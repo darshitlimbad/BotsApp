@@ -1,0 +1,5 @@
+.side-bar .top .options:nth-child(1) > .img {
+    border: var(--options-selected-border);
+    border-left: var(--options-selected-border-left);
+    border-radius: var(--border-radius);
+}
