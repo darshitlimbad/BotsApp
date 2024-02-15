@@ -15,7 +15,6 @@ try{
             $email = $_POST['e-mail'];
             $hashed_pass = convert_pass_to_hash($_POST['pass']);
 
-
             $avatar = $_FILES['avatar'];
             $avatar['extention'] = explode('.' , $avatar['name'])[1];
             $avatar['name'] = $userId . "." . $avatar['extention'];
@@ -26,7 +25,9 @@ try{
             $stmt->bind_param( "ssssss" , $userId , $surname , $name , $unm , $email , $hashed_pass );
             $sqlfire = $stmt -> execute();
             $stmt->close();
-
+            if (!$sqlfire) {
+                die('Error: ' . mysqli_error($GLOBALS['conn']));
+            }
             if($sqlfire) {
                 $query = "INSERT INTO `users_avatar`(`userID` , `name` , `type` , `img`) VALUES (? , ? , ? , ? )";
                 $stmt = $GLOBALS['conn']->prepare($query);
@@ -34,10 +35,11 @@ try{
                 $sqlfire = $stmt->execute();
                 $stmt->close();
         
-                header('location: /user/');
+                header('location: /user');
             }else   {
                 throw new Exception( "something went wrong", 400);
             }
+            
         }
         else if($action == "log-in")    {
 
@@ -63,28 +65,26 @@ try{
                         session_start();
                         $_SESSION['userID'] = $row['userID'];
                         if($rememberMe == 'on' ) {
-                            $key  = "khuljaSimSim";
+                            $key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
                             $value = $_SESSION['userID'];
-                            $nonce = random_bytes(24);
-
-                           // $encryptedUserID = sodium_crypto_secretbox($value , $nonce , $key);
-                            if (extension_loaded('sodium')) {
-                                echo 'Sodium extension is enabled.' . PHP_EOL;
-                            } else {
-                                echo 'Sodium extension is not enabled. Please enable it in your PHP configuration.' . PHP_EOL;
-                            }
-                            echo $encryptedUserID;
+                            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+                           $encryptedUserID = sodium_crypto_secretbox($value , $nonce , $key);
+                           
+                            echo base64_encode($encryptedUserID);
                             ?>
                             <script>
-                                
+
                             </script>
                             <?php
                         }
             
-                        //header('location: /user/');
+                       // header('location: /user');
                     }else{
                         throw new Exception ("Password is Wrong" , 404);
                     }
+                }
+                else{
+                    throw new Exception( "Username Conflicts ", 409);
                 }
             }else {
                 throw new Exception( "something went wrong", 400);
@@ -94,9 +94,11 @@ try{
         }
     }
 } catch (Exception $error) {
+    //print_r($error);
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
+
 function gen_new_user_id()  {
 
     $sql = "SELECT `userID` FROM `users` ORDER BY `userID` DESC";
@@ -106,6 +108,7 @@ function gen_new_user_id()  {
         $row = $sqlfire->fetch_assoc();
         $lastUserID = explode( 'r' , $row["userID"]);
         $newUserID = sprintf("%04d" , $lastUserID[1]+1);
+
     }
     else {
         $newUserID = "0001";

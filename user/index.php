@@ -1,5 +1,6 @@
 <?php
     include '../functionality/_auto_login.php';
+    include '../functionality/lib/_features.php';
     
     if(isset($_SESSION['userID'])){
         //header("location: /");
@@ -19,11 +20,7 @@
 <body onload="document.forms['form']['user'].focus()">
     
     <header style="background-color: rgb(5, 33, 60) ;">
-        <div class="title">
-            <img src="../img/botsapp_white.png" onclick="tohomepage()">
-            <h1 onclick="tohomepage()">BotsApp</h1>
-            <p>-A Better place for chat.</p>
-        </div>
+        <?php custom_header();?>
     </header>
 
     <div class="square-container"> 
@@ -150,10 +147,6 @@
         
     </div>
 
-    <div id="notification" class="">
-    </div>
-    
-    <div id="alert" class="">
-    </div>
+    <?php pop_ups();?>
 </body>
 </html>

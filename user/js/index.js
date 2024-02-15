@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '400') {
                     new_Alert( URL_params.get('ERROR') + " : Something went Wrong :( , Please try again");
                 }
+                if(URL_params.get('ERROR') == '409') {
+                    new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
+                }
                 if( (URL_params.get('ERROR') == '404') && (URL_params.get('USER')) ) {
                     new_Alert( "404 : Password is wrong!");
                     user.value = URL_params.get('USER');

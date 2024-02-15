@@ -1,5 +1,6 @@
 <?php
     include 'functionality/_auto_login.php';
+    include 'functionality/lib/_features.php';
 ?>
 <!-- bots app -->
 <!DOCTYPE html>
@@ -14,15 +15,10 @@
     <link rel="stylesheet" href="css/interface.css" type="text/css">
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
-    <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script> -->
 </head>
 <body>
     <header>
-        <div class="title">
-            <img src="img/botsapp_white.png" onclick="tohomepage()">
-            <h1 onclick="tohomepage()">BotsApp</h1>
-            <p>-A Better place for chat.</p>
-        </div>
+        <?php custom_header();?>
     </header>
     <div class="side-bar">
         <div class="top">

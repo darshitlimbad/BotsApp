@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Table structure for table `user`
 --
 
-CREATE TABLE `users` (
+CREATE TABLE `user` (
   `id` int(11) NOT NULL,
   `userID` varchar(20) NOT NULL,
   `unm` varchar(20) NOT NULL,
@@ -36,10 +36,10 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data for table `user`
 --
 
-INSERT INTO `users` (`id`, `userID`, `unm`, `email`, `pass`) VALUES
+INSERT INTO `user` (`id`, `userID`, `unm`, `email`, `pass`) VALUES
 (4, '23', '32', 'ew', 'ew');
 
 -- --------------------------------------------------------
@@ -61,9 +61,9 @@ CREATE TABLE `user_avatar` (
 --
 
 --
--- Indexes for table `users`
+-- Indexes for table `user`
 --
-ALTER TABLE `users`
+ALTER TABLE `user`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `ava_user_id` (`userID`) USING BTREE;
 
@@ -79,9 +79,9 @@ ALTER TABLE `user_avatar`
 --
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT for table `user`
 --
-ALTER TABLE `users`
+ALTER TABLE `user`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
@@ -98,7 +98,7 @@ ALTER TABLE `user_avatar`
 -- Constraints for table `user_avatar`
 --
 ALTER TABLE `user_avatar`
-  ADD CONSTRAINT `unique_img_id` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `unique_img_id` FOREIGN KEY (`userId`) REFERENCES `user` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -18,7 +18,8 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     // title of the list page
     if(document.querySelector('#cname')){
-        document.querySelector('#cname').innerHTML = document.title;
+        var cname = document.title.substring(0 , document.title.search('--')-1 );
+        document.querySelector('#cname').innerHTML = cname;
     }
 
     // skeleton animation stop 

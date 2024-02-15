@@ -4,12 +4,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Personal Chat</title>
+    <title>Personal Chat -- BOTSAPP</title>
     
     <link rel="stylesheet" href="css/index.css" type="text/css"> 
 </head>
 <body>
 
+    <div class="center">
     <!-- chat-box -->
     <div class="chat-box">
         <!-- chat-list -->
@@ -228,6 +229,6 @@
         </div>
 
     </div>
-    
+    </div>
 </body>
 </html>

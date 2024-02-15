@@ -4,12 +4,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Group Chat</title>
+    <title>Group Chat -- BOTSAPP</title>
     
     <link rel="stylesheet" href="css/group_chat.css" type="text/css"> 
 </head>
 <body>
     
+    <div class="center">
     <!-- chat-box -->
     <div class="chat-box">
         <!-- chat-list -->
@@ -221,7 +222,7 @@
                 </tbody>
             </table>
         </div>
-
+        </div>
         <!-- opened-chat -->
         <div class="chat">
 
