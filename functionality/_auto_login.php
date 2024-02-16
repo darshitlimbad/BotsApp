@@ -32,9 +32,9 @@ session_start();
                     var getRequest = objectStore.get("1");
 
                     getRequest.onsuccess = ((event) => {
-                        var data = event.target.result;
+                        data = event.target.result;
 
-                        console.log(data);
+                        //finding a way to send data to php in same file
                         
                     })
                 }
