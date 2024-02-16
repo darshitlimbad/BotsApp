@@ -65,20 +65,53 @@ try{
                         session_start();
                         $_SESSION['userID'] = $row['userID'];
                         if($rememberMe == 'on' ) {
+                            $data = $_SESSION['userID'];
+
                             $key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-                            $value = $_SESSION['userID'];
-                            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-                           $encryptedUserID = sodium_crypto_secretbox($value , $nonce , $key);
+                            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
+                            $encryptedUserID = sodium_crypto_secretbox($data , $nonce , $key);
                            
-                            echo base64_encode($encryptedUserID);
                             ?>
                             <script>
+                                var request = indexedDB.open("Botsapp", 1);
 
+                                request.onerror = (event) => {
+                                    console.error("something went wrong");
+                                };
+
+                                request.onupgradeneeded = (event) => {
+                                    var db = event.target.result;
+
+                                    var objectStore = db.createObjectStore("session" , { keyPath: "id"});
+
+                                    objectStore.createIndex("id" , "id" , { unique: true });
+                                };
+
+                                request.onsuccess = (event) => {
+                                    var db = event.target.result;
+
+                                    var transaction = db.transaction("session" , "readonly");
+                                    var objectStore = transaction.objectStore("session");
+                                    var count = objectStore.count();
+
+                                    transaction.oncomplete = (() => {
+                                        count = count.result;
+                                        transaction = db.transaction("session" , "readwrite");
+                                        objectStore = transaction.objectStore("session");
+                                        if(count > 0) {
+                                            objectStore.clear();
+                                        }
+
+                                        objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , key : "<?php echo base64_encode($key);?>" , nonce : "<?php echo base64_encode($nonce)?>"});
+
+                                        window.location.assign('/');
+                                    });
+                                    transaction.close;
+                                };
                             </script>
                             <?php
                         }
             
-                       // header('location: /user');
                     }else{
                         throw new Exception ("Password is Wrong" , 404);
                     }

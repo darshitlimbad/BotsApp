@@ -87,13 +87,13 @@ document.addEventListener('DOMContentLoaded' , function () {
             // set password validation attribute
             pass.setAttribute('onkeyup' , 'pass_validation()');
 
-        } 
+        }   
 
         //notification 
             new_notification(form_name+' form.');
 
         // set form action path
-        set_form_action_path();
+            set_form_action_path();
 
         // content chnage
             // hading h1
