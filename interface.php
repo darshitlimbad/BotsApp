@@ -185,9 +185,5 @@
         </div>
     </div>
     
-    <div id="notification" class="">
-    </div>
-    <div id="alert" class="">
-    </div>
 </body>
 </html>

@@ -9,17 +9,22 @@
         <?php
     }
 
-    function footer() {
+    function custom_footer() {
         ?>
-        
-        <?php
-    }
-
-    function pop_ups() {
-        ?>
-        <div id="notification" class=""></div>
-    
-        <div id="alert" class=""></div>
+            <div>
+            All right reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.
+            </div>
+            <a href="/help/user-help.php" class="link">Need help?</a>
         <?php
     }
 ?>
+
+<script>
+    pop_up(title , message , URL) => {
+        
+    }
+</script>
+
+<!-- Notifications -->
+<div id="notification" class=""></div>
+<div id="alert" class=""></div>

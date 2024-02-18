@@ -139,14 +139,10 @@
         </form>
         
         <footer>
-            <div>
-            All right reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.
-            </div>
-            <a href="/help/user-help.php" class="link">Need help?</a>
+            <?php custom_footer();?>
         </footer>
         
     </div>
 
-    <?php pop_ups();?>
 </body>
 </html>
