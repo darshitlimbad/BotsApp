@@ -3,7 +3,7 @@
     include 'functionality/lib/_features.php';
 
     if(!isset($_SESSION['userID'])){
-        //header("location: /user");
+        header("location: /user");
     }
 ?>
 <!-- bots app -->
@@ -120,7 +120,7 @@
 
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
-                <button class="danger-button button" onclick="alert('hi');">Delete Account</button>
+                <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ?' , '/functionality/_log_out.php?get_pass=khulJaSimSim' , 'red');">Delete Account</button>
             </div>
            
            <div class="body" name="chat-body" style="display: none;">

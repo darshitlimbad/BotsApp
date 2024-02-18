@@ -624,7 +624,7 @@ header .title p {
 
     --margin: 0px 60%;
     --color: rgb(241, 3, 3);
-    --background-image: linear-gradient(to bottom right , rgba(0, 0, 0, 0.721) 15%,rgba(160, 107, 107, 0.523) , rgba(5, 0, 0, 0.839));
+    --background-image: linear-gradient(to bottom right , rgba(44, 44, 44, 0.721) 15%,rgba(255, 255, 255, 0.523) , rgba(44, 44, 44, 0.721) 15%);
     --btn-shadow: rgba(226, 43, 43, 0.373);
 
 }

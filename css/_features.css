@@ -1,0 +1,42 @@
+/* pop-up box */
+#pop_up {
+    display: none;
+    opacity: 0%;
+    height: auto;
+    width: auto;
+    min-width: 300px;
+    position: fixed;
+    z-index: 2;
+    top: 40%;
+    background-color:rgba(1, 12, 23, 0.798);
+    box-shadow: 3px 3px 15px black;
+    border: 2px outset rgba(0, 0, 0, 0.707);
+    border-radius: 20px;
+    padding: 5px;
+    transition: opacity .7s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+#pop_up .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-content: center;
+}
+
+#pop_up .buttons .pop_up_cancel_btn {
+    font-weight: 600;
+
+    --margin: 0px 0px;
+    --color: rgb(254, 254, 254);
+    --background-image: linear-gradient(to bottom right , rgba(44, 44, 44, 0.721) 15%,rgba(255, 255, 255, 0.523) , rgba(44, 44, 44, 0.721) 15%);
+    --btn-shadow: rgba(19, 19, 19, 0.483);
+}
+
+#pop_up .buttons .pop_up_yes_btn {
+    font-weight: 900;
+
+    --margin: 0px 0px;
+    --color: rgb(255, 255, 255);
+    --btn-shadow: rgba(19, 19, 19, 0.483);
+}
+
