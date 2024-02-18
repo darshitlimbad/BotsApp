@@ -4,7 +4,6 @@
 if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
     try{
         $data = json_decode( file_get_contents("php://input") , true );
-
         if(isset($data)) {
             $encryptedUserID = base64_decode($data['userID']);
             $user_nonce = base64_decode($data['user_nonce']);
@@ -52,7 +51,8 @@ function metchPasswords($Pass , $userID){
             session_start();
 
             $_SESSION['userID'] = $userID;
-            return 1;
+
+            
         }else {
             throw new Exception("saved Password is wrong try log-in again." , 404);
         }

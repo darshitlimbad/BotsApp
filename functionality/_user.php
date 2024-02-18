@@ -36,7 +36,7 @@ try{
                 $sqlfire = $stmt->execute();
                 $stmt->close();
         
-                header('location: /user');
+                header('location: /user/?success=201&USER='.$unm);
             }else   {
                 throw new Exception( "something went wrong", 400);
             }
@@ -137,6 +137,7 @@ try{
         }
     }
 } catch (Exception $error) {
+    // print_r($error);     
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }

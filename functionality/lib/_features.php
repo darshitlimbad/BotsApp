@@ -66,7 +66,7 @@
         <p class="message"></p>
 
         <div class="buttons">
-            <button class="pop_up_cancel_btn button" onclick=" document.querySelector('#pop_up').style.display='none'" >Cancel</button>
+            <button class="pop_up_no_btn button" onclick=" document.querySelector('#pop_up').style.display='none'" >No</button>
             <button class="pop_up_yes_btn button" onclick="goToURL()">Yes</button>
         </div>
     </div>

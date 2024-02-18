@@ -77,6 +77,7 @@ body{
 
 ::-webkit-scrollbar {
     width: 2px;
+    height: 3px;
 }
 
 ::-webkit-scrollbar-track   {
@@ -198,6 +199,7 @@ header .title p {
     position: fixed;
     left: 10px;
     height: 500px;
+    max-height: 80%;
     width: 500px;
     z-index: 1;
     border-radius: var(--border-radius);
@@ -225,6 +227,7 @@ header .title p {
     padding: 7px;
     margin: 7px;
     list-style-type: none;
+    overflow-y: auto;
 }
 
 .settings-box ul li {
@@ -238,7 +241,9 @@ header .title p {
 }
 
 .settings-box ul li:last-child {
-    bottom: -52%;
+    bottom: 0%;
+    position: fixed;
+    width: 80%;
 }
 
 .settings-box ul li:hover   {
@@ -276,13 +281,14 @@ header .title p {
     background-color: rgba(25, 45, 65, 0.836);
     color: rgb(255, 255, 255);
     font-weight: 400;
-
+    overflow-y: auto;
 }
 
 .settings-box .settings-container .body{
     display: block;
     position: absolute;
     margin: 17px;
+    padding-bottom: 10px;
     height: auto;
     width: 90%;
 }
@@ -617,12 +623,13 @@ header .title p {
 }
 
 .danger-button {
+    position: relative;
     text-decoration: none;
     filter: brightness(100%);
     font-weight: 700;
     width: 40% !important;
-
-    --margin: 0px 60%;
+    left: 55%;
+    --margin: 5px;
     --color: rgb(241, 3, 3);
     --background-image: linear-gradient(to bottom right , rgba(44, 44, 44, 0.721) 15%,rgba(255, 255, 255, 0.523) , rgba(44, 44, 44, 0.721) 15%);
     --btn-shadow: rgba(226, 43, 43, 0.373);

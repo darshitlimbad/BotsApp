@@ -31,7 +31,10 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
                 }
-                
+                if(URL_params.get('success') == '201')    {
+                    new_notification("'" + URL_params.get('USER') + "' User Created Successfully.");
+                    user.value = URL_params.get('USER');
+                }
             },10)
             
         //

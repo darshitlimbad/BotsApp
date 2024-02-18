@@ -2,9 +2,6 @@
     include 'functionality/_auto_login.php';
     include 'functionality/lib/_features.php';
 
-    if(!isset($_SESSION['userID'])){
-        header("location: /user");
-    }
 ?>
 <!-- bots app -->
 <!DOCTYPE html>
@@ -14,7 +11,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <link rel="icon" href="img/botsapp_white.png" type="image/png">
+    <!-- <link rel="icon" href="img/BotsApp_white.png" type="image/png">  no more need-->
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
     <!-- Script -->
@@ -120,7 +117,8 @@
 
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
-                <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ?' , '/functionality/_log_out.php?get_pass=khulJaSimSim' , 'red');">Delete Account</button>
+                <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , '/functionality/_delete_account.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button>
+                <!-- <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ?' , '/functionality/_log_out.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button> -->
             </div>
            
            <div class="body" name="chat-body" style="display: none;">
@@ -187,3 +185,12 @@
     
 </body>
 </html>
+<?php
+    if(!isset($_SESSION['userID'])){
+       ?>
+        <script>
+            window.location.assign('/user');
+        </script>
+       <?php
+    }
+?>

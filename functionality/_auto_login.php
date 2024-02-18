@@ -1,5 +1,6 @@
 <?php
 session_start();
+if(!isset($_SESSION['userID'])) {
 ?>
     <script>
     var request = indexedDB.open("Botsapp", 1);
@@ -42,13 +43,16 @@ session_start();
                     getRequest.onsuccess = ((event) => {
                         var data = JSON.stringify(event.target.result);
                         xml = new XMLHttpRequest();
-                        var URL = window.location.origin+"/functionality/_set_session_auto.php?entryPass=khuljasimsim";
-                        xml.open('POST' , URL , false);
+                        var URL_of_setSession = window.location.origin+"/functionality/_set_session_auto.php?keyPass=khuljasimsim";
+                        console.log(URL_of_setSession);
+
+                        xml.open('POST' , URL_of_setSession , false);
                         
                         xml.onreadystatechange = (response) => {
                             if(!(xml.readyState == 4) && !(xml.status == 200)) {
                                 console.error("[400] :"," Bad Request");
                             }
+
                         };
 
                         xml.send(data);
@@ -63,3 +67,6 @@ session_start();
 
     };
     </script>
+<?php
+}
+?>
