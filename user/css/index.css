@@ -9,7 +9,7 @@ body{
     color: aliceblue;
     user-select: none;
     background-size: 200% 110%;
-    overflow: auto;
+    overflow: hidden;
     animation: bg-animation 2s alternate infinite ease-out;
 }
 
@@ -27,12 +27,12 @@ body{
 }
 
 :root{
-    --top : -30px;
+    --Fade_out_top : -30px;
     --load-animation-speed:cubic-bezier(0, 0.94, 0.27, 1.2);
 }
 
 .fadeout {
-    top: var(--top);
+    top: var(--Fade_out_top);
     opacity: 0;
     animation: fade 700ms var(--load-animation-speed);
 }
@@ -45,7 +45,7 @@ body{
 @keyframes fade {
     0%{
         opacity: 0;
-        top: var(--top);
+        top: var(--Fade_out_top);
     }
     100%{
         opacity: 1;
@@ -76,7 +76,7 @@ body{
 .box {
     height: var(--user-box-height);
     width: var(--user-box-width);
-    top: calc(50% - (var(--user-box-height) / 2) );
+    top: 100px;
     left: calc(50% - (var(--user-box-width) / 2));
     display: flex;
     position: absolute;
@@ -180,7 +180,7 @@ body{
 .input_field img[name="eye"] {
     display: block;
     position: relative;
-    top: 24px;
+    top: 14px;
     left:307px;
     z-index: 1;
 }
@@ -265,32 +265,9 @@ body{
     --btn-shadow: rgba(89, 43, 226, 0.373);
 }
 
-.input_field .button input  {
-    height: 2rem;
-    width: 30%;
-    text-transform: capitalize;
-    margin: var(--margin);    
-    color: var(--color) ;
-    background-image: var(--background-image);
-    border-radius: 30px;
-    border: none;
-    --btn-shadow :rgba(240, 248, 255, 0.18);
-    transition: all .1s cubic-bezier(0.215, 0.610, 0.355, 1);
-}
-
-.input_field .button input[disabled="true"]   {
+.input_field .button-div input[disabled="true"]   {
     background-image: none;
     background-color: rgba(58, 58, 58, 0.699) ;
-}
-
-.input_field .button input:hover {
-    height: calc(2rem + 2px);
-    width: calc(30% + 2px);
-    transform: translate(-1px,-1px);
-    /* background-blend-mode: hard-light; */
-    box-shadow: 2px 2px 30px var(--btn-shadow);
-    filter: brightness(80%);
-    filter: contrast(4px);
 }
 
 footer {

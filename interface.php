@@ -1,6 +1,10 @@
 <?php
     include 'functionality/_auto_login.php';
     include 'functionality/lib/_features.php';
+
+    if(!isset($_SESSION['userID'])){
+        //header("location: /user");
+    }
 ?>
 <!-- bots app -->
 <!DOCTYPE html>
@@ -91,20 +95,13 @@
 
         <div class="settings-container">
 
-           <div class="body" name="general-body"  style="display: none;">
+            <div class="body" name="general-body"  style="display: none;">
                 <div class="headding">General</div>
                 
-                <div class="checkbox">
-                    <input type="checkbox" name="save-log-in" id="save-log-in">
-                    <label for="save-log-in">Save log-In Details</label>
-                </div>
                 
-                <p>If you to want save login details in this browser then check this checkbox or uncheck if you don't want to.</p>
-                
-                <a href="functionality/_log-out.php" class="link">Log Out</a>
-           </div>
+            </div>
         
-           <div class="body" name="account-body" style="display: none;">
+            <div class="body" name="account-body" style="display: none;">
                 <div class="headding">Account</div>
 
                 <h4>Privacy</h4>
@@ -120,7 +117,11 @@
                     <input type="checkbox" name="can-see-about-section" id="can-see-about-section">
                     <label for="can-see-about-section">Can see about section</label>
                 </div>
-           </div>
+
+                <h4 class="danger">Delete Account</h4>
+                    <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
+                <button class="danger-button button" onclick="alert('hi');">Delete Account</button>
+            </div>
            
            <div class="body" name="chat-body" style="display: none;">
                 <div class="headding">Chat</div>
@@ -147,7 +148,7 @@
                 <div class="headding">Feedback</div>
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
-                <p>share your experience...</p>
+                <p>share your thoughts...</p>
                 <a href="help/ux.php?form=feedback" target="_blank" class="link">Feedback Here</a>
             
                 <br><br>

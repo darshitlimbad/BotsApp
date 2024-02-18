@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded' , function () {
     pass = document.querySelector('#pass');
     avatar = document.querySelector('#avatar');
     submit_btn = document.querySelector('.submit input');
-    buttons = document.querySelectorAll('.button input');
+    buttons = document.querySelectorAll('.button-div input');
     // 
 
         //check URL parameters for any error params
@@ -19,14 +19,17 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '400') {
                     new_Alert( URL_params.get('ERROR') + " : Something went Wrong :( , Please try again");
                 }
-                if(URL_params.get('ERROR') == '409') {
-                    new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
-                }
                 if( (URL_params.get('ERROR') == '404') && (URL_params.get('USER')) ) {
                     new_Alert( "404 : Password is wrong!");
                     user.value = URL_params.get('USER');
                 }else if(URL_params.get('ERROR') == '404') {
                     new_Alert( URL_params.get('ERROR') + " : User not Found!");
+                }
+                if(URL_params.get('ERROR') == '409') {
+                    new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
+                }
+                if(URL_params.get('ERROR') == '1146')    {
+                    new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
                 }
                 
             },10)
@@ -111,8 +114,8 @@ document.addEventListener('DOMContentLoaded' , function () {
         fade_in(ele);
     });
 
-    form.querySelectorAll('.button input')[0].attributes.removeNamedItem('disabled');
-    form.querySelectorAll('.button input')[1].attributes.removeNamedItem('disabled');
+    form.querySelectorAll('.button-div input')[0].attributes.removeNamedItem('disabled');
+    form.querySelectorAll('.button-div input')[1].attributes.removeNamedItem('disabled');
     // 
 
 });

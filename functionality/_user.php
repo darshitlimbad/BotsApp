@@ -14,15 +14,16 @@ try{
             $unm = $_POST['user'];
             $email = $_POST['e-mail'];
             $hashed_pass = convert_pass_to_hash($_POST['pass']);
+            $pass_key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
 
             $avatar = $_FILES['avatar'];
             $avatar['extention'] = explode('.' , $avatar['name'])[1];
             $avatar['name'] = $userId . "." . $avatar['extention'];
             $avatar['imgdata'] = file_get_contents($avatar['tmp_name']);
 
-            $query = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass`) VALUES (? , ? , ? , ? , ? , ? )";
+            $query = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass` , `pass_key`) VALUES (? , ? , ? , ? , ? , ? , ?)";
             $stmt = $GLOBALS['conn']->prepare($query);
-            $stmt->bind_param( "ssssss" , $userId , $surname , $name , $unm , $email , $hashed_pass );
+            $stmt->bind_param( "sssssss" , $userId , $surname , $name , $unm , $email , $hashed_pass , $pass_key);
             $sqlfire = $stmt -> execute();
             $stmt->close();
             if (!$sqlfire) {
@@ -50,7 +51,7 @@ try{
             $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] :"null";
             $is_user_username = preg_match('/[@][.]/' , $user );
             
-            $query = "SELECT `userID` , `pass` FROM `users` WHERE ".(($is_user_username == 0) ? "`unm`" : "`email`")." = ?";
+            $query = "SELECT `userID` , `pass` , `pass_key` FROM `users` WHERE ".(($is_user_username == 0) ? "`unm`" : "`email`")." = ?";
             $stmt = $GLOBALS['conn']->prepare($query);
             $stmt->bind_param( "s" , $user);
             $sqlfire = $stmt->execute();
@@ -61,19 +62,28 @@ try{
                     throw new Exception( "User not Found", 404);
                 }else if($result->num_rows == 1){
                     $row = $result->fetch_assoc();
+                    
                     if(password_verify($pass , $row['pass']))   {
                         session_start();
+                        
                         $_SESSION['userID'] = $row['userID'];
-                        if($rememberMe == 'on' ) {
-                            $data = $_SESSION['userID'];
 
-                            $key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-                            $nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
-                            $encryptedUserID = sodium_crypto_secretbox($data , $nonce , $key);
-                           
+                        if($rememberMe == 'on' ) {
+                            
+                            $userID = $_SESSION['userID'];
+                            $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+                            $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
+                            $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
+                            
+                            $pass = $row['pass'];
+                            $pass_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+                            $pass_key = base64_decode($row['pass_key']);
+                            $encryptedPass = sodium_crypto_secretbox($pass , $pass_nonce , $pass_key);
+
+
                             ?>
                             <script>
-                                var request = indexedDB.open("Botsapp", 1);
+                                var request = indexedDB.open("Botsapp" , 1 );
 
                                 request.onerror = (event) => {
                                     console.error("something went wrong");
@@ -89,7 +99,7 @@ try{
 
                                 request.onsuccess = (event) => {
                                     var db = event.target.result;
-
+                                   
                                     var transaction = db.transaction("session" , "readonly");
                                     var objectStore = transaction.objectStore("session");
                                     var count = objectStore.count();
@@ -102,7 +112,7 @@ try{
                                             objectStore.clear();
                                         }
 
-                                        objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , key : "<?php echo base64_encode($key);?>" , nonce : "<?php echo base64_encode($nonce)?>"});
+                                        objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>"});
 
                                         window.location.assign('/');
                                     });
@@ -127,7 +137,6 @@ try{
         }
     }
 } catch (Exception $error) {
-    //print_r($error);
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
@@ -137,11 +146,10 @@ function gen_new_user_id()  {
     $sql = "SELECT `userID` FROM `users` ORDER BY `userID` DESC";
     $sqlfire = $GLOBALS['conn'] -> query($sql);
 
-    if($sqlfire && $sqlfire -> num_rows > 0) {
+    if($sqlfire && ($sqlfire -> num_rows > 0)) {
         $row = $sqlfire->fetch_assoc();
         $lastUserID = explode( 'r' , $row["userID"]);
         $newUserID = sprintf("%04d" , $lastUserID[1]+1);
-
     }
     else {
         $newUserID = "0001";

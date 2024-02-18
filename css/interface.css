@@ -32,14 +32,8 @@ body{
 }
 
 @keyframes skeleton {
-    0%  {
-        background-color: rgba(46, 46, 46, 0.6);
-
-    }
-    
-    100%  {
-        background-color: rgba(72, 72, 72, 0.5);
-    }
+    0%  { background-color: rgba(46, 46, 46, 0.6); }
+    100%  { background-color: rgba(72, 72, 72, 0.5); }
 }
 
 #notification , #alert{
@@ -447,16 +441,6 @@ header .title p {
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.link {
-    color:rgb(3, 218, 3);
-    text-decoration: none;
-    filter: brightness(100%);
-}
-
-.link:hover{
-    color: rgb(0, 153, 0);
-}
-
 .center{
     display: flex;
     justify-content: center;
@@ -465,7 +449,7 @@ header .title p {
 .chat-box {
     display: block;
     position: absolute;
-    height: 90%;
+    height: 85%;
     min-height: 450px;
     width: 90%;
     min-width: 500px;
@@ -561,10 +545,11 @@ header .title p {
 
  .list .inbox-user  {
     display: flex;
-    width: 100%;
+    width: 90%;
     padding: 5px;
     margin: 10px;
     border-radius: 5px;
+    border-bottom: 2px inset rgba(240, 248, 255, 0.321);
     align-content: center;
 }
 
@@ -616,3 +601,55 @@ header .title p {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+.link {
+    color:rgb(3, 218, 3);
+    text-decoration: none;
+    filter: brightness(100%);
+}
+
+.link:hover{
+    color: rgb(0, 153, 0);
+}
+
+.danger{
+    color: red;
+}
+
+.danger-button {
+    text-decoration: none;
+    filter: brightness(100%);
+    font-weight: 700;
+    width: 40% !important;
+
+    --margin: 0px 60%;
+    --color: rgb(241, 3, 3);
+    --background-image: linear-gradient(to bottom right , rgba(0, 0, 0, 0.721) 15%,rgba(160, 107, 107, 0.523) , rgba(5, 0, 0, 0.839));
+    --btn-shadow: rgba(226, 43, 43, 0.373);
+
+}
+
+.button {
+    height: 2rem;
+    width: 30%;
+    text-transform: capitalize;
+    margin: var(--margin);    
+    color: var(--color) ;
+    background-image: var(--background-image);
+    border-radius: 30px;
+    border: none;
+    /* --btn-shadow :rgba(240, 248, 255, 0.18); */
+    transition: all .3s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.button:hover {
+    height: calc(2rem + 2px);
+    width: calc(30% + 2px);
+    transform: translate(-1px,-1px);
+    /* background-blend-mode: hard-light; */
+    box-shadow: 2px 2px 30px var(--btn-shadow);
+    filter: brightness(80%);
+    /* filter: contrast(4px); */
+}
+
+
