@@ -9,36 +9,6 @@ document.addEventListener('DOMContentLoaded' , function () {
     buttons = document.querySelectorAll('.button-div input');
     // 
 
-        //check URL parameters for any error params
-            URL_params = new URLSearchParams(window.location.search);
-            
-            setTimeout(() => {
-                if(URL_params.get('ACTION') == 'sign-in')    {
-                    buttons[1].click();
-                }
-                if(URL_params.get('ERROR') == '400') {
-                    new_Alert( URL_params.get('ERROR') + " : Something went Wrong :( , Please try again");
-                }
-                if( (URL_params.get('ERROR') == '404') && (URL_params.get('USER')) ) {
-                    new_Alert( "404 : Password is wrong!");
-                    user.value = URL_params.get('USER');
-                }else if(URL_params.get('ERROR') == '404') {
-                    new_Alert( URL_params.get('ERROR') + " : User not Found!");
-                }
-                if(URL_params.get('ERROR') == '409') {
-                    new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
-                }
-                if(URL_params.get('ERROR') == '1146')    {
-                    new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
-                }
-                if(URL_params.get('success') == '201')    {
-                    new_notification("'" + URL_params.get('USER') + "' User Created Successfully.");
-                    user.value = URL_params.get('USER');
-                }
-            },10)
-            
-        //
-
     // chnage button toggle //log-in ,sign-in toggle
     document.querySelector('input[name="change"]').addEventListener( 'click' , function (){
 

@@ -3,7 +3,7 @@
     include '../functionality/lib/_features.php';
     
     if(isset($_SESSION['userID'])){
-        header("location: /");
+        // header("location: /");
     }
 ?>
 <!DOCTYPE html>
@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../css/interface.css" type="text/css">
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="../js/interface.js"></script>
+    <script type="text/javascript" src="../js/_error_handling.js"></script>
 </head>
 <body onload="document.forms['form']['user'].focus()">
     <!-- create a div and size it acording to the display (desktop,mobile) -->

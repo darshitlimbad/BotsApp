@@ -19,6 +19,9 @@
         <?php
     }
 ?>
+<!-- Notifications -->
+<div id="notification" class=""></div>
+<div id="alert" class=""></div>
 
 <script>
     var url;
@@ -53,10 +56,6 @@
         window.location.assign(url);
     }
 </script>
-
-<!-- Notifications -->
-<div id="notification" class=""></div>
-<div id="alert" class=""></div>
 
 <!-- custom-pop-up  -->
 <div class="center">

@@ -11,7 +11,7 @@ if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
         var requst= indexedDB.deleteDatabase('Botsapp');
 
         requst.onsuccess = (event) => {
-            window.location.assign('/');
+            window.location.assign('/user/?SUCCESS='.concat(URL_Param.get('SUCCESS') ? URL_Param.get('SUCCESS') : '202') );
         }
         requst.onerror = (event) => {
             console.log(event);

@@ -11,11 +11,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <!-- <link rel="icon" href="img/BotsApp_white.png" type="image/png">  no more need-->
+    <!-- <link rel="icon" href="img/BotsApp_white.png" type="image/png">  no need-->
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
+    <script type="text/javascript" src="js/_error_handling.js"></script>
 </head>
 <body>
     <header>
@@ -114,11 +115,16 @@
                     <input type="checkbox" name="can-see-about-section" id="can-see-about-section">
                     <label for="can-see-about-section">Can see about section</label>
                 </div>
+                
+                <!-- log-out -->
+                <h4 class="danger">Log Out</h4>
+                        <p>Log out from your account</p>
+                <button class="danger-button button" onclick="pop_up('Log out', 'Are you sure.. You want to Log out?' , '/functionality/_log_out.php?key_pass=khulJaSimSim' , 'red');">Log Out</button>
 
+                <!-- Delete Account -->
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
                 <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , '/functionality/_delete_account.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button>
-                <!-- <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ?' , '/functionality/_log_out.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button> -->
             </div>
            
            <div class="body" name="chat-body" style="display: none;">
