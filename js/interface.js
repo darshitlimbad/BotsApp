@@ -199,6 +199,12 @@ function _remove_Alert_show(){
     }, 70); 
 }
 
+
+// default img loader functions
+const defaultDp = (tag) => {
+    tag.src='img/default_dp.png';
+};
+
 //
 
 // dispose space

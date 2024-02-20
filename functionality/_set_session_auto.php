@@ -27,7 +27,7 @@ if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
 }
 
 function getPassKey($userID) {
-    $result = fetch_columns('userID' , $userID , 'pass_key');
+    $result = fetch_columns( "users" ,'userID' , $userID , 'pass_key');
     if($result != '400') {
         if($result->num_rows == 1){
             return $result->fetch_assoc()['pass_key'];
@@ -43,7 +43,7 @@ function getPassKey($userID) {
 }
 
 function metchPasswords($Pass , $userID){
-    $result = fetch_columns('userID' , $userID , 'pass');
+    $result = fetch_columns(  "users" , 'userID' , $userID , 'pass');
     //echo $result->fetch_assoc()['pass'];
     if($result->num_rows == 1) {
         $pwd = $result->fetch_assoc()['pass'];
@@ -51,7 +51,6 @@ function metchPasswords($Pass , $userID){
             session_start();
 
             $_SESSION['userID'] = $userID;
-
             
         }else {
             throw new Exception("saved Password is wrong try log-in again." , 404);

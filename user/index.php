@@ -3,8 +3,9 @@
     include '../functionality/lib/_features.php';
     
     if(isset($_SESSION['userID'])){
-        // header("location: /");
-    }
+        header('location: /');
+        exit();
+      }
 ?>
 <!DOCTYPE html>
 <html lang="en">

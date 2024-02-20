@@ -10,14 +10,17 @@
         die("Database Connection failed: " . $GLOBALS['conn']->connect_error);
     } 
 
-    function fetch_columns($where , $value , ...$columns){
-        $query = "SELECT ". implode(',' , $columns) ." FROM `users` WHERE `$where` = ?";
+    function fetch_columns( $table , $condition , $condition_value , ...$columns){
+        
+        $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE `$condition` = ?";
         $stmt  = $GLOBALS['conn'] -> prepare($query);
-        $stmt->bind_param('s' , $value);
+        $stmt->bind_param('s' , $condition_value);
         $sqlfire = $stmt->execute();
 
         if($sqlfire){
-            return $stmt->get_result();
+            $result = $stmt->get_result();
+            $stmt->close();
+            return $result;
         }else {
             return '400';
         }

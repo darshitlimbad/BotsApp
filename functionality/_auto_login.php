@@ -56,6 +56,8 @@ if(!isset($_SESSION['userID'])) {
                         };
 
                         xml.send(data);
+
+                        
                     });
                 } else {
                     console.warn('[404] :' , "No Saved data found");

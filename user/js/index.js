@@ -162,7 +162,6 @@ function fade_out(ele){
                 if(request.readyState === 4 && request.status === 200)  {
                     // availability == 1 = available ,  availability == 0 = not available
                     var availability = request.responseText;
-            console.log(availability);
 
                     if(availability == 1)   {
                         user_span.style.color = '#00ff00';

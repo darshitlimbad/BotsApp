@@ -17,8 +17,6 @@ try{
             $pass_key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
 
             $avatar = $_FILES['avatar'];
-            $avatar['extention'] = explode('.' , $avatar['name'])[1];
-            $avatar['name'] = $userId . "." . $avatar['extention'];
             $avatar['imgdata'] = file_get_contents($avatar['tmp_name']);
 
             $query = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass` , `pass_key`) VALUES (? , ? , ? , ? , ? , ? , ?)";
@@ -30,13 +28,14 @@ try{
                 die('Error: ' . mysqli_error($GLOBALS['conn']));
             }
             if($sqlfire) {
-                $query = "INSERT INTO `users_avatar`(`userID` , `name` , `type` , `img`) VALUES (? , ? , ? , ? )";
+                $query = "INSERT INTO `users_avatar`(`userID` , `type` , `img`) VALUES (? , ? , ? )";
                 $stmt = $GLOBALS['conn']->prepare($query);
-                $stmt->bind_param( "ssss" , $userId , $avatar['name'] , $avatar['type'] , $avatar['imgdata'] );
+                $stmt->bind_param( "sss" , $userId , $avatar['type'] , $avatar['imgdata'] );
                 $sqlfire = $stmt->execute();
                 $stmt->close();
-        
-                header('location: /user/?success=201&USER='.$unm);
+                
+                if($sqlfire)
+                    header('location: /user/?success=201&USER='.$unm);
             }else   {
                 throw new Exception( "something went wrong", 400);
             }
@@ -48,96 +47,90 @@ try{
             $user = $_POST['user'];
             $pass = $_POST['pass'];
             
-            $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] :"null";
-            $is_user_username = preg_match('/[@][.]/' , $user );
+            $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] : "null" ;
+            $is_user_username = (str_contains($user, '@') && str_contains($user , '.')) ? '1' : '0';
             
-            $query = "SELECT `userID` , `pass` , `pass_key` FROM `users` WHERE ".(($is_user_username == 0) ? "`unm`" : "`email`")." = ?";
-            $stmt = $GLOBALS['conn']->prepare($query);
-            $stmt->bind_param( "s" , $user);
-            $sqlfire = $stmt->execute();
+            $result = fetch_columns( "users" , (($is_user_username == 0) ? "unm" : "email") , $user , 'userID' , 'pass' , 'pass_key');
 
-            if($sqlfire) {
-                $result = $stmt->get_result();
-                if($result->num_rows == 0){
-                    throw new Exception( "User not Found", 404);
-                }else if($result->num_rows == 1){
-                    $row = $result->fetch_assoc();
+            if($result->num_rows == 0){
+                throw new Exception( "User not Found", 404);
+            }else if($result->num_rows == 1){
+                $row = $result->fetch_assoc();
+                
+                if(password_verify($pass , $row['pass']))   {
+                    session_start();
                     
-                    if(password_verify($pass , $row['pass']))   {
-                        session_start();
+                    $_SESSION['userID'] = $row['userID'];
+
+                    if($rememberMe == 'on' ) {
                         
-                        $_SESSION['userID'] = $row['userID'];
-
-                        if($rememberMe == 'on' ) {
-                            
-                            $userID = $_SESSION['userID'];
-                            $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-                            $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
-                            $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
-                            
-                            $pass = $row['pass'];
-                            $pass_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
-                            $pass_key = base64_decode($row['pass_key']);
-                            $encryptedPass = sodium_crypto_secretbox($pass , $pass_nonce , $pass_key);
+                        $userID = $_SESSION['userID'];
+                        $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+                        $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
+                        $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
+                        
+                        $pass = $row['pass'];
+                        $pass_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
+                        $pass_key = base64_decode($row['pass_key']);
+                        $encryptedPass = sodium_crypto_secretbox($pass , $pass_nonce , $pass_key);
 
 
-                            ?>
-                            <script>
-                                var request = indexedDB.open("Botsapp" , 1 );
+                        ?>
+                        <script>
+                            var request = indexedDB.open("Botsapp" , 1 );
 
-                                request.onerror = (event) => {
-                                    console.error("something went wrong");
-                                };
+                            request.onerror = (event) => {
+                                console.error("something went wrong");
+                            };
 
-                                request.onupgradeneeded = (event) => {
-                                    var db = event.target.result;
+                            request.onupgradeneeded = (event) => {
+                                var db = event.target.result;
 
-                                    var objectStore = db.createObjectStore("session" , { keyPath: "id"});
+                                var objectStore = db.createObjectStore("session" , { keyPath: "id"});
 
-                                    objectStore.createIndex("id" , "id" , { unique: true });
-                                };
+                                objectStore.createIndex("id" , "id" , { unique: true });
+                            };
 
-                                request.onsuccess = (event) => {
-                                    var db = event.target.result;
-                                   
-                                    var transaction = db.transaction("session" , "readonly");
-                                    var objectStore = transaction.objectStore("session");
-                                    var count = objectStore.count();
+                            request.onsuccess = (event) => {
+                                var db = event.target.result;
+                                
+                                var transaction = db.transaction("session" , "readonly");
+                                var objectStore = transaction.objectStore("session");
+                                var count = objectStore.count();
 
-                                    transaction.oncomplete = (() => {
-                                        count = count.result;
-                                        transaction = db.transaction("session" , "readwrite");
-                                        objectStore = transaction.objectStore("session");
-                                        if(count > 0) {
-                                            objectStore.clear();
-                                        }
+                                transaction.oncomplete = (() => {
+                                    count = count.result;
+                                    transaction = db.transaction("session" , "readwrite");
+                                    objectStore = transaction.objectStore("session");
+                                    if(count > 0) {
+                                        objectStore.clear();
+                                    }
 
-                                        objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>"});
+                                    objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>"});
+                                    
+                                    window.location.assign('/');
 
-                                        window.location.assign('/');
-                                    });
-                                    transaction.close;
-                                };
-                            </script>
-                            <?php
-                        }
-            
+                                });
+                                transaction.close;
+                            };
+                        </script>
+                        <?php
                     }else{
-                        throw new Exception ("Password is Wrong" , 404);
+                        header('location: /');
                     }
+        
+                }else{
+                    throw new Exception ("Password is Wrong" , 404);
                 }
-                else{
-                    throw new Exception( "Username Conflicts ", 409);
-                }
-            }else {
-                throw new Exception( "something went wrong", 400);
+            }
+            else{
+                throw new Exception( "Username Conflicts ", 409);
             }
             
-            $stmt->close();
         }
     }
 } catch (Exception $error) {
-    // print_r($error);     
+    //print_r($error);     
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }

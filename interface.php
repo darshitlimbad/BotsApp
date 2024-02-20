@@ -1,7 +1,15 @@
 <?php
     include 'functionality/_auto_login.php';
     include 'functionality/lib/_features.php';
+    include 'functionality/lib/_fetch_img.php';
 
+    // ask about the what to do for the delay 
+    print_r($_SESSION); 
+
+    if( !isset($_SESSION['userID']) && !isset($_SESSION['sessionDataReady'])){
+       header('location: /user');
+       exit();
+     }
 ?>
 <!-- bots app -->
 <!DOCTYPE html>
@@ -164,11 +172,12 @@
                 <a href="help/ux.php?form=bugs" target="_blank" class="link">Bugs Report</a>
             </div>
 
+            <!-- Profile Body -->
             <div class="body" name="profile-body" style="display: none;">
                 <div class="headding">Profile</div>
 
                 <div class="profile-dp">
-                    <img src="img/default_dp.png" height="80px" width="80px">
+                    <img src="<?php get_dp($_SESSION['userID']);?>" onerror="defaultDp(this);" height="80px" width="80px">
                 </div>
 
                 <br>
@@ -191,12 +200,3 @@
     
 </body>
 </html>
-<?php
-    if(!isset($_SESSION['userID'])){
-       ?>
-        <script>
-            window.location.assign('/user');
-        </script>
-       <?php
-    }
-?>
