@@ -415,9 +415,10 @@ header .title p {
 }
 
 .settings-box .settings-container .body .text{
+    display: block;
     width: 80% !important;
     max-width: 80%;
-    max-height: 30px;
+    height: 30px;
     margin: 3px 0;
     background-color: transparent;
     outline: none;
@@ -445,6 +446,10 @@ header .title p {
     background-color: rgba(161, 161, 161, 0.58);
     border-radius: 3px;
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.margin-dead {
+    margin:0px;
 }
 
 .center{
@@ -631,7 +636,7 @@ header .title p {
     left: 55%;
     --margin: 5px;
     --color: rgb(241, 3, 3);
-    --background-image: linear-gradient(to bottom right , rgba(44, 44, 44, 0.721) 15%,rgba(255, 255, 255, 0.523) , rgba(44, 44, 44, 0.721) 15%);
+    --background-image:rgb(147, 147, 147);
     --btn-shadow: rgba(226, 43, 43, 0.373);
 
 }

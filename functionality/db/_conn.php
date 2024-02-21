@@ -22,7 +22,7 @@
             $stmt->close();
             return $result;
         }else {
-            return '400';
+            return 400;
         }
     }
 ?>

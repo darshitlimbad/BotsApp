@@ -24,8 +24,6 @@
 <div id="alert" class=""></div>
 
 <script>
-    var url;
-
     const pop_up = (title , message , came_url , theme = 'blue') => {
         url=came_url;
 
@@ -65,7 +63,7 @@
         <p class="message"></p>
 
         <div class="buttons">
-            <button class="pop_up_no_btn button" onclick=" document.querySelector('#pop_up').style.display='none'" >No</button>
+            <button class="pop_up_no_btn button" onclick="document.querySelector('#pop_up').style.display='none'" >No</button>
             <button class="pop_up_yes_btn button" onclick="goToURL()">Yes</button>
         </div>
     </div>

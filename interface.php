@@ -1,7 +1,7 @@
 <?php
     include 'functionality/_auto_login.php';
     include 'functionality/lib/_features.php';
-    include 'functionality/lib/_fetch_img.php';
+    include 'functionality/lib/_fetch_data.php';
 
     // ask about the what to do for the delay 
     print_r($_SESSION); 
@@ -59,7 +59,7 @@
             <!-- profile -->
             <div class="options profile"  title="Profile" onclick="toggle_settings_box()" accesskey="p">
                 <div class="img">
-                    <img src="img/default_dp.png">    <!-- insert php code to change profile img and title -->
+                    <img src="<?= get_dp($_SESSION['userID']) ?>"  onerror="defaultDp(this);" />
                 </div>
             </div>
         </div>
@@ -93,7 +93,7 @@
             </li>
             <li class="" name="profile">
                 <div>
-                    <img src="img/icons/settings/profile-64.png" height="20px" width="20px" alt="" >
+                    <img src="img/icons/settings/profile-64.png"  onerror="defaultDp(this);" height="20px" width="20px" alt="" >
                 </div>    
                 <p>Profile</p>
             </li>
@@ -112,16 +112,8 @@
 
                 <h4>Privacy</h4>
                 <div class="checkbox">
-                    <input type="checkbox" name="last-seen-online" id="last-seen-online">
-                    <label for="last-seen-online">Last seen and online status </label>
-                </div>
-                <div class="checkbox">
-                    <input type="checkbox" name="can-see-profile-photo" id="can-see-profile-photo">
-                    <label for="can-see-profile-photo">Can see Profile photo</label>
-                </div>
-                <div class="checkbox">
-                    <input type="checkbox" name="can-see-about-section" id="can-see-about-section">
-                    <label for="can-see-about-section">Can see about section</label>
+                    <input type="checkbox" name="last-seen-online" id="last-seen-online" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'can_see_online_status') == '1') { echo 'checked';} ?>>
+                    <label for="last-seen-online">Everyone can see online status </label>
                 </div>
                 
                 <!-- log-out -->
@@ -142,7 +134,7 @@
                 
                 <div class="swipe-box">
                     <label for="day-night-mode">Dark</label>
-                    <input type="checkbox" name="day-night-mode" id="day-night-mode">
+                    <input type="checkbox" name="day-night-mode" id="day-night-mode" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'theme') == 'LIGHT') { echo 'checked';} ?> >
                     <label for="day-night-mode">Light</label>
                 </div>
 
@@ -177,23 +169,27 @@
                 <div class="headding">Profile</div>
 
                 <div class="profile-dp">
-                    <img src="<?php get_dp($_SESSION['userID']);?>" onerror="defaultDp(this);" height="80px" width="80px">
+                    <img src="<?= get_dp($_SESSION['userID']); ?>" onerror="defaultDp(this);" height="80px" width="80px">
                 </div>
 
                 <br>
+                
+                <div class="text">@<?= fetch_data_from_users($_SESSION['userID'] , 'unm' );?></div>
+
+                <p class="margin-dead">Name:</p>
                 <form action="functionality/edit.php?edit=name" method="post" class="flex" name="edit-user-name">
-                    <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" value="Darshit_limbad" disabled /> 
+                    <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" value="<?= get_user_full_name($_SESSION['userID']); ?>" disabled /> 
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit"/>  
                 </form>
                 
-                <p>About</p>
-                <form action="functionality/edit.php?edit=name" method="post" class="flex" name="edit-about">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 30px;" placeholder="Enter About Yourself" disabled>Limbad darshit.</textarea>
+                <p class="margin-dead">About:</p>
+                <form action="functionality/edit.php?edit=name" method="post" class="flex" name="edit-about" style="margin:30px 0">
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" placeholder="Enter About Yourself" disabled><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
                 </form>
 
-                <p>E-mail</p>
-                <div class="text">darshitlimbad@gmail.com</div>
+                <p class="margin-dead">E-mail:</p>
+                <div class="text"><?= fetch_data_from_users($_SESSION['userID'] , 'email' );?></div>
            </div>
         </div>
     </div>

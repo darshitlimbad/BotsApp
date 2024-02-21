@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded' , function () {
             profile_edit_box_toggle(edit_icon);
         })
     });
+
     document.querySelectorAll('.flex').forEach( function (form) {
         form.addEventListener('submit' , function (){
             var edit_icon= form.querySelector(".edit-icon");
@@ -92,12 +93,15 @@ function remove_selected_li(){
 } 
 
 function closesettingsbox(event) {    
-
     if((!settings_box.contains(event.target)) &&
         (settings_box != event.target) && 
         (!event.target.closest("div[title='Settings']"))&&
-        (!event.target.closest("div[title='Profile']")) ) {
+        (!event.target.closest("div[title='Profile']")) &&
+        (!event.target.closest("div[id='pop_up']")) ) {
         toggle_settings_box();
+
+        // all settings options to noramal
+        settings_options_to_default();
     }
 }
 
@@ -134,6 +138,21 @@ function profile_edit_box_toggle(edit_icon) {
             }
 }
 
+// all settings options to noramal
+const settings_options_to_default = () => {
+    // profile settings
+        boxes = document.querySelectorAll("div[name='profile-body'] > form");
+        
+        for(var i = 0 ; i<boxes.length ; i++){
+            boxes[i].querySelector('.text').classList.remove("edit");
+            boxes[i].querySelector('.text').setAttribute('disabled' , true);
+            boxes[i].querySelector('.edit-icon').setAttribute("src" ,"img/icons/settings/profile/edit.png"); 
+        }
+
+    // pop_up
+        document.querySelector('#pop_up').style.display='none';
+}
+
 //notification
 function new_notification(str) {
     
@@ -155,14 +174,14 @@ function _onclick_notification_hide(event)   {
 
 // show is class which shows a notifiacation
 function _add_notification_show(str){
-    notification.innerHTML = str;
+    notification.textContent = str;
     notification.classList.add('show');
 }
 
 function _remove_notification_show(){
     notification.classList.remove('show');
     setTimeout(() => {
-        notification.innerHTML = "";
+        notification.textContent = "";
     }, 70);
 }
 
@@ -188,14 +207,14 @@ function _onclick_Alert_hide(event)   {
 }
 
 function _add_Alert_show(str){
-    Alert.innerHTML = str;
+    Alert.textContent = str;
     Alert.classList.add('show');
 }
 
 function _remove_Alert_show(){
     Alert.classList.remove('show');
     setTimeout(() => {
-        Alert.innerHTML = "";
+        Alert.textContent = "";
     }, 70); 
 }
 

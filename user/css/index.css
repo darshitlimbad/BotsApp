@@ -202,8 +202,9 @@ body{
     color: #bf6ae2;
     font-size: .8rem;
 }
+
 .input_field #pass_rules p{
-    margin: 0;
+    margin: 0 ;
 }
 
 .input_field #pass_rules span   {

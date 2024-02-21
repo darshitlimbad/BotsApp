@@ -28,9 +28,9 @@
     font-weight: 600;
 
     --margin: 0px 0px;
-    --color: rgb(254, 254, 254);
-    --background-image: linear-gradient(to bottom right , rgba(44, 44, 44, 0.721) 15%,rgba(255, 255, 255, 0.523) , rgba(44, 44, 44, 0.721) 15%);
-    --btn-shadow: rgba(19, 19, 19, 0.483);
+    --color: rgb(0, 0, 0);
+    --background-image: white;
+    --btn-shadow: rgba(19, 19, 19, 0.788);
 }
 
 #pop_up .buttons .pop_up_yes_btn {
