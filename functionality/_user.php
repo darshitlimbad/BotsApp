@@ -8,7 +8,7 @@ try{
         if($action == "sign-in")
         {
             //user uploaded values
-            $userId = gen_new_user_id(); 
+            $userID = gen_new_user_id(); 
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
@@ -19,23 +19,35 @@ try{
             $avatar = $_FILES['avatar'];
             $avatar['imgdata'] = file_get_contents($avatar['tmp_name']);
 
-            $query = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass` , `pass_key`) VALUES (? , ? , ? , ? , ? , ? , ?)";
-            $stmt = $GLOBALS['conn']->prepare($query);
-            $stmt->bind_param( "sssssss" , $userId , $surname , $name , $unm , $email , $hashed_pass , $pass_key);
-            $sqlfire = $stmt -> execute();
-            $stmt->close();
-            if (!$sqlfire) {
-                die('Error: ' . mysqli_error($GLOBALS['conn']));
-            }
-            if($sqlfire) {
+            $query[0] = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass` , `pass_key`) VALUES (? , ? , ? , ? , ? , ? , ?)";
+            $query[1] = "INSERT INTO `users_account`(`userID` , `unm` ) VALUES(? , ?)"; 
+            $query[2] = "INSERT INTO `users_details`(`userID`) VALUES (?)";
+
+            $stmt[0] = $GLOBALS['conn']->prepare($query[0]);
+            $stmt[1] = $GLOBALS['conn']->prepare($query[1]);
+            $stmt[2] = $GLOBALS['conn']->prepare($query[2]);
+            
+            $stmt[0]->bind_param( "sssssss" , $userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key);
+            $stmt[1]->bind_param( "ss" , $userID , $unm );
+            $stmt[2]->bind_param("s" , $userID );
+
+            $sqlfire[0] = $stmt[0] -> execute();
+            $sqlfire[1] = $stmt[1] -> execute();
+            $sqlfire[2] = $stmt[2] -> execute();
+
+            $stmt[0]->close();
+            $stmt[1]->close();
+            $stmt[2]->close();
+
+            if($sqlfire[0] && $sqlfire[1] && $sqlfire[2]) {
                 $query = "INSERT INTO `users_avatar`(`userID` , `type` , `img`) VALUES (? , ? , ? )";
                 $stmt = $GLOBALS['conn']->prepare($query);
-                $stmt->bind_param( "sss" , $userId , $avatar['type'] , $avatar['imgdata'] );
+                $stmt->bind_param( "sss" , $userID , $avatar['type'] , $avatar['imgdata'] );
                 $sqlfire = $stmt->execute();
                 $stmt->close();
                 
                 if($sqlfire)
-                    header('location: /user/?success=201&USER='.$unm);
+                    header('location: /user/?SUCCESS=201&USER='.$unm);
             }else   {
                 throw new Exception( "something went wrong", 400);
             }

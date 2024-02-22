@@ -38,9 +38,9 @@
         message_ele.textContent = message;
 
         if(theme == 'blue'){
-            pop_up.querySelector('.pop_up_yes_btn').style.backgroundColor = "rgb(102 134 247 / 52%)";
+            pop_up.querySelector('.pop_up_yes_btn').style.backgroundColor = "rgb(0 56 254 / 52%)";
         }else if(theme == 'red'){
-            pop_up.querySelector('.pop_up_yes_btn').style.backgroundColor = "rgb(241 114 114 / 53%)";
+            pop_up.querySelector('.pop_up_yes_btn').style.backgroundColor = "rgb(255 0 0 / 53%)";
 
         }
         pop_up.style.display = 'block';

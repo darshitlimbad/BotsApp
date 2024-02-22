@@ -149,6 +149,10 @@ function fade_out(ele){
             user_span.textContent = "Username is too short , more then 8 cherecters required";
             user_span.style.display='block';
             _submit_btn_disable();
+        }else  if(inputed_unm.length > 20)  {
+            user_span.textContent = "Username is too big , only 30 charecters are allowed";
+            user_span.style.display='block';
+            _submit_btn_disable();
         }else  if(inputed_unm.split('').every(char => char === inputed_unm[0]))  {
             user_span.textContent = "All charecters can't be same";
             user_span.style.display='block';
