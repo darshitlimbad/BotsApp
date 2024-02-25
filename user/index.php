@@ -5,7 +5,7 @@
     if(isset($_SESSION['userID'])){
         header('location: /');
         exit();
-      }
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -53,11 +53,11 @@
 
             <!-- avatar -->
             <div class="input_field validation fadeout toggle_field hide" name="avatar_field">
-               <div class="input-img">
+                <div class="input-img">
                     <lable for="avatar">Profile picture :</lable>
                     <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp" onchange="avatar_validation()">
-               </div>
-               <span id="avatar_span">Only [ .jpg, .jpeg, .png, .webp ] format is allowed</span>
+                </div>
+                <span id="avatar_span">Only [ .jpg, .jpeg, .png, .webp ] format is allowed</span>
             </div>
 
             <!-- user -->
@@ -111,7 +111,7 @@
             
             <!-- con_pass -->
             <div class="input_field validation fadeout toggle_field hide" name="con_pass_field">  
-                 <div class="input">
+                <div class="input">
                     <div style="height:0px">
                         <!-- url change when uploading -->
                         <img src="/img/icons/form/eye.png" name="eye" class="con_eye" height="20px" width="20px" onclick="toggle_pass_box(this)"> 

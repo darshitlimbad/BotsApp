@@ -1,17 +1,20 @@
 <?php
+    include 'functionality/db/_conn.php';
     include 'functionality/_auto_login.php';
     include 'functionality/lib/_features.php';
     include 'functionality/lib/_fetch_data.php';
+    include 'functionality/lib/_validation.php';
 
-    // ask about the what to do for the delay 
-    print_r($_SESSION); 
-
+    // ask about what to do for the delay 
+print_r($_SESSION);
     if( !isset($_SESSION['userID']) && !isset($_SESSION['sessionDataReady'])){
-       header('location: /user');
-       exit();
-     }
+        header('location: /user');
+        exit();
+    }else{
+        is_session_valid();
+        session_regenerate_id(true);
+    }
 ?>
-  
 
 <!-- bots app -->
 <!DOCTYPE html>

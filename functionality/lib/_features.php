@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="/css/_features.css" type="text/css">
-<?php
+<?php    
     function custom_header() {
         ?>
         <div class="title">
@@ -18,6 +18,7 @@
             <a href="/help/user-help.php" class="link">Need help?</a>
         <?php
     }
+
 ?>
 <!-- Notifications -->
 <div id="notification" class=""></div>

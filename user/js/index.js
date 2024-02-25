@@ -145,6 +145,11 @@ function fade_out(ele){
             user_span.textContent = "space is not allowed use '_'.";
             user_span.style.display='block';
             _submit_btn_disable();
+        }else if( inputed_unm == "" ) {
+
+            user_span.textContent = "Please Enter Username...";
+            user_span.style.display = 'block';
+
         }else  if(inputed_unm.length < 8)  {
             user_span.textContent = "Username is too short , more then 8 cherecters required";
             user_span.style.display='block';
@@ -160,7 +165,7 @@ function fade_out(ele){
         }else   {
 
             var request = new XMLHttpRequest();
-            var URL = location.origin + "/functionality/_chk_unm_available.php?UNM="+inputed_unm;
+            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&UNM="+inputed_unm;
     
             request.onreadystatechange = function () {
                 if(request.readyState === 4 && request.status === 200)  {
@@ -188,21 +193,43 @@ function fade_out(ele){
     function email_validation() {
         var email_span = document.querySelector('#e-mail_span');
 
+        // pre process
         _submit_btn_disable(); 
+        email_span.style.color = 'red';
+
         if( email.value == "" ) {
 
-            email_span.innerHTML = "Enter Your Email...";
+            email_span.textContent = "Enter Your Email...";
             email_span.style.display = 'block';
 
         }else if( ( (email.value.indexOf('.')) == -1 || (email.value.indexOf('.') != email.value.lastIndexOf('.')) ) ||
-                  ( (email.value.indexOf('@')) == -1 || (email.value.indexOf('@') != email.value.lastIndexOf('@')) ) ||
-                  (email.value.indexOf('.') < email.value.indexOf('@')) ) 
+                    ( (email.value.indexOf('@')) == -1 || (email.value.indexOf('@') != email.value.lastIndexOf('@')) ) ||
+                    (email.value.indexOf('.') < email.value.indexOf('@')) ) 
         {
             email_span.innerHTML = "Email is wrong!!!";
             email_span.style.display = 'block';
-        }   else {
-            email_span.style.display = 'none';
-            _submit_btn_enable(); 
+        }else {
+            var request = new XMLHttpRequest();
+            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&EMAIL="+email.value;
+
+            request.onreadystatechange = function () {
+                if(request.readyState === 4 && request.status === 200)  {
+                    // availability == 1 = available ,  availability == 0 = not available
+                    var availability = request.responseText;
+
+                    if(availability == 1)   {
+                        email_span.style.color = '#00ff00';
+                        email_span.textContent = 'AVAILABLE';
+                        _submit_btn_enable();
+                    }   else if(availability == 0)  {
+                        email_span.textContent = 'NOT AVAILABLE';
+                    }
+                    user_span.style.display ='block';
+                }
+            }
+    
+            request.open('GET' , URL , true);
+            request.send();
         }
     }
 
@@ -296,16 +323,17 @@ function fade_out(ele){
     function _submit_btn_enable() {
         var validation_input = document.querySelectorAll('.validation input');
         var validation_span = document.querySelectorAll('.validation > span , .validation #pass_rules');
+
         var fleg = 0;
 
-        if( (validation_span[1].style.display == "block") && (validation_span[1].textContent != "AVAILABLE" ) && (validation_input[1].textContent != '' ) )  {
+        if( (validation_span[1].style.display == "block") && (validation_span[1].textContent != "AVAILABLE" ) && (validation_input[1].textContent != '' ) ||
+            (validation_span[2].style.display == "block") && (validation_span[2].textContent != "AVAILABLE" ) && (validation_input[2].textContent != '' ) )  {
             _submit_btn_disable();
             fleg = 1;
-            console.log(fleg);
         }
         
         for(var i=0 ; i<validation_span.length ; i++)   {
-            if(i==1){}
+            if(i==1 || i==2){}
             else if( (validation_span[i].style.display == 'block') && (validation_input[i] != '' ) )  {
                 _submit_btn_disable();
                 fleg = 1;

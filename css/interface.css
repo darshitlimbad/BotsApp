@@ -170,6 +170,7 @@ header .title p {
 }
 
 .side-bar .profile .img img {
+    height: 20px;
     width: 19px;
     border: 1px solid aliceblue;
     border-radius: 100%;

@@ -1,7 +1,5 @@
 <!-- Page for geting data from Database -->
 <?php
-    include 'functionality/db/_conn.php';
-
     function get_dp($userID) {
 
         $fetch_img = fetch_columns( "users_avatar" , "userID" , $userID , "type" , "img" );
@@ -50,5 +48,20 @@
         }
     }
 
+    function getPassKey($userID) {
+        $result = fetch_columns( "users" ,'userID' , $userID , 'pass_key');
+        if($result != '400') {
+            if($result->num_rows == 1){
+                return $result->fetch_assoc()['pass_key'];
+            }else{
+                throw new Exception("No user Found from Indexed DB storage." , 404);
+            }
+        }
+        else{
+            throw new Exception("Can't connect to Database through Indexed DB" , 400);
+        }
+    
+        return false;
+    }
     
 ?>

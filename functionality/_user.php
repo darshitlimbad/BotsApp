@@ -1,56 +1,28 @@
 <?php
 include 'db/_conn.php';
-
+include 'lib/_insert_data.php';
 try{
     if( (isset($_POST['submit']))&& (isset($_GET['action'])) )
     {
         $action = $_GET['action'];
         if($action == "sign-in")
         {
-            //user uploaded values
+            // user uploaded values
             $userID = gen_new_user_id(); 
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
             $email = $_POST['e-mail'];
-            $hashed_pass = convert_pass_to_hash($_POST['pass']);
+            $hashed_pass = password_hash($_POST['pass'] , PASSWORD_BCRYPT);
             $pass_key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
 
             $avatar = $_FILES['avatar'];
-            $avatar['imgdata'] = file_get_contents($avatar['tmp_name']);
 
-            $query[0] = "INSERT INTO `users`(`userID` , `surname` , `name` , `unm` , `email` , `pass` , `pass_key`) VALUES (? , ? , ? , ? , ? , ? , ?)";
-            $query[1] = "INSERT INTO `users_account`(`userID` , `unm` ) VALUES(? , ?)"; 
-            $query[2] = "INSERT INTO `users_details`(`userID`) VALUES (?)";
-
-            $stmt[0] = $GLOBALS['conn']->prepare($query[0]);
-            $stmt[1] = $GLOBALS['conn']->prepare($query[1]);
-            $stmt[2] = $GLOBALS['conn']->prepare($query[2]);
-            
-            $stmt[0]->bind_param( "sssssss" , $userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key);
-            $stmt[1]->bind_param( "ss" , $userID , $unm );
-            $stmt[2]->bind_param("s" , $userID );
-
-            $sqlfire[0] = $stmt[0] -> execute();
-            $sqlfire[1] = $stmt[1] -> execute();
-            $sqlfire[2] = $stmt[2] -> execute();
-
-            $stmt[0]->close();
-            $stmt[1]->close();
-            $stmt[2]->close();
-
-            if($sqlfire[0] && $sqlfire[1] && $sqlfire[2]) {
-                $query = "INSERT INTO `users_avatar`(`userID` , `type` , `img`) VALUES (? , ? , ? )";
-                $stmt = $GLOBALS['conn']->prepare($query);
-                $stmt->bind_param( "sss" , $userID , $avatar['type'] , $avatar['imgdata'] );
-                $sqlfire = $stmt->execute();
-                $stmt->close();
+            $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
+                    "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar['type'] , $avatar['tmp_name']);
                 
-                if($sqlfire)
-                    header('location: /user/?SUCCESS=201&USER='.$unm);
-            }else   {
-                throw new Exception( "something went wrong", 400);
-            }
+                if($user == 1)
+                    header('location: /user/?SUCCESS=201&USER='.$unm); 
             
         }
         else if($action == "log-in")    {
@@ -118,12 +90,13 @@ try{
                                         objectStore.clear();
                                     }
 
-                                    objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>"});
-                                    
-                                    window.location.assign('/');
+                                    objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , 
+                                            user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , 
+                                            pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>" });
 
-                                });
-                                transaction.close;
+                                    window.location.assign('/');
+                                    transaction.close;
+                                })
                             };
                         </script>
                         <?php
@@ -142,30 +115,27 @@ try{
         }
     }
 } catch (Exception $error) {
-    //print_r($error);     
+    // print_r($error);     
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
 
+
 function gen_new_user_id()  {
 
-    $sql = "SELECT `userID` FROM `users` ORDER BY `userID` DESC";
+    $sql = "SELECT `userID` FROM `users` ORDER BY `userID` DESC LIMIT 1";
     $sqlfire = $GLOBALS['conn'] -> query($sql);
 
     if($sqlfire && ($sqlfire -> num_rows > 0)) {
         $row = $sqlfire->fetch_assoc();
         $lastUserID = explode( 'r' , $row["userID"]);
-        $newUserID = sprintf("%04d" , $lastUserID[1]+1);
+        $newUserID = "User".sprintf("%08d" , ++$lastUserID[1]);    
     }
     else {
-        $newUserID = "0001";
+        $newUserID ="User".sprintf("%08d" , 1);
     }
 
-    return "User" . $newUserID;
-}
-
-function convert_pass_to_hash($pass) {
-    return password_hash($pass , PASSWORD_BCRYPT);
+    return $newUserID;
 }
 
 ?>

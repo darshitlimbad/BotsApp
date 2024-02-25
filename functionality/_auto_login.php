@@ -17,7 +17,7 @@ if(!isset($_SESSION['userID'])) {
             db.close();
             indexedDB.deleteDatabase('Botsapp');
         }
-       
+
         is_data = 0;
     };
 
@@ -48,7 +48,7 @@ if(!isset($_SESSION['userID'])) {
 
                         xml.open('POST' , URL_of_setSession , false);
                         
-                        xml.onreadystatechange = (response) => {
+                        xml.onreadystatechange = (response ) => {
                             if(!(xml.readyState == 4) && !(xml.status == 200)) {
                                 console.error("[400] :"," Bad Request");
                             }

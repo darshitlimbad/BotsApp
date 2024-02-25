@@ -1,5 +1,7 @@
 <?php
     include 'db/_conn.php';
+    include 'lib/_fetch_data.php';
+    include 'lib/_validation.php';
 
 if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
     try{
@@ -16,47 +18,19 @@ if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
             $pass_key = base64_decode(getPassKey($userID));
             $Pass = sodium_crypto_secretbox_open($encryptedPass , $pass_nonce , $pass_key);
         
-            metchPasswords($Pass , $userID);
+            $res = metchEncryptedPasswords($Pass , $userID);
+            if($res === 1) {
+                session_start();
+                $_SESSION['userID'] = $userID;
+            }
         }
     
         
     }
     catch(Exception $error) {
-        echo '['.$error->getCode().']' .":". $error->getMessage();;
+        echo '['.$error->getCode().']' .":". $error->getMessage();
+        header('location: /user');
     }
 }
 
-function getPassKey($userID) {
-    $result = fetch_columns( "users" ,'userID' , $userID , 'pass_key');
-    if($result != '400') {
-        if($result->num_rows == 1){
-            return $result->fetch_assoc()['pass_key'];
-        }else{
-            throw new Exception("No user Found from Indexed DB storage." , 404);
-        }
-    }
-    else{
-        throw new Exception("Can't connect to Database through Indexed DB" , 400);
-    }
-
-    return false;
-}
-
-function metchPasswords($Pass , $userID){
-    $result = fetch_columns(  "users" , 'userID' , $userID , 'pass');
-    //echo $result->fetch_assoc()['pass'];
-    if($result->num_rows == 1) {
-        $pwd = $result->fetch_assoc()['pass'];
-        if($pwd === $Pass){
-            session_start();
-
-            $_SESSION['userID'] = $userID;
-            
-        }else {
-            throw new Exception("saved Password is wrong try log-in again." , 404);
-        }
-    }else{
-        throw new Exception("No user Found from Indexed DB storage." , 404);
-    }
-}
 ?>
