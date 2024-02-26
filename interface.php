@@ -30,6 +30,7 @@ print_r($_SESSION);
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/_error_handling.js"></script>
+    <script type="text/javascript" src="js/lib/_postReq.js"></script>
 </head>
 <body>
     <header>
@@ -116,11 +117,11 @@ print_r($_SESSION);
                 <div class="headding">Account</div>
 
                 <h4>Privacy</h4>
-                <div class="checkbox">
-                    <input type="checkbox" name="last-seen-online" id="last-seen-online" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'can_see_online_status') == '1') { echo 'checked';} ?>>
-                    <label for="last-seen-online">Everyone can see online status </label>
+                <div class="flex checkbox" name="edit-can_see_online_status">
+                    <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'can_see_online_status') == '1') { echo 'checked';} ?>>
+                    <label for="can_see_online_status">Everyone can see online status </label>
                 </div>
-                
+
                 <!-- log-out -->
                 <h4 class="danger">Log Out</h4>
                         <p>Log out from your account</p>
@@ -131,16 +132,16 @@ print_r($_SESSION);
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
                 <button class="danger-button button" onclick="pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , '/functionality/_delete_account.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button>
             </div>
-           
-           <div class="body" name="chat-body" style="display: none;">
+
+            <div class="body" name="chat-body" style="display: none;">
                 <div class="headding">Chat</div>
 
                 <h3>Theme</h3>
                 
                 <div class="swipe-box">
-                    <label for="day-night-mode">Dark</label>
-                    <input type="checkbox" name="day-night-mode" id="day-night-mode" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'theme') == 'LIGHT') { echo 'checked';} ?> >
-                    <label for="day-night-mode">Light</label>
+                    <label for="theme">Dark</label>
+                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'theme') == '1') { echo 'checked';} ?> >
+                    <label for="theme">Light</label>
                 </div>
 
                 <h3>Chat Wallpaper</h3>
@@ -182,20 +183,20 @@ print_r($_SESSION);
                 <div class="text">@<?= fetch_data_from_users($_SESSION['userID'] , 'unm' );?></div>
 
                 <p class="margin-dead">Name:</p>
-                <form action="functionality/edit.php?edit=name" method="post" class="flex" name="edit-user-name">
-                    <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" value="<?= get_user_full_name($_SESSION['userID']); ?>" disabled /> 
+                <div class="flex edit_box" name="edit-user-name">
+                    <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" maxlength="30" value="<?= get_user_full_name($_SESSION['userID']); ?>" readonly /> 
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit"/>  
-                </form>
+                </div>
                 
                 <p class="margin-dead">About:</p>
-                <form action="functionality/edit.php?edit=name" method="post" class="flex" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" placeholder="Enter About Yourself" disabled><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
+                <div class="flex edit_box" name="edit-about" style="margin:30px 0">
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
-                </form>
+                </div>
 
                 <p class="margin-dead">E-mail:</p>
                 <div class="text"><?= fetch_data_from_users($_SESSION['userID'] , 'email' );?></div>
-           </div>
+            </div>
         </div>
     </div>
     

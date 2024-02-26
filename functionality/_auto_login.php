@@ -31,7 +31,7 @@ if(!isset($_SESSION['userID'])) {
 
             
             transaction.oncomplete = (() => {
-
+// use promise
                 count = count.result;
                 transaction = db.transaction("session" , "readonly");
                 objectStore = transaction.objectStore("session");

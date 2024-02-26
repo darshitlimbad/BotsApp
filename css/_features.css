@@ -1,6 +1,6 @@
 /* pop-up box */
 #pop_up {
-    display: none;
+    display: block;
     opacity: 0%;
     height: auto;
     width: auto;

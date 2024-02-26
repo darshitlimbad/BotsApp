@@ -57,7 +57,7 @@
 </script>
 
 <!-- custom-pop-up  -->
-<div class="center">
+<div class="center" >
     <div id="pop_up">
         <h3 class="title"></h3>
         <hr>

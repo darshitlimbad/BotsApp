@@ -50,9 +50,9 @@ document.addEventListener('DOMContentLoaded' , function () {
         })
     });
 
-    document.querySelectorAll('.flex').forEach( function (form) {
-        form.addEventListener('submit' , function (){
-            var edit_icon= form.querySelector(".edit-icon");
+    document.querySelectorAll('.edit_box').forEach( function (box) {
+        box.addEventListener('submit' , function (){
+            var edit_icon= box.querySelector(".edit-icon");
             profile_edit_box_toggle(edit_icon);
         })
     });
@@ -121,16 +121,18 @@ function show_setting_body(listitem)  {
 
 //toggle edit box of profile 
 function profile_edit_box_toggle(edit_icon) {
-    var form =  edit_icon.closest(".flex");
-            if(form)    {
-                var text_box = form.querySelector(".text");
-                var icon = form.querySelector(".edit-icon");
+    var edit_box =  edit_icon.closest(".flex");
+            if(edit_box)    {
+                var text_box = edit_box.querySelector(".text");
+                var icon = edit_box.querySelector(".edit-icon");
 
                 text_box.classList.toggle("edit");
-                text_box.toggleAttribute('disabled');
+                text_box.toggleAttribute('readonly');
 
                 if(!text_box.classList.contains("edit")) {
-                    form.submit();
+
+                    _edit_user_data( text_box );
+
                     icon.setAttribute("src" ,"img/icons/settings/profile/edit.png");
                 }  else {
                     icon.setAttribute("src" ,"img/icons/settings/profile/right.png");
@@ -141,11 +143,11 @@ function profile_edit_box_toggle(edit_icon) {
 // all settings options to noramal
 const settings_options_to_default = () => {
     // profile settings
-        boxes = document.querySelectorAll("div[name='profile-body'] > form");
+        boxes = document.querySelectorAll("div[name='profile-body'] > .edit_box");
         
         for(var i = 0 ; i<boxes.length ; i++){
             boxes[i].querySelector('.text').classList.remove("edit");
-            boxes[i].querySelector('.text').setAttribute('disabled' , true);
+            boxes[i].querySelector('.text').setAttribute('readonly' , true);
             boxes[i].querySelector('.edit-icon').setAttribute("src" ,"img/icons/settings/profile/edit.png"); 
         }
 
@@ -218,10 +220,9 @@ function _remove_Alert_show(){
     }, 70); 
 }
 
-
 // default img loader functions
 const defaultDp = (tag) => {
-    tag.src='img/default_dp.png';
+    tag.src='/img/default_dp.png';
 };
 
 //
