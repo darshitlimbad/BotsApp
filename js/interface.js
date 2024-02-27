@@ -130,7 +130,6 @@ function profile_edit_box_toggle(edit_icon) {
                 text_box.toggleAttribute('readonly');
 
                 if(!text_box.classList.contains("edit")) {
-
                     _edit_user_data( text_box );
 
                     icon.setAttribute("src" ,"img/icons/settings/profile/edit.png");
@@ -220,10 +219,79 @@ function _remove_Alert_show(){
     }, 70); 
 }
 
+// edit data by user
+const _edit_user_data = (ele) => {
+
+    var edit_table = (ele.name == 'user-name') ? "users" : "users_details" ;
+    var field=ele.name;
+    var value=ele.value;    
+    
+    if(value == "")
+        window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=405'));
+    
+    data = JSON.stringify(
+        {
+        table: edit_table,
+        edit_column: field,
+        data : value ,
+        });
+
+    url = window.location.origin+"/functionality/_user_edit.php";
+
+    postReq(url , data) 
+        .then(response => {
+            if(response == 0){
+                window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=400'));
+            }else if (response == 1 ){
+                new_notification('data changed');
+            }else{
+                console.log(response);
+            }
+        })
+        .catch(err => {
+            console.error(err);
+        });   
+};
+
+// togle user theme
+const _togle_user_data = (ele) => {
+
+    var field=ele.name;
+    var value=(ele.checked) ? '1' : '0';    
+    data = JSON.stringify(
+        {
+        table: 'users_details',
+        edit_column: field,
+        data : value 
+        });
+
+    url = window.location.origin+"/functionality/_user_edit.php";
+
+    postReq(url , data) 
+        .then(response => {
+            if(response == 0){
+                ele.checked = (value == 1) ?  false : true;
+                new_Alert('Something Went Wrong , Please Try Again');
+            }else if (response == 1 ){
+                new_notification('data changed');
+            }else{
+                console.log(response);
+            }
+            })
+        .catch(err => {
+        console.error(err);
+        });   
+};
+
 // default img loader functions
 const defaultDp = (tag) => {
     tag.src='/img/default_dp.png';
 };
+
+// submit user data on enter press
+const _submit_data = (event) => {
+    (event.key === 'Enter') ? event.target.parentElement.querySelector('.edit-icon').click() : '' ;
+}
 
 //
 

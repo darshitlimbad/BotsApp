@@ -1,8 +1,6 @@
 <?php
     include 'functionality/db/_conn.php';
     include 'functionality/_auto_login.php';
-    include 'functionality/lib/_features.php';
-    include 'functionality/lib/_fetch_data.php';
     include 'functionality/lib/_validation.php';
 
     // ask about what to do for the delay 
@@ -13,6 +11,8 @@ print_r($_SESSION);
     }else{
         is_session_valid();
         session_regenerate_id(true);
+        include 'functionality/lib/_features.php';
+        include 'functionality/lib/_fetch_data.php';
     }
 ?>
 
@@ -28,9 +28,10 @@ print_r($_SESSION);
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
     <!-- Script -->
+    <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/_error_handling.js"></script>
-    <script type="text/javascript" src="js/lib/_postReq.js"></script>
+
 </head>
 <body>
     <header>
@@ -184,13 +185,13 @@ print_r($_SESSION);
 
                 <p class="margin-dead">Name:</p>
                 <div class="flex edit_box" name="edit-user-name">
-                    <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" maxlength="30" value="<?= get_user_full_name($_SESSION['userID']); ?>" readonly /> 
+                <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= get_user_full_name($_SESSION['userID']); ?>" readonly /> 
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
                 
                 <p class="margin-dead">About:</p>
                 <div class="flex edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 

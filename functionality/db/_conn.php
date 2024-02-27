@@ -59,6 +59,42 @@
         }
     }
 
+    function updateData($table, $column_str , $values_str , $point, $point_value )   {
+
+        $columns = explode(',' , $column_str);
+        $values = explode(',' , $values_str);
+        foreach($columns as $key => $val){
+            $columns[$key] = trim($val);
+        }
+        foreach($values as $key => $val){
+            $values[$key] = trim($val);
+        }
+
+        if(sizeof($columns) != sizeof($values))
+            die(throw new Exception( "Columns size is not equal to values size", 400));
+
+        $paramtypes =  str_repeat('s' , count($values));
+
+        $str="";
+        foreach($columns as $column){
+            if($str != ""){
+                $str.=",";
+            }
+            $str .= $column . " = ". ' ? ';
+        }
+
+        $query = "UPDATE `$table` SET $str WHERE `$point` = '$point_value'";
+        $stmt = $GLOBALS['conn']->prepare($query);
+        $stmt->bind_param($paramtypes , ...$values);
+        $sqlfire = $stmt->execute();
+        $stmt ->close();
+        
+        if($sqlfire) {
+            return 1;
+        }else {
+            return 0;
+        }
+    }
 
     // delete users table data
     function deleteData($table,$userID){

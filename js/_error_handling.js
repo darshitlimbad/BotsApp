@@ -18,6 +18,9 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '409') {
                     new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
                 }
+                if(URL_params.get('ERROR') == '405') {
+                    new_Alert( "Name can't be Emptey");
+                }
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
                 }

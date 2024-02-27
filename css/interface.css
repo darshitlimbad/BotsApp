@@ -551,20 +551,22 @@ header .title p {
     align-content: center;
     flex-direction: column;
     background-color: var(--list-box-bg);
+    font-size: 11px;
 }
 
- .list .inbox-user  {
+.list .inbox-user  {
     display: flex;
     width: 90%;
     padding: 5px;
     margin: 10px;
-    border-radius: 5px;
-    border-bottom: 2px inset rgba(240, 248, 255, 0.321);
+    border-bottom: 1px outset rgba(240, 248, 255, 0.321);
     align-content: center;
 }
 
 .list .inbox-user:hover , .select {
     background-color: rgba(110, 110, 110, 0.218);
+    border-bottom: 2px outset rgba(240, 248, 255, 0.321);
+    transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .list .img  {

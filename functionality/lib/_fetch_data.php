@@ -19,7 +19,7 @@
 
         if($fetch_name != '400' && $fetch_name->num_rows == 1){
             $name = $fetch_name->fetch_assoc();
-            $full_name = $name['name']." ".$name['surname'];
+            $full_name = $name['surname']." ".$name['name'];
             return $full_name; 
         }else {
             return '';
