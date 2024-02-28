@@ -38,7 +38,6 @@ document.addEventListener('DOMContentLoaded' , function () {
                 remove_selected_li();
                 listitem.classList.add('selected');
                 show_setting_body(listitem);
-               //console.log(corrosponding_body);
             }
         })
     });
@@ -92,14 +91,16 @@ function remove_selected_li(){
     })
 } 
 
+// add Pop_up for show and hide
 function closesettingsbox(event) {    
     if((!settings_box.contains(event.target)) &&
         (settings_box != event.target) && 
         (!event.target.closest("div[title='Settings']"))&&
         (!event.target.closest("div[title='Profile']")) &&
-        (!event.target.closest("div[id='pop_up']")) ) {
+        (!event.target.closest("div[id='confirmation_pop_up']")) &&
+        (!event.target.closest("div[id='upload_img_form']")) ) {
+        
         toggle_settings_box();
-
         // all settings options to noramal
         settings_options_to_default();
     }
@@ -151,7 +152,8 @@ const settings_options_to_default = () => {
         }
 
     // pop_up
-        document.querySelector('#pop_up').style.display='none';
+        _hide_this_pop_up(confirmation_pop_up);
+        _hide_this_pop_up(upload_img_form);
 }
 
 //notification
@@ -236,16 +238,14 @@ const _edit_user_data = (ele) => {
         data : value ,
         });
 
-    url = window.location.origin+"/functionality/_user_edit.php";
+    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
         .then(response => {
-            if(response == 0){
-                window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=400'));
-            }else if (response == 1 ){
-                new_notification('data changed');
+            if (response == 1 ){
+                new_notification('data changed succesfully');
             }else{
-                console.log(response);
+                window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=400'));
             }
         })
         .catch(err => {
@@ -265,17 +265,15 @@ const _togle_user_data = (ele) => {
         data : value 
         });
 
-    url = window.location.origin+"/functionality/_user_edit.php";
+    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
         .then(response => {
-            if(response == 0){
+            if (response == 1 ){
+                new_notification('data changed succesfully');
+            }else {
                 ele.checked = (value == 1) ?  false : true;
                 new_Alert('Something Went Wrong , Please Try Again');
-            }else if (response == 1 ){
-                new_notification('data changed');
-            }else{
-                console.log(response);
             }
             })
         .catch(err => {

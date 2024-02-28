@@ -50,7 +50,7 @@ function createUser($column_str , $values_str , $img_type , $img_tmp_name ) {
 }
 
 // for uploading img it takes user id img type and img tmp name
-function uploadImg($userID , $img_type , $img_tmp_name){
+function uploadImg($userID , $img_type , $img_tmp_name ){
 
     $table = 'users_avatar';
     $img_data = file_get_contents($img_tmp_name);

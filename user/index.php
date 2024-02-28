@@ -5,7 +5,8 @@
         header('location: /');
         exit();
     }
-    include '../functionality/lib/_features.php';
+
+    include '../functionality/lib/_wrappers.php';
 
 ?>
 <!DOCTYPE html>
@@ -19,6 +20,7 @@
     <script type="text/javascript" src="js/index.js"></script>
     <script type="text/javascript" src="../js/interface.js"></script>
     <script type="text/javascript" src="../js/_error_handling.js"></script>
+    <script type="text/javascript" src="../js/lib/_validation.js"></script>
 </head>
 <body onload="document.forms['form']['user'].focus()">
     <!-- create a div and size it acording to the display (desktop,mobile) -->
@@ -54,11 +56,11 @@
 
             <!-- avatar -->
             <div class="input_field validation fadeout toggle_field hide" name="avatar_field">
-                <div class="input-img">
-                    <lable for="avatar">Profile picture :</lable>
+                <div class="input-img avatar_block">
+                    <img src="../img/default_dp.png" alt="" class="avatar avatar_preview">
                     <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp" onchange="avatar_validation()">
                 </div>
-                <span id="avatar_span">Only [ .jpg, .jpeg, .png, .webp ] format is allowed</span>
+                <span id="avatar_span"></span>
             </div>
 
             <!-- user -->

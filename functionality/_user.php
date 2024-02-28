@@ -18,6 +18,8 @@ try{
 
             $avatar = $_FILES['avatar'];
 
+            // validate user here also 
+
             $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
                     "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar['type'] , $avatar['tmp_name']);
                 

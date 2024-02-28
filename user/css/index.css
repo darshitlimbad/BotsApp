@@ -1,7 +1,6 @@
 :root {
     --user-box-height : 30rem;
     --user-box-width : 30rem;
-    --text-color : rgb(89, 43, 226);
 }
 
 body{
@@ -108,7 +107,6 @@ body{
     display: flex;
     flex-direction: column;
     justify-content: center;
-   
 }
 
 
@@ -188,7 +186,6 @@ body{
 .input_field span   {
     display: none;
     text-align: end;
-    text-transform: capitalize;
     font-weight: 100;
     color: rgb(240, 31, 31);
     font-size: .8rem;
