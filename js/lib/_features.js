@@ -119,7 +119,7 @@ function _submit_btn_enable() {
 
 function _show_this_pop_up(pop_up) {
     pop_up.style.display = 'block';
-
+    document.querySelector('.avatar_preview').src="../img/default_dp.png";
     setTimeout(() => {
         pop_up.style.transform = "translateY(0)";
         pop_up.style.opacity = '100%';

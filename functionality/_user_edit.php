@@ -24,7 +24,6 @@
             $imgData = $data['data']['img_data'];
 
             $imgData = base64_decode($imgData);
-
             $imgTempName = tempnam(sys_get_temp_dir() , 'uploaded_img_');
 
             file_put_contents($imgTempName , $imgData);

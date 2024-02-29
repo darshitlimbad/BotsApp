@@ -3,11 +3,11 @@ const postReq = (url, data) => {
     return new Promise((resolve, reject) => {
         const xml = new XMLHttpRequest();
 
-        xml.onreadystatechange = () => {
+        xml.onreadystatechange = (res) => {
             if (xml.readyState === 4) {
-                if (xml.status === 200) {
-                    var response = JSON.parse(xml.responseText);
-                    resolve(response);
+                if (xml.status === 200) { 
+                    console.log(xml.responseText);
+                    resolve(res.target.response);
                 } else {
                     reject(new Error(`HTTP status ${xml.status}`));
                 }

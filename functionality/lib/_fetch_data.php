@@ -1,17 +1,53 @@
-<!-- Page for geting data from Database -->
 <?php
-    function get_dp($userID) {
+    if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim")  {
+        session_start();
+        if(isset($_SESSION['userID']))  {
+            include '../db/_conn.php';
+            $data = json_decode(file_get_contents("php://input") , true);
+            // json data format 
+            // data = JSON.stringify(
+            // {
+            //     table: 
+            //     column: 
+            //      
+            // });
+            echo "hii";
+            echo $data['users_avatar'];
+            exit();
+            //pre decleration 
+            $userID = (isset($data['userID'])) ? $data['userID'] : $_SESSION['userID'] ;
+            if(isset($data['column'])){
+                $column = $data['column'];
+            }else {
+                echo 0;
+                exit();
+            }
+            // 
+            //through javascript request 
+            if($column = "dp") {
+                echo get_dp($userID);
+                exit();
+            }
+        }
+        else{
+            echo 0;
+            exit();
+        }
+    }
+    
 
-        $fetch_img = fetch_columns( "users_avatar" , "userID" , $userID , "type" , "img" );
+    function get_dp($userID) {
+        $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "img" );
 
         if($fetch_img != '400' && $fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
             $type = $img['type'];
             $data = base64_encode($img['img']);
+
             return "data:$type;base64,$data";
         }else{
-            return 404;
-        }        
+            return 0;
+        }  
     }
 
     function get_user_full_name($userID){
@@ -63,5 +99,4 @@
     
         return false;
     }
-    
 ?>

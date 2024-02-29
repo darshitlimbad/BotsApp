@@ -26,7 +26,7 @@
         <!-- img -->
         <div class="input_field" name="avatar_field">
             <div class="input-img avatar_block">
-                <img src="../img/default_dp.png" alt="" class="avatar avatar_preview">
+                <img src="" alt="" class="avatar avatar_preview">
                 <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp" onchange="avatar_validation()">
             </div>
             <span id="avatar_span"></span>

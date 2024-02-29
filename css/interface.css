@@ -416,8 +416,11 @@ header .title p {
     height: 1rem;
     width: 1rem;
     position: fixed;
-    transform: translate(60px, -20px);
+    transform: translate(59px, -20px);
+    border-radius: 4px;
     background-color: aliceblue;
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+
 }
 
 .settings-box .settings-container .body .profile-dp img{

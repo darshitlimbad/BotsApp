@@ -30,10 +30,11 @@ print_r($_SESSION);
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
     <!-- Script -->
-    <script type="text/javascript" src="js/lib/_postReq.js"></script>
-    <script type="text/javascript" src="js/lib/_validation.js"></script>
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/_error_handling.js"></script>
+    <script type="text/javascript" src="js/lib/_postReq.js"></script>
+    <script type="text/javascript" src="js/lib/_validation.js"></script>
+    <script type="text/javascript" src="js/lib/_fetch_data.js"></script>
 
 </head>
 <body>
@@ -65,11 +66,11 @@ print_r($_SESSION);
                     <img src="img/icons/options/setting-24.png"> 
                 </div>
             </div>
-            
+                                                <!-- fetch dp -->
             <!-- profile -->
             <div class="options profile"  title="Profile" onclick="toggle_settings_box()" accesskey="p">
                 <div class="img">
-                    <img src="<?= get_dp($_SESSION['userID']) ?>"  onerror="defaultDp(this);"  class="avatar"  />
+                    <img src=""  onerror="defaultDp(this);"  class="avatar"  />
                 </div>
             </div>
         </div>
@@ -103,7 +104,7 @@ print_r($_SESSION);
             </li>
             <li class="" name="profile">
                 <div>
-                    <img src="img/icons/settings/profile-64.png"  onerror="defaultDp(this);" height="20px" width="20px" alt="" >
+                    <img src="img/icons/settings/profile-64.png" height="20px" width="20px" alt="" >
                 </div>    
                 <p>Profile</p>
             </li>
@@ -177,10 +178,10 @@ print_r($_SESSION);
             <!-- Profile Body -->
             <div class="body" name="profile-body" style="display: none;">
                 <div class="headding">Profile</div>
-                <div class="profile-dp" onclick="_upload_img_form('Upload Your new Profile picture' , `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim`);">
-                    <img src="<?= get_dp($_SESSION['userID']); ?>" onerror="defaultDp(this);" class="avatar">
+                <div class="profile-dp">
+                    <!-- <img src=`${ _fetch_data_of_user( "users_avatar" , 'dp'); }` onerror="defaultDp(this);" class="avatar"> -->
                 </div>
-                    <img src="img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture"/>
+                    <img src="img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="_upload_img_form('Upload Your new Profile picture' , `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim`);"/>
 
 
                 <br>
