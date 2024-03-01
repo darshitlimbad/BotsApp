@@ -158,7 +158,6 @@ const settings_options_to_default = () => {
 
 //notification
 function new_notification(str) {
-    
     setTimeout(() => {
         _add_notification_show(str);
         document.addEventListener('click' , _onclick_notification_hide);
