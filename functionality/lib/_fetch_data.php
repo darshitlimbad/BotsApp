@@ -1,4 +1,12 @@
 <?php
+    if($data = json_decode(file_get_contents("php://input") , true) ){
+        if(isset($data['action'])){
+            include '../db/_conn.php';
+            if($data['action'] == "get_dp"){
+                echo get_dp($data['userID']);
+            }
+        }
+    }
 
     function get_dp($userID) {
         $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "img" );

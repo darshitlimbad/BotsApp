@@ -56,7 +56,20 @@ document.addEventListener('DOMContentLoaded' , function () {
         })
     });
 
+    
 
+    // // user hover on chat animation  
+    // garbage for now
+    // document.querySelectorAll('.list .inbox-user').forEach( (ele) => {
+    //     ele.addEventListener('mousemove' , (event) => {
+    //             const rect = ele.getBoundingClientRect();
+    //             const relativeX = event.clientX - rect.x - 12;
+    //             const relativeY = event.clientY - rect.y - 30;
+                
+    //             ele.classList.add("inbox-user_hover");
+    //             ele.style.setProperty("--inbox-user-x" , `${relativeX}px`);
+    //             ele.style.setProperty("--inbox-user-y" , `${relativeY}px`);         
+    //     }); }); 
 });
 
 // toggle settings-box
@@ -280,6 +293,35 @@ const _togle_user_data = (ele) => {
         });   
 };
 
+
+// get dp function // note : this function returns Promise obj
+const get_dp = (userID) => {
+    return new Promise((resolve , reject) => {
+        var url_for_get_dp = '/functionality/lib/_fetch_data.php' ;
+        var data = JSON.stringify({
+            userID: userID,
+            action : "get_dp"  })
+
+        postReq(url_for_get_dp , data)
+            .then((res) => {
+                resolve(res);
+            }).catch(err => {
+                reject();
+            });
+    });
+}
+
+const set_profile_dp = ((userID) => {
+    get_dp(userID)
+        .then( res  => {
+            document.querySelectorAll(".options .avatar , .profile-dp .avatar").forEach( (ele) => {
+                ele.src = res;
+            });
+        });
+});
+
+
+
 // default img loader functions
 const defaultDp = (tag) => {
     tag.src='/img/default_dp.png';
@@ -289,6 +331,7 @@ const defaultDp = (tag) => {
 const _submit_data = (event) => {
     (event.key === 'Enter') ? event.target.parentElement.querySelector('.edit-icon').click() : '' ;
 }
+
 
 //
 

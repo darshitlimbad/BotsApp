@@ -1,9 +1,21 @@
 <?php
+    include 'interface.php';
 
 ?>
-<script type="text/javascript" src="js/interface.js"></script>
-    <script type="text/javascript" src="js/_error_handling.js"></script>
-    <script type="text/javascript" src="js/lib/_postReq.js"></script>
-    <script type="text/javascript" src="js/lib/_validation.js"></script>
-    <script type="text/javascript" src="js/lib/_fetch_data.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<body>
+    <img src="/img/default_dp.png" class="avatar" alt="">
 
+    <script>
+        set_profile_dp("User00000001");
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "botsapp",
+  "version": "1.0.0",
+  "description": "A better place for chat",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Darshit Limbad",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "mysql": "^2.18.1",
+    "socket.io": "^4.7.4"
+  }
+}

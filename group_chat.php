@@ -1,5 +1,6 @@
 <?php
-    include "interface.php";
+    include_once("interface.php");
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

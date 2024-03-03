@@ -1,7 +1,7 @@
 <?php
-    include 'functionality/db/_conn.php';
-    include 'functionality/_auto_login.php';
-    include 'functionality/lib/_validation.php';
+    include_once('functionality/db/_conn.php');
+    include_once('functionality/_auto_login.php');
+    include_once('functionality/lib/_validation.php');
 
     // ask about what to do for the delay 
 print_r($_SESSION);
@@ -12,9 +12,11 @@ print_r($_SESSION);
         is_session_valid();
         session_regenerate_id(true);
 
-        include 'functionality/lib/_wrappers.php';
-        include 'functionality/lib/_features.php';
-        include 'functionality/lib/_fetch_data.php';
+        include_once('functionality/lib/_wrappers.php');
+        include_once('functionality/lib/_features.php');
+        include_once('functionality/lib/_fetch_data.php');
+        $unm = "@".fetch_data_from_users($_SESSION['userID'] , 'unm' );
+        $nm  = get_user_full_name($_SESSION['userID']); 
     }
 ?>
 
@@ -33,7 +35,10 @@ print_r($_SESSION);
     <script type="text/javascript" src="js/_error_handling.js"></script>
     <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/lib/_validation.js"></script>
-
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script> -->
+    <script>
+        set_profile_dp("<?= $_SESSION['userID']; ?>");
+    </script>
 </head>
 <body>
     <header>
@@ -64,11 +69,11 @@ print_r($_SESSION);
                     <img src="img/icons/options/setting-24.png"> 
                 </div>
             </div>
-                                                <!-- fetch dp -->
+
             <!-- profile -->
             <div class="options profile"  title="Profile" onclick="toggle_settings_box()" accesskey="p">
                 <div class="img">
-                    <img src="<?= get_dp($_SESSION['userID'])?>"  onerror="defaultDp(this);"  class="avatar"  />
+                    <img src="/img/dp-moon.png"  onerror="defaultDp(this);"  class="avatar" title="<?= $unm?>" />
                 </div>
             </div>
         </div>
@@ -161,7 +166,7 @@ print_r($_SESSION);
                 <div class="headding">Feedback</div>
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
-                <p>share your thoughts...</p>
+                <p>share your thoughts...</p>  
                 <a href="help/ux.php?form=feedback" target="_blank" class="link">Feedback Here</a>
             
                 <br><br>
@@ -177,18 +182,16 @@ print_r($_SESSION);
             <div class="body" name="profile-body" style="display: none;">
                 <div class="headding">Profile</div>
                 <div class="profile-dp">
-                    <img src="<?= get_dp($_SESSION['userID'])?>" onerror="defaultDp(this);" class="avatar">
+                    <img src="/img/dp-moon.png" onerror="defaultDp(this);" title="<?= $nm?>" class="avatar">
                 </div>
                     <img src="img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="_upload_img_form('Upload Your new Profile picture' , `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim`);"/>
-
-
                 <br>
                 
-                <div class="text">@<?= fetch_data_from_users($_SESSION['userID'] , 'unm' );?></div>
+                <div class="text"><?= $unm?></div>
 
                 <p class="margin-dead">Name:</p>
                 <div class="flex edit_box" name="edit-user-name">
-                <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= get_user_full_name($_SESSION['userID']); ?>" readonly /> 
+                <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= $nm; ?>" readonly /> 
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
                 

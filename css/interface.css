@@ -569,6 +569,7 @@ header .title p {
     height: calc(100% - 110px);
     display: flex;
     flex-wrap: wrap;
+    flex-wrap: wrap;
     justify-items: center;
     align-content: center;
     flex-direction: column;
@@ -577,18 +578,18 @@ header .title p {
 
 .list .inbox-user  {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     width: 90%;
     padding: 5px;
     margin: 0 10px;
     border-bottom: 1px outset rgba(240, 248, 255, 0.321);
     align-content: center;
+    transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.list .inbox-user:hover , .select {
-    background-color: rgba(110, 110, 110, 0.218);
-    border-bottom: 2px outset rgba(240, 248, 255, 0.321);
-    transition: all 2s cubic-bezier(0.075, 0.82, 0.165, 1);
+.select , .list .inbox-user:hover {
+    background-color: rgba(145, 145, 145, 0.218);
 }
 
 .list .img  {
@@ -622,6 +623,7 @@ header .title p {
 
 .list .inbox-name,.list .last-chat{
     margin: 2px;
+    user-select: text;
 }
 
 .list .inbox-name{
@@ -634,13 +636,11 @@ header .title p {
     min-width: 150px;
     display: inline-block;
     padding: 8px 0 0 0;
-    user-select: all;
     word-break: break-word;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 11px;
-
 }
 
 .link {
