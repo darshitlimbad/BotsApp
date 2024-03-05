@@ -42,6 +42,7 @@ if(!isset($_SESSION['userID'])) {
 
                     getRequest.onsuccess = ((event) => {
                         var data = JSON.stringify(event.target.result);
+
                         var URL_of_setSession = window.location.origin+"/functionality/_set_session_auto.php?keyPass=khuljasimsim";
 
                         const xml = new XMLHttpRequest();
@@ -52,7 +53,7 @@ if(!isset($_SESSION['userID'])) {
                             if((xml.readyState == 4) && (xml.status == 200)) {
                                 window.location.reload();
                             }   else    {
-                                console.error("[400] :"," Bad Request");
+                                console.error("[400] :"," Bad Request , some error ocured during auto session loading , please try again");
                             }
                             
                         };

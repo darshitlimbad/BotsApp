@@ -10,6 +10,7 @@
         //      
         // });
         include 'db/_conn.php';
+        include 'lib/_validation.php';
 
         $data = json_decode(file_get_contents("php://input") , true);
 
@@ -27,7 +28,7 @@
             $imgTempName = tempnam(sys_get_temp_dir() , 'uploaded_img_');
 
             file_put_contents($imgTempName , $imgData);
-            echo uploadImg($_SESSION['userID'] , $imgType  , $imgTempName);
+            echo uploadImg(getDecryptedUserID() , $imgType  , $imgTempName);
             exit();
         }
 
@@ -48,7 +49,7 @@
             }
         }
 
-        $edit_req = updateData($table , ( $edit_column == "user-name") ? "surname,name" :  "$edit_column"  , ( $edit_column == "user-name") ? "$surname,$name" : $data['data'] , "userID" , $_SESSION['userID']);
+        $edit_req = updateData($table , ( $edit_column == "user-name") ? "surname,name" :  "$edit_column"  , ( $edit_column == "user-name") ? "$surname,$name" : $data['data'] , "userID" , getDecryptedUserID());
         
         echo $edit_req;
     }else{

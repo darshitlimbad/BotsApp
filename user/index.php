@@ -4,9 +4,9 @@
     if(isset($_SESSION['userID'])){
         header('location: /');
         exit();
+    }else{
+        include_once('../functionality/lib/_wrappers.php');
     }
-
-    include '../functionality/lib/_wrappers.php';
 
 ?>
 <!DOCTYPE html>

@@ -21,7 +21,7 @@ try{
             // validate user here also 
 
             $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
-                    "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar['type'] , $avatar['tmp_name']);
+                    "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar);
                 
                 if($user == 1)
                     header('location: /user/?SUCCESS=201&USER='.$unm); 
@@ -46,20 +46,21 @@ try{
                 if(password_verify($pass , $row['pass']))   {
                     session_start();
                     
-                    $_SESSION['userID'] = $row['userID'];
+                    $userID = $row['userID'];
+                    $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
+                    $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
+                    $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
+                        
+                    $_SESSION['userID'] = base64_encode($encryptedUserID);
+                    $_SESSION['key'] = base64_encode($user_key);
+                    $_SESSION['nonce'] = base64_encode($user_nonce);
 
                     if($rememberMe == 'on' ) {
-                        
-                        $userID = $_SESSION['userID'];
-                        $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-                        $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
-                        $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
-                        
+
                         $pass = $row['pass'];
                         $pass_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);
                         $pass_key = base64_decode($row['pass_key']);
                         $encryptedPass = sodium_crypto_secretbox($pass , $pass_nonce , $pass_key);
-
 
                         ?>
                         <script>
@@ -85,19 +86,18 @@ try{
                                 var count = objectStore.count();
 
                                 transaction.oncomplete = (() => {
-                                    count = count.result;
                                     transaction = db.transaction("session" , "readwrite");
                                     objectStore = transaction.objectStore("session");
-                                    if(count > 0) {
+                                    if(count.result > 0) {
                                         objectStore.clear();
                                     }
 
-                                    objectStore.add({id: "1" , userID : "<?php echo base64_encode($encryptedUserID);?>" , 
-                                            user_key : "<?php echo base64_encode($user_key);?>" , user_nonce : "<?php echo base64_encode($user_nonce);?>" , 
-                                            pass : "<?php echo base64_encode($encryptedPass)?>" , pass_nonce: "<?php echo base64_encode($pass_nonce)?>" });
+                                    objectStore.add({id: "1" , userID : "<?= $_SESSION['userID'];?>" , 
+                                            user_key : "<?= $_SESSION['key'];?>" , user_nonce : "<?= $_SESSION['nonce'];?>" , 
+                                            pass : "<?= base64_encode($encryptedPass)?>" , pass_nonce: "<?= base64_encode($pass_nonce)?>" });
 
-                                    window.location.assign('/');
                                     transaction.close;
+                                    window.location.assign('/');
                                 })
                             };
                         </script>
@@ -117,9 +117,9 @@ try{
         }
     }
 } catch (Exception $error) {
-    // print_r($error);     
-    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
-    die();
+    print_r($error);     
+    // header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
+    // die();
 }
 
 
@@ -130,7 +130,7 @@ function gen_new_user_id()  {
 
     if($sqlfire && ($sqlfire -> num_rows > 0)) {
         $row = $sqlfire->fetch_assoc();
-        $lastUserID = explode( 'r' , $row["userID"]);
+        $lastUserID = explode( 'r' , $row["userID"]); //for cuting User00000007 the decimal part
         $newUserID = "User".sprintf("%08d" , ++$lastUserID[1]);    
     }
     else {

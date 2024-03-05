@@ -5,7 +5,7 @@ if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
     include 'db/_conn.php';
 
     if(isset($_SESSION['userID'])) {
-        $userID = $_SESSION['userID'];
+        $userID = getDecryptedUserID();
 
         $delete = deleteData('users',$userID);
 

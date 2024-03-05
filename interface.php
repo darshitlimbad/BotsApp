@@ -1,22 +1,37 @@
 <?php
     include_once('functionality/db/_conn.php');
-    include_once('functionality/_auto_login.php');
-    include_once('functionality/lib/_validation.php');
+    include 'functionality/_auto_login.php';
+    include 'functionality/lib/_validation.php';
 
-    // ask about what to do for the delay 
 print_r($_SESSION);
-    if( !isset($_SESSION['userID']) && !isset($_SESSION['sessionDataReady'])){
+
+    if( !isset($_SESSION['userID']) ){
         header('location: /user');
         exit();
     }else{
         is_session_valid();
-        session_regenerate_id(true);
 
         include_once('functionality/lib/_wrappers.php');
         include_once('functionality/lib/_features.php');
         include_once('functionality/lib/_fetch_data.php');
-        $unm = "@".fetch_data_from_users($_SESSION['userID'] , 'unm' );
-        $nm  = get_user_full_name($_SESSION['userID']); 
+        $unm = "@".fetch_data_from_users(getDecryptedUserID() , 'unm' );
+        $nm  = get_user_full_name(getDecryptedUserID()); 
+        ?>
+        <script>
+            const set_profile_dp = ((userID) => {
+                get_dp(userID)
+                    .then( res  => {
+                        document.querySelectorAll(".options .avatar , .profile-dp .avatar").forEach( (ele) => {
+                            ele.src = res;
+                        });
+                    });
+            });
+
+            document.addEventListener('DOMContentLoaded' , ()=> {
+                set_profile_dp("<?= getDecryptedUserID(); ?>");
+            });
+        </script>
+        <?php
     }
 ?>
 
@@ -35,10 +50,6 @@ print_r($_SESSION);
     <script type="text/javascript" src="js/_error_handling.js"></script>
     <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/lib/_validation.js"></script>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script> -->
-    <script>
-        set_profile_dp("<?= $_SESSION['userID']; ?>");
-    </script>
 </head>
 <body>
     <header>
@@ -126,7 +137,7 @@ print_r($_SESSION);
 
                 <h4>Privacy</h4>
                 <div class="flex checkbox" name="edit-can_see_online_status">
-                    <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'can_see_online_status') == '1') { echo 'checked';} ?>>
+                    <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details(getDecryptedUserID() , 'can_see_online_status') == '1') { echo 'checked';} ?>>
                     <label for="can_see_online_status">Everyone can see online status </label>
                 </div>
 
@@ -148,7 +159,7 @@ print_r($_SESSION);
                 
                 <div class="swipe-box">
                     <label for="theme">Dark</label>
-                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($_SESSION['userID'] , 'theme') == '1') { echo 'checked';} ?> >
+                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details(getDecryptedUserID() , 'theme') == '1') { echo 'checked';} ?> >
                     <label for="theme">Light</label>
                 </div>
 
@@ -197,12 +208,12 @@ print_r($_SESSION);
                 
                 <p class="margin-dead">About:</p>
                 <div class="flex edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($_SESSION['userID'] , 'about');?></textarea>
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details(getDecryptedUserID() , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 
                 <p class="margin-dead">E-mail:</p>
-                <div class="text"><?= fetch_data_from_users($_SESSION['userID'] , 'email' );?></div>
+                <div class="text"><?= fetch_data_from_users(getDecryptedUserID() , 'email' );?></div>
             </div>
         </div>
     </div>

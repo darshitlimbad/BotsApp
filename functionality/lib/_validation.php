@@ -1,4 +1,21 @@
 <?php   
+
+function getDecryptedUserID(){
+
+    $encryptedUserID = base64_decode($_SESSION['userID']);
+    $nonce = base64_decode($_SESSION['nonce']);
+    $key = base64_decode($_SESSION['key']);
+
+    try{
+        $res = sodium_crypto_secretbox_open($encryptedUserID , $nonce , $key) ?: 0;
+    }catch( Exception $err){
+        session_destroy();
+    }
+
+    // if the description process completes it will return userid but if it ocures any errors by the wrong value it will return 0.
+    return $res;
+}
+
 // this function matches the Encrypted passwords with password_hash bcrypt
 function metchEncryptedPasswords($Pass , $userID){
     $result = fetch_columns(  "users" , 'userID' , $userID , 'pass');
@@ -30,9 +47,12 @@ function is_data_present($table , $point , $point_val , $column='userID'){
 }
 
 function is_session_valid(){
-    if(is_data_present('users' , 'userID' , $_SESSION['userID']) == 0)  {
+    $userID = getDecryptedUserID();
+    if(is_data_present('users' , 'userID' , $userID) == 0)  {
         session_destroy();
-        header('location: /user');
+        header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
+    }else{
+        session_regenerate_id(true);
     }
 }
 ?>
