@@ -23,8 +23,11 @@ try{
             $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
                     "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar);
                 
-                if($user == 1)
-                    header('location: /user/?SUCCESS=201&USER='.$unm); 
+            if($user == 1)
+                header('location: /user/?SUCCESS=201&USER='.$unm); 
+            else if($user == 0){
+                header('location: /user/?ERROR=400');
+            }
             
         }
         else if($action == "log-in")    {
@@ -117,9 +120,9 @@ try{
         }
     }
 } catch (Exception $error) {
-    print_r($error);     
-    // header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
-    // die();
+    // print_r($error);     
+    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
+    die();
 }
 
 

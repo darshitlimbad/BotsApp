@@ -55,10 +55,10 @@ const _uploadImg = () => {
     _get_img_data(img)
         .then( result => {
             img_binary_data = result.split(',').pop();
-
             var value = {
                 img_type : img.type,
                 img_data : img_binary_data,
+                size     : img.size,
             };
 
             data = JSON.stringify(
@@ -79,6 +79,7 @@ const _uploadImg = () => {
                         })
                         new_notification("data changed succesfully");
                     }else{
+                        console.log(response);
                         new_Alert('somethinng went wrong while uploading Profile img :( , please try again.');
                     }
                 })

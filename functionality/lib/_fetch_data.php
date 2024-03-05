@@ -9,12 +9,12 @@
     }
 
     function get_dp($userID) {
-        $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "img" );
+        $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "imgData" );
 
         if($fetch_img != '400' && $fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
             $type = $img['type'];
-            $data = base64_encode($img['img']);
+            $data = base64_encode($img['imgData']);
 
             return "data:$type;base64,$data";
         }else{

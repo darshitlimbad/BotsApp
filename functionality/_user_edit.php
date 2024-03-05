@@ -9,8 +9,8 @@
         //     data : value ,
         //      
         // });
-        include 'db/_conn.php';
-        include 'lib/_validation.php';
+        include_once('db/_conn.php');
+        // include_once('lib/_validation.php');
 
         $data = json_decode(file_get_contents("php://input") , true);
 
@@ -20,15 +20,14 @@
         // if the profile picture is requested to change
         if($table == 'users_avatar') {
             include 'lib/_insert_data.php';
+            $img['type'] = $data['data']['img_type'];
+            $img['img_data'] = base64_decode($data['data']['img_data']);
+            $img['size'] = $data['data']['size'];
 
-            $imgType = $data['data']['img_type'];
-            $imgData = $data['data']['img_data'];
+            $img['tmp_name'] = tempnam(sys_get_temp_dir() , 'uploaded_img_');
+            file_put_contents($img['tmp_name'] , $img['img_data']);
 
-            $imgData = base64_decode($imgData);
-            $imgTempName = tempnam(sys_get_temp_dir() , 'uploaded_img_');
-
-            file_put_contents($imgTempName , $imgData);
-            echo uploadImg(getDecryptedUserID() , $imgType  , $imgTempName);
+            echo uploadImg(getDecryptedUserID() , $img);
             exit();
         }
 

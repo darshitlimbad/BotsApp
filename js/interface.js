@@ -311,6 +311,16 @@ const get_dp = (userID) => {
     });
 }
 
+const set_profile_dp = ((userID) => {
+    get_dp(userID)
+        .then( res  => {
+            document.querySelectorAll(".options .avatar , .profile-dp .avatar").forEach( (ele) => {
+                ele.src = res;
+            });
+        });
+});
+
+
 // default img loader functions
 const defaultDp = (tag) => {
     tag.src='/img/default_dp.png';

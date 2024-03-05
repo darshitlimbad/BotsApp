@@ -12,28 +12,32 @@
 
     // insert data by table , column as string seprated by ',' , values as string seprated by ',' 
     function insertData($table, $column_str , $values_str )   {
-
-        $columns = explode(',' , $column_str);
-        $values = explode(',' , $values_str);
-        foreach($columns as $key => $val){
-            $columns[$key] = trim($val);
+        try{
+            $columns = explode(',' , $column_str);
+            $values = explode(',' , $values_str);
+            foreach($columns as $key => $val){
+                $columns[$key] = trim($val);
+            }
+            foreach($values as $key => $val){
+                $values[$key] = trim($val);
+            }
+    
+            if(sizeof($columns) != sizeof($values))
+                throw new Exception( "Columns size is not equal to values size", 400);
+    
+            $paramtypes =   str_repeat('s' , count($values));
+            $column_str =   implode(',' , $columns);
+            $values_str =   implode( ',' , array_fill(0 , count($values) , '?') );
+    
+            $query = "INSERT INTO `$table`($column_str) VALUES ($values_str)";
+            $stmt = $GLOBALS['conn']->prepare($query);
+            $stmt->bind_param($paramtypes , ...$values);
+            $sqlfire = $stmt->execute();
+            $stmt ->close();
+        }catch(Exception $e) {
+            return 0;
         }
-        foreach($values as $key => $val){
-            $values[$key] = trim($val);
-        }
-
-        if(sizeof($columns) != sizeof($values))
-            die(throw new Exception( "Columns size is not equal to values size", 400));
-
-        $paramtypes =   str_repeat('s' , count($values));
-        $column_str =   implode(',' , $columns);
-        $values_str =   implode( ',' , array_fill(0 , count($values) , '?') );
-
-        $query = "INSERT INTO `$table`($column_str) VALUES ($values_str)";
-        $stmt = $GLOBALS['conn']->prepare($query);
-        $stmt->bind_param($paramtypes , ...$values);
-        $sqlfire = $stmt->execute();
-        $stmt ->close();
+        
         
         if($sqlfire) {
             return 1;
@@ -103,6 +107,7 @@
         $stmt->bind_param('s' , $userID);
         $sqlfire = $stmt->execute();
         $stmt->close();
+
         return $sqlfire;
     }
 ?>

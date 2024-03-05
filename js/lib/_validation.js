@@ -5,7 +5,6 @@
         var inputed_unm = user.value;
         var user_span = document.querySelector('#user_span');
 
-
         // regex
         var has_blankspace = /[ ]/.test(inputed_unm);
         // 
@@ -162,14 +161,19 @@ function con_pass_validation()  {
     var con_pass_span = document.querySelector('#con_pass_span');
     var pass_rules = document.querySelector('#pass_rules');
 
-    
-    if(con_pass.value == '' || pass.value == '' || pass_rules.style.display == 'block' )   {
-        con_pass_span.innerHTML = "password is incorect!!";
+    if((pass.value !== con_pass.value)){
+        if(con_pass.value == '' || pass.value == '' || pass_rules.style.display == 'block' )   {
+            con_pass_span.innerHTML = "password is incorect!!";
+        }else{
+            con_pass_span.innerHTML = "password is not same!!"
+        }
+        
+        con_pass_span.style.display = 'block';
+        _submit_btn_disable();
     }else{
-        con_pass_span.innerHTML = "password is not same!!"
+        con_pass_span.style.display = 'none';
+        _submit_btn_enable();
     }
-    
-    con_pass_span.style.display = (pass.value !== con_pass.value) ? 'block' : 'none';
 
 }
 

@@ -18,15 +18,6 @@ print_r($_SESSION);
         $nm  = get_user_full_name(getDecryptedUserID()); 
         ?>
         <script>
-            const set_profile_dp = ((userID) => {
-                get_dp(userID)
-                    .then( res  => {
-                        document.querySelectorAll(".options .avatar , .profile-dp .avatar").forEach( (ele) => {
-                            ele.src = res;
-                        });
-                    });
-            });
-
             document.addEventListener('DOMContentLoaded' , ()=> {
                 set_profile_dp("<?= getDecryptedUserID(); ?>");
             });

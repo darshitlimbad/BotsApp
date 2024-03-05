@@ -128,33 +128,26 @@ function fade_out(ele){
     //all validation of the form at _validation.js in root js folder. 
 
     function _submit_btn_disable() {
-        submit_btn.setAttribute('disabled' , 'true');
+        submit_btn.setAttribute('disabled' , true);
     }
 
     function _submit_btn_enable() {
         var validation_input = document.querySelectorAll('.validation input');
         var validation_span = document.querySelectorAll('.validation > span , .validation #pass_rules');
-
         var fleg = 0;
 
-        if( (validation_span[1].style.display == "block") && (validation_span[1].textContent != "AVAILABLE" ) && (validation_input[1].textContent != '' ) ||
-            (validation_span[2].style.display == "block") && (validation_span[2].textContent != "AVAILABLE" ) && (validation_input[2].textContent != '' ) )  {
-            _submit_btn_disable();
-            fleg = 1;
-        }
-        
-        for(var i=0 ; i<validation_span.length ; i++)   {
-            if(i==1 || i==2){}
-            else if( (validation_span[i].style.display == 'block') && (validation_input[i] != '' ) )  {
-                _submit_btn_disable();
+        for(var i=0 ; i< validation_span.length ; i++)   {
+            if(i==1 || i==2){
+                if( (validation_span[i].style.display == "block") && (validation_span[i].textContent != "AVAILABLE" ) && (validation_input[i].value != '' )){
+                    fleg = 1;
+                }
+            } 
+            else if(  (validation_input[i].value != '' ) && (validation_span[i].style.display == 'block') ){
                 fleg = 1;
             }
         }
 
-        if(fleg == 0) {
-            submit_btn.removeAttribute('disabled');
-        }
-        
+        (fleg == 1) ? _submit_btn_disable() : submit_btn.removeAttribute('disabled');
     }
 
     function check_all_fields() {
