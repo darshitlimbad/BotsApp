@@ -15,14 +15,14 @@
     <meta charset="UTF-8">
     <title>User</title>
 
-    <link rel="stylesheet" href="css/index.css" type="text/css">
+    <link rel="stylesheet" href="../css/User/index.css" type="text/css">
     <link rel="stylesheet" href="../css/interface.css" type="text/css">
-    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="../js/User/index.js"></script>
     <script type="text/javascript" src="../js/interface.js"></script>
     <script type="text/javascript" src="../js/_error_handling.js"></script>
     <script type="text/javascript" src="../js/lib/_validation.js"></script>
 </head>
-<body onload="document.forms['form']['user'].focus()">
+<body onload="document.forms['form']['user'].focus()" class="User">
     <!-- create a div and size it acording to the display (desktop,mobile) -->
     <header style="background-color: rgb(5, 33, 60) ;">
         <?php custom_header();?>

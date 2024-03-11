@@ -5,6 +5,12 @@
     --list-bg : rgb(53, 51, 51);
     --border-radius :  0px 10px;
     --text-color : rgb(89, 43, 226);
+    --default-font : 'Courier New', Courier, monospace;
+    --text-font : 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: var(--default-font);
+}
+span {
+    font-family: var(--text-font);
 }
 
 body{
@@ -37,40 +43,6 @@ body{
     100%  { background-color: rgba(72, 72, 72, 0.5); }
 }
 
-#notification , #alert{
-    display: flex;
-    opacity: 0;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-content: center;
-    position: fixed;
-    height: 50px;
-    width: auto;
-    bottom: 0px;
-    right: -100px;
-    text-transform: capitalize;
-    border: 1px solid black;
-    padding: 5px 30px;
-    margin: 20px;
-    z-index: 1;
-    transition:all .5s cubic-bezier(0.4, 0.6, 0, 1.17);
-    border-radius: 5px;
-}
-
-#notification   {
-    color: aliceblue;
-    background-color: rgba(79, 15, 197, 0.623);
-    box-shadow: 3px 3px 30px rgba(0, 0, 255, 0.296);
-
-}
-
-#alert {
-    color: red;
-    background-color: aliceblue;
-    box-shadow: 3px 3px 30px rgba(255, 0, 0, 0.296);
-
-}
-
 .show {
     opacity: 1 !important;
     right: 0px !important;
@@ -94,11 +66,12 @@ body{
 }
 
 header  {
-    display: block;
+    display: flex;
+    justify-content: center;
     height: 30px;
 }
 
-header .title{
+.title{
     height: inherit;
     display: flex;
     justify-content: center;
@@ -116,24 +89,43 @@ header .title p {
     transform: translateX(100px);
 }
 
+header .Status{
+    align-self: center;
+    align-items: center;
+    position: absolute;
+    right: 5%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+header .Status .status-icon {
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    background-color: green;
+}
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: aliceblue;
+    font-size: 12px;
+}
+
 .side-bar   {
     display: block;
     position: fixed;
     top: 7%;
     width: auto;
     height: 100%;
-}
-
-.side-bar {
-    display: block;
-    position: fixed ;
     padding: 5px;
     margin: 4px;
 }
 
 .side-bar .options  {
     margin: 10px 2px;
-    text-align: center;
 }
 
 .side-bar .bottom   {
@@ -171,7 +163,7 @@ header .title p {
     border-radius: 100%;
     height: 80px;
     width: 80px;
-    border: 1px solid aliceblue;
+    border: 2px solid aliceblue;
     border-radius: 100%;
 }
 
@@ -181,15 +173,18 @@ header .title p {
 }
 
 .side-bar .options .img img {
-    height: auto;
+    height: 20px;
     width: 20px;
     mix-blend-mode: lighten;
+}
+
+.side-bar .options > .img{
+    transition: .5s background ;
 }
 
 .side-bar .options:hover > .img  {
     background-color: rgba(80, 79, 79, 0.623);
     opacity: 80%;
-    transition: .5s background ;
 }
 
 .side-bar .options h6 {
@@ -204,7 +199,7 @@ header .title p {
     border-radius: var(--border-radius);
 }
 
-.settings-box   {
+.settings-box ,.noti-box  {
     display: flex;
     box-sizing: border-box;
     position: fixed;
@@ -218,12 +213,12 @@ header .title p {
     transition: bottom .5s cubic-bezier(0, 0.81, 0.27, 1.02) ;
 }
 
-.settings-box_hide  {
+.settings-box_hide , .noti-box_hide {
     opacity: 0%;
     bottom: -600px;
     transition:   bottom .5s cubic-bezier(0, 0.81, 0.27, 1.02) , opacity .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-.settings-box_show  {
+.settings-box_show , .noti-box_show {
     opacity: 100%;
     bottom: 10px;
 }
@@ -286,13 +281,22 @@ header .title p {
     width: 65%;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4) , -5px -5px 10px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(1px);
+    filter: blur(0px);
     padding: 7px;
     margin: 7px;
     background-color: rgba(25, 45, 65, 0.836);
     color: rgb(255, 255, 255);
+    font-family: var(--text-font);
     font-weight: 400;
     overflow-y: auto;
+}
+
+.settings-box .settings-container h4{
+    font-family: var(--default-font);
+}
+
+.settings-box .settings-container p{
+    font-size: 13px;
 }
 
 .settings-box .settings-container .body{
@@ -425,7 +429,6 @@ header .title p {
 
 .settings-box .settings-container .body .profile-dp img{
     border-radius: 100%;
-    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
 }
 
 .settings-box .settings-container .body .flex{
@@ -469,6 +472,7 @@ header .title p {
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
+
 .margin-dead {
     margin:0px;
 }
@@ -481,7 +485,7 @@ header .title p {
 .chat-box {
     display: block;
     position: absolute;
-    height: 85%;
+    height: 89%;
     min-height: 450px;
     width: 90%;
     min-width: 500px;
@@ -560,7 +564,7 @@ header .title p {
 .scroll {
     display: block ;
     max-width: 100%;
-    min-height: 100px;
+    min-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -569,10 +573,9 @@ header .title p {
     height: calc(100% - 110px);
     display: flex;
     flex-wrap: wrap;
-    flex-wrap: wrap;
+    flex-direction: column;
     justify-items: center;
     align-content: center;
-    flex-direction: column;
     background-color: var(--list-box-bg);
 }
 
@@ -613,8 +616,8 @@ header .title p {
 }
 
 .list .details {
-    height: 45px;
-    width: 80%;
+    height: 40px;
+    max-width: 80%;
     display: block;
     padding: 3px;
     background-color: var(--list--bg);
@@ -631,11 +634,11 @@ header .title p {
 }
 
 .list .last-chat{
-    height: 35px;
-    max-width:220px;
+    max-height: 35px;
+    max-width: 220px;
     min-width: 150px;
     display: inline-block;
-    padding: 8px 0 0 0;
+    padding: 4px 0 0 0;
     word-break: break-word;
     overflow: hidden;
     white-space: nowrap;

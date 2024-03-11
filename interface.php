@@ -1,9 +1,7 @@
 <?php
     include_once('functionality/db/_conn.php');
-    include 'functionality/_auto_login.php';
-    include 'functionality/lib/_validation.php';
-
-print_r($_SESSION);
+    include_once('functionality/_auto_login.php');
+    include_once('functionality/lib/_validation.php');
 
     if( !isset($_SESSION['userID']) ){
         header('location: /user');
@@ -14,15 +12,9 @@ print_r($_SESSION);
         include_once('functionality/lib/_wrappers.php');
         include_once('functionality/lib/_features.php');
         include_once('functionality/lib/_fetch_data.php');
-        $unm = "@".fetch_data_from_users(getDecryptedUserID() , 'unm' );
-        $nm  = get_user_full_name(getDecryptedUserID()); 
-        ?>
-        <script>
-            document.addEventListener('DOMContentLoaded' , ()=> {
-                set_profile_dp("<?= getDecryptedUserID(); ?>");
-            });
-        </script>
-        <?php
+        $userID = getDecryptedUserID();
+        $unm = "@".fetch_data_from_users($userID , 'unm' );
+        $nm  = get_user_full_name($userID); 
     }
 ?>
 
@@ -36,19 +28,26 @@ print_r($_SESSION);
     
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
+    <link rel="stylesheet" href="css/User/index.css" type="text/css">
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
+    <script type="text/javascript" src="js/lib/_chat.js" ></script>
     <script type="text/javascript" src="js/_error_handling.js"></script>
     <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/lib/_validation.js"></script>
 </head>
 <body>
     <header>
-        <?php custom_header();?>
+            <?php custom_header();?>
+        <div class="Status">
+            <div class="status-icon"></div>
+            <h4 style="text-transform: capitalize;">online</h4>
+        </div>
     </header>
     <div class="side-bar">
         <div class="top">
             <!-- Personal -->
+                    <!-- Yah yah I know i should have nammed icon rather then img  -->
             <div class="options" title="Personal" onclick="tohomepage()" >
                 <div class="img">
                     <img src="img/icons/options/chat-30.png" alt="Chat" >
@@ -65,6 +64,20 @@ print_r($_SESSION);
         </div>
         
         <div class="bottom">
+            <!-- Add New Chat -->
+            <div class="options" title="addNewChat" onclick="_add_new_chat_form(); document.querySelector('input#username').focus()" accesskey="a">
+                <div class="img">
+                    <div style="font-size: 20px;"><b>+</b></div> 
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="options" title="Noti" onclick="toggle_noti_box()" accesskey="n">
+                <div class="img">
+                    <img src="img/icons/options/noti.png"> 
+                </div>
+            </div>
+
             <!-- settings -->
             <div class="options" title="Settings" onclick="toggle_settings_box()" accesskey="s">
                 <div class="img">
@@ -78,8 +91,14 @@ print_r($_SESSION);
                     <img src="/img/dp-moon.png"  onerror="defaultDp(this);"  class="avatar" title="<?= $unm?>" />
                 </div>
             </div>
+
         </div>
     </div>
+    
+    <!-- Notification-box -->
+    <div class="noti-box noti-box_hide">
+    </div>
+
     <!-- settings-box -->
     <div class="settings-box settings-box_hide">
         <ul>
@@ -128,33 +147,33 @@ print_r($_SESSION);
 
                 <h4>Privacy</h4>
                 <div class="flex checkbox" name="edit-can_see_online_status">
-                    <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details(getDecryptedUserID() , 'can_see_online_status') == '1') { echo 'checked';} ?>>
+                    <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'can_see_online_status') == '1') { echo 'checked';} ?>>
                     <label for="can_see_online_status">Everyone can see online status </label>
                 </div>
 
                 <!-- log-out -->
                 <h4 class="danger">Log Out</h4>
                         <p>Log out from your account</p>
-                <button class="danger-button button" onclick="_confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , '/functionality/_log_out.php?key_pass=khulJaSimSim' , 'red');">Log Out</button>
+                <button class="danger-button button" onclick="_confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');">Log Out</button>
 
                 <!-- Delete Account -->
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
-                <button class="danger-button button" onclick="_confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , '/functionality/_delete_account.php?key_pass=khulJaSimSim' , 'red');">Delete Account</button>
+                <button class="danger-button button" onclick="_confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');">Delete Account</button>
             </div>
 
             <div class="body" name="chat-body" style="display: none;">
                 <div class="headding">Chat</div>
 
-                <h3>Theme</h3>
+                <h4>Theme</h4>
                 
                 <div class="swipe-box">
                     <label for="theme">Dark</label>
-                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details(getDecryptedUserID() , 'theme') == '1') { echo 'checked';} ?> >
+                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'theme') == '1') { echo 'checked';} ?> >
                     <label for="theme">Light</label>
                 </div>
 
-                <h3>Chat Wallpaper</h3>
+                <h4>Chat Wallpaper</h4>
 
                 <a href="wallpaper.php?type=add_new" class="link">Change Wallpaper</a>
 
@@ -199,15 +218,14 @@ print_r($_SESSION);
                 
                 <p class="margin-dead">About:</p>
                 <div class="flex edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details(getDecryptedUserID() , 'about');?></textarea>
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 
                 <p class="margin-dead">E-mail:</p>
-                <div class="text"><?= fetch_data_from_users(getDecryptedUserID() , 'email' );?></div>
+                <div class="text"><?= fetch_data_from_users($userID , 'email' );?></div>
             </div>
         </div>
     </div>
-    
 </body>
 </html>

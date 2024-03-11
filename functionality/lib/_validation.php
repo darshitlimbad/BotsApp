@@ -1,4 +1,15 @@
 <?php   
+if($data = json_decode( file_get_contents("php://input") , true)){
+    if(isset($data)){
+        if( isset($data['action']) ) {
+            if($data['action'] == "userID"){
+                session_start();
+                echo json_encode(getDecryptedUserID());
+            }
+        }
+
+    }
+}
 
 function getDecryptedUserID(){
 

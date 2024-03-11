@@ -5,8 +5,8 @@
 <html lang="en">
 <head>
     <title>Personal Chat -- BOTSAPP</title>
-    
-    <link rel="stylesheet" href="css/index.css" type="text/css"> 
+
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 <body>
 
@@ -29,9 +29,15 @@
 
             <table class="list"> 
                 <tbody class="scroll">
+                    <script>
+                        getChatList("<?= $userID?>");
+                    </script>
 
-                    
-
+                    <td>
+                        <footer>
+                            <?= custom_footer();?>
+                        </footer>
+                    </td>
                 </tbody>
             </table>
         </div>

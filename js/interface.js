@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     // global var
     settings_box =  document.querySelector(".settings-box");
+    noti_box = document.querySelector(".noti-box");
     notification = document.querySelector('#notification');
     Alert = document.querySelector('#alert');
     // 
@@ -56,7 +57,9 @@ document.addEventListener('DOMContentLoaded' , function () {
         })
     });
 
-    
+    //functions to be called
+    set_profile_dp();
+    getNewUserReq();
 
     // // user hover on chat animation  
     // garbage for now
@@ -95,6 +98,24 @@ function toggle_settings_box()   {
     }
 }
 
+// toggle notification-box
+function toggle_noti_box()   {
+    if (!noti_box.classList.contains('noti-box_show')) {
+
+        noti_box.classList.add('noti-box_show');
+        noti_box.classList.remove('noti-box_hide');
+
+        document.addEventListener('click' , closeNotiBox);
+
+    } else {
+
+        noti_box.classList.add('noti-box_hide');
+        noti_box.classList.remove('noti-box_show');
+        document.removeEventListener('click' , closeNotiBox);
+
+    }
+}
+
 //remove selected from li
 function remove_selected_li(){
     document.querySelectorAll(".settings-box ul li").forEach( function (row) {
@@ -105,17 +126,27 @@ function remove_selected_li(){
 } 
 
 // add Pop_up for show and hide
-function closesettingsbox(event) {    
+function closesettingsbox(event) {  
     if((!settings_box.contains(event.target)) &&
         (settings_box != event.target) && 
         (!event.target.closest("div[title='Settings']"))&&
         (!event.target.closest("div[title='Profile']")) &&
         (!event.target.closest("div[id='confirmation_pop_up']")) &&
-        (!event.target.closest("div[id='upload_img_form']")) ) {
+        (!event.target.closest("div[id='upload_img_form']"))  ) {
         
         toggle_settings_box();
         // all settings options to noramal
         settings_options_to_default();
+    }
+}
+
+function closeNotiBox(event) { 
+
+    if((!noti_box.contains(event.target)) &&
+        (noti_box != event.target) && 
+        (!event.target.closest("div[title='Noti']"))&&
+        (!event.target.closest("div[title='noti-box']")) ) {
+            toggle_noti_box();
     }
 }
 
@@ -145,7 +176,6 @@ function profile_edit_box_toggle(edit_icon) {
 
                 if(!text_box.classList.contains("edit")) {
                     _edit_user_data( text_box );
-
                     icon.setAttribute("src" ,"img/icons/settings/profile/edit.png");
                 }  else {
                     icon.setAttribute("src" ,"img/icons/settings/profile/right.png");
@@ -165,8 +195,7 @@ const settings_options_to_default = () => {
         }
 
     // pop_up
-        _hide_this_pop_up(confirmation_pop_up);
-        _hide_this_pop_up(upload_img_form);
+        _hide_all_pop_up();
 }
 
 //notification
@@ -175,15 +204,12 @@ function new_notification(str) {
         _add_notification_show(str);
         document.addEventListener('click' , _onclick_notification_hide);
     }, 100);
-
 }
 
 function _onclick_notification_hide(event)   {
-
     if((!notification.contains(event.target)) && (notification != event.target) ) {
-        _remove_notification_show();
-
         document.removeEventListener('click' , _onclick_notification_hide);
+        _remove_notification_show();
     }
 }
 
@@ -203,21 +229,24 @@ function _remove_notification_show(){
 // 
 
 //Alert
-function new_Alert(str) {
+function new_Alert(str , time = null) {
     setTimeout(() => {
 
         _add_Alert_show(str);
         document.addEventListener('click' , _onclick_Alert_hide);
         
     } , 100);
+
+    if(time != null) {
+        setTimeout(() => {
+            _remove_Alert_show();
+        } , time * 1000)
+    }
 }
 
 function _onclick_Alert_hide(event)   {
-
     if((!Alert.contains(event.target)) && (Alert != event.target) ) {
         _remove_Alert_show();
-
-        document.removeEventListener('click' , _onclick_Alert_hide);
     }
 }
 
@@ -227,97 +256,26 @@ function _add_Alert_show(str){
 }
 
 function _remove_Alert_show(){
+    document.removeEventListener('click' , _onclick_Alert_hide);
     Alert.classList.remove('show');
     setTimeout(() => {
         Alert.textContent = "";
     }, 70); 
 }
 
-// edit data by user
-const _edit_user_data = (ele) => {
+const set_profile_dp = (() => {
+    dp = document.querySelectorAll(".options .avatar , .profile-dp .avatar");    
+    getUserID()
+        .then((userID)=>{
+            get_dp(userID)
+                .then( res  => {
+                    dp.forEach( (ele) => {
+                        ele.src = res;
+                    })
+                })
+        });
 
-    var edit_table = (ele.name == 'user-name') ? "users" : "users_details" ;
-    var field=ele.name;
-    var value=ele.value;    
     
-    if(value == "")
-        window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=405'));
-    
-    data = JSON.stringify(
-        {
-        table: edit_table,
-        edit_column: field,
-        data : value ,
-        });
-
-    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
-
-    postReq(url , data) 
-        .then(response => {
-            if (response == 1 ){
-                new_notification('data changed succesfully');
-            }else{
-                window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=400'));
-            }
-        })
-        .catch(err => {
-            console.error(err);
-        });   
-};
-
-// togle user theme
-const _togle_user_data = (ele) => {
-
-    var field=ele.name;
-    var value=(ele.checked) ? '1' : '0';    
-    data = JSON.stringify(
-        {
-        table: 'users_details',
-        edit_column: field,
-        data : value 
-        });
-
-    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
-
-    postReq(url , data) 
-        .then(response => {
-            if (response == 1 ){
-                new_notification('data changed succesfully');
-            }else {
-                ele.checked = (value == 1) ?  false : true;
-                new_Alert('Something Went Wrong , Please Try Again');
-            }
-            })
-        .catch(err => {
-        console.error(err);
-        });   
-};
-
-
-// get dp function // note : this function returns Promise obj
-const get_dp = (userID) => {
-    return new Promise((resolve , reject) => {
-        var url_for_get_dp = '/functionality/lib/_fetch_data.php' ;
-        var data = JSON.stringify({
-            userID: userID,
-            action : "get_dp"  })
-
-        postReq(url_for_get_dp , data)
-            .then((res) => {
-                resolve(res);
-            }).catch(err => {
-                reject();
-            });
-    });
-}
-
-const set_profile_dp = ((userID) => {
-    get_dp(userID)
-        .then( res  => {
-            document.querySelectorAll(".options .avatar , .profile-dp .avatar").forEach( (ele) => {
-                ele.src = res;
-            });
-        });
 });
 
 

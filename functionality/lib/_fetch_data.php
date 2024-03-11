@@ -5,6 +5,9 @@
             if($data['action'] == "get_dp"){
                 echo get_dp($data['userID']);
             }
+            if($data['action'] == "get_unm"){
+                echo search_user($data['from'] , $data['value']);
+            }
         }
     }
 
@@ -16,22 +19,27 @@
             $type = $img['type'];
             $data = base64_encode($img['imgData']);
 
-            return "data:$type;base64,$data";
+            return json_encode("data:$type;base64,$data");
         }else{
             return 0;
         }  
     }
 
     function get_user_full_name($userID){
-        $fetch_name = fetch_columns('users' , 'userID' , $userID , 'surname' , 'name');
+        try{
+            $fetch_name = fetch_columns('users' , 'userID' , $userID , 'surname' , 'name');
 
-        if($fetch_name != '400' && $fetch_name->num_rows == 1){
-            $name = $fetch_name->fetch_assoc();
-            $full_name = $name['surname']." ".$name['name'];
-            return $full_name; 
-        }else {
-            return '';
+            if($fetch_name != '400' && $fetch_name->num_rows == 1){
+                $name = $fetch_name->fetch_assoc();
+                $full_name = $name['surname']." ".$name['name'];
+                return $full_name; 
+            }else {
+                return 0;
+            }
+        }catch(Exception $e){
+            return 0;
         }
+        
     }
 
     function fetch_data_from_users_details($userID , $column){
@@ -53,6 +61,31 @@
             return $data; 
         }else {
             return '';
+        }
+    }
+
+    function search_user($from , $value) {
+        try{
+            if($from == "add_new_chat")
+                $result = search_columns("users_account" , "unm" , $value , "userID" , "unm");
+            else   
+                throw new Exception();
+    
+                if($result !== 0 ){
+                    $i=0;
+                    while($row = $result->fetch_assoc()){
+                        $row['dp'] = json_decode(get_dp($row['userID']));
+
+                        $rows[$i]['dp'] = $row['dp'];
+                        $rows[$i++]['unm'] = $row['unm'];
+                    }
+                    return json_encode($rows);
+                }else{
+                    throw new Exception();
+                }
+    
+        }catch(Exception $e){
+            return 0;
         }
     }
 
