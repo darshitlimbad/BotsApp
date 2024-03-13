@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();
-    getNewUserReq();
+    getNewChatterReq();
 
     // // user hover on chat animation  
     // garbage for now
@@ -82,7 +82,9 @@ function toggle_settings_box()   {
         settings_box.classList.add('settings-box_show');
         settings_box.classList.remove('settings-box_hide');
 
-        var li = (!event.target.closest("div[title='Profile']")) ?document.querySelector(".settings-box ul li[name='general']") :  document.querySelector(".settings-box ul li[name='profile']");
+        var li = (!event.target.closest("div[title='Profile']")) ?
+                    document.querySelector(".settings-box ul li[name='general']") :
+                    document.querySelector(".settings-box ul li[name='profile']") ;
 
         li.classList.add('selected');
         show_setting_body(li);

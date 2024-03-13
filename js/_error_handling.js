@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded' , function () {
             setTimeout(() => {
                 // ERROR
                 if( URL_params.get('ERROR') == '400') {
-                    new_Alert( " Something went Wrong :( , Please try again");
+                    err_400();
                 }
                 if(URL_params.get('ACTION') == 'sign-in')    {
                     buttons[1].click();
@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded' , function () {
                     new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
                 }
                 if(URL_params.get('ERROR') == '405') {
-                    new_Alert( "Name can't be Emptey");
+                    err_405();
                 }
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
@@ -40,7 +40,13 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('SUCCESS') == '203')    {
                     new_notification(" Your Accout has Successfully Deleted.");
                 }
-
-                
             },10);
 });
+
+
+const err_405 = ()=>{
+    new_Alert( "Name can't be Empty");
+}
+const err_400 = ()=>{
+    new_Alert( " Something went Wrong :( , Please try again");
+}

@@ -145,7 +145,6 @@ footer {
     margin: 4px;
     padding: 2px;
     border-radius: 3px;
-    
 }
 
 .avatar_block{
@@ -199,11 +198,87 @@ footer {
     border-radius: var(--border-radius);
 }
 
+.noti-box{
+    display: block !important;
+    background-color: rgba(0, 0, 0, 0.861);
+}
+
+.noti-box .title{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: start;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif ;
+    font-size: 20px;
+    height: 10%;
+    width: 100%;
+    margin: 0 0 10px 0;
+    border-bottom: 3px solid var(--text-color);
+}
+
+.noti-box .conteiner{
+    width: 100%;
+    height: 500px;
+    max-height: 85%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.noti-box .conteiner .box_data{
+    height: auto;
+    width: 90%;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    flex-direction: column;
+    border: 3px solid rgba(245, 245, 245, 0.131);
+    border-radius: 10px;
+}
+
+.noti-box .conteiner .box_data .unm {
+    padding: none;
+    margin: 5px;
+    color: var(--text-color);
+}
+
+.noti-box .conteiner .box_data .hr {
+    display: block;
+    height: 1.5px;
+    width: 80%;
+    background-color: var(--text-color);
+    margin: 5px 0   ;
+}
+
+.noti-box .conteiner .box_data .msg {
+    font-size: small;
+    font-family: var(--text-font);
+}
+
+.noti-box .conteiner .box_data .reject_btn , .noti-box .conteiner .box_data .accept_btn {
+    height: 1.8rem;
+    width: 30% !important;
+}
+
+.noti-box .conteiner .box_data .reject_btn{
+    left: -20% ;
+}
+.noti-box .conteiner .box_data .accept_btn{
+    left: 10% ;
+}
+
+.new_noti{
+    background-color: blueviolet;
+}
+
 .settings-box ,.noti-box  {
     display: flex;
     box-sizing: border-box;
     position: fixed;
-    left: 10px;
+    left: 1%;
     height: 500px;
     max-height: 80%;
     width: 500px;
@@ -220,7 +295,7 @@ footer {
 }
 .settings-box_show , .noti-box_show {
     opacity: 100%;
-    bottom: 10px;
+    bottom: 14px;
 }
 
 .settings-box ul {    
@@ -660,6 +735,18 @@ footer {
     color: red;
 }
 
+.success-button{
+    position: relative;
+    text-decoration: none;
+    filter: brightness(100%);
+    font-weight: 700;
+    width: 40% !important;
+    left: 55%;
+    --margin: 5px;
+    --color: aliceblue;
+    --background-image: linear-gradient(to bottom right , rgb(89, 43, 226) ,rgba(33, 16, 84, 0.797) , rgb(89, 43, 226) );
+    --btn-shadow: rgba(12, 56, 145, 0.489);
+}
 .danger-button {
     position: relative;
     text-decoration: none;
@@ -669,14 +756,15 @@ footer {
     left: 55%;
     --margin: 5px;
     --color: rgb(241, 3, 3);
-    --background-image:rgb(147, 147, 147);
-    --btn-shadow: rgba(226, 43, 43, 0.373);
+    --background-image: linear-gradient(to bottom right, rgb(0 0 0), rgb(128 123 138 / 80%), rgb(34 34 34));
+    --btn-shadow: rgba(206, 82, 82, 0.466);
 
 }
 
 .button {
     height: 2rem;
     width: 30%;
+    cursor: pointer;
     text-transform: capitalize;
     margin: var(--margin);    
     color: var(--color) ;
@@ -688,13 +776,8 @@ footer {
 }
 
 .button:hover {
-    height: calc(2rem + 2px);
-    width: calc(30% + 2px);
-    transform: translate(-1px,-1px);
-    /* background-blend-mode: hard-light; */
-    box-shadow: 2px 2px 30px var(--btn-shadow);
+    box-shadow: 1px 1px 10px var(--btn-shadow);
     filter: brightness(80%);
-    /* filter: contrast(4px); */
 }
 
 

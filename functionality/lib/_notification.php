@@ -12,8 +12,10 @@ if($data = json_decode( file_get_contents("php://input") , true)){
         else{
             echo add_new_noti($data['unm']);
         }
-    }else if($data['req'] == "getNewUserReq"){
-        echo getNewUserReq();
+    }else if($data['req'] == "getNewChatterReq"){
+        echo getNewChatterReq();
+    }else if($data['req'] == "rejectChatterReq"){
+        echo rejectChatterReq($data);
     }
 }
 
@@ -69,37 +71,60 @@ function is_noti_exist($fromID , $toID , $action){
     return $res;
 }
 
-function getNewUserReq(){
+function getNewChatterReq(){
     try{
         $userID = getDecryptedUserID();
         $action = "addUserReq";
         
         $query  = "SELECT `notificationID` as `notiID` , `fromID` FROM `notification` WHERE `ToID` = '$userID' AND `action` = '$action'";
         $res = $GLOBALS['status']-> query($query);
-
-        $i=0;
+        
+        $rows = $i = 0;
         while($row = $res->fetch_assoc()){
             $unmQuery = fetch_columns("users_account" , "userID" , $row['fromID'] , "unm");
                 if( $unmQuery !== 0 ){
                     if($unmQuery->num_rows == 1){
                         $row['unm'] = $unmQuery->fetch_column();
+                        
+                        $rows[$i]['notiID'] = $row['notiID'];
+                        $rows[$i]['fromID'] = $row['fromID'];
+                        $rows[$i]['unm'] = $row['unm'];
+                        $i++;
                     } else {
                         throw new Exception();
                     }
                 }else{
                     throw new Exception();
                 }
-                
-            $rows[$i]['notiID'] = $row['notiID'];
-            $rows[$i]['unm'] = $row['unm'];
-            $i++;
         }
 
         return json_encode($rows);
     }catch(Exception){
         return 0;
     }
-    
     }
+
+function rejectChatterReq($data){
+    try{
+        $oldNotiID = $data['notiID'];
+        $query = "DELETE FROM `notification` WHERE `notificationID` = '$oldNotiID'";
+        $req = $GLOBALS['status']->query($query); 
+    
+        if($req){
+            $newNotiID = gen_new_notification_id();
+            $toID = $data['toID']; $fromID = getDecryptedUserID();
+            $action = "chatterReqRejected";
+            $req = insertData('notification' , "notificationID , fromID , toID , action" , 
+                                                "$newNotiID , $fromID , $toID , $action" , "status" );
+            echo $req;
+        }else{
+            return 0;
+        }
+    }catch(Exception $e){
+        print_r($e);
+        return 0;
+    }
+    
+}
 
 ?>

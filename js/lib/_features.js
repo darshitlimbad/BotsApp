@@ -21,20 +21,59 @@
         });
     }
 
-    const getNewUserReq = ()=>{
-        // var URL = "/functionality/lib/_notification.php";
+    const getNewChatterReq = ()=>{
+        var URL = "/functionality/lib/_notification.php";
 
-        // data=JSON.stringify({
-        //     req:"getNewUserReq",
-        // })
+        data=JSON.stringify({
+            req:"getNewChatterReq",
+        })
 
-        // postReq(URL , data)
-        //     .then(res=>{
-        //         console.log(res);
-        //     })
-        //     .catch((err)=>{
-        //         console.error(err);
-        //     })
+        postReq(URL , data)
+            .then(data=>{
+                var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
+
+                if(data !== 0){
+                    document.querySelector("div[title='Noti'] .img img").classList.add("new_noti");
+                    
+                    data.forEach(row=>{
+                        box_data=document.createElement("div");box_data.classList.add("box_data");box.appendChild(box_data);
+                        box_data.innerHTML = `
+                                <h4 class="unm">@${row['unm']}</h4>
+                                <div class="hr"></div>
+            
+                                <div class="msg">${row['unm']} wants to add you in the Personal chat list,</div>
+                                <div class="msg"> Do you want to add him/her as a chatter?</div>
+            
+                                <div class="buttons">
+                                    <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}' , '${row['fromID']}' , '${row['unm']}')">Reject</button>
+                                    <button name="accept_btn" id="accept_btn" class="success-button accept_btn button">Accept</button>
+                                </div> ` ;
+                    })
+                }else{
+                    
+                }
+            })
+            .catch((err)=>{
+                console.error(err);
+            })
+    }
+
+    const _rejectChatterReq = (notiID , toID , unm)=>{
+        var url = "/functionality/lib/_notification.php"
+        data = JSON.stringify({
+            req: "rejectChatterReq",
+            notiID:notiID,
+            toID:toID,
+        })
+
+        postReq(url , data)
+            .then(res =>{
+                if(res == 0){
+                    err_400();
+                }
+            }).catch(err=>{
+                console.error(err);
+            })
     }
 
 // the aditional features
@@ -54,7 +93,8 @@ const _edit_user_data = (ele) => {
 
     
     if(value == "" && field == "user-name"){
-        window.location.assign(window.location.origin+window.location.pathname.concat('?ERROR=405'));
+        ele.value = ele.getAttribute("value");
+        err_405();
         return;
     }
     
@@ -86,7 +126,7 @@ const _togle_user_data = (ele) => {
 
     if(ele.id == "theme"){
         ele.checked = false;
-        new_Alert("I am wannabe Backend dev , so NO LIGHTTTTTT theme :)");
+        new_Alert("I am wannabe Backend dev , so don't expect a Light theme from me :)");
         return;
     }
     var field=ele.name;

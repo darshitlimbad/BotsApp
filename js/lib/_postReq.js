@@ -6,6 +6,7 @@ const postReq = (url, data , method="POST") => {
         xml.onreadystatechange = (res) => {
             if (xml.readyState === 4) {
                 if(xml.status === 200) {
+                    // console.log(res.target.response);
                     resolve(JSON.parse(res.target.response));
                 } else {
                     reject(new Error(`HTTP status ${xml.status}`));

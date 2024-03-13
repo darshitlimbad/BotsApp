@@ -135,10 +135,10 @@
     }
 
     // delete users table data
-    function deleteData($table,$userID){
+    function deleteData($table,$userID , $db='conn'){
         try{
             $query = "DELETE FROM `$table` WHERE `userID` = ?";
-            $stmt = $GLOBALS['conn']->prepare($query);
+            $stmt = $GLOBALS[$db]->prepare($query);
             $stmt->bind_param('s' , $userID);
             $sqlfire = $stmt->execute();
             $stmt->close();
