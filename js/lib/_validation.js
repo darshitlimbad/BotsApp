@@ -7,6 +7,7 @@
 
         // regex
         var has_blankspace = /[ ]/.test(inputed_unm);
+        var  has_at = /[@]/.test(inputed_unm);
         // 
 
         // pre process
@@ -14,15 +15,17 @@
             user_span.style.color = 'red';
         // 
 
-        if( has_blankspace )  {
+        if( inputed_unm == "" ) {
+            user_span.textContent = "Please Enter Username...";
+            user_span.style.display = 'block';
+        }else if( has_blankspace )  {
             user_span.textContent = "space is not allowed use '_'.";
             user_span.style.display='block';
             _submit_btn_disable();
-        }else if( inputed_unm == "" ) {
-
-            user_span.textContent = "Please Enter Username...";
-            user_span.style.display = 'block';
-
+        }else if( has_at )  {
+            user_span.textContent = "@ is not allowed..";
+            user_span.style.display='block';
+            _submit_btn_disable();
         }else  if(inputed_unm.length < 8)  {
             user_span.textContent = "Username is too short , more then 8 cherecters required";
             user_span.style.display='block';

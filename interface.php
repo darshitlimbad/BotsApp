@@ -97,7 +97,7 @@
     
     <!-- Notification-box -->
     <div class="noti-box noti-box_hide">
-        <div class="title">New Chatter Requests</div>
+        <div class="title"> Notification</div>
         <div class="conteiner">
             
         </div>

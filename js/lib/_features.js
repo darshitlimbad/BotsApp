@@ -21,23 +21,54 @@
         });
     }
 
-    const getNewChatterReq = ()=>{
+
+    const _sendAddInChatReq = async (unm)=>{
+        _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
+        
+        url = "/functionality/lib/_notification.php";
+        data = JSON.stringify({
+            req:'addNoti',
+            unm:unm,
+            action:"addUserReq",
+        });
+        
+        postReq(url , data)
+            .then(res=>{
+                console.log(res);
+                if(res == 1){
+                    new_notification('@'+unm.concat(" has succesfully invited to be chatter with you."));
+                }else if(res == 409){
+                    new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
+                }else if(res == 403){
+                }else if(res == 499){
+                    new_Alert(`oops,You are rejected by '@${unm}'`);
+                }else if(res == 403){
+                    new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
+                }else {
+                    new_Alert("Please try again later!! :(");
+                }
+            }).catch(err=>{
+                console.error(err);
+            })
+    }
+
+    const getNewNoti = ()=>{
         var URL = "/functionality/lib/_notification.php";
 
         data=JSON.stringify({
-            req:"getNewChatterReq",
+            req:"getNewNoti",
         })
 
         postReq(URL , data)
             .then(data=>{
                 var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
-
                 if(data !== 0){
                     document.querySelector("div[title='Noti'] .img img").classList.add("new_noti");
-                    
+                    var i=0;
                     data.forEach(row=>{
-                        box_data=document.createElement("div");box_data.classList.add("box_data");box.appendChild(box_data);
-                        box_data.innerHTML = `
+                        box_data=document.createElement("div");box_data.classList.add("box_data");box_data.classList.add(`${row['action']}`);box.appendChild(box_data);
+                        if(row['action'] == "addUserReq"){
+                            box_data.innerHTML = `
                                 <h4 class="unm">@${row['unm']}</h4>
                                 <div class="hr"></div>
             
@@ -45,9 +76,19 @@
                                 <div class="msg"> Do you want to add him/her as a chatter?</div>
             
                                 <div class="buttons">
-                                    <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}' , '${row['fromID']}' , '${row['unm']}')">Reject</button>
-                                    <button name="accept_btn" id="accept_btn" class="success-button accept_btn button">Accept</button>
+                                    <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}')">Reject</button>
+                                    <button name="accept_btn" id="accept_btn" class="success-button accept_btn button" onclick="_acceptChatterReq('${row['notiID']}')">Accept</button>
                                 </div> ` ;
+                        }else if(row['action'] == "chatterReqRejected"){
+                            box_data.innerHTML = `
+                                <h4 class="unm"  style="color:red">@${row['unm']}</h4>
+                                <div class="hr" style="background-color:red"></div>
+                                <div class="msg">${row['unm']} has rejected your chatter request.</div>
+                                <div class="buttons">
+                                    <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                </div>` ;
+                        }
+                        
                     })
                 }else{
                     
@@ -58,17 +99,46 @@
             })
     }
 
-    const _rejectChatterReq = (notiID , toID , unm)=>{
-        var url = "/functionality/lib/_notification.php"
-        data = JSON.stringify({
-            req: "rejectChatterReq",
-            notiID:notiID,
-            toID:toID,
-        })
+    const _rejectChatterReq = (notiID)=>{
+        var req = "rejectedChatterReq";
 
-        postReq(url , data)
+        sendNoti(req , notiID)
             .then(res =>{
-                if(res == 0){
+                if(res == 1){
+                    getNewNoti();
+                }else{
+                    err_400();
+                }
+            }).catch(err=>{
+                console.error(err);
+            })
+    }
+
+    // accept chatter request
+    const _acceptChatterReq = (notiID) => {
+        var req = "acceptChatterReq";
+
+        sendNoti(req , notiID )
+            .then(res =>{
+                if(res == 1){
+                    getNewNoti();
+                }else{
+                    err_400();
+                }
+            }).catch(err=>{
+                console.error(err);
+            })
+    }
+
+    // delete notification
+    const _deleteThisNoti = (notiID) => {
+        var req = "deleteThisNoti";
+
+        sendNoti(req , notiID)
+            .then(res =>{
+                if(res == 1){
+                    getNewNoti();
+                }else{
                     err_400();
                 }
             }).catch(err=>{
@@ -327,30 +397,6 @@ const _addDataInList = (data) => {
         });
     }
 
-}
-
-const _sendAddInChatReq = async (unm)=>{
-    _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
-    
-    url = "/functionality/lib/_notification.php";
-    data = JSON.stringify({
-        req:'addNoti',
-        unm:unm,
-        action:"addUserReq",
-    });
-    
-    postReq(url , data)
-        .then(res=>{
-            if(res == 1){
-                new_notification('@'+unm.concat(" has succesfully invited to be chatter with you."));
-            }else if(res == 403){
-                new_Alert(`oops,You have already send Chatter request to this '@${unm}' user`);
-            }else {
-                new_Alert("Please try again later!! :(");
-            }
-        }).catch(err=>{
-            console.error(err);
-        })
 }
 
 function _submit_btn_disable() {

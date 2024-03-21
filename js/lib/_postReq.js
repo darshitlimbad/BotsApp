@@ -40,3 +40,20 @@ const getUserID = () => {
             })
     })    
 }
+
+const sendNoti = (req , notiID) => {
+    return new Promise((resolve , reject) => {
+        var url = "/functionality/lib/_notification.php"
+        data = JSON.stringify({
+            req: req,
+            notiID:notiID,
+        })
+
+        postReq(url , data)
+            .then(res =>{
+                resolve(res);
+            }).catch(err=>{
+                console.error(err);
+            })
+    })
+}

@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();
-    getNewChatterReq();
+    getNewNoti();
 
     // // user hover on chat animation  
     // garbage for now
