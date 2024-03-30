@@ -32,6 +32,7 @@
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/lib/_chat.js" ></script>
+    <script type="text/javascript" src="js/lib/_notify.js" ></script>
     <script type="text/javascript" src="js/_error_handling.js"></script>
     <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/lib/_validation.js"></script>
@@ -98,8 +99,7 @@
     <!-- Notification-box -->
     <div class="noti-box noti-box_hide">
         <div class="title"> Notification</div>
-        <div class="conteiner">
-            
+        <div class="conteiner">  
         </div>
     </div>
 

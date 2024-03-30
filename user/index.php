@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="../css/User/index.css" type="text/css">
     <link rel="stylesheet" href="../css/interface.css" type="text/css">
     <script type="text/javascript" src="../js/User/index.js"></script>
-    <script type="text/javascript" src="../js/interface.js"></script>
+    <script type="text/javascript" src="../js/lib/_notify.js"></script>
     <script type="text/javascript" src="../js/_error_handling.js"></script>
     <script type="text/javascript" src="../js/lib/_validation.js"></script>
 </head>
@@ -29,24 +29,23 @@
     </header>
 
     <div class="square-container"> 
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span>
-        <span class="square"></span><span class="square"></span><span class="square"></span>
-    </div>
+        <span class="square"></span>
+        <script>
+            var sq_con = document.querySelector(".square-container");
+            var sq = document.querySelector(".square");
+            var sq_row = Math.ceil(screen.height / sq.clientHeight);
+            var sq_column = Math.ceil(screen.width / sq.clientWidth);
 
+            for(var i=1 ; i<=sq_row ; i++){
+                for(var j=1 ; j<=sq_column ; j++){
+                    sq_con.innerHTML+=`
+                        <span class="square"></span>
+                    `;
+                }
+            }
+        </script>
+    </div>
+<div class="center">
     <div class="box">
         <div class="heading">
             <h1 class="fadeout">Log-in</h1>
@@ -148,6 +147,8 @@
         </footer>
         
     </div>
+</div>
+
 
 </body>
 </html>

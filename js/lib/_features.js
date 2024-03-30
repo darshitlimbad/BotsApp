@@ -21,7 +21,6 @@
         });
     }
 
-
     const _sendAddInChatReq = async (unm)=>{
         _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
         
@@ -34,9 +33,9 @@
         
         postReq(url , data)
             .then(res=>{
-                console.log(res);
                 if(res == 1){
                     new_notification('@'+unm.concat(" has succesfully invited to be chatter with you."));
+                    getNewNoti();
                 }else if(res == 409){
                     new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
                 }else if(res == 403){
@@ -87,6 +86,14 @@
                                 <div class="buttons">
                                     <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                 </div>` ;
+                        }else if(row['action'] == "acceptedChatterReq"){
+                            box_data.innerHTML = `
+                                <h4 class="unm">@${row['unm']}</h4>
+                                <div class="hr"></div>
+                                <div class="msg">${row['unm']} has Accepted your chatter request.</div>
+                                <div class="buttons">
+                                    <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                </div>` ;
                         }
                         
                     })
@@ -122,6 +129,8 @@
             .then(res =>{
                 if(res == 1){
                     getNewNoti();
+                    chatList();
+                    new_notification("Chatter added succesfully!!!")
                 }else{
                     err_400();
                 }

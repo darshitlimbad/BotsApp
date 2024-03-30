@@ -10,6 +10,7 @@
     }
 
     function custom_footer() {
+        // if any changes made in this also change in _chat.php for inbox footer.
         ?>
         <div>
             All right reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.

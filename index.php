@@ -26,19 +26,28 @@
             <div class="search">
                 <input type="search" name="seach" placeholder="search" autocomplete="off">
             </div>
-
+            
             <table class="list"> 
                 <tbody class="scroll">
-                    <script>
-                        getChatList("<?= $userID?>");
-                    </script>
-
-                    <td>
-                        <footer>
-                            <?= custom_footer();?>
-                        </footer>
-                    </td>
-                </tbody>
+                <script>
+                    list = document.querySelector('.list .scroll');
+                    for(var i=0 ; i<8 ; i++){
+                        tr = document.createElement('tr');
+                        list.appendChild(tr);
+                        tr.innerHTML = `
+                            <td class="inbox-user">
+                                <div class="img">
+                                    <span class="skeleton"></span>
+                                </div>
+                                <div class="details">
+                                    <h5 class="skeleton skeleton-text inbox-name">   </h5> 
+                                    <div class="last-chat skeleton skeleton-text">   </div>
+                                </div>
+                            </td>
+                        `;
+                    }
+                </script>
+            </tbody>
             </table>
         </div>
 

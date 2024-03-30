@@ -12,8 +12,6 @@ document.addEventListener('DOMContentLoaded' , function () {
     // global var
     settings_box =  document.querySelector(".settings-box");
     noti_box = document.querySelector(".noti-box");
-    notification = document.querySelector('#notification');
-    Alert = document.querySelector('#alert');
     // 
 
 
@@ -23,13 +21,6 @@ document.addEventListener('DOMContentLoaded' , function () {
         document.querySelector('#cname').innerHTML = cname;
     }
 
-    // skeleton animation stop 
-    const ani_ele = document.querySelectorAll('.list img , .list h5 , .list .last-chat');
-            // animation elements
-    ani_ele.forEach(function (element) {
-        element.classList.remove('skeleton');
-        element.classList.remove('skeleton-text');
-    });
 
     //settings-box setting option toggle
     const li = document.querySelectorAll(".settings-box ul li");
@@ -60,6 +51,9 @@ document.addEventListener('DOMContentLoaded' , function () {
     //functions to be called
     set_profile_dp();
     getNewNoti();
+    chatList();
+    
+
 
     // // user hover on chat animation  
     // garbage for now
@@ -74,6 +68,23 @@ document.addEventListener('DOMContentLoaded' , function () {
     //             ele.style.setProperty("--inbox-user-y" , `${relativeY}px`);         
     //     }); }); 
 });
+
+// skeleton animation stop 
+const _st_chLi_skltn = () => {
+    const ani_ele = document.querySelectorAll(' .list h5 , .list .last-chat');
+    const ani_img = document.querySelectorAll('.list img');
+            // animation elements
+    ani_ele.forEach(function (element) {
+        element.classList.remove('skeleton');
+        element.classList.remove('skeleton-text');
+    });
+    ani_img.forEach((element) => {
+        element.addEventListener('load' ,()=>{
+            element.classList.remove('skeleton');
+        })
+    });
+};
+    
 
 // toggle settings-box
 function toggle_settings_box()   {
@@ -200,76 +211,11 @@ const settings_options_to_default = () => {
         _hide_all_pop_up();
 }
 
-//notification
-function new_notification(str) {
-    setTimeout(() => {
-        _add_notification_show(str);
-        document.addEventListener('click' , _onclick_notification_hide);
-    }, 100);
-}
-
-function _onclick_notification_hide(event)   {
-    if((!notification.contains(event.target)) && (notification != event.target) ) {
-        document.removeEventListener('click' , _onclick_notification_hide);
-        _remove_notification_show();
-    }
-}
-
-// show is class which shows a notifiacation
-function _add_notification_show(str){
-    notification.textContent = str;
-    notification.classList.add('show');
-}
-
-function _remove_notification_show(){
-    notification.classList.remove('show');
-    setTimeout(() => {
-        notification.textContent = "";
-    }, 70);
-}
-
-// 
-
-//Alert
-function new_Alert(str , time = null) {
-    setTimeout(() => {
-
-        _add_Alert_show(str);
-        document.addEventListener('click' , _onclick_Alert_hide);
-        
-    } , 100);
-
-    if(time != null) {
-        setTimeout(() => {
-            _remove_Alert_show();
-        } , time * 1000)
-    }
-}
-
-function _onclick_Alert_hide(event)   {
-    if((!Alert.contains(event.target)) && (Alert != event.target) ) {
-        _remove_Alert_show();
-    }
-}
-
-function _add_Alert_show(str){
-    Alert.textContent = str;
-    Alert.classList.add('show');
-}
-
-function _remove_Alert_show(){
-    document.removeEventListener('click' , _onclick_Alert_hide);
-    Alert.classList.remove('show');
-    setTimeout(() => {
-        Alert.textContent = "";
-    }, 70); 
-}
-
 const set_profile_dp = (() => {
     dp = document.querySelectorAll(".options .avatar , .profile-dp .avatar");    
     getUserID()
-        .then((userID)=>{
-            get_dp(userID)
+        .then((res)=>{
+            get_dp(res)
                 .then( res  => {
                     dp.forEach( (ele) => {
                         ele.src = res;

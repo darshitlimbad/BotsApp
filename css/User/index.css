@@ -76,7 +76,7 @@ body.user{
     height: var(--user-box-height);
     width: var(--user-box-width);
     top: 100px;
-    left: calc(50% - (var(--user-box-width) / 2));
+    /* left: calc(50% - (var(--user-box-width) / 2)); */
     display: flex;
     position: absolute;
     align-items: center;

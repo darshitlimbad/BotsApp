@@ -57,3 +57,25 @@ const sendNoti = (req , notiID) => {
             })
     })
 }
+
+const _getChatList = async () => {
+    var url = "/functionality/lib/_chat.php"
+    data = JSON.stringify({
+        req: "getChatList",
+    })
+
+    try{
+        const chatList = await postReq(url , data);
+        return chatList;
+    }catch(err){
+        console.log(err);
+        return 0;
+    }
+    // postReq(url , data)
+    //     .then(res =>{
+    //         return res;
+    //     }).catch(err=>{
+    //         console.error(err);
+    //         return 0;
+    //     })
+}

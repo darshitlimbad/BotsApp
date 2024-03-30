@@ -104,4 +104,16 @@
     
         return false;
     }
+
+function _fetch_unm($userID){
+    $res = fetch_columns("users_account", "userID", $userID, "unm");
+
+    if($res->num_rows == 1){
+        $unm = $res->fetch_column();
+        return $unm;
+    }else{
+        return "USER_NOT_FOUND";
+    }
+
+}
 ?>

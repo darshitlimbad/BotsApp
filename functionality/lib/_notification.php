@@ -2,19 +2,21 @@
 
 if($data = json_decode( file_get_contents("php://input") , true)){
     session_start();
-    include_once('../db/_conn.php');
-    include_once('../lib/_validation.php');
-    
-    if($data['req'] == "addNoti"){
-            echo add_new_noti($data);
-    }else if($data['req'] == "getNewNoti"){
-        echo getNewNoti();
-    }else if($data['req'] == "acceptChatterReq"){
-        echo acceptChatterReq($data);
-    }else if($data['req'] == "rejectedChatterReq"){
-        echo rejectedChatterReq($data);
-    }else if($data['req'] == "deleteThisNoti"){
-        echo deleteThisNoti($data['notiID']);
+    if(isset($_SESSION['userID'])){
+        include_once('../db/_conn.php');
+        include_once('../lib/_validation.php');
+        
+        if($data['req'] == "addNoti"){
+                echo add_new_noti($data);
+        }else if($data['req'] == "getNewNoti"){
+            echo getNewNoti();
+        }else if($data['req'] == "acceptChatterReq"){
+            echo acceptChatterReq($data);
+        }else if($data['req'] == "rejectedChatterReq"){
+            echo rejectedChatterReq($data);
+        }else if($data['req'] == "deleteThisNoti"){
+            echo deleteThisNoti($data['notiID']);
+        }
     }
 }
 
