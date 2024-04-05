@@ -58,11 +58,12 @@ const sendNoti = (req , notiID) => {
     })
 }
 
-const _getChatList = async () => {
+const _getChatList = async (chatType) => {
     var url = "/functionality/lib/_chat.php"
     data = JSON.stringify({
         req: "getChatList",
-    })
+        chatType: chatType,
+    });
 
     try{
         const chatList = await postReq(url , data);
@@ -71,11 +72,4 @@ const _getChatList = async () => {
         console.log(err);
         return 0;
     }
-    // postReq(url , data)
-    //     .then(res =>{
-    //         return res;
-    //     }).catch(err=>{
-    //         console.error(err);
-    //         return 0;
-    //     })
 }

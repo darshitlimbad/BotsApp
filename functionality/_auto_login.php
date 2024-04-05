@@ -43,7 +43,7 @@ if(!isset($_SESSION['userID'])) {
                     getRequest.onsuccess = ((event) => {
                         var data = JSON.stringify(event.target.result);
 
-                        var URL_of_setSession = window.location.origin+"/functionality/_set_session_auto.php?keyPass=khuljasimsim";
+                        var URL_of_setSession = `${window.location.origin}/functionality/_set_session_auto.php?keyPass=khuljasimsim`;
 
                         const xml = new XMLHttpRequest();
 

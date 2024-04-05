@@ -32,7 +32,7 @@ if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
     }
     catch(Exception $error) {
         echo '['.$error->getCode().']' .":". $error->getMessage();
-        header('location: /user');
+        header('location: /user?ERROR='.$error->getCode());
     }
 }
 

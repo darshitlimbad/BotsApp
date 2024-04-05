@@ -7,7 +7,7 @@
         header('location: /user');
         exit();
     }else{
-        is_session_valid();
+        session_check();
 
         include_once('functionality/lib/_wrappers.php');
         include_once('functionality/lib/_features.php');
@@ -15,6 +15,9 @@
         $userID = getDecryptedUserID();
         $unm = "@".fetch_data_from_users($userID , 'unm' );
         $nm  = get_user_full_name($userID); 
+        ?>
+        <script>unm = "<?= $unm ?>";</script>
+        <?php
     }
 ?>
 
@@ -28,7 +31,6 @@
     
     <!-- Style -->  
     <link rel="stylesheet" href="css/interface.css" type="text/css">
-    <link rel="stylesheet" href="css/User/index.css" type="text/css">
     <!-- Script -->
     <script type="text/javascript" src="js/interface.js"></script>
     <script type="text/javascript" src="js/lib/_chat.js" ></script>
@@ -37,27 +39,26 @@
     <script type="text/javascript" src="js/lib/_postReq.js"></script>
     <script type="text/javascript" src="js/lib/_validation.js"></script>
 </head>
-<body>
+<body class="main">
     <header>
             <?php custom_header();?>
-        <div class="Status">
+        <div class="status">
             <div class="status-icon"></div>
-            <h4 style="text-transform: capitalize;">online</h4>
         </div>
     </header>
     <div class="side-bar">
         <div class="top">
             <!-- Personal -->
-                    <!-- Yah yah I know i should have nammed icon rather then img  -->
-            <div class="options" title="Personal" onclick="tohomepage()" >
-                <div class="img">
+                    <!-- Yup, I know i should have name it .icon rather then .img  -->
+            <div class="options" title="Personal" onclick="chat(this.title)" >
+                <div class="img ">
                     <img src="img/icons/options/chat-30.png" alt="Chat" >
                 </div>
                 
             </div>
             
             <!-- group -->
-            <div class="options" title="Groups" onclick="togroupchat()"> 
+            <div class="options" title="Group" onclick="chat(this.title)"> 
                 <div class="img">
                     <img src="img/icons/options/group_chat-48.png" alt="Group">
                 </div>
@@ -166,6 +167,7 @@
                 <button class="danger-button button" onclick="_confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');">Delete Account</button>
             </div>
 
+            <!-- Chat-body -->
             <div class="body" name="chat-body" style="display: none;">
                 <div class="headding">Chat</div>
 
@@ -184,23 +186,35 @@
                 <br><br>
 
                 <a href="wallpaper.php?type=set_default" class="link">Set Default BotsApp Wallpaper</a>
+                
+                <br><br>
+
+                <a href="wallpaper.php?type=remove" class="link">Remove Wallpaper</a>
 
             </div>
 
+            <!-- Help-body -->
             <div class="body" name="help-body" style="display: none;">
+
+                <div class="headding">New Chatter ?</div>
+                <p>Are you new user? Don't know what do ?</p>
+                <p>Don't worry just visit our information page  </p>
+                <a href="help/info.php" class="link">More Info</a>
+            
+                <br><br>
+
                 <div class="headding">Feedback</div>
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
                 <p>share your thoughts...</p>  
-                <a href="help/ux.php?form=feedback" target="_blank" class="link">Feedback Here</a>
+                <a href="help/ux.php?form=feedback" class="link">Feedback Here</a>
             
                 <br><br>
 
                 <div class="headding">Found any bugs?</div>
                 <p>If you recently noticed any bug or mistacks by me please share it here,</p>
                 <p>It will be very helpfull for me</p>
-                <p>Thanks for helping :&#41</p>
-                <a href="help/ux.php?form=bugs" target="_blank" class="link">Bugs Report</a>
+                <a href="help/ux.php?form=bugs" class="link">Bugs Report</a>
             </div>
 
             <!-- Profile Body -->

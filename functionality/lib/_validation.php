@@ -12,12 +12,14 @@ if($data = json_decode( file_get_contents("php://input") , true)){
 }
 
 function getDecryptedUserID(){
-
-    $encryptedUserID = base64_decode($_SESSION['userID']);
-    $nonce = base64_decode($_SESSION['nonce']);
-    $key = base64_decode($_SESSION['key']);
-
     try{
+        if(!isset($_SESSION['userID']))
+            throw new Exception();
+
+        $encryptedUserID = base64_decode($_SESSION['userID']);
+        $nonce = base64_decode($_SESSION['nonce']);
+        $key = base64_decode($_SESSION['key']);
+
         $res = sodium_crypto_secretbox_open($encryptedUserID , $nonce , $key) ?: 0;
     }catch( Exception $err){
         session_destroy();
@@ -30,9 +32,8 @@ function getDecryptedUserID(){
 // this function matches the Encrypted passwords with password_hash bcrypt
 function metchEncryptedPasswords($Pass , $userID){
     $result = fetch_columns(  "users" , 'userID' , $userID , 'pass');
-    //echo $result->fetch_assoc()['pass'];
     if($result->num_rows == 1) {
-        $pwd = $result->fetch_assoc()['pass'];
+        $pwd = $result->fetch_column();
         
         if($pwd === $Pass){
             
@@ -57,9 +58,10 @@ function is_data_present($table , $point , $point_val , $column='userID'){
     }
 }
 
-function is_session_valid(){
+function session_check(){
     $userID = getDecryptedUserID();
     if(is_data_present('users' , 'userID' , $userID) == 0)  {
+        session_abort();
         session_destroy();
         header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
     }else{

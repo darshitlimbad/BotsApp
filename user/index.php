@@ -7,12 +7,12 @@
     }else{
         include_once('../functionality/lib/_wrappers.php');
     }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>User</title>
 
     <link rel="stylesheet" href="../css/User/index.css" type="text/css">
@@ -24,7 +24,7 @@
 </head>
 <body onload="document.forms['form']['user'].focus()" class="User">
     <!-- create a div and size it acording to the display (desktop,mobile) -->
-    <header style="background-color: rgb(5, 33, 60) ;">
+    <header style="background-color: rgb(2, 2, 55) ;">
         <?php custom_header();?>
     </header>
 
@@ -36,13 +36,9 @@
             var sq_row = Math.ceil(screen.height / sq.clientHeight);
             var sq_column = Math.ceil(screen.width / sq.clientWidth);
 
-            for(var i=1 ; i<=sq_row ; i++){
-                for(var j=1 ; j<=sq_column ; j++){
-                    sq_con.innerHTML+=`
-                        <span class="square"></span>
-                    `;
-                }
-            }
+            for(var i=1 ; i<=sq_row ; i++)
+                for(var j=1 ; j<=sq_column ; j++)
+                    sq_con.innerHTML+=`<span class="square"></span>`;
         </script>
     </div>
 <div class="center">

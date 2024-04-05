@@ -20,6 +20,16 @@ body.user{
         background-position: 100% 90% ;
     }
 }
+header{
+    height: 4rem !important;
+}
+header img{
+    height: 3rem !important;
+}
+header h1{
+    height: auto !important;
+    font-size: 2rem !important;
+}
 
 .hide {
     display: none !important;
@@ -75,14 +85,13 @@ body.user{
 .box {
     height: var(--user-box-height);
     width: var(--user-box-width);
-    top: 100px;
-    /* left: calc(50% - (var(--user-box-width) / 2)); */
+    top: 20%;
     display: flex;
     position: absolute;
     align-items: center;
     flex-direction: column;
     text-align: center;
-    background-color: rgb(0 26 44 / 88%);
+    background-color: rgba(2, 2, 55, 0.703);
     border: 2px solid rgb(0 0 0 / 41%);
     color: var(--text-color);
     border-radius: 10px 30px;
@@ -99,7 +108,7 @@ body.user{
 }
 
 .box .heading h1{
-    font-size: 1.5rem; 
+    font-size: 3rem; 
     text-transform: capitalize;   
 }
 
@@ -107,105 +116,6 @@ body.user{
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-
-
-.input_field    {
-    height: auto;
-    width: auto;
-    position: relative;
-    text-align: start;
-    color: var(--text-color);
-    color: aliceblue;
-    margin: 5px;
-    padding: 5px;
-}
-
-.input_field .input input{
-    height: 1rem;
-    width: 20rem;
-    position: relative;
-    background-color: transparent;
-    outline: none;
-    border: none;
-    padding: 10px;
-    margin: 5px;
-    font-family: var(--default-font);
-    font-size: 0.9rem;
-    border-bottom: 2px solid aliceblue;
-    border-radius: none;
-    top:15px;
-    color: aliceblue;
-    transition: box-shadow 2s cubic-bezier(0.56, 0.11, 0.85, 0.46);
-}
-
-.input_field .input input:focus , .input_field .input input:not(:placeholder-shown){
-    border-color: var(--text-color) !important;
-    transition: border-color .5s;
-}
-
-.input_field label  {
-    width: 50%;
-    display: block;
-    position: relative;
-    z-index: 1;
-    top: -15px;
-    left: 10px;
-    font-size: 0.8rem;
-    transition: all .5s;
-}
-
-.input_field .input input:focus + label ,.input_field .input input:not(:placeholder-shown) + label    {
-    transform: translate(-10px , -20px);
-    color: var(--text-color);
-}
-
-.name_field{
-    display: flex;
-    position: relative;
-}
-
-.name_field input {
-    width: 9.5rem !important;
-    text-transform: capitalize;
-}
-
-.name_field label  {
-    width: 60%;
-    font-size: 0.8rem;
-}
-
-.input_field img[name="eye"] {
-    display: block;
-    position: relative;
-    top: 14px;
-    left:307px;
-    z-index: 1;
-}
-
-.input_field span   {
-    display: none;
-    text-align: end;
-    font-weight: 100;
-    color: rgb(240, 31, 31);
-    font-size: .8rem;
-}
-
-.input_field #pass_rules {
-    height: auto;
-    display: none;
-    text-align: start;
-    text-transform: capitalize;
-    color: #bf6ae2;
-    font-size: .8rem;
-}
-
-.input_field #pass_rules p{
-    margin: 0 ;
-}
-
-.input_field #pass_rules span   {
-    text-align: start;
 }
 
 .rememberMe_div{
@@ -266,4 +176,25 @@ body.user{
 .input_field .button-div input[disabled="true"]   {
     background-image: none;
     background-color: rgba(58, 58, 58, 0.699) ;
+}
+
+@media screen and ( max-width:768px ) {
+    header{
+        height: 6.4rem !important;
+    }
+    header p{
+        display: block !important;
+        transform: translateX(20px);
+    }
+
+    .box{
+        height: 35rem;
+        width: 85%;
+        padding: 5px;
+    }
+
+    .square{
+        height: 3rem;
+        width: 3rem;
+    }
 }

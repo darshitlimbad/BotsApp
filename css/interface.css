@@ -1,22 +1,40 @@
 :root   {
     --options-selected-border : 1.5px solid rgba(155, 155, 155, 0.37);
     --options-selected-border-left:5px solid rgba(137, 43, 226, 0.854);
-    --list-box-bg : rgb(33, 32, 32);
+    --main-bg-color : rgb(33, 32, 32);
     --list-bg : rgb(53, 51, 51);
     --border-radius :  0px 10px;
     --text-color : rgb(89, 43, 226);
+    --heading-color:#8c41b8;
+    --thin-wh-border : rgba(240, 248, 255, 0.321);
     --default-font : 'Courier New', Courier, monospace;
-    --text-font : 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    --text-font : 'Arial Narrow', Arial, sans-serif;
     font-family: var(--default-font);
 }
-span {
+
+
+::-webkit-scrollbar {
+    width: 2px;
+    height: 3px;
+}
+
+::-webkit-scrollbar-track   {
+    background-color:rgb(1, 12, 23);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgb(140 65 179);
+}
+
+span{
     font-family: var(--text-font);
 }
 
-body{
+body.main{
     background-color:rgb(1, 12, 23);
     color: aliceblue;
     user-select: none;
+    width: 100%;
 }
 
 .skeleton   {
@@ -48,27 +66,17 @@ body{
     right: 0px !important;
 }
 
-::-webkit-scrollbar {
-    width: 2px;
-    height: 3px;
-}
-
-::-webkit-scrollbar-track   {
-    background-color:rgb(1, 12, 23);
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: rgb(29, 41, 78);
-}
-
 .absolute   {
     position: absolute;
 }
 
 header  {
+    position: relative;
     display: flex;
-    justify-content: center;
     height: 30px;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
 }
 
 .title{
@@ -81,21 +89,20 @@ header  {
 
 header .title h1 , header .title img  {
     height: 30px;
-    width: 30px;
     font-size: 25px;
-}
-
-header .title p {
-    transform: translateX(100px);
 }
 
 header .Status{
     align-self: center;
-    align-items: center;
     position: absolute;
-    right: 5%;
+    right: 10%;
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
+    height: 20px;
+    width: 20px;
+    --color: green;
+    border: 1px solid var(--color);
 }
 
 header .Status .status-icon {
@@ -103,7 +110,7 @@ header .Status .status-icon {
     width: 10px;
     border-radius: 50%;
     margin: 0 5px;
-    background-color: green;
+    background-color: var(--color);
 }
 
 footer {
@@ -116,10 +123,11 @@ footer {
 
 .side-bar   {
     display: block;
-    position: fixed;
+    position: absolute;
     top: 7%;
+    left: 6%;
     width: auto;
-    height: 100%;
+    height: auto;
     padding: 5px;
     margin: 4px;
 }
@@ -131,7 +139,7 @@ footer {
 .side-bar .bottom   {
     display: block;
     position: fixed;
-    bottom: 0%;
+    bottom: 2%;
 }
 
 
@@ -192,10 +200,10 @@ footer {
     transform: translateX(-7%);
 }
 
-.side-bar .top .options:nth-child(0) > .img {
+.side-bar .selected > .img {
     border: var(--options-selected-border);
     border-left: var(--options-selected-border-left);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius) !important;
 }
 
 .noti-box{
@@ -363,9 +371,8 @@ footer {
     width: 65%;
     border-radius: var(--border-radius);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4) , -5px -5px 10px rgba(0, 0, 0, 0.4);
-    filter: blur(0px);
-    padding: 7px;
-    margin: 7px;
+    /* filter: blur(0px); */
+    padding: 7px;    margin: 7px;
     background-color: rgba(25, 45, 65, 0.836);
     color: rgb(255, 255, 255);
     font-family: var(--text-font);
@@ -378,12 +385,12 @@ footer {
 }
 
 .settings-box .settings-container p{
-    font-size: 13px;
+    font-size: 1rem;
 }
 
 .settings-box .settings-container .body{
     display: block;
-    position: absolute;
+    position: relative;
     margin: 17px;
     padding-bottom: 10px;
     height: auto;
@@ -543,17 +550,17 @@ footer {
 .settings-box .settings-container .body .flex .edit-icon{
     height:20px;
     width:20px;
-    position: fixed;
+    position: relative;
     padding: 3px;
     margin: 0px 10px;
     right: 0;
 }
+
 .settings-box .settings-container .body .flex .edit-icon:hover {
     background-color: rgba(161, 161, 161, 0.58);
     border-radius: 3px;
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-
 
 .margin-dead {
     margin:0px;
@@ -564,168 +571,10 @@ footer {
     justify-content: center;
 }
 
-.chat-box {
-    display: block;
-    position: absolute;
-    height: 89%;
-    min-height: 450px;
-    width: 90%;
-    min-width: 500px;
-    max-width: 3000px;
-    margin: 5px;
-    transform: translate( 30px , 10px);
-    border: 4px solid var(--list-box-bg);
-    border-radius: 10px;
-    background-color: var(--list-box-bg);
-}
-
-
-.chat-box .inbox {
-    box-sizing: border-box;
-    display: block;
-    position: fixed;
-    height: calc(96% + 5px);
-    width: auto;
-    padding: 6px;
-    margin: inherit;
-    border-radius:var(--border-radius);
-    background-color: var(--list-box-bg);
-    outline: 2px solid rgb(1, 12, 23);
-}
-
-.chat-box .inbox .page-name{
-    display: block;
-    position: relative;
-    background-color: var(--list-box-bg);
-}
-
-.chat-box .inbox .page-name #cname{
-    background-color: var(--list-box-bg);
-    font-size: 20px;
-    padding: 0%;
-    margin: 15px;
-}
-
-.chat-box .inbox .hr{
-    height: 1.5px;
-    width: calc(100% + 10px);
-    margin: 6px 0px;
-    transform: translateX(-6px);
-    background-color: rgba(240, 248, 255, 0.423);
-}
-
-.chat-box .inbox .search   {
-    height: auto;
-    width: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color:var(--list-box-bg);
-    
-}
-
-.chat-box .inbox .search input{
-    height: 30px;
-    width: 80%;
-    font-size: 15px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    padding: 10px;
-    margin: 10px;
-    border:none;
-    outline: none;
-    border-bottom: 2px inset white;
-    background-color:rgb(1, 12, 23);
-    color: rgba(255, 255, 255, 0.756);
-}
-
-.chat-box .inbox .search input:focus   {
-    border-color: blueviolet;
-    transition: 1s border cubic-bezier(0.165, 0.84, 0.44, 1);
-}
-
-.scroll {
-    display: block ;
-    max-width: 100%;
-    min-height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.list  {
-    height: calc(100% - 110px);
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-    justify-items: center;
-    align-content: center;
-    background-color: var(--list-box-bg);
-}
-
-.list .inbox-user  {
+.align-center{
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    width: 90%;
-    padding: 5px;
-    margin: 0 10px;
-    border-bottom: 1px outset rgba(240, 248, 255, 0.321);
-    align-content: center;
-    transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-
-.select , .list .inbox-user:hover {
-    background-color: rgba(145, 145, 145, 0.218);
-}
-
-.list .img  {
-    background-color: var(--list-box-bg);
-    display: block;
-    height: 30px;
-    width: 30px;
-    padding: 0px;
-    margin: 7px;
-    background-color: var(--list-box-bg);
-    border-radius: 100%;
-
-}
-/* span for skeleton loadding animation */
-.list .img img , .list .img span {
-    display: block;
-    height: inherit;
-    width: inherit;
-    background-color: var(--list-box-bg);
-    border-radius: 100%;
-}
-
-.list .details {
-    height: 40px;
-    max-width: 80%;
-    display: block;
-    padding: 3px;
-    background-color: var(--list--bg);
-    margin: 2px;
-}
-
-.list .inbox-name,.list .last-chat{
-    margin: 2px;
-    user-select: text;
-}
-
-.list .inbox-name{
-    font-size: 15px;
-}
-
-.list .last-chat{
-    max-height: 35px;
-    max-width: 220px;
-    min-width: 150px;
-    display: inline-block;
-    padding: 4px 0 0 0;
-    word-break: break-word;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 11px;
 }
 
 .link {
@@ -787,4 +636,118 @@ footer {
     filter: brightness(80%);
 }
 
+/* input field css */
+.input_field    {
+    height: auto;
+    width: auto;
+    position: relative;
+    text-align: start;
+    color: var(--text-color);
+    color: aliceblue;
+    margin: 5px;
+    padding: 5px;
+}
 
+.input_field .input input{
+    height: 1rem;
+    width: 20rem;
+    position: relative;
+    background-color: transparent;
+    outline: none;
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    font-family: var(--default-font);
+    font-size: 0.9rem;
+    border-bottom: 2px solid aliceblue;
+    border-radius: none;
+    top:15px;
+    color: aliceblue;
+    transition: box-shadow 2s cubic-bezier(0.56, 0.11, 0.85, 0.46);
+}
+
+.input_field .input input:focus , .input_field .input input:not(:placeholder-shown){
+    border-color: var(--text-color) !important;
+    transition: border-color .5s;
+}
+
+.input_field label  {
+    width: 50%;
+    display: block;
+    position: relative;
+    z-index: 1;
+    top: -15px;
+    left: 10px;
+    font-size: 0.8rem;
+    transition: all .5s;
+}
+
+.input_field .input input:focus + label ,.input_field .input input:not(:placeholder-shown) + label    {
+    transform: translate(-10px , -20px);
+    color: var(--text-color);
+}
+
+.name_field{
+    display: flex;
+    position: relative;
+}
+
+.name_field input {
+    width: 9.5rem !important;
+    text-transform: capitalize;
+}
+
+.name_field label  {
+    width: 60%;
+    font-size: 0.8rem;
+}
+
+.input_field img[name="eye"] {
+    display: block;
+    position: relative;
+    top: 14px;
+    left:307px;
+    z-index: 1;
+}
+
+.input_field span   {
+    display: none;
+    text-align: end;
+    font-weight: 100;
+    color: rgb(240, 31, 31);
+    font-size: .8rem;
+}
+
+.input_field #pass_rules {
+    height: auto;
+    display: none;
+    text-align: start;
+    text-transform: capitalize;
+    color: #bf6ae2;
+    font-size: .8rem;
+}
+
+.input_field #pass_rules p{
+    margin: 0 ;
+}
+
+.input_field #pass_rules span{
+    text-align: start;
+}
+/*  */
+
+@media screen and ( max-width:768px ) {
+    header{
+        display: grid !important;
+    }
+    header .title{
+        height: auto !important;
+    }
+    header .title h1{
+        margin : 0px;
+    }
+    header p {
+        display: none;
+    }
+
+}

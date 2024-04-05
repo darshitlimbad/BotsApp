@@ -62,7 +62,7 @@
 
         <!-- Buttons -->
         <div class="buttons">
-            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))" >Cancel</button>
+            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))" >Close</button>
         </div>
     </div>
 

@@ -129,7 +129,7 @@
             .then(res =>{
                 if(res == 1){
                     getNewNoti();
-                    chatList();
+                    chat(currCht);
                     new_notification("Chatter added succesfully!!!")
                 }else{
                     err_400();

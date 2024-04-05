@@ -8,16 +8,19 @@ if($data = json_decode( file_get_contents("php://input") , true)){
         include_once('../lib/_fetch_data.php');
         
         if($data['req'] == "getChatList"){
-                echo getChatList();
+                echo getChatList($data['chatType']);
         }
     }
 }
 
-function getChatList(){
+function getChatList($chatType){
     try{
         $userID = getDecryptedUserID();
-        $dataFromInbox = fetch_columns('inbox', 'fromID', $userID, "toID" , "last_msg");
-
+        if($chatType === "personal")
+            $dataFromInbox = fetch_columns('inbox', 'fromID', $userID, "toID" , "last_msg");
+        else if($chatType === "group")
+            return 0;
+        
         $i=0;
         if($dataFromInbox -> num_rows != 0 ){
             while( $row = $dataFromInbox->fetch_assoc() ){

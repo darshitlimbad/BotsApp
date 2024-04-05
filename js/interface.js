@@ -1,26 +1,18 @@
-// Navigation start
-function tohomepage()   {
-    window.location.assign('/');
-}
-
-function togroupchat()  {
-    window.location.assign('/group_chat.php');
-}
-
 document.addEventListener('DOMContentLoaded' , function () {
 
-    // global var
-    settings_box =  document.querySelector(".settings-box");
-    noti_box = document.querySelector(".noti-box");
+    // set cookies 
+        // chat
+        if( !getCookie("chat")){
+            setCookie("chat", "Personal");
+        }
     // 
 
-
-    // title of the list page
-    if(document.querySelector('#cname')){
-        var cname = document.title.substring(0 , document.title.search('--')-1 );
-        document.querySelector('#cname').innerHTML = cname;
-    }
-
+    // global var
+    currCht= getCookie("chat");
+    settings_box =  document.querySelector(".settings-box");
+    noti_box = document.querySelector(".noti-box");
+    list = document.querySelector('tbody.listBody');
+    // 
 
     //settings-box setting option toggle
     const li = document.querySelectorAll(".settings-box ul li");
@@ -50,41 +42,28 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();
-    getNewNoti();
-    chatList();
+    getNewNoti();    
+    _cht_sk_loading();
+    chat(currCht);
+
+});    
+
+const chat = (chatType) => {
     
-
-
-    // // user hover on chat animation  
-    // garbage for now
-    // document.querySelectorAll('.list .inbox-user').forEach( (ele) => {
-    //     ele.addEventListener('mousemove' , (event) => {
-    //             const rect = ele.getBoundingClientRect();
-    //             const relativeX = event.clientX - rect.x - 12;
-    //             const relativeY = event.clientY - rect.y - 30;
-                
-    //             ele.classList.add("inbox-user_hover");
-    //             ele.style.setProperty("--inbox-user-x" , `${relativeX}px`);
-    //             ele.style.setProperty("--inbox-user-y" , `${relativeY}px`);         
-    //     }); }); 
-});
-
-// skeleton animation stop 
-const _st_chLi_skltn = () => {
-    const ani_ele = document.querySelectorAll(' .list h5 , .list .last-chat');
-    const ani_img = document.querySelectorAll('.list img');
-            // animation elements
-    ani_ele.forEach(function (element) {
-        element.classList.remove('skeleton');
-        element.classList.remove('skeleton-text');
+    // Title Names
+    document.querySelector('#cname').innerHTML = chatType + " Chat";
+    document.title = chatType + " -- Botsapp"; 
+    // 
+    document.querySelectorAll(".side-bar .top .options").forEach( (ele) => {
+        ele.classList.remove("selected");
     });
-    ani_img.forEach((element) => {
-        element.addEventListener('load' ,()=>{
-            element.classList.remove('skeleton');
-        })
-    });
-};
-    
+    document.querySelector(`div[title=${chatType}]`).classList.add("selected");
+
+    setCookie('chat', chatType);
+    _flash_chatList();
+    _cht_sk_loading();
+    openChatList(chatType);
+}
 
 // toggle settings-box
 function toggle_settings_box()   {
@@ -237,31 +216,53 @@ const _submit_data = (event) => {
     (event.key === 'Enter') ? event.target.parentElement.querySelector('.edit-icon').click() : '' ;
 }
 
+// cookies store
+const setCookie = (name , value , exDays = null , path = "/" ) => {
+    if(exDays != null ) {
+        var d=new Date();
+        d.setTime(d.getTime() + ( exDays*24*60*60*1000 ) );
+        var expires =  "expires=" + d.toUTCString() ;
+    }
+
+    document.cookie = `${name} = ${value} ${ (exDays != null) ? ";"+ expires : ";" } Path = ${path}`;
+}
+
+const getCookie = (name) => {
+    var cookies = decodeURI(document.cookie).split(";");
+    name = name+"=";
+    var cookie_val = 0;
+    
+    if(name == "PHPSESSID="){
+        return cookie_val;
+    }
+
+    cookies.forEach( cookie => {
+        cookie=cookie.trim();
+        if(cookie.indexOf(name) == 0){
+            cookie_val = cookie.substring(name.length);
+        }
+    })
+
+    return cookie_val;
+}
+// 
 
 //
 
 // dispose space
 
-// document.querySelector("div[title='Settings']").addEventListener( 'click' , function () {
-        
+    // document.querySelector("div[title='Settings']").addEventListener( 'click' , function () {
     // })
-    // inbox-user chat select
-    // const inbox-user = document.querySelectorAll(".inbox-user");
-    // for (var i = 0; i < inbox-user.length; i++) {
-    //     inbox-user[i].addEventListener('click', function () {
-    //         this.classList.add('select');
-    //     });
-        
-    // }
 
-// function select_options(div)    {
-//     const img = div.querySelector("img");
-        
-//         if(div.classList.contains("selected")) {
-//             div.classList.remove("selected");
-//         }   
-//         else    {
-//             div.classList.add("selected");
-//         }
-//         // console.log(div);
-// }
+// // user hover on chat animation  
+// garbage for now
+// document.querySelectorAll('.list .inbox-user').forEach( (ele) => {
+//     ele.addEventListener('mousemove' , (event) => {
+//             const rect = ele.getBoundingClientRect();
+//             const relativeX = event.clientX - rect.x - 12;
+//             const relativeY = event.clientY - rect.y - 30;
+            
+//             ele.classList.add("inbox-user_hover");
+//             ele.style.setProperty("--inbox-user-x" , `${relativeX}px`);
+//             ele.style.setProperty("--inbox-user-y" , `${relativeY}px`);         
+//     }); }); 

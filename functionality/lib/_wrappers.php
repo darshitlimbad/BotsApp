@@ -4,9 +4,10 @@
         <div class="title">
             <img src="../img/botsapp_white.png" onclick="tohomepage()">
             <h1 onclick="tohomepage()">BotsApp</h1>
-            <p>-A Better place for chat.</p>
         </div>
-        <?php
+        <p>-A Better place for chat.</p>
+        
+<?php
     }
 
     function custom_footer() {

@@ -43,7 +43,6 @@
             return 0;
         }
         
-        
         if($sqlfire) {
             return 1;
         }else {
