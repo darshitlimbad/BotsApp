@@ -1,5 +1,6 @@
 :root   {
     --options-selected-border : 1.5px solid rgba(155, 155, 155, 0.37);
+    --options-selected-border-color:rgba(137, 43, 226, 0.854);
     --options-selected-border-left:5px solid rgba(137, 43, 226, 0.854);
     --main-bg-color : rgb(33, 32, 32);
     --list-bg : rgb(53, 51, 51);
@@ -11,7 +12,6 @@
     --text-font : 'Arial Narrow', Arial, sans-serif;
     font-family: var(--default-font);
 }
-
 
 ::-webkit-scrollbar {
     width: 2px;
@@ -25,16 +25,51 @@
 ::-webkit-scrollbar-thumb {
     background-color: rgb(140 65 179);
 }
+.red{
+    color: red;
+    --color: red;
+    border-color: red;
+}
+.green{
+    color: green;
+    --color: green;
+    border-color: green;
+}
 
 span{
     font-family: var(--text-font);
+}
+
+.loader{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;    
+}
+.loader-img{
+    height: 30px;
+    width: 30px;
+}
+.loader-text{
+
+}
+
+.ele{
+    border: 1px solid rgba(255, 255, 255, 0.436);
+    border-radius: 10px;
+    transition: all .5s cubic-bezier(0.04, 0.37, 0.49, 1.04);
+}
+
+.ele:hover{
+    cursor: pointer;
+    background-color: rgba(145, 145, 145, 0.218) !important;
 }
 
 body.main{
     background-color:rgb(1, 12, 23);
     color: aliceblue;
     user-select: none;
-    width: 100%;
 }
 
 .skeleton   {
@@ -101,7 +136,6 @@ header .Status{
     flex-wrap: wrap;
     height: 20px;
     width: 20px;
-    --color: green;
     border: 1px solid var(--color);
 }
 
@@ -133,13 +167,14 @@ footer {
 }
 
 .side-bar .options  {
-    margin: 5px 2px;
+    margin: 0 2px;
 }
 
 .side-bar .bottom   {
-    display: block;
+    display: flex;
     position: fixed;
     bottom: 2%;
+    flex-direction: column;
 }
 
 
@@ -202,7 +237,6 @@ footer {
 
 .side-bar .selected > .img {
     border: var(--options-selected-border);
-    border-left: var(--options-selected-border-left);
     border-radius: var(--border-radius) !important;
 }
 
@@ -285,7 +319,16 @@ footer {
     left: 0;
 }
 
-.new_noti{
+.new_noti::after{
+    content: "";
+    height: 7px;
+    width: 7px;
+    display: block;
+    position: absolute;
+    top: 30%;
+    right: 20%;
+    border-radius: 50%;
+    z-index: 1;
     background-color: blueviolet;
 }
 
@@ -350,7 +393,7 @@ footer {
     background-color: rgba(0, 0, 0, 0.687);
     box-shadow: 1px 1px 5px rgba(137, 43, 226, 0.2);
     border-radius: var(--border-radius);
-    transition: background-color opacity .2s ease-in-out;
+    transition: background-color, opacity .5s ease-in-out;
 }
 
 .settings-box .selected > div img  {
@@ -358,8 +401,14 @@ footer {
     width: 18px;
 }
 
-.settings-box .selected {
+.settings-box .selected , .side-bar .selected > .img {
+    animation: borderLeft .1s 1 cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-left: var(--options-selected-border-left);
+}
+@keyframes borderLeft{
+    0%{border-left: none;}
+    50%{border-left:3px solid var(--options-selected-border-color)}
+    100%{border-left: 5px solid var(--options-selected-border-color);}
 }
 
 .settings-box ul li div {
@@ -378,6 +427,8 @@ footer {
     font-family: var(--text-font);
     font-weight: 400;
     overflow-y: auto;
+    overflow-x: hidden;
+
 }
 
 .settings-box .settings-container h4{
@@ -444,7 +495,7 @@ footer {
     display: flex;
 }
 
-.settings-box .settings-container .body .swipe-box {
+.settings-box .settings-container .body .swipe-btn {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -452,7 +503,7 @@ footer {
     font-size: 17px;
 }
 
-.settings-box .settings-container .body .swipe-box input[type='checkbox']   {
+.settings-box .settings-container .body .swipe-btn input[type='checkbox']   {
     appearance: none;    
     height: 31px;
     width: 60px;
@@ -468,7 +519,7 @@ footer {
 
 }
 
-.settings-box .settings-container .body .swipe-box input[type='checkbox']::after  {
+.settings-box .settings-container .body .swipe-btn input[type='checkbox']::after  {
     content: "";
     height: 20px;
     width: 20px;
@@ -478,11 +529,11 @@ footer {
     background-color:rgb(255, 252, 252);
 }
 
-.settings-box .settings-container .body .swipe-box input[type='checkbox']:checked   {
+.settings-box .settings-container .body .swipe-btn input[type='checkbox']:checked   {
     background-color: rgb(255, 253, 253);
 }
 
-.settings-box .settings-container .body .swipe-box input[type='checkbox']:checked::after  {
+.settings-box .settings-container .body .swipe-btn input[type='checkbox']:checked::after  {
     left:29px;
     background-color: rgba(0, 0, 0, 0.9);
     animation: swipe .5s cubic-bezier(0, 0.27, 0.85, 1.17) ;
@@ -524,6 +575,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
     align-content: center;
+    align-items: center;
     height: 30px;
 }
 
@@ -571,10 +623,16 @@ footer {
     justify-content: center;
 }
 
+.end{
+    display: flex;
+    justify-content: end;
+}
+
 .align-center{
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    align-content: center;
 }
 
 .link {

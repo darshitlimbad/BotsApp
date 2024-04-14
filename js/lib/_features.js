@@ -5,11 +5,11 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp = (userID) => {
+    const get_dp = (unm) => {
         return new Promise((resolve , reject) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php' ;
             var data = JSON.stringify({
-                userID: userID,
+                unm: unm,
                 action : "get_dp"  })
 
             postReq(url_for_get_dp , data)
@@ -33,19 +33,21 @@
         
         postReq(url , data)
             .then(res=>{
-                if(res == 1){
-                    new_notification('@'+unm.concat(" has succesfully invited to be chatter with you."));
-                    getNewNoti();
-                }else if(res == 409){
-                    new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
-                }else if(res == 403){
-                }else if(res == 499){
-                    new_Alert(`oops,You are rejected by '@${unm}'`);
-                }else if(res == 403){
-                    new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
-                }else {
-                    new_Alert("Please try again later!! :(");
-                }
+                switch(res){
+                    case 1:
+                        new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
+                        getNewNoti();
+                        break;
+                    case 409:
+                        new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
+                        break;
+                    case 403:
+                        new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
+                        break;
+
+                    default:
+                        new_Alert("Please try again later!! :(");
+                    }
             }).catch(err=>{
                 console.error(err);
             })
@@ -62,7 +64,7 @@
             .then(data=>{
                 var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
                 if(data !== 0){
-                    document.querySelector("div[title='Noti'] .img img").classList.add("new_noti");
+                    document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
                     var i=0;
                     data.forEach(row=>{
                         box_data=document.createElement("div");box_data.classList.add("box_data");box_data.classList.add(`${row['action']}`);box.appendChild(box_data);
@@ -98,7 +100,7 @@
                         
                     })
                 }else{
-                    
+                    document.querySelector("div[title='Noti'] .img").classList.remove("new_noti");
                 }
             })
             .catch((err)=>{
@@ -264,8 +266,10 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 }
 
 const _upload_img_form = (title , came_url , theme = 'blue') => {
-    
     url = came_url;
+
+    if(came_url == 'USER_DP_UPDATE')
+        url = `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim` ;
 
     var upload_img_form = document.querySelector('#upload_img_form');
 

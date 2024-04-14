@@ -27,17 +27,16 @@ document.addEventListener('DOMContentLoaded' , function () {
             // hide sign-in fields
                 toggle_field.forEach(ele => { hide(ele) });
             
-            // remove user validation attribute
-                user.removeAttribute('onkeyup');
-                document.querySelector('#user_span').style.display = 'none' ;
-            
-            // remove e-mail validation attribute
-                email.removeAttribute('onkeyup');
-                document.querySelector('#e-mail_span').style.display = 'none' ;
-
-            // remove password validation attribute
-                pass.removeAttribute('onkeyup');
-                document.querySelector('#pass_rules').style.display = 'none' ;
+            // remove  validation attribute
+                var elements = [user,email,pass];
+                var spans = [document.querySelector('#user_span'), document.querySelector('#e-mail_span'), document.querySelector('#pass_rules')];
+                
+                elements.forEach(ele => {
+                    ele.removeAttribute('onkeyup');
+                });
+                spans.forEach(span => {
+                    span.style.display = 'none' ; 
+                })
             
             // rememberMe_div showing
             show(document.querySelector('.rememberMe_div'));
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 // set_form_action_path
 function set_form_action_path() {
     let form_action_path = "/functionality/_user.php?";
-    var form_action =(form.attributes.name.value == 'log-in') ? form_action_path+"action=log-in" : form_action_path+"action=sign-in";
+    var form_action = form_action_path.concat((form.attributes.name.value == 'log-in') ? "action=log-in" : "action=sign-in");
     form.setAttribute('action' , form_action);
 }
 

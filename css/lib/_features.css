@@ -29,6 +29,25 @@
     justify-content: space-evenly;
     align-content: center;
     padding: 15px;
+    text-transform: capitalize;
+}
+#add_new_chat_form .buttons{
+    position: absolute;
+    top: 6%;
+    right: 0%;
+}
+
+#add_new_chat_form .buttons .button{
+    display: flex;
+    justify-content: center;
+    background-color: transparent;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    transition: 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+#add_new_chat_form .buttons .button:hover{
+    filter: brightness(60%);
 }
 
 .buttons .pop_up_no_btn {
@@ -64,10 +83,10 @@
     max-height: 280px;
     min-height: 50px;
     width: auto;
-    background-color: var(--list-box-bg);
+    background-color:black;
     border-radius: 10px;
     transition: 1s all cubic-bezier(0.215, 0.610, 0.355, 1);
-
+    text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.479);
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -76,11 +95,11 @@
     content: "";
     position: fixed;
     right: 50%;
-    top: 58%;
+    top: 82%;
     height: 10px;
     width: 10px;
     transform: rotate(45deg);
-    background-color:var(--list-box-bg) ;
+    background-color:black ;
     overflow-y: visible;
     z-index: -1;
 }

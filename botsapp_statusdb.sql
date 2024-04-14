@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 10, 2024 at 06:57 PM
+-- Generation Time: Apr 17, 2024 at 08:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,9 +40,27 @@ CREATE TABLE `notification` (
 --
 
 INSERT INTO `notification` (`id`, `notificationID`, `fromID`, `toID`, `action`) VALUES
-(30, 'Noti00000001', 'User00000001', 'User00000002', 'addUserReq'),
-(31, 'Noti00000002', 'User00000001', 'User00000004', 'addUserReq'),
-(32, 'Noti00000003', 'User00000001', 'User00000001', 'addUserReq');
+(112, 'Noti00000003', 'User00000002', 'User00000002', 'addUserReq');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `on_status`
+--
+
+CREATE TABLE `on_status` (
+  `id` int(11) NOT NULL,
+  `userID` varchar(20) NOT NULL,
+  `status` tinyint(1) NOT NULL,
+  `last_on_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `on_status`
+--
+
+INSERT INTO `on_status` (`id`, `userID`, `status`, `last_on_date`) VALUES
+(6, 'User00000001', 0, '2024-03-25 12:53:52');
 
 --
 -- Indexes for dumped tables
@@ -58,6 +76,13 @@ ALTER TABLE `notification`
   ADD KEY `statusDBUnique2` (`toID`);
 
 --
+-- Indexes for table `on_status`
+--
+ALTER TABLE `on_status`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `on_status_userID` (`userID`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -65,7 +90,13 @@ ALTER TABLE `notification`
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+
+--
+-- AUTO_INCREMENT for table `on_status`
+--
+ALTER TABLE `on_status`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
@@ -77,6 +108,12 @@ ALTER TABLE `notification`
 ALTER TABLE `notification`
   ADD CONSTRAINT `statusDBUnique1` FOREIGN KEY (`fromID`) REFERENCES `botsapp`.`users_account` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `statusDBUnique2` FOREIGN KEY (`toID`) REFERENCES `botsapp`.`users_account` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `on_status`
+--
+ALTER TABLE `on_status`
+  ADD CONSTRAINT `on_status_user_id` FOREIGN KEY (`userID`) REFERENCES `botsapp`.`users_account` (`userID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

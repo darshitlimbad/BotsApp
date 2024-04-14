@@ -1,15 +1,4 @@
 <?php   
-if($data = json_decode( file_get_contents("php://input") , true)){
-    if(isset($data)){
-        if( isset($data['action']) ) {
-            if($data['action'] == "userID"){
-                session_start();
-                echo json_encode(getDecryptedUserID());
-            }
-        }
-
-    }
-}
 
 function getDecryptedUserID(){
     try{
@@ -67,5 +56,34 @@ function session_check(){
     }else{
         session_regenerate_id(true);
     }
+}
+
+function gen_new_id($preFix)  {
+    $preFix = ucfirst(strtolower(trim($preFix)));
+
+    switch($preFix){
+        case "User":
+            $table = "users";
+            $clm = "userID";
+            break;
+        case "Msg":
+            $table = "messages";
+            $clm = "msgID";
+            break;
+    }
+
+    $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
+    $sqlfire = $GLOBALS['conn'] -> query($sql);
+
+    if($sqlfire && ($sqlfire -> num_rows > 0)) {
+        $ID = $sqlfire->fetch_column();
+        $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
+        $newID =  sprintf("%08d" , ++$oldID);    
+    }
+    else {
+        $newID = sprintf("%08d" , 1);
+    }
+
+    return $preFix.$newID;
 }
 ?>

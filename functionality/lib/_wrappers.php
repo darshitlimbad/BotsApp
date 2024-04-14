@@ -2,7 +2,7 @@
     function custom_header() {
         ?>
         <div class="title">
-            <img src="../img/botsapp_white.png" onclick="tohomepage()">
+            <img src="../img/logo.png" onclick="tohomepage()">
             <h1 onclick="tohomepage()">BotsApp</h1>
         </div>
         <p>-A Better place for chat.</p>

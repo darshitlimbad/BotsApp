@@ -1,4 +1,7 @@
 <?php
 include_once('../interface.php');
-echo getDecryptedUserID();
+include_once('../functionality/lib/_chat.php');
+
+getMsgs("darshitlimbad");
+
 ?>

@@ -3,7 +3,7 @@
         if(isset($data['action'])){
             include '../db/_conn.php';
             if($data['action'] == "get_dp"){
-                echo get_dp($data['userID']);
+                echo get_dp( null,$data['unm']);
             }
             if($data['action'] == "get_unm"){
                 echo search_user($data['from'] , $data['value']);
@@ -11,7 +11,44 @@
         }
     }
 
-    function get_dp($userID) {
+    function _get_userID_by_UNM($unm){
+        $fetchUID = fetch_columns('users_account', "unm", $unm, "userID");
+        return $fetchUID->fetch_column();
+    }
+
+    function _fetch_unm($userID=null){
+        if($userID == null)
+            $userID = getDecryptedUserID();
+
+        $res = fetch_columns("users_account", "userID", $userID, "unm");
+        
+        if($res->num_rows == 1){
+            $unm = $res->fetch_column();
+            return $unm;
+        }else{
+            return "USER_NOT_FOUND";
+        }
+    }
+
+    function _fetch_email($userID = null){
+        if($userID == null)
+            $userID = getDecryptedUserID();
+
+        $res = fetch_columns("users", "userID", $userID, "email");
+        
+        if($res->num_rows == 1){
+            $email = $res->fetch_column();
+            return $email;
+        }else{
+            return "EMAIL_NOT_FOUND";
+        }
+    }
+
+    function get_dp($userID,$unm=null) {
+        if($unm){
+            $userID = _get_userID_by_UNM($unm);
+        }
+        
         $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "imgData" );
 
         if($fetch_img != '400' && $fetch_img->num_rows == 1){
@@ -25,8 +62,10 @@
         }  
     }
 
-    function get_user_full_name($userID){
+    function get_user_full_name($unm){
         try{
+            $userID = _get_userID_by_UNM($unm);
+
             $fetch_name = fetch_columns('users' , 'userID' , $userID , 'surname' , 'name');
 
             if($fetch_name != '400' && $fetch_name->num_rows == 1){
@@ -77,7 +116,9 @@
                         $row['dp'] = json_decode(get_dp($row['userID']));
 
                         $rows[$i]['dp'] = $row['dp'];
-                        $rows[$i++]['unm'] = $row['unm'];
+                        $rows[$i]['unm'] = $row['unm'];
+
+                        $i++;
                     }
                     return json_encode($rows);
                 }else{
@@ -104,16 +145,4 @@
     
         return false;
     }
-
-function _fetch_unm($userID){
-    $res = fetch_columns("users_account", "userID", $userID, "unm");
-
-    if($res->num_rows == 1){
-        $unm = $res->fetch_column();
-        return $unm;
-    }else{
-        return "USER_NOT_FOUND";
-    }
-
-}
 ?>

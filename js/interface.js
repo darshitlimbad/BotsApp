@@ -1,17 +1,13 @@
 document.addEventListener('DOMContentLoaded' , function () {
 
-    // set cookies 
-        // chat
-        if( !getCookie("chat")){
-            setCookie("chat", "Personal");
-        }
+    // keyboard sortcuts (_srtc stands for sortcut)
+        document.addEventListener('keydown' , _srtc);
+        
     // 
 
     // global var
-    currCht= getCookie("chat");
     settings_box =  document.querySelector(".settings-box");
     noti_box = document.querySelector(".noti-box");
-    list = document.querySelector('tbody.listBody');
     // 
 
     //settings-box setting option toggle
@@ -43,16 +39,19 @@ document.addEventListener('DOMContentLoaded' , function () {
     //functions to be called
     set_profile_dp();
     getNewNoti();    
-    _cht_sk_loading();
-    chat(currCht);
 
-});    
+});  
 
-const chat = (chatType) => {
-    
+// 
+const initiateChatBox = (chatType) => {
+    if(window.location.pathname != '/'){
+        setCookie("chat", chatType);
+        window.location.assign('/');
+    }
     // Title Names
-    document.querySelector('#cname').innerHTML = chatType + " Chat";
-    document.title = chatType + " -- Botsapp"; 
+    let heading =  document.querySelector('#cname');
+    heading.textContent = chatType + " Chat";
+    document.title = heading.textContent + " -- Botsapp"; 
     // 
     document.querySelectorAll(".side-bar .top .options").forEach( (ele) => {
         ele.classList.remove("selected");
@@ -62,8 +61,10 @@ const chat = (chatType) => {
     setCookie('chat', chatType);
     _flash_chatList();
     _cht_sk_loading();
+    // closeChat();
     openChatList(chatType);
 }
+
 
 // toggle settings-box
 function toggle_settings_box()   {
@@ -192,15 +193,15 @@ const settings_options_to_default = () => {
 
 const set_profile_dp = (() => {
     dp = document.querySelectorAll(".options .avatar , .profile-dp .avatar");    
-    getUserID()
-        .then((res)=>{
-            get_dp(res)
-                .then( res  => {
-                    dp.forEach( (ele) => {
-                        ele.src = res;
-                    })
+        get_dp(getCookie('unm'))
+            .then( res  => {
+                dp.forEach( (ele) => {
+                    ele.src = res;
                 })
-        });
+            })
+            .catch( (e) => {
+                console.error(e);
+            });
 
     
 });
@@ -224,12 +225,12 @@ const setCookie = (name , value , exDays = null , path = "/" ) => {
         var expires =  "expires=" + d.toUTCString() ;
     }
 
-    document.cookie = `${name} = ${value} ${ (exDays != null) ? ";"+ expires : ";" } Path = ${path}`;
+    document.cookie = `${name} = ${encodeURIComponent(value)} ${ (exDays != null) ? ";"+ expires : ";" } Path = ${path}`;
 }
 
 const getCookie = (name) => {
+    name+='=';
     var cookies = decodeURI(document.cookie).split(";");
-    name = name+"=";
     var cookie_val = 0;
     
     if(name == "PHPSESSID="){
@@ -242,14 +243,58 @@ const getCookie = (name) => {
             cookie_val = cookie.substring(name.length);
         }
     })
-
-    return cookie_val;
+    
+    if(cookie_val!=0)
+        return decodeURIComponent(cookie_val);
 }
+// 
+
+
+// SORTCUT FUNCTIONS
+
+    const _srtc = (e) => {
+        let searchTxt = document.querySelector("div#searchTxt");
+
+        if(e.ctrlKey){
+            // msg search box toggle
+            if(e.keyCode == 70){
+                e.preventDefault();
+                toggleSearchTxt();
+            };
+        }
+        if(e.altKey){
+            if(e.keyCode == 70){
+                e.preventDefault();
+            }
+        }
+
+        // btns to up down dictionary
+        if((searchTxt) && (searchTxt.style.display != "none")){
+            if(e.keyCode == "38"){
+                moveSearch("up");
+            }else if(e.keyCode == "40"){
+                moveSearch("down");
+            }
+        }
+
+    };
+
+    // loader animation function
+    const loader = (loc)=>{
+        let i=1;
+
+        return  setInterval(()=>{
+                loc.querySelector('#loader .loader-img').style.rotate=`${i}deg`;
+                    i+=4;
+                    if(i>=356)
+                        i=0;
+                },10 ); 
+    }
 // 
 
 //
 
-// dispose space
+// dustbin space
 
     // document.querySelector("div[title='Settings']").addEventListener( 'click' , function () {
     // })

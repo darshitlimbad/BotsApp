@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded' , function () {
-
-        var URL_params = new URLSearchParams(window.location.search);
+        var url = decodeURI(window.location.href)
+        var URL_params = new URLSearchParams(url.substring(url.indexOf('?')));
+        
             
             setTimeout(() => {
                 // ERROR

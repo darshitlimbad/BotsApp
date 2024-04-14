@@ -1,6 +1,7 @@
 <?php
-include 'db/_conn.php';
-include 'lib/_insert_data.php';
+include_once('db/_conn.php');
+include_once('lib/_insert_data.php');
+include_once('lib/_validation.php');
 try{
     if( (isset($_POST['submit']))&& (isset($_GET['action'])) )
     {
@@ -8,7 +9,7 @@ try{
         if($action == "sign-in")
         {
             // user uploaded values
-            $userID = gen_new_user_id(); 
+            $userID = gen_new_id("user"); 
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
@@ -18,7 +19,10 @@ try{
 
             $avatar = $_FILES['avatar'];
 
-            // validate user here also 
+            // validate user here also
+            if(is_data_present("users" , "unm" , $unm , 'unm') || 
+                is_data_present("users" , "email" , $email , 'email') )
+                throw new Exception(400);
 
             $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
                     "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar);
@@ -120,27 +124,7 @@ try{
         }
     }
 } catch (Exception $error) {
-    // print_r($error);     
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
-
-
-function gen_new_user_id()  {
-
-    $sql = "SELECT `userID` FROM `users` ORDER BY `userID` DESC LIMIT 1";
-    $sqlfire = $GLOBALS['conn'] -> query($sql);
-
-    if($sqlfire && ($sqlfire -> num_rows > 0)) {
-        $row = $sqlfire->fetch_assoc();
-        $lastUserID = explode( 'r' , $row["userID"]); //for cuting User00000007 the decimal part
-        $newUserID = "User".sprintf("%08d" , ++$lastUserID[1]);    
-    }
-    else {
-        $newUserID ="User".sprintf("%08d" , 1);
-    }
-
-    return $newUserID;
-}
-
 ?>

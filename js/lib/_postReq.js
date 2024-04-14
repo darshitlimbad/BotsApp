@@ -1,5 +1,5 @@
 // js to php post reqest 
-const postReq = (url, data , method="POST") => {
+const postReq = (url, data=null , method="POST" , async = true) => {
     return new Promise((resolve, reject) => {
         const xml = new XMLHttpRequest();
 
@@ -14,7 +14,7 @@ const postReq = (url, data , method="POST") => {
             }
         };
 
-        xml.open(method, url, true);
+        xml.open(method, url, async);
         if(method == "POST"){
             xml.setRequestHeader('Content-Type', 'application/json');
             xml.send(data);
@@ -24,22 +24,6 @@ const postReq = (url, data , method="POST") => {
         
     });
 };
-
-const getUserID = () => {
-    return new Promise((resolve , reject) => {
-        getUserID_URL = "/functionality/lib/_validation.php";
-        data = JSON.stringify({
-            action:"userID",
-        });
-
-        postReq(getUserID_URL , data)
-            .then(res=>{
-                resolve(res);
-            }).catch(err=>{
-                reject(err);
-            })
-    })    
-}
 
 const sendNoti = (req , notiID) => {
     return new Promise((resolve , reject) => {
@@ -70,6 +54,40 @@ const _getChatList = async (chatType) => {
         return chatList;
     }catch(err){
         console.log(err);
+        return 0;
+    }
+}
+
+const _getMsgs = async (unm) => {
+    var url = "/functionality/lib/_chat.php";
+    data = JSON.stringify({
+        req: "getMsgs",
+        unm: unm,
+    });
+
+    try{
+        return await postReq(url , data);
+    }catch(err){
+        console.log(err);
+        return 0;
+    }
+}
+
+const _sendMsg = async (type, input) =>{
+    var url="/functionality/lib/_chat.php";
+
+    var data = JSON.stringify({
+        req:"sendMsg",
+        toUnm:getCookie("currOpenedChat"),
+        type:type,
+        input:input,
+        time: Date.now(),
+    });
+
+    try{
+        return await postReq(url,data);
+    }catch(err){
+        console.error(err);
         return 0;
     }
 }

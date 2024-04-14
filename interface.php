@@ -12,13 +12,15 @@
         include_once('functionality/lib/_wrappers.php');
         include_once('functionality/lib/_features.php');
         include_once('functionality/lib/_fetch_data.php');
+
         $userID = getDecryptedUserID();
-        $unm = "@".fetch_data_from_users($userID , 'unm' );
-        $nm  = get_user_full_name($userID); 
-        ?>
-        <script>unm = "<?= $unm ?>";</script>
-        <?php
+        $unm = "@"._fetch_unm();
+        $nm  = get_user_full_name(substr($unm , 1)); 
+        $email = _fetch_email();
+        
+        setcookie("unm" , substr($unm, 1) , time()+(24*60*60*1000), "/");
     }
+
 ?>
 
 <!-- bots app -->
@@ -30,19 +32,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Style -->  
-    <link rel="stylesheet" href="css/interface.css" type="text/css">
+    <link rel="stylesheet" href="/css/interface.css" type="text/css">
     <!-- Script -->
-    <script type="text/javascript" src="js/interface.js"></script>
-    <script type="text/javascript" src="js/lib/_chat.js" ></script>
-    <script type="text/javascript" src="js/lib/_notify.js" ></script>
-    <script type="text/javascript" src="js/_error_handling.js"></script>
-    <script type="text/javascript" src="js/lib/_postReq.js"></script>
-    <script type="text/javascript" src="js/lib/_validation.js"></script>
+    <script type="text/javascript" src="/js/interface.js"></script>
+    <script type="text/javascript" src="/js/lib/_chat.js" ></script>
+    <script type="text/javascript" src="/js/lib/_notify.js" ></script>
+    <script type="text/javascript" src="/js/_error_handling.js"></script>
+    <script type="text/javascript" src="/js/lib/_postReq.js"></script>
+    <script type="text/javascript" src="/js/lib/_validation.js"></script>
 </head>
 <body class="main">
     <header>
             <?php custom_header();?>
-        <div class="status">
+        <div class="status red">
             <div class="status-icon"></div>
         </div>
     </header>
@@ -50,22 +52,23 @@
         <div class="top">
             <!-- Personal -->
                     <!-- Yup, I know i should have name it .icon rather then .img  -->
-            <div class="options" title="Personal" onclick="chat(this.title)" >
+            <div class="options" title="Personal" onclick="initiateChatBox(this.title)" >
                 <div class="img ">
-                    <img src="img/icons/options/chat-30.png" alt="Chat" >
+                    <img src="/img/icons/options/chat-30.png" alt="Personal-Chat-Img" >
                 </div>
                 
             </div>
             
             <!-- group -->
-            <div class="options" title="Group" onclick="chat(this.title)"> 
+            <div class="options" title="Group" onclick="initiateChatBox(this.title)"> 
                 <div class="img">
-                    <img src="img/icons/options/group_chat-48.png" alt="Group">
+                    <img src="/img/icons/options/group_chat-48.png" alt="Group-Chat-Img">
                 </div>
             </div>
         </div>
         
         <div class="bottom">
+
             <!-- Add New Chat -->
             <div class="options" title="addNewChat" onclick="_add_new_chat_form(); document.querySelector('input#username').focus()" accesskey="a">
                 <div class="img">
@@ -76,14 +79,14 @@
             <!-- Notifications -->
             <div class="options" title="Noti" onclick="toggle_noti_box()" accesskey="n">
                 <div class="img">
-                    <img src="img/icons/options/noti.png"> 
+                    <img src="/img/icons/options/noti.png" alt="New-notification-img"> 
                 </div>
             </div>
 
             <!-- settings -->
             <div class="options" title="Settings" onclick="toggle_settings_box()" accesskey="s">
                 <div class="img">
-                    <img src="img/icons/options/setting-24.png"> 
+                    <img src="/img/icons/options/setting-24.png" alt="settings-img"> 
                 </div>
             </div>
 
@@ -109,31 +112,31 @@
         <ul>
             <li class="" name="general">
                 <div>
-                    <img src="img/icons/settings/general-64.png" height="20px" width="20px" alt="" >
+                    <img src="/img/icons/settings/general-64.png" height="20px" width="20px" alt="settings-general-img" >
                 </div>    
                 <p>General</p>
             </li>
             <li class="" name="account">
                 <div>
-                    <img src="img/icons/settings/account-64.png" height="20px" width="20px" alt="" >
+                    <img src="/img/icons/settings/account-64.png" height="20px" width="20px" alt="settings-account-img" >
                 </div>    
                 <p>Account</p>
             </li>
             <li class="" name="chat">
                 <div>
-                    <img src="img/icons/settings/chat-64.png" height="20px" width="20px" alt="" >
+                    <img src="/img/icons/settings/chat-64.png" height="20px" width="20px" alt="settings-chat-img" >
                 </div>    
                 <p>Chat</p>
             </li>
             <li class="" name="help">
                 <div>
-                    <img src="img/icons/settings/help-64.png" height="20px" width="20px" alt="" >
+                    <img src="/img/icons/settings/help-64.png" height="20px" width="20px" alt="settings-help-img" >
                 </div>    
                 <p>Help</p>
             </li>
             <li class="" name="profile">
                 <div>
-                    <img src="img/icons/settings/profile-64.png" height="20px" width="20px" alt="" >
+                    <img src="/img/icons/settings/profile-64.png" height="20px" width="20px" alt="settings-profile-icon" >
                 </div>    
                 <p>Profile</p>
             </li>
@@ -149,7 +152,6 @@
         
             <div class="body" name="account-body" style="display: none;">
                 <div class="headding">Account</div>
-
                 <h4>Privacy</h4>
                 <div class="flex checkbox" name="edit-can_see_online_status">
                     <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'can_see_online_status') == '1') { echo 'checked';} ?>>
@@ -173,9 +175,9 @@
 
                 <h4>Theme</h4>
                 
-                <div class="swipe-box">
+                <div class="swipe-btn">
                     <label for="theme">Dark</label>
-                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'theme') == '1') { echo 'checked';} ?> >
+                    <input type="checkbox" name="theme" id="theme" onclick="_togle_user_data(this);">
                     <label for="theme">Light</label>
                 </div>
 
@@ -199,7 +201,7 @@
                 <div class="headding">New Chatter ?</div>
                 <p>Are you new user? Don't know what do ?</p>
                 <p>Don't worry just visit our information page  </p>
-                <a href="help/info.php" class="link">More Info</a>
+                <a href="/help/info.php" class="link">More Info</a>
             
                 <br><br>
 
@@ -207,14 +209,14 @@
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
                 <p>share your thoughts...</p>  
-                <a href="help/ux.php?form=feedback" class="link">Feedback Here</a>
+                <a href="/help/ux.php?form=feedback" class="link">Feedback Here</a>
             
                 <br><br>
 
                 <div class="headding">Found any bugs?</div>
                 <p>If you recently noticed any bug or mistacks by me please share it here,</p>
                 <p>It will be very helpfull for me</p>
-                <a href="help/ux.php?form=bugs" class="link">Bugs Report</a>
+                <a href="/help/ux.php?form=bugs" class="link">Bugs Report</a>
             </div>
 
             <!-- Profile Body -->
@@ -223,7 +225,7 @@
                 <div class="profile-dp">
                     <img src="/img/dp-moon.png" onerror="defaultDp(this);" title="<?= $nm?>" class="avatar">
                 </div>
-                    <img src="img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="_upload_img_form('Upload Your new Profile picture' , `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim`);"/>
+                    <img src="/img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="_upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);"/>
                 <br>
                 
                 <div class="text"><?= $unm?></div>
@@ -231,17 +233,17 @@
                 <p class="margin-dead">Name:</p>
                 <div class="flex edit_box" name="edit-user-name">
                 <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= $nm; ?>" readonly /> 
-                    <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit"/>  
+                    <img name="edit-icon" class="edit-icon" src="/img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
                 
                 <p class="margin-dead">About:</p>
                 <div class="flex edit_box" name="edit-about" style="margin:30px 0">
                     <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
-                    <img name="edit-icon" class="edit-icon" src="img/icons/settings/profile/edit.png" title="edit" /> 
+                    <img name="edit-icon" class="edit-icon" src="/img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 
                 <p class="margin-dead">E-mail:</p>
-                <div class="text"><?= fetch_data_from_users($userID , 'email' );?></div>
+                <div class="text"><?= $email?></div>
             </div>
         </div>
     </div>

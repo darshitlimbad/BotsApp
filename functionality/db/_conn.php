@@ -1,4 +1,7 @@
 <?php
+
+use function PHPSTORM_META\map;
+
     $host = "localhost";
     $unm = "root";
     $pass = "";
@@ -51,11 +54,39 @@
     }
 
     // fetch data by table name , column for where point , point value , parameter of columns you want to fetch
-    function fetch_columns( $table , $point , $point_value , ...$columns){
+    function fetch_columns( $table , $points , $point_values , ...$columns){
         try{
-            $query = "SELECT ". implode(' , ' , $columns) ." from `$table` WHERE `$point` = ?";
+            $points = explode(',', $points);
+            $point_values = explode( ',', $point_values);
+
+            foreach($columns as $key => $val){
+                $columns[$key] = trim($val);
+            }
+            foreach($points as $key => $val){
+                $points[$key] = trim($val);
+        }
+            foreach($point_values as $key => $val){
+                $point_values[$key] = trim($val);
+            }
+            
+            if(sizeof($points) != sizeof($point_values))
+                die(throw new Exception( "Point size is not equal to Point Value size", 400));
+
+            $point_str = "";
+            $i=0;
+            foreach($points as $point){
+
+                $point_str .="`" . $point . "` = ". ' ? ';
+                ++$i;
+                if(sizeof($points) != $i)
+                    $point_str .= ' AND ';
+            }
+
+            $bind_param = str_repeat("s" , count($point_values));
+
+            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE $point_str ";
             $stmt  = $GLOBALS['conn'] -> prepare($query);
-            $stmt->bind_param('s' , $point_value);
+            $stmt->bind_param($bind_param , ...$point_values);
             $sqlfire = $stmt->execute();
 
             if($sqlfire){
@@ -134,9 +165,9 @@
     }
 
     // delete users table data
-    function deleteData($table,$userID , $db='conn'){
+    function deleteData($table,$userID ,$where = "userID", $db='conn'){
         try{
-            $query = "DELETE FROM `$table` WHERE `userID` = ?";
+            $query = "DELETE FROM `$table` WHERE `$where` = ?";
             $stmt = $GLOBALS[$db]->prepare($query);
             $stmt->bind_param('s' , $userID);
             $sqlfire = $stmt->execute();

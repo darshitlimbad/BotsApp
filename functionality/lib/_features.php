@@ -42,6 +42,12 @@
 
     <div id="add_new_chat_form">   
         <h3 class="title">Let's Add more Chatters!</h3>
+
+        <!-- Buttons -->
+        <div class="buttons">
+            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))" ><img src="/img/icons/close.png" alt="Close" height="15px" width="15px"></button>
+        </div>
+
         <hr>
 
         <!--Input Box -->
@@ -58,11 +64,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="buttons">
-            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))" >Close</button>
         </div>
     </div>
 

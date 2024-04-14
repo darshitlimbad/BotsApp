@@ -33,27 +33,24 @@ function createUser($column_str , $values_str , $avatar ) {
                     if($res4 === 1){
                         return 1;
                     }else{
-                        deleteData($main_table,$userID);
                         $fleg = 1;
                     }
 
                 }else{
-                    deleteData($main_table,$userID);
                     $fleg = 1;
                 }
                 
             }else{
-                deleteData($main_table,$userID);
                 $fleg = 1;
             }
 
         }else   {
-            deleteData($main_table,$userID);
             $fleg = 1;
         } 
 
     if($fleg == 1) {
-        throw new Exception( "something went wrong", 400);
+            deleteData($main_table,$userID);
+            throw new Exception( "something went wrong", 400);
     }
     
     }catch (Exception $e){
