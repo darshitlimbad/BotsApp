@@ -1,14 +1,6 @@
 <?php
     session_start();
     if(isset($_SESSION['userID']) && isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim")  {
-        // json data format 
-        // data = JSON.stringify(
-        // {
-        //     table: edit_table,
-        //     edit_column: field,
-        //     data : value ,
-        //      
-        // });
         include_once('db/_conn.php');
         include_once('lib/_validation.php');
         try{

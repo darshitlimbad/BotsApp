@@ -61,7 +61,7 @@ const initiateChatBox = (chatType) => {
     setCookie('chat', chatType);
     _flash_chatList();
     _cht_sk_loading();
-    // closeChat();
+    closeChat();
     openChatList(chatType);
 }
 

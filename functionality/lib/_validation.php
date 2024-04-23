@@ -86,4 +86,46 @@ function gen_new_id($preFix)  {
 
     return $preFix.$newID;
 }
+
+function compressImg($imgObj , $quality = 50) {
+    try{
+        $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+        if (!in_array($imgObj['type'], $allowedTypes)) {
+            throw new Exception("Unsupported image type: " . $imgObj['type']);
+        }
+
+        $tmp_file = tempnam( sys_get_temp_dir() , "/ima" ); 
+        
+        $success = false;
+        switch ($imgObj['type']) {
+            case 'image/jpeg':
+                $image = imagecreatefromjpeg($imgObj['tmp_name']);
+                break;
+            case 'image/png':
+                $image   = imagecreatefrompng($imgObj['tmp_name']);
+                break;
+            case 'image/webp':
+                $image = imagecreatefromwebp($imgObj['tmp_name']);
+                break;
+            default:
+                throw new Exception("Unexpected image type: " . $imgObj['type']);
+        }
+        
+        $success = imagewebp($image, $tmp_file, $quality);
+
+        if (!$success) {
+            throw new Exception("Failed to compress image");
+        }
+
+        unlink($imgObj['tmp_name']);
+        $imgObj['tmp_name'] = $tmp_file;
+        $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
+
+        return $imgObj;
+    }catch(Exception $e) {
+        return 0;
+    }
+}
 ?>

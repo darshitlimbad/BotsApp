@@ -36,7 +36,7 @@
 
         <div class="buttons">
             <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#upload_img_form'))" >No</button>
-            <button class="pop_up_yes_btn button" onclick="_uploadImg();"  >Yes</button>
+            <button class="pop_up_yes_btn button">Yes</button>
         </div>
     </div>
 

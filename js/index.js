@@ -216,27 +216,28 @@ function moveSearch(dir){
 }
 
 const toggleDocsContainer = () => {
-    let upDocsContainer = document.querySelector("div#upDocsContainer");
-
+    var upDocsContainer = document.querySelector("div.upDocsContainer");
     var upDocsBtn = document.querySelector("div.upDocsBtn");
     
-    // edit this
-    
-    // if(upDocsContainer.style.display == 'flex'){
-    //     searchTxt.style.top = "-6%" ;
-    //     icon = "search";
-    //     setTimeout(()=>{ 
-    //         searchTxt.style.display = "none";
-    //     },100);
-    // }else{
-    //     searchTxt.style.display = "flex";
-    //     icon="close";
-    //     setTimeout(()=>{
-    //         searchTxt.style.top = "1%" ;
-    //         searchTxtInput.focus();
-    //     },10);
-    // }
+    if(upDocsContainer.style.display == 'flex'){
+        upDocsContainer.style.bottom = "0%" ;
+        upDocsBtn.style.outline = "none";
 
-    // searchTxtInput.value="";
-    // searchBtn.querySelector('img').src = `img/icons/${icon}.png`;
+        setTimeout(()=>{ 
+            upDocsContainer.style.zIndex = "-1";
+            upDocsContainer.style.display = "none";
+        },100);
+
+    document.removeEventListener('click' , toggleDocsContainer);
+
+    }else{
+        upDocsContainer.style.display = "flex";
+        upDocsBtn.style.outline = "1px solid aliceblue";
+        setTimeout(()=>{
+            upDocsContainer.style.zIndex = "1";
+            upDocsContainer.style.bottom = "110%" ;
+            document.addEventListener('click' , toggleDocsContainer);
+        },10);
+    }
+
 }

@@ -131,7 +131,7 @@
             .then(res =>{
                 if(res == 1){
                     getNewNoti();
-                    chat(currCht);
+                    initiateChatBox(currCht);
                     new_notification("Chatter added succesfully!!!")
                 }else{
                     err_400();
@@ -265,11 +265,7 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 
 }
 
-const _upload_img_form = (title , came_url , theme = 'blue') => {
-    url = came_url;
-
-    if(came_url == 'USER_DP_UPDATE')
-        url = `${window.location.origin}/functionality/_user_edit.php?key_pass=khulJaSimSim` ;
+const _upload_img_form = (title , action , theme = 'blue') => {
 
     var upload_img_form = document.querySelector('#upload_img_form');
 
@@ -278,19 +274,31 @@ const _upload_img_form = (title , came_url , theme = 'blue') => {
     title_ele.textContent = title;
 
     upload_img_form.querySelector('hr').style.border='1px solid '.concat(theme);
-    upload_img_form.querySelector('.pop_up_yes_btn').style.backgroundColor = theme;
+    var yes_btn = upload_img_form.querySelector(".buttons .pop_up_yes_btn");
+    yes_btn.style.backgroundColor = theme;
+    yes_btn.style.outlineColor=theme;
+
+    if(action == "USER_DP_UPDATE"){
+        yes_btn.addEventListener('click',_uploadDP);
+    }else if(action == "USER_SEND_IMG"){
+        yes_btn.addEventListener('click', ()=> {
+            _submit_btn_disable();
+            _trigerSendMsg("img");
+        });
+    }
 
     _submit_btn_disable();
     _show_this_pop_up(upload_img_form);
 
 }
 
-const _uploadImg = () => {
+const _uploadDP = () => {
     _submit_btn_disable(); 
     img = avatar.files[0];
 
     _get_img_data(img)
         .then( result => {
+            
             img_binary_data = result.split(',').pop();
             var value = {
                 img_data : img_binary_data,
@@ -305,7 +313,6 @@ const _uploadImg = () => {
                 });
 
             var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
-
             postReq(url , data)
                 .then(response => {
                     if(response == 1){

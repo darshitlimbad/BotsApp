@@ -59,16 +59,16 @@ function createUser($column_str , $values_str , $avatar ) {
 }
 
 // for uploading img it takes user id img type and img tmp name
-function uploadImg($userID , $img ){
+function uploadImg($userID , $imgObj ){
     try{
-        $img = compressImg($img);
-        if($img == 0)
+        $imgObj = compressImg($imgObj);
+        if($imgObj == 0)
             throw new Exception("something went wrong with Compression");
 
         $table = 'users_avatar';
-        $type = $img['type'];
+        $type = $imgObj['type'];
 
-        $img_data = file_get_contents($img['tmp_name']);
+        $img_data = file_get_contents($imgObj['tmp_name']);
 
         if(is_data_present($table , 'userID' , $userID , "imgData")){
             $query = "UPDATE `$table` SET `type` = ? , `imgData` = ?  WHERE `userID` = ? ";
@@ -83,57 +83,10 @@ function uploadImg($userID , $img ){
             $sqlfire = $stmt->execute();
             $stmt ->close();
 
-            if($sqlfire) {
-                return 1;
-            }else {
-                return 0;
-            }
-            
+            return ($sqlfire)?1:0;
     }catch(Exception $e) {
         return 0;
     }
-}
-
-function compressImg($img , $quality = 50) {
-    try{
-        $img['type'] = getimagesize($img['tmp_name'])['mime'];
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-
-        if (!in_array($img['type'], $allowedTypes)) {
-            throw new Exception("Unsupported image type: " . $img['type']);
-        }
-
-        $tmp_file = tempnam( sys_get_temp_dir() , "_compressed_img_" ); 
-        
-        $success = false;
-        switch ($img['type']) {
-            case 'image/jpeg':
-                $image = imagecreatefromjpeg($img['tmp_name']);
-                break;
-            case 'image/png':
-                $image   = imagecreatefrompng($img['tmp_name']);
-                break;
-            case 'image/webp':
-                $image = imagecreatefromwebp($img['tmp_name']);
-                break;
-            default:
-                throw new Exception("Unexpected image type: " . $img['type']);
-        }
-
-        $success = imagewebp($image, $tmp_file, $quality);
-
-        if (!$success) {
-            throw new Exception("Failed to compress image");
-        }
-
-        unlink($img['tmp_name']);
-        $img['tmp_name'] = $tmp_file;
-        $img['type'] = getimagesize($img['tmp_name'])['mime'];
-    }catch(Exception $e) {
-        return 0;
-    }
-
-    return $img;
 }
 
 ?>

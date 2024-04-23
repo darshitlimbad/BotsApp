@@ -672,7 +672,7 @@ footer {
     --color: rgb(98 0 0);
     --background-image: linear-gradient(to bottom right, rgb(0 0 0 / 83%), rgb(255 130 130 / 80%), rgb(34 34 34));
     --btn-shadow: rgba(206, 82, 82, 0.466);
-
+    
 }
 
 .button {
@@ -685,13 +685,14 @@ footer {
     background-image: var(--background-image);
     border-radius: 30px;
     border: none;
-    /* --btn-shadow :rgba(240, 248, 255, 0.18); */
+    outline: 2px solid #a9a9a96b;
     transition: all .3s cubic-bezier(0.215, 0.610, 0.355, 1);
 }
 
 .button:hover {
     box-shadow: 1px 1px 10px var(--btn-shadow);
     filter: brightness(80%);
+    outline-offset: 2px;
 }
 
 /* input field css */

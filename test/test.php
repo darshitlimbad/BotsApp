@@ -1,7 +1,5 @@
 <?php
-include_once('../interface.php');
-include_once('../functionality/lib/_chat.php');
 
-getMsgs("darshitlimbad");
+_upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);
 
 ?>

@@ -6,7 +6,7 @@ const postReq = (url, data=null , method="POST" , async = true) => {
         xml.onreadystatechange = (res) => {
             if (xml.readyState === 4) {
                 if(xml.status === 200) {
-                    // console.log(res.target.response);
+                    console.log(res.target.response);
                     resolve(JSON.parse(res.target.response));
                 } else {
                     reject(new Error(`HTTP status ${xml.status}`));
@@ -68,7 +68,6 @@ const _getMsgs = async (unm) => {
     try{
         return await postReq(url , data);
     }catch(err){
-        console.log(err);
         return 0;
     }
 }
@@ -81,13 +80,12 @@ const _sendMsg = async (type, input) =>{
         toUnm:getCookie("currOpenedChat"),
         type:type,
         input:input,
-        time: Date.now(),
+        time: Date.now().toFixed(),
     });
-
+console.log(data);
     try{
         return await postReq(url,data);
     }catch(err){
-        console.error(err);
         return 0;
     }
 }

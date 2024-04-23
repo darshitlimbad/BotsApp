@@ -369,7 +369,7 @@
     position: absolute;
     display: block;
     height: 1.5em;
-    width: 3.5em;
+    width: 5em;
     transform: translateY(-3px);
     border: 1px solid var(--thin-wh-border);
     background-color: rgba(0, 0, 0, 0.42);
@@ -389,6 +389,7 @@
     height: auto;
     width: auto;
     z-index: 1;
+    margin: 10px 0;
     --light-grey-color : rgb(53, 51, 51);
 }
 
@@ -396,12 +397,15 @@
 .chat .chatBody .msgContainer .msg {
     height: auto;
     width: auto;
-    max-width: 40%;
+    max-width: 65%;
+    min-width: 30%;
     padding: 10px;
     background-color:var(--light-grey-color);
     border-radius: 10px;
     text-wrap: pretty;
     user-select: text;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
 .chat .chatBody .receive {
@@ -464,13 +468,18 @@
     font-size: 25px;
 }
 
+.chat .footer .upDocsBtn:hover{
+    border-color:aliceblue;
+}
+
 .chat .footer .upDocsContainer{
-    display: flex;
+    display: none;
     flex-wrap: wrap;
     flex-direction: column;
     position: absolute;
-    bottom: 110%;
+    bottom: 0%;
     left: 2%;
+    z-index: -1;
 
     height: auto;
     width: auto;
@@ -478,7 +487,7 @@
     
     background-color: rgba(107, 107, 107, 0.202);
     border-radius: var(--border-radius);
-    z-index: 1;
+    transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .chat .footer .upDocsContainer .node{

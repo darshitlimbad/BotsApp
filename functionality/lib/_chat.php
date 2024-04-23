@@ -11,6 +11,8 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             echo getChatList($data['chatType']);
         }else if($data['req'] == "getMsgs"){
             echo getMsgs($data['unm']);
+        }else if($data['req'] == "sendMsg"){
+            echo sendMsg($data);
         }
     }
 }
@@ -58,38 +60,92 @@ function getMsgs($toUnm){
         $fromUnm = _fetch_unm();
         $fromID = getDecryptedUserID();
         $toID = _get_userID_by_UNM($toUnm);
-        $fromData = fetch_columns("messages", "fromID, toID", "$fromID, $toID" , "msgID", "type", "msg", "doc", "time");
         $msgs = null;
-        if($fromData->num_rows != 0){
-            while( $row = $fromData->fetch_assoc()){
-                $row['unm']= $fromUnm;
-                $msgs[] = $row;
-            }
+
+        if($fromID == $toID){
+            $condition = "(`fromID` , `toid` ) IN ( (? , ?))";
         }
-        if($fromUnm != $toUnm){
-            $toData = fetch_columns("messages", "fromID, toID", "$toID, $fromID" , "msgID", "type", "msg", "doc", "time" );
-            if($toData->num_rows != 0){
-                while( $row= $toData->fetch_assoc()){
-                    $row['unm']= $toUnm;
-                    $msgs[]= $row;
-                }
-            } 
+        else{
+            $condition = "( `fromID` , `toid` ) IN ( (? , ?), (? , ?) )";
         }
 
-        if($msgs != null){            
-            function usortFunc($a,$b){
-                if($a['time'] == $b['time'])
-                    return 0;
+        $data = "SELECT `msgID`,`fromID`, `type`, `msg`, `doc`, `time` FROM `messages` WHERE $condition ORDER BY `time`";
 
-                return ($a['time'] < $b['time']) ? -1 : 1;
+        $stmt = $GLOBALS['conn'] -> prepare($data);
+        if($fromID == $toID){
+            $stmt ->bind_param("ss" , $fromID , $toID);
+        }else{
+            $stmt ->bind_param("ssss" , $fromID, $toID, $toID, $fromID);
+        }
+        $sqlquery= $stmt->execute();
+
+        if($sqlquery){
+            $result=$stmt->get_result();
+
+            if($result->num_rows == 0)
+                return 0;
+
+            $i=0;
+            while($row = $result->fetch_assoc()){
+                $msgs[$i]['msgID']=$row['msgID'];
+                $msgs[$i]['unm']= ($row['fromID'] == $fromID) ? $fromUnm : $toUnm ;
+                $msgs[$i]['type']= $row['type'];
+                $msgs[$i]['msg']=$row['msg'];
+                $msgs[$i]['doc']=$row['doc'];
+                $msgs[$i]['time']=$row['time'];
+
+                $i++;
             }
-            usort($msgs , 'usortFunc');
+
             return json_encode($msgs);
         }
 
         return 0;
     }catch(Exception $e){
-        print_r($e);
+        // print_r($e);
+        return 0;
+    }
+}
+
+function sendMsg($data){
+    try{
+        $newMsgID = gen_new_id("Msg");
+        $fromID = getDecryptedUserID();
+        $toID = _get_userID_by_UNM($data['toUnm']);
+        $input = $data['input'];//this is input by user it can be anything
+        $type= $data['type'];
+        $time = $data['time'];
+    
+        $msg_column = null;
+        $msg_value = null;
+        if($type == "text"){
+            $msg_column = "msg";
+            $msg_value = "$input";
+
+        }else if($type == "img"){
+            $imgName = "\Img-".date("d-m-Y").'-'.rand(10,1000).".webp";
+            $imgObj['img_data'] = base64_decode($input['img_data']);
+            $imgObj['size'] = $input['size'];
+            
+            $imgObj['tmp_name'] = $_COOKIE['imgDir'].$imgName;
+            file_put_contents($imgObj['tmp_name'] , $imgObj['img_data']);
+            $imgObj=compressImg($imgObj);
+            
+            $imgObj['img_data'] = base64_encode(file_get_contents($imgObj['tmp_name']));
+            if(!$imgObj)
+                throw new Exception('Img could not be compressed',0);
+
+            $msg_column = "";
+            $msg_value = "";
+        }
+
+        if($msg_column && $msg_value){
+            $msgRes = insertData('messages' , "msgID, fromID, toID, time, $msg_column" ,"$newMsgID ,$fromID ,$toID, $time, $msg_value");
+            return $msgRes;
+        }
+
+        return 0;
+    }catch(Exception $e){
         return 0;
     }
 }

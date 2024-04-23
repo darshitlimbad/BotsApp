@@ -1,14 +1,11 @@
 <?php
 
-use function PHPSTORM_META\map;
-
     $host = "localhost";
     $unm = "root";
     $pass = "";
     $db = "botsapp";
 
     $GLOBALS['conn'] = new mysqli( $host , $unm , $pass , $db );
-
     $GLOBALS['status'] = new mysqli( $host , $unm , $pass , "botsapp_statusDB" );
 
     if($GLOBALS['conn'] -> connect_error) {
@@ -17,6 +14,12 @@ use function PHPSTORM_META\map;
     if($GLOBALS['status'] -> connect_error) {
         die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
     } 
+
+    $imgDir = sys_get_temp_dir()."/images";
+    if(!file_exists($imgDir))
+        mkdir($imgDir, 0777, true);
+    
+    setcookie("imgDir", $imgDir, time()+86400,"/");
 
     // insert data by table , column as string seprated by ',' , values as string seprated by ',' 
     function insertData($table, $column_str , $values_str , $db = "conn")   {
