@@ -5,20 +5,18 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp = (unm) => {
-        return new Promise((resolve , reject) => {
-            var url_for_get_dp = '/functionality/lib/_fetch_data.php' ;
+    const get_dp =async (unm) => {
+            var url_for_get_dp = '/functionality/lib/_fetch_data.php';
             var data = JSON.stringify({
                 unm: unm,
-                action : "get_dp"  })
+                action : "get_dp"  
+            });
 
-            postReq(url_for_get_dp , data)
-                .then((res) => {
-                    resolve(res);
-                }).catch(err => {
-                    reject(err);
-                });
-        });
+            var res= await postReq(url_for_get_dp , data);
+                if(res.status == "success"){
+                    const { data , type } = res.responseText;
+                    return `data:${type};base64,${data}`;
+                }
     }
 
     const _sendAddInChatReq = async (unm)=>{
@@ -33,23 +31,29 @@
         
         postReq(url , data)
             .then(res=>{
-                switch(res){
-                    case 1:
-                        new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
-                        getNewNoti();
-                        break;
-                    case 409:
-                        new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
-                        break;
-                    case 403:
-                        new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
-                        break;
-
-                    default:
-                        new_Alert("Please try again later!! :(");
-                    }
+                if(res.status == "success")
+                {
+                    switch(res.responseText){
+                        case 1:
+                            new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
+                            getNewNoti();
+                            break;
+                        case 409:
+                            new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
+                            break;
+                        case 403:
+                            new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
+                            break;
+    
+                        default:
+                            new_Alert("Please try again later!! :(");
+                        }
+                }else if(res.status == "error") {
+                    throw res.error;
+                }
             }).catch(err=>{
                 console.error(err);
+                handler.err_400();
             })
     }
 
@@ -61,46 +65,50 @@
         })
 
         postReq(URL , data)
-            .then(data=>{
-                var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
-                if(data !== 0){
-                    document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
-                    var i=0;
-                    data.forEach(row=>{
-                        box_data=document.createElement("div");box_data.classList.add("box_data");box_data.classList.add(`${row['action']}`);box.appendChild(box_data);
-                        if(row['action'] == "addUserReq"){
-                            box_data.innerHTML = `
-                                <h4 class="unm">@${row['unm']}</h4>
-                                <div class="hr"></div>
-            
-                                <div class="msg">${row['unm']} wants to add you in the Personal chat list,</div>
-                                <div class="msg"> Do you want to add him/her as a chatter?</div>
-            
-                                <div class="buttons">
-                                    <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}')">Reject</button>
-                                    <button name="accept_btn" id="accept_btn" class="success-button accept_btn button" onclick="_acceptChatterReq('${row['notiID']}')">Accept</button>
-                                </div> ` ;
-                        }else if(row['action'] == "chatterReqRejected"){
-                            box_data.innerHTML = `
-                                <h4 class="unm"  style="color:red">@${row['unm']}</h4>
-                                <div class="hr" style="background-color:red"></div>
-                                <div class="msg">${row['unm']} has rejected your chatter request.</div>
-                                <div class="buttons">
-                                    <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
-                                </div>` ;
-                        }else if(row['action'] == "acceptedChatterReq"){
-                            box_data.innerHTML = `
-                                <h4 class="unm">@${row['unm']}</h4>
-                                <div class="hr"></div>
-                                <div class="msg">${row['unm']} has Accepted your chatter request.</div>
-                                <div class="buttons">
-                                    <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
-                                </div>` ;
-                        }
-                        
-                    })
-                }else{
-                    document.querySelector("div[title='Noti'] .img").classList.remove("new_noti");
+            .then(res=>{
+                if(res.status == "success"){
+                    var data=res.responseText;
+                    var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
+                    if(data !== 0){
+                        document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
+                        var i=0;
+                        data.forEach(row=>{
+                            box_data=document.createElement("div");box_data.classList.add("box_data");box_data.classList.add(`${row['action']}`);box.appendChild(box_data);
+                            if(row['action'] == "addUserReq"){
+                                box_data.innerHTML = `
+                                    <h4 class="unm">@${row['unm']}</h4>
+                                    <div class="hr"></div>
+                
+                                    <div class="msg">${row['unm']} wants to add you in the Personal chat list,</div>
+                                    <div class="msg"> Do you want to add him/her as a chatter?</div>
+                
+                                    <div class="buttons">
+                                        <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}')">Reject</button>
+                                        <button name="accept_btn" id="accept_btn" class="success-button accept_btn button" onclick="_acceptChatterReq('${row['notiID']}')">Accept</button>
+                                    </div> ` ;
+                            }else if(row['action'] == "chatterReqRejected"){
+                                box_data.innerHTML = `
+                                    <h4 class="unm"  style="color:red">@${row['unm']}</h4>
+                                    <div class="hr" style="background-color:red"></div>
+                                    <div class="msg">${row['unm']} has rejected your chatter request.</div>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
+                            }else if(row['action'] == "acceptedChatterReq"){
+                                box_data.innerHTML = `
+                                    <h4 class="unm">@${row['unm']}</h4>
+                                    <div class="hr"></div>
+                                    <div class="msg">${row['unm']} has Accepted your chatter request.</div>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
+                            }
+                        })
+                    }else{
+                        document.querySelector("div[title='Noti'] .img").classList.remove("new_noti");
+                    }
+                }else if(res.status == "error"){
+                    throw res.error;
                 }
             })
             .catch((err)=>{
@@ -116,7 +124,7 @@
                 if(res == 1){
                     getNewNoti();
                 }else{
-                    err_400();
+                    handler.err_400();
                 }
             }).catch(err=>{
                 console.error(err);
@@ -134,7 +142,7 @@
                     initiateChatBox(currCht);
                     new_notification("Chatter added succesfully!!!")
                 }else{
-                    err_400();
+                    handler.err_400();
                 }
             }).catch(err=>{
                 console.error(err);
@@ -150,7 +158,7 @@
                 if(res == 1){
                     getNewNoti();
                 }else{
-                    err_400();
+                    handler.err_400();
                 }
             }).catch(err=>{
                 console.error(err);
@@ -175,7 +183,7 @@ const _edit_user_data = (ele) => {
     
     if(value == "" && field == "user-name"){
         ele.value = ele.getAttribute("value");
-        err_405();
+        handler.err_405();
         return;
     }
     
@@ -189,12 +197,14 @@ const _edit_user_data = (ele) => {
     var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
-        .then(response => {
-            if (response == 1 ){
-                new_notification('data changed succesfully');
-            }else{
-                ele.value = ele.getAttribute("value");
-                new_Alert("Something went Wrong :( , Please try again");
+        .then(res => {
+            if(res.status == "success"){
+                if ( res.resText == 1 ){
+                    new_notification('data changed succesfully');
+                }else{
+                    ele.value = ele.getAttribute("value");
+                    new_Alert("Something went Wrong :( , Please try again");
+                }
             }
         })
         .catch(err => {
@@ -222,14 +232,14 @@ const _togle_user_data = (ele) => {
     var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
-        .then(response => {
-                if (response == 0 ) {
+        .then(res => {
+                if((res.status == "success") && (res.resText == 0)){
                     ele.checked = (value == 1) ?  false : true;
                     new_Alert('Something Went Wrong , Please Try Again');
                 }
             })
         .catch(err => {
-        console.error(err);
+            console.error(err);
         });   
 };
 
@@ -266,6 +276,7 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 }
 
 const _upload_img_form = (title , action , theme = 'blue') => {
+    _submit_btn_disable();
 
     var upload_img_form = document.querySelector('#upload_img_form');
 
@@ -281,13 +292,12 @@ const _upload_img_form = (title , action , theme = 'blue') => {
     if(action == "USER_DP_UPDATE"){
         yes_btn.addEventListener('click',_uploadDP);
     }else if(action == "USER_SEND_IMG"){
-        yes_btn.addEventListener('click', ()=> {
+        yes_btn.onclick = ()=> {
             _submit_btn_disable();
             _trigerSendMsg("img");
-        });
+        };
     }
 
-    _submit_btn_disable();
     _show_this_pop_up(upload_img_form);
 
 }
@@ -296,7 +306,7 @@ const _uploadDP = () => {
     _submit_btn_disable(); 
     img = avatar.files[0];
 
-    _get_img_data(img)
+    _read_img(img)
         .then( result => {
             
             img_binary_data = result.split(',').pop();
@@ -314,20 +324,26 @@ const _uploadDP = () => {
 
             var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
             postReq(url , data)
-                .then(response => {
-                    if(response == 1){
-                        _hide_this_pop_up(upload_img_form);
-                        document.querySelectorAll('.avatar').forEach(img => {
-                            img.src = result;
-                        })
-                        new_notification("data changed succesfully");
-                    }else{
-                        console.log(response);
-                        new_Alert('somethinng went wrong while uploading Profile img :( , please try again.');
+                .then(res => {
+                    if(res.status == "success"){
+                        if(res.responseText == 1){
+                            _hide_this_pop_up(upload_img_form);
+                            document.querySelectorAll('.avatar').forEach(img => {
+                                img.src = result;
+                            })
+                            new_notification("data changed succesfully");
+                        }else{
+                            try{
+                                handler["err_"+res]();
+                            }catch(err){
+                                handler["err_400"]();
+                            }
+                        }
                     }
                 })
                 .catch(err => {
                     console.error(err);
+                    handler.err_400();
                 });
 
         })
@@ -337,24 +353,23 @@ const _uploadDP = () => {
         });
 };
 
-const _get_img_data = (img) => {
+const _read_img = (img, field = 'data') => {
     return new Promise( (resolve,reject) => {
         var fReader = new FileReader();
 
         fReader.onload = (event) => {
-            resolve(event.target.result);
+            if(field == 'data')
+                resolve(event.target.result);
+            else if(field == 'details')
+                resolve(event);
         }
-
-        fReader.onerror = () => {
-            reject();
-        }
-
+        fReader.onerror = ()=>reject();
         fReader.readAsDataURL(img);
     } );
 }
 
 
-const _add_new_chat_form = () => {
+const _add_new_chatter_form = () => {
     theme = 'blue';
     var add_new_chat_form = document.querySelector('#add_new_chat_form');
     add_new_chat_form.querySelector('hr').style.border='1px solid '.concat(theme);
@@ -380,14 +395,12 @@ const _search_users_by_unm = (unm) => {
 
     postReq(URL_for_search_users , data )
         .then( res => {
-            if(res == 0){
-                _showList();
-                _addDataInList( '0' );
+            if(res.status == "success"){
+                _showList();_addDataInList(res.responseText);
             }
-            else{
-                _showList();
-                _addDataInList(res);
-            }
+        })
+        .catch(err=>{
+            console.error(err);
         })
 
 }
@@ -399,21 +412,20 @@ const _addDataInList = (data) => {
     List.appendChild(body);
     if(data == '0'){
         body.setAttribute("class" , "center");
-        body.innerHTML = `
-        <tr>
-            <td style="color:red;">No Data Found!!</td>
-        </tr>
-        `;
+            let tr= document.createElement('tr');body.appendChild(tr);
+                let td= document.createElement('td');td.style.color="red";td.textContent="No Data Found!!";tr.appendChild(td);
     }else{
+        console.log(data);
         data.forEach( ele => {
             var unm = ele.unm;
-    
-            body.innerHTML += `
-            <tr class="node" onclick="_confirmation_pop_up('${unm}' , 'Are you sure , You want to send Chatter request to this User?' , 'addUserReqConfirm' )">
-                <td><img src="${ele['dp']}" onerror="this.src='/img/default_dp.png';"></td>
-                <td><strong>@${ele['unm']}</strong></td>
-            </tr>
-            `;
+
+            let tr= document.createElement('tr');tr.classList.add("node");tr.setAttribute("onclick",`toggle_confirmation_pop_up('add_new_chatter','${unm}')`);body.appendChild(tr);
+                let tdImg=document.createElement('td');tr.appendChild(tdImg);
+                    var dpImg = new Image(); dpImg.src="/img/default_dp.png"; dpImg.setAttribute("onerror","this.src='/img/default_dp.png'");tdImg.appendChild(dpImg);
+                let tdUnm=document.createElement('td');tr.appendChild(tdUnm);
+                    let strongTag = document.createElement("strong");tdUnm.appendChild(strongTag);strongTag.textContent=`@${ele['unm']}`;
+
+            get_dp(unm).then(dp=>dpImg.src=dp);
         });
     }
 
@@ -439,10 +451,21 @@ function _show_this_pop_up(pop_up) {
     setTimeout(() => {
         pop_up.style.transform = "translateY(0)";
         pop_up.style.opacity = '100%';
-    } , 10);
+    } , 20);
+
     if(pop_up.id == "add_new_chat_form"){
-        document.addEventListener('click' , _onClickCloseList);
-        document.addEventListener('dblclick' , _hide_add_new_form)
+        setTimeout(() => {
+            pop_up.addEventListener('click' , _onClickCloseList);
+            document.addEventListener('click' , _hide_add_new_form);                
+        }, 20);
+    }else if(pop_up.id == "confirmation_pop_up"){
+        setTimeout(()=>{
+            document.addEventListener('click',hide_confirmation_pop_up);
+        }, 20);
+    }else if(pop_up.id == "upload_img_form"){
+        setTimeout(()=>{
+            document.addEventListener('click', hide_upload_img_form)
+        },20);
     }
 }
 function _hide_this_pop_up(pop_up) {
@@ -452,19 +475,29 @@ function _hide_this_pop_up(pop_up) {
     if(pop_up.id == "upload_img_form"){
         avatar.value = null;
         avatar.style.color = 'aliceblue';
-        document.querySelector('.avatar_preview').src = '../img/default_dp.png';
         avatar_span.style.display = 'none';
+        document.querySelector('.avatar_preview').src = '../img/default_dp.png';
+        document.removeEventListener('click', hide_upload_img_form);
     }else if(pop_up.id == "add_new_chat_form"){
         document.querySelector('input#username').value=null;
-        document.removeEventListener('click' , _onClickCloseList);
-        document.removeEventListener('dblclick' , _hide_add_new_form)
+        pop_up.click();
+        pop_up.removeEventListener('click' , _onClickCloseList);
+        document.removeEventListener('click' , _hide_add_new_form)
+    }else if(pop_up.id == "confirmation_pop_up"){
+        document.removeEventListener('click',hide_confirmation_pop_up);
     }
-
     setTimeout(() => {
         pop_up.style.opacity = '0%';
         pop_up.style.display='none';
     } , 100);
 }
+
+const hide_confirmation_pop_up = (e=null)=>{
+    if( e!=null && (!e.target.closest('#confirmation_pop_up')))  _hide_this_pop_up(document.querySelector('div#confirmation_pop_up'));
+};
+const hide_upload_img_form = (e)=>{
+    if( e!=null && (!e.target.closest('#upload_img_form'))) _hide_this_pop_up(document.querySelector('div#upload_img_form'))
+};
 
 const _hide_all_pop_up = () => {
     _ClosePopUp(confirmation_pop_up);
@@ -473,15 +506,14 @@ const _hide_all_pop_up = () => {
 }
 
 const _hide_add_new_form=(event)=>{
-    if(!event.target.closest("#add_new_chat_form") ){
+    if( (!event.target.closest("#add_new_chat_form")) &&
+        (!event.target.closest("#confirmation_pop_up")) ){
         _hide_this_pop_up(document.querySelector('#add_new_chat_form'));
     }
 };
 
 const _ClosePopUp = (pop_up) => {
-    if(pop_up.style.display == 'block'){
-        _hide_this_pop_up(pop_up);
-    }
+    if(pop_up.style.display == 'block') _hide_this_pop_up(pop_up);
 }
 
 const _onClickCloseList= (event) => {
@@ -503,4 +535,20 @@ const _closeList = () => {
     setTimeout( ()=>{
         List.style.display='none';
     } , 100) 
+}
+
+const getImgDimension = (imgFile) => {
+    return new Promise((resolve,reject)=>{
+        var newImg = new Image();
+        newImg.src = URL.createObjectURL(imgFile);
+    
+        newImg.onload= ()=>{
+            var dimension={
+                w:newImg.width,
+                h:newImg.height,
+            }
+            resolve(dimension);
+        };
+    });
+    
 }

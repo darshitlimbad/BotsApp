@@ -12,13 +12,13 @@
             // if the profile picture is requested to change
             if($table == 'users_avatar') {
                 include_once('lib/_insert_data.php');
-                $img['img_data'] = base64_decode($data['data']['img_data']);
-                $img['size'] = $data['data']['size'];
+                $imgObj['img_data'] = base64_decode($data['data']['img_data']);
+                $imgObj['size'] = $data['data']['size'];
 
-                $img['tmp_name'] = tempnam(sys_get_temp_dir() , 'uploaded_img_');
-                file_put_contents($img['tmp_name'] , $img['img_data']);
-
-                echo uploadImg(getDecryptedUserID() , $img);
+                $imgObj['tmp_name'] = tempnam(sys_get_temp_dir() , 'upImg');
+                file_put_contents($imgObj['tmp_name'] , $imgObj['img_data']);
+                $imgObj['img_data']=null;
+                echo uploadImg(getDecryptedUserID() , $imgObj);
                 exit();
             }
 

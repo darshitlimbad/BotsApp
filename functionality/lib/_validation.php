@@ -92,12 +92,9 @@ function compressImg($imgObj , $quality = 50) {
         $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
-        if (!in_array($imgObj['type'], $allowedTypes)) {
-            throw new Exception("Unsupported image type: " . $imgObj['type']);
-        }
+        if (!in_array($imgObj['type'], $allowedTypes))
+            throw new Exception("Unsupported image type: " , 415);
 
-        $tmp_file = tempnam( sys_get_temp_dir() , "/ima" ); 
-        
         $success = false;
         switch ($imgObj['type']) {
             case 'image/jpeg':
@@ -110,22 +107,20 @@ function compressImg($imgObj , $quality = 50) {
                 $image = imagecreatefromwebp($imgObj['tmp_name']);
                 break;
             default:
-                throw new Exception("Unexpected image type: " . $imgObj['type']);
-        }
-        
-        $success = imagewebp($image, $tmp_file, $quality);
-
-        if (!$success) {
-            throw new Exception("Failed to compress image");
+                throw new Exception("Unexpected image type: ", 415);
         }
 
         unlink($imgObj['tmp_name']);
-        $imgObj['tmp_name'] = $tmp_file;
+        $success = imagewebp($image, $imgObj['tmp_name'], $quality);
+        
+        if (!$success)
+            throw new Exception("Failed to compress image",400);
+        
         $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
 
         return $imgObj;
     }catch(Exception $e) {
-        return 0;
+        return $e->getCode();
     }
 }
 ?>

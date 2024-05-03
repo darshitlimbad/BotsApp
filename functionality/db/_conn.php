@@ -1,4 +1,8 @@
 <?php
+    // php.ini changes
+    // SET GLOBAL max_allowed_packet = 32 * 1024 * 1024;
+
+    // 
 
     $host = "localhost";
     $unm = "root";
@@ -15,10 +19,9 @@
         die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
     } 
 
-    $imgDir = sys_get_temp_dir()."/images";
+    $imgDir = sys_get_temp_dir()."/images/";
     if(!file_exists($imgDir))
         mkdir($imgDir, 0777, true);
-    
     setcookie("imgDir", $imgDir, time()+86400,"/");
 
     // insert data by table , column as string seprated by ',' , values as string seprated by ',' 

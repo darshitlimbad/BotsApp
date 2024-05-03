@@ -62,8 +62,8 @@ function createUser($column_str , $values_str , $avatar ) {
 function uploadImg($userID , $imgObj ){
     try{
         $imgObj = compressImg($imgObj);
-        if($imgObj == 0)
-            throw new Exception("something went wrong with Compression");
+        if(gettype($imgObj)=="integer")
+            throw new Exception("Something Went wrong",$imgObj);//this will return error code
 
         $table = 'users_avatar';
         $type = $imgObj['type'];
@@ -85,7 +85,7 @@ function uploadImg($userID , $imgObj ){
 
             return ($sqlfire)?1:0;
     }catch(Exception $e) {
-        return 0;
+        return $e->getCode();
     }
 }
 

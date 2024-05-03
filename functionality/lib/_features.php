@@ -45,7 +45,7 @@
 
         <!-- Buttons -->
         <div class="buttons">
-            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))" ><img src="/img/icons/close.png" alt="Close" height="15px" width="15px"></button>
+            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))"><img src="/img/icons/close.png" alt="Close" height="15px" width="15px" style="top: 2px;position: relative;"></button>
         </div>
 
         <hr>

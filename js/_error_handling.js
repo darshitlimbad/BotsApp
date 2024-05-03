@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded' , function () {
             setTimeout(() => {
                 // ERROR
                 if( URL_params.get('ERROR') == '400') {
-                    err_400();
+                    handler.err_400();
                 }
                 if(URL_params.get('ACTION') == 'sign-in')    {
                     buttons[1].click();
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded' , function () {
                     new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
                 }
                 if(URL_params.get('ERROR') == '405') {
-                    err_405();
+                    handler.err_405();
                 }
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
@@ -44,10 +44,19 @@ document.addEventListener('DOMContentLoaded' , function () {
             },10);
 });
 
+const handler={};
 
-const err_405 = ()=>{
-    new_Alert( "Name can't be Empty");
-}
-const err_400 = ()=>{
+handler.err_400 = () => {
     new_Alert( " Something went Wrong :( , Please try again");
 }
+handler.err_405 = () => {
+    new_Alert( "Name can't be Empty");
+}
+handler.err_415 = () => {
+    new_Alert(" Media type is Unsupprted. ");
+}
+handler.err_413 = () => {
+    new_Alert(" File Size is larger then allowed. ");
+}
+
+

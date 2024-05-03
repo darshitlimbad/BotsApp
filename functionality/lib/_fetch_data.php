@@ -2,6 +2,7 @@
     if($data = json_decode(file_get_contents("php://input") , true) ){
         if(isset($data['action'])){
             include '../db/_conn.php';
+            include_once('./_validation.php');
             if($data['action'] == "get_dp"){
                 echo get_dp( null,$data['unm']);
             }
@@ -45,18 +46,21 @@
     }
 
     function get_dp($userID,$unm=null) {
-        if($unm){
+        if($unm)
             $userID = _get_userID_by_UNM($unm);
-        }
         
         $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "imgData" );
 
-        if($fetch_img != '400' && $fetch_img->num_rows == 1){
+        if($fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
             $type = $img['type'];
             $data = base64_encode($img['imgData']);
 
-            return json_encode("data:$type;base64,$data");
+            $returnData = array( 
+                    "type" => $type,
+                    "data" => $data
+                );
+            return json_encode($returnData);
         }else{
             return 0;
         }  
@@ -111,15 +115,10 @@
                 throw new Exception();
     
                 if($result !== 0 ){
-                    $i=0;
                     while($row = $result->fetch_assoc()){
-                        $row['dp'] = json_decode(get_dp($row['userID']));
-
-                        $rows[$i]['dp'] = $row['dp'];
-                        $rows[$i]['unm'] = $row['unm'];
-
-                        $i++;
+                        $rows[]['unm'] = $row['unm'];
                     }
+                    
                     return json_encode($rows);
                 }else{
                     throw new Exception();

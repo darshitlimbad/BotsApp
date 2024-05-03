@@ -72,6 +72,7 @@ const toggleSearchTxt = () => {
 }
 
 function _searchWords(val) {
+    val=val.trim();
     let searchTxt = document.querySelector("div#searchTxt");
 
     var chatBody = document.querySelector(".chatBody");

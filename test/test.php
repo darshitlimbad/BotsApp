@@ -1,5 +1,8 @@
 <?php
+    // include "../interface.php";
+    // include "../functionality/lib/_chat.php";
 
-_upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);
-
+    // echo getDoc("Msg00000050");
 ?>
+
+<img src="" alt="">

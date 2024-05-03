@@ -86,7 +86,6 @@
     background-color:black;
     border-radius: 10px;
     transition: 1s all cubic-bezier(0.215, 0.610, 0.355, 1);
-    text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.479);
     overflow-y: auto;
     overflow-x: hidden;
 }

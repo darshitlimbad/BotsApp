@@ -70,7 +70,7 @@
         <div class="bottom">
 
             <!-- Add New Chat -->
-            <div class="options" title="addNewChat" onclick="_add_new_chat_form(); document.querySelector('input#username').focus()" accesskey="a">
+            <div class="options" title="addNewChat" onclick="toggleAddNewChatter()" accesskey="a">
                 <div class="img">
                     <div style="font-size: 20px;"><b>+</b></div> 
                 </div>
@@ -161,12 +161,12 @@
                 <!-- log-out -->
                 <h4 class="danger">Log Out</h4>
                         <p>Log out from your account</p>
-                <button class="danger-button button" onclick="_confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');">Log Out</button>
+                <button class="danger-button button" onclick="toggle_confirmation_pop_up('log_out')">Log Out</button>
 
                 <!-- Delete Account -->
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
-                <button class="danger-button button" onclick="_confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');">Delete Account</button>
+                <button class="danger-button button" onclick="toggle_confirmation_pop_up('deleteAccount')">Delete Account</button>
             </div>
 
             <!-- Chat-body -->
@@ -225,7 +225,7 @@
                 <div class="profile-dp">
                     <img src="/img/dp-moon.png" onerror="defaultDp(this);" title="<?= $nm?>" class="avatar">
                 </div>
-                    <img src="/img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="_upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);"/>
+                    <img src="/img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="toggle_img_upload_form('upload_new_dp')"/>
                 <br>
                 
                 <div class="text"><?= $unm?></div>

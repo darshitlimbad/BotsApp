@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     // keyboard sortcuts (_srtc stands for sortcut)
         document.addEventListener('keydown' , _srtc);
-        
     // 
 
     // global var
@@ -39,7 +38,6 @@ document.addEventListener('DOMContentLoaded' , function () {
     //functions to be called
     set_profile_dp();
     getNewNoti();    
-
 });  
 
 // 
@@ -65,13 +63,27 @@ const initiateChatBox = (chatType) => {
     openChatList(chatType);
 }
 
+// toggle add new Chatter
+function toggleAddNewChatter(){
+    let newChatterForm=document.querySelector("div#add_new_chat_form");
+    if(newChatterForm.style.display=="none" || newChatterForm.style.display=="" ) {
+        _add_new_chatter_form(); 
+        document.querySelector('input#username').focus();
+
+        document.addEventListener('keypress',(e)=>{
+            // if(e.keyCode )
+            console.log(e.key);
+        });
+    }else{
+        _hide_this_pop_up(newChatterForm);
+    }
+}
 
 // toggle settings-box
 function toggle_settings_box()   {
     if (!settings_box.classList.contains('settings-box_show')) {
 
-        settings_box.classList.add('settings-box_show');
-        settings_box.classList.remove('settings-box_hide');
+        settings_box.classList.replace('settings-box_hide','settings-box_show');
 
         var li = (!event.target.closest("div[title='Profile']")) ?
                     document.querySelector(".settings-box ul li[name='general']") :
@@ -88,6 +100,31 @@ function toggle_settings_box()   {
         remove_selected_li();
         document.removeEventListener('click' , closesettingsbox);
 
+    }
+}
+
+// toggle_log_out_pop_up
+function toggle_confirmation_pop_up(pop_up_name , title=null){
+    let confirmation_pop_up=document.querySelector('div#confirmation_pop_up');
+    if(confirmation_pop_up.style.display != 'block'){
+        if(pop_up_name == "log_out")    _confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');
+        else if(pop_up_name == "deleteAccount") _confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');
+        else if(pop_up_name == "add_new_chatter") _confirmation_pop_up( title , 'Are you sure , You want to send Chatter request to this User?' , 'addUserReqConfirm' );
+    }
+}
+
+// 
+function toggle_img_upload_form(pop_up_name){
+    let upload_img_form=document.querySelector('div#upload_img_form');
+    if(upload_img_form.style.display != "block"){
+        switch(pop_up_name){
+            case "upload_new_dp":
+                _upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);
+                break;
+            case "send_img":
+
+            break;
+        }
     }
 }
 
@@ -277,37 +314,20 @@ const getCookie = (name) => {
             }
         }
 
+        // Message Input box shortcut
+        let msgInput=document.querySelector('.msgInput');
+        if(msgInput && e.keyCode == 191 && document.activeElement!=msgInput)   {e.preventDefault();msgInput.focus();}
+
     };
 
     // loader animation function
     const loader = (loc)=>{
         let i=1;
-
+        
         return  setInterval(()=>{
-                loc.querySelector('#loader .loader-img').style.rotate=`${i}deg`;
-                    i+=4;
-                    if(i>=356)
-                        i=0;
-                },10 ); 
+                loc.querySelector('.loader .loader-img').style.rotate=`${i}deg`;
+                    i+=6;
+                    if(i>=356)  i=0;
+                },20 ); 
     }
 // 
-
-//
-
-// dustbin space
-
-    // document.querySelector("div[title='Settings']").addEventListener( 'click' , function () {
-    // })
-
-// // user hover on chat animation  
-// garbage for now
-// document.querySelectorAll('.list .inbox-user').forEach( (ele) => {
-//     ele.addEventListener('mousemove' , (event) => {
-//             const rect = ele.getBoundingClientRect();
-//             const relativeX = event.clientX - rect.x - 12;
-//             const relativeY = event.clientY - rect.y - 30;
-            
-//             ele.classList.add("inbox-user_hover");
-//             ele.style.setProperty("--inbox-user-x" , `${relativeX}px`);
-//             ele.style.setProperty("--inbox-user-y" , `${relativeY}px`);         
-//     }); }); 

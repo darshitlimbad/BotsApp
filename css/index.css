@@ -139,23 +139,19 @@
 }
 
 .list .img  {
-    background-color: var(--main-bg-color);
     display: block;
     height: 30px;
     width: 30px;
     padding: 0px;
     margin: 7px;
-    background-color: var(--main-bg-color);
-    border-radius: 100%;
-
+    border-radius: 50%;
 }
 /* span for skeleton loadding animation */
 .list .img img , .list .img span {
     display: block;
     height: inherit;
     width: inherit;
-    background-color: var(--main-bg-color);
-    border-radius: 100%;
+    border-radius: 50%;
 }
 
 .list .details {
@@ -189,8 +185,8 @@
     font-size: 11px;
 }
 
-.list .listBody .selected,
-.chat .headding .icon:hover,
+.list .listBody .inbox-user:hover,
+.chat .heading .icon:hover,
 .chat .ele:hover,
 .chat .msgInput {
     cursor: pointer;
@@ -235,7 +231,7 @@
     }
 }
 
-.chat .headding {
+.chat .heading {
     height: 5em;
     width: 100%;
     justify-content: start;
@@ -247,43 +243,43 @@
     background-attachment: fixed;
 }
 
-.chat .headding .icon{
+.chat .heading .icon{
     margin: 5px;
     border-radius: 50%;
     transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.chat .headding .icon img {
+.chat .heading .icon img {
     height: 1em;
     width: 1em;
     padding: 5px;
 }
 
-.chat .headding .dp{
+.chat .heading .dp{
     height: 60%;
     margin: 0 5px;
 }
-.chat .headding .dp img {
+.chat .heading .dp img {
     height: 2em;
     width: 2em;
     border-radius: 50%;
 }
 
-.chat .headding .details {
+.chat .heading .details {
     width: auto;
     max-width: 15em;
 }
 
-.chat .headding .details .name{
+.chat .heading .details .name{
     font-family: var(--text-font);
     font-weight: 900;
 } 
-.chat .headding .details .Status{
+.chat .heading .details .Status{
     font-size: 10px;
     font-family:  'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 } 
 
-.chat .headding .search-btn{
+.chat .heading .search-btn{
     position: absolute;
     right: 3%;
 }
@@ -397,6 +393,8 @@
 .chat .chatBody .msgContainer .msg {
     height: auto;
     width: auto;
+    display: flex;
+    flex-direction: column;
     max-width: 65%;
     min-width: 30%;
     padding: 10px;
@@ -445,8 +443,28 @@
     border-right: 5px solid transparent;
 }
 
+.chat .chatBody .msgContainer .msg .msgData{
+    padding: 2px;
+    margin: 0;
+}
+
+.chat .chatBody .msgContainer .msg .img {
+    height: auto;
+    width: auto;
+    padding: 5px;
+    border: 1px solid rgba(240, 248, 255, 0.418);
+    border-radius: 5px;
+}
+
+.chat .chatBody .msgContainer .msg .fileName {
+    padding: 5px;
+    margin: 0;
+    
+}
+
 .chat .footer{
     justify-content: space-evenly;
+    flex-direction: row;
     height: auto;
     width: 100%;
     display: inline-flex;
@@ -455,7 +473,6 @@
     /* padding: 10px 0; */
     border-top: 0.5px solid black;
     font-size: var(--chat-font-medium);
-
     transition: all .5s cubic-bezier(0.04, 0.37, 0.49, 1.04);
 }
 

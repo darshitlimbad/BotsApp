@@ -73,8 +73,7 @@ body.main{
 }
 
 .skeleton   {
-    animation: skeleton 1s linear infinite alternate ;
-    z-index: 1;
+    animation: skeleton 1s linear infinite alternate;
 }
 
 .skeleton-text  {
@@ -83,7 +82,6 @@ body.main{
     border-radius: .25rem;
     margin: 6px 0 !important;
     filter: blur(10%);
-
 }
 
 .skeleton-text:last-child   {
@@ -168,6 +166,7 @@ footer {
 
 .side-bar .options  {
     margin: 0 2px;
+    cursor: pointer;
 }
 
 .side-bar .bottom   {
@@ -448,7 +447,7 @@ footer {
     width: 90%;
 }
 
-.settings-box .settings-container .body .headding   {
+.settings-box .settings-container .body .heading   {
     font-family: 'Times New Roman', Times, serif;
     font-size: 20px;
     margin: 0 0 10px 0;
