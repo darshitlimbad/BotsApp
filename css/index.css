@@ -49,10 +49,16 @@
     display: block;
     position: relative;
     height: calc(96% + 5px);
-    width: 17rem;
+    width: 15em;
     padding: 6px;
     border-radius:10px 0 0 10px;
     outline: 2px solid rgb(1, 12, 23);
+}
+
+@media screen and ( max-width:900px ){
+    .chat-box .inbox {
+        width:290px;
+    }
 }
 
 .chat-box .inbox .page-name{
@@ -133,7 +139,7 @@
     border-bottom: 1px outset var(--thin-wh-border);
     align-content: center;
 }
-.list .inbox-user:hover {
+.list .inbox-user:hover , .list .selected { 
     transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1); 
     background-color: rgba(145, 145, 145, 0.218);
 }
@@ -397,7 +403,7 @@
     flex-direction: column;
     max-width: 65%;
     min-width: 30%;
-    padding: 10px;
+    padding: 5px;
     background-color:var(--light-grey-color);
     border-radius: 10px;
     text-wrap: pretty;
@@ -448,18 +454,19 @@
     margin: 0;
 }
 
-.chat .chatBody .msgContainer .msg .img {
+.chat .chatBody .msgContainer .msg .msgImg {
     height: auto;
     width: auto;
-    padding: 5px;
-    border: 1px solid rgba(240, 248, 255, 0.418);
+    padding: 0px;
+    margin: 5px;
+    border: 1px solid rgba(240, 248, 255, 0.717);
     border-radius: 5px;
 }
 
 .chat .chatBody .msgContainer .msg .fileName {
     padding: 5px;
     margin: 0;
-    
+
 }
 
 .chat .footer{

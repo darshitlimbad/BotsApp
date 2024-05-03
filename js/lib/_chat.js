@@ -149,8 +149,6 @@ const openChat =async (unm) => {
     await setChatBody(unm);
     removeLoader(chatStruct.chatBody,loaderID);
     
-
-    
      // post-fix
 };
 const setLoader = async (loc)=>{
@@ -258,7 +256,7 @@ const _trigerSendMsg = async (type) => {
         case 'img':
             var inputBox = document.querySelector("#upload_img_form");
             var imgFile =inputBox.querySelector("#avatar").files[0];
-            msgObj.blob = (await _read_img(imgFile)).split(',').pop();
+            msgObj.blob = (await _read_img(imgFile));
 
             _hide_this_pop_up(inputBox);
             break;
@@ -320,7 +318,7 @@ const addNewMsgInCurrChat = (msgObj) => {
             let msgData = document.createElement("p");msgData.classList.add("msgData");msgData.textContent=msgObj.msg;msg.appendChild(msgData);
             break;
         case 'img':
-            let msgImg = new Image();msgImg.classList.add("msgImg");msgImg.src=msgObj.blob;msgImg.alt="Image";msg.appendChild(msgImg);
+            let msgImg = new Image();msgImg.classList.add("msgImg");msgImg.src=msgObj.blob;msgImg.alt="Image";msgImg.onerror=()=>msgImg.style.padding="5px";msg.appendChild(msgImg);
             break;
 
     }
