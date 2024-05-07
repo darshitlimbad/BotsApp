@@ -236,6 +236,7 @@ footer {
 .side-bar .selected > .img  {
     border: var(--options-selected-border);
     border-radius: var(--border-radius) !important;
+    transition: all .2s 1 cubic-bezier(0.11, 0.82, 0.33, 1.1);
 }
 
 .noti-box{
@@ -567,7 +568,13 @@ footer {
     border-radius: 4px;
     background-color: aliceblue;
     box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
+    transition: all .2s;
+}
 
+.settings-box .settings-container .body .edit_img:hover{
+    filter: brightness(.5);
+    cursor: pointer;
+    
 }
 
 .settings-box .settings-container .body .profile-dp img{
@@ -711,7 +718,7 @@ footer {
 }
 
 .input_field .input input{
-    height: 1rem;
+    height: 2rem;
     width: 20rem;
     position: relative;
     background-color: transparent;
@@ -728,9 +735,11 @@ footer {
     transition: box-shadow 2s cubic-bezier(0.56, 0.11, 0.85, 0.46);
 }
 
-.input_field .input input:focus , .input_field .input input:not(:placeholder-shown){
+.input_field .input input:focus , .input_field .input input:not(:placeholder-shown), .input_field .input input:hover{
     border-color: var(--text-color) !important;
     transition: border-color .5s;
+    background-color: #aeaeae49;
+    border-radius: 4px;
 }
 
 .input_field label  {
@@ -767,8 +776,8 @@ footer {
 .input_field img[name="eye"] {
     display: block;
     position: relative;
-    top: 14px;
-    left:307px;
+    top: 27px;
+    left:300px;
     z-index: 1;
 }
 

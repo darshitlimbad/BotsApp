@@ -2,6 +2,7 @@
 session_start();
 if(!isset($_SESSION['userID'])) {
 ?>
+
     <script>
     var request = indexedDB.open("Botsapp", 1);
     var is_data = 1;
@@ -41,23 +42,30 @@ if(!isset($_SESSION['userID'])) {
                     var getRequest = objectStore.get("1");
 
                     getRequest.onsuccess = ((event) => {
-                        var data = JSON.stringify(event.target.result);
+                        var data = JSON.stringify({...event.target.result,keyPass:'khuljasimsim'});
 
-                        var URL_of_setSession = `${window.location.origin}/functionality/_set_session_auto.php?keyPass=khuljasimsim`;
+                        var URL_of_setSession = '/functionality/_set_session_auto.php';
 
                         const xml = new XMLHttpRequest();
-
-                        xml.open('POST' , URL_of_setSession , false);
-
-                        xml.onreadystatechange = (response ) => {
+                        xml.onload = (response) => {
                             if((xml.readyState == 4) && (xml.status == 200)) {
-                                window.location.reload();
+                                let res = JSON.parse(response.target.response);
+
+                                if(res.status === 'success'){
+                                    window.location.reload();
+                                }else{
+                                    new_Alert(`[${res.code}] : ${res.message}`);
+                                    console.warn(`[${res.code}] :` , `${res.message}`);
+                                    db.close();
+                                    indexedDB.deleteDatabase('Botsapp');
+                                }
                             }   else    {
                                 console.error("[400] :"," Bad Request , some error ocured during auto session loading , please try again");
                             }
                             
                         };
 
+                        xml.open('POST' , URL_of_setSession , false);
                         xml.send(data);
 
                     });

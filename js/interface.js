@@ -197,20 +197,20 @@ function show_setting_body(listitem)  {
 //toggle edit box of profile 
 function profile_edit_box_toggle(edit_icon) {
     var edit_box =  edit_icon.closest(".flex");
-            if(edit_box)    {
-                var text_box = edit_box.querySelector(".text");
-                var icon = edit_box.querySelector(".edit-icon");
+        if(edit_box)    {
+            var text_box = edit_box.querySelector(".text");
+            var icon = edit_box.querySelector(".edit-icon");
+            var setIcon = "right";
 
-                text_box.classList.toggle("edit");
-                text_box.toggleAttribute('readonly');
+            text_box.classList.toggle("edit");
+            text_box.toggleAttribute('readonly');
 
-                if(!text_box.classList.contains("edit")) {
-                    _edit_user_data( text_box );
-                    icon.setAttribute("src" ,"img/icons/settings/profile/edit.png");
-                }  else {
-                    icon.setAttribute("src" ,"img/icons/settings/profile/right.png");
-                }
+            if(!text_box.classList.contains("edit")) {
+                _edit_user_data( text_box );
+                setIcon= "edit";
             }
+            icon.setAttribute("src" ,`img/icons/settings/profile/${setIcon}.png`);
+        }
 }
 
 // all settings options to noramal
@@ -251,7 +251,7 @@ const defaultDp = (tag) => {
 
 // submit user data on enter press
 const _submit_data = (event) => {
-    (event.key === 'Enter') ? event.target.parentElement.querySelector('.edit-icon').click() : '' ;
+    if(event.key === 'Enter') event.target.parentElement.querySelector('.edit-icon').click();
 }
 
 // cookies store

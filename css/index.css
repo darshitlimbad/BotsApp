@@ -379,8 +379,8 @@
 }
 
 .chat .chatBody .msgTime{
-    display: flex;
-    align-items: end;
+    height: auto;
+    width: auto;
     margin: 0 5px;
     opacity: 50%;
     font-size: 10px;
@@ -393,6 +393,7 @@
     z-index: 1;
     margin: 10px 0;
     --light-grey-color : rgb(53, 51, 51);
+    align-items: end;
 }
 
 
@@ -408,7 +409,6 @@
     border-radius: 10px;
     text-wrap: pretty;
     user-select: text;
-    white-space: pre-wrap;
     overflow-wrap: break-word;
 }
 
@@ -445,6 +445,7 @@
 }
 
 .chat .chatBody .send::before{
+    align-self: start;
     transform: translateX(4px);
     border-right: 5px solid transparent;
 }
@@ -461,12 +462,20 @@
     margin: 5px;
     border: 1px solid rgba(240, 248, 255, 0.717);
     border-radius: 5px;
+    font-size: 15px;
 }
 
 .chat .chatBody .msgContainer .msg .fileName {
     padding: 5px;
     margin: 0;
+}
 
+.chat .chatBody .msgContainer .msg .optionBtn {
+    position: absolute;
+    backdrop-filter: brightness(0.8);
+    border-top-right-radius: 0;
+    border-top-left-radius: 10%;
+    border: none;
 }
 
 .chat .footer{

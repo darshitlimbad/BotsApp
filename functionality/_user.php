@@ -40,7 +40,7 @@ try{
             $user = $_POST['user'];
             $pass = $_POST['pass'];
             
-            $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] : "null" ;
+            $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] : null ;
             $is_user_username = (str_contains($user, '@') && str_contains($user , '.')) ? '1' : '0';
             
             $result = fetch_columns( "users" , (($is_user_username == 0) ? "unm" : "email") , $user , 'userID' , 'pass' , 'pass_key');

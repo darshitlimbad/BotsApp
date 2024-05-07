@@ -2,12 +2,10 @@
     include_once('db/_conn.php');
     include_once('lib/_fetch_data.php');
     include_once('lib/_validation.php');
-
-if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
-    try{
-        $data = json_decode( file_get_contents("php://input") , true );
-        
-        if(isset($data)) {
+    $data = json_decode( file_get_contents("php://input") , true );
+    if(isset($data)) {
+        try{
+        if(isset($data['keyPass']) && $data['keyPass'] == 'khuljasimsim'){
             $encryptedUserID = base64_decode($data['userID']);
             $user_nonce = base64_decode($data['user_nonce']);
             $user_key = base64_decode($data['user_key']);
@@ -19,20 +17,30 @@ if(isset($_GET['keyPass']) && $_GET['keyPass'] == 'khuljasimsim'){
             $Pass = sodium_crypto_secretbox_open($encryptedPass , $pass_nonce , $pass_key);
         
             $res = metchEncryptedPasswords($Pass , $userID);
-
             if($res === 1) {
                 session_start();
                 $_SESSION['userID'] = $data['userID'];
                 $_SESSION['nonce'] = $data['user_nonce'];
                 $_SESSION['key'] = $data['user_key'];
+
+                $res = json_encode( array(
+                    'status'=>'success' 
+                ) );
+                echo $res;
+            }else{
+                throw new Exception("saved Password is wrong try log-in again." , 404);
             }
         }
     
         
     }
     catch(Exception $error) {
-        echo '['.$error->getCode().']' .":". $error->getMessage();
-        header('location: /user?ERROR='.$error->getCode());
+        $err= json_encode(array(
+            'status'=>'error',
+            'code'=>$error->getCode(),
+            'message'=>$error->getMessage()
+        ));
+        echo $err;;
     }
 }
 

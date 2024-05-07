@@ -200,6 +200,7 @@ const setChatHeader = (unm) =>{
 
 const setChatBody = async (unm) =>{
     const msgs = await _getMsgs(unm);
+    console.log(msgs);
     if(!msgs)  return;
     msgs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
 }
@@ -248,7 +249,7 @@ const _trigerSendMsg = async (type) => {
         case 'text':
             var inputBox = chatStruct.footer.querySelector(".msgInput");
             var msg=inputBox.value.trim();
-
+            if(!msg) return;
             msgObj['msg'] = msg;
             inputBox.value = "";
             inputBox.style.height = "auto";    
@@ -257,43 +258,41 @@ const _trigerSendMsg = async (type) => {
             var inputBox = document.querySelector("#upload_img_form");
             var imgFile =inputBox.querySelector("#avatar").files[0];
             msgObj.blob = (await _read_img(imgFile));
-
+            if(!msgObj.blob) return;
             _hide_this_pop_up(inputBox);
             break;
     }
 
     if(type != 'text') {
         let date = new Date();
-        msgObj.fileName = `${type.toLowerCase()}-${date.getDay()}-${date.getMonth()}-${date.getFullYear()}-${Math.ceil(Math.random()*1000)}.webp`;
+        msgObj.fileName = `${type.toLowerCase()}-${date.getDay()}-${date.getMonth()+1}-${date.getFullYear()}-${Math.ceil(Math.random()*1000)}.webp`;
     } 
         
     msgObj={
-        unm:getCookie('unm'),
+        msgID:await _genNewID("msg"),
+        toUnm:getCookie("currOpenedChat"),
         time:Date.now(),
-        type:type,
+        type,
         ...msgObj,
     };
     addNewMsgInCurrChat(msgObj);
-return;
-    if(!input)  return;
-    
     let res= await _sendMsg(msgObj);
 
-    if((typeof res == "number") && res != 1){
+    if( (res.status != 'success') || (res.responseText != 1)){
         try{
-            handler['err_'+res]();
+            handler['err_'+res.responseText]();
         }catch(e){
             handler.err_400();
         }
         return;
     }
+    
 }
 
 // new message chat
 const addNewMsgInCurrChat = (msgObj) => {
-
     let fullDate=new Date(Number(msgObj['time']));
-    let date = fullDate.getDate() +'/'+ fullDate.getMonth() +'/'+ fullDate.getFullYear();
+    let date = fullDate.getDate() +'/'+ (fullDate.getMonth()+1) +'/'+ fullDate.getFullYear();
     let time= fullDate.toLocaleTimeString();
 
     var prevDate = document.querySelectorAll(".msgDate");
@@ -302,32 +301,68 @@ const addNewMsgInCurrChat = (msgObj) => {
         prevDate=prevDate[prevDate.length-1].textContent;
     
     if( prevDate != date ){
-        var msgDate=document.createElement("div");msgDate.classList.add("msgDate");msgDate.textContent=date;
+        var msgDate=document.createElement("div");
+        msgDate.classList.add("msgDate");
+        msgDate.textContent=date;
+
         chatStruct.chatBody.appendChild(msgDate);
         prevDate = date;
     }  
 
-    let whichTransmit = ( getCookie('unm') != msgObj['unm'] ) ? 'receive' : 'send' ;
+    let whichTransmit = (getCookie('unm') == getCookie('currOpenedChat')) 
+                        ?   'send' : 
+                        ( ( getCookie('unm') == msgObj['toUnm'] ) 
+                        ? 'receive' : 'send' ) ;
 
-    var msgContainer=document.createElement("div");msgContainer.classList.add('msgContainer');msgContainer.classList.add(whichTransmit);
+    var msgContainer=document.createElement("div");
+    msgContainer.classList.add('msgContainer');
+    msgContainer.classList.add(whichTransmit);
+    msgContainer.id=msgObj.msgID;
     
-    msg=document.createElement("div");msg.classList.add(`msg`);
+    msg=document.createElement("div");msg.classList.add('msg');
 
     switch(msgObj['type']){
         case 'text':
-            let msgData = document.createElement("p");msgData.classList.add("msgData");msgData.textContent=msgObj.msg;msg.appendChild(msgData);
+            
+            let msgData = document.createElement("p");
+            msgData.classList.add("msgData");
+            msgData.textContent=msgObj.msg;
+            msg.appendChild(msgData);
+
             break;
         case 'img':
-            let msgImg = new Image();msgImg.classList.add("msgImg");msgImg.src=msgObj.blob;msgImg.alt="Image";msgImg.onerror=()=>msgImg.style.padding="5px";msg.appendChild(msgImg);
+
+            let msgImg = new Image();
+            msgImg.classList.add("msgImg");
+            msgImg.src=msgObj.blob;
+            msgImg.alt="Image";
+            msgImg.onerror=()=>msgImg.style.padding="5px";
+            msg.appendChild(msgImg);
+            
             break;
 
     }
 
-    if(msgObj.type != "text"){  let fileName = document.createElement('b');fileName.classList.add('fileName');fileName.textContent=msgObj.fileName;msg.appendChild(fileName);   }
+    if(msgObj.type != "text"){  
+        let fileName = document.createElement('b');
+        fileName.classList.add('fileName');
+        fileName.textContent=msgObj.fileName;
+        msg.appendChild(fileName);   
+    }
 
-    var msgTime=document.createElement("div");msgTime.classList.add(`msgTime`);msgTime.textContent=time;
-
-    chatStruct.chatBody.appendChild(msgContainer);
+    let optionBtn = document.createElement('div');
+    optionBtn.classList.add("optionBtn");
+    optionBtn.name="optionBtn";
+    optionBtn.title="Options";
+        optionBtn.innerHTML=`
+        <svg width="20px" height="20px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000" >
+        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+        </svg>`;
+    msg.appendChild(optionBtn);
+    
+    let msgTime=document.createElement("div");
+    msgTime.classList.add('msgTime');
+    msgTime.textContent=time;
 
     if(whichTransmit == 'receive'){
         msgContainer.appendChild(msg);
@@ -335,6 +370,7 @@ const addNewMsgInCurrChat = (msgObj) => {
     }else{
         msgContainer.appendChild(msgTime);    
         msgContainer.appendChild(msg);
-    }       
-    chatStruct.chatBody.scrollTop = chatStruct.chatBody.scrollHeight;        
+    }    
+    chatStruct.chatBody.appendChild(msgContainer);
+    setTimeout(()=>chatStruct.chatBody.scrollTop = chatStruct.chatBody.scrollHeight,100);        
 }

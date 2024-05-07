@@ -1,3 +1,4 @@
+<html>
 <head>
     <link rel="stylesheet" href="/css/lib/_features.css" type="text/css">
     <script type="text/javascript" src='/js/lib/_features.js'></script>
@@ -6,7 +7,7 @@
     <!-- custom-pop-up  -->
 <div class="center" >
     
-    <div id="confirmation_pop_up">
+    <div id="confirmation_pop_up" class="pop_up">
         <h3 class="title"></h3>
         <hr>
         <div class="input_field">
@@ -19,7 +20,7 @@
         </div>
     </div>
 
-    <div id="upload_img_form">
+    <div id="upload_img_form" class="pop_up">
 
         <h3 class="title"></h3>
         <hr>
@@ -28,7 +29,7 @@
         <div class="input_field" name="avatar_field">
             <div class="input-img avatar_block">
                 <img src="/img/default_dp.png" alt="" class="avatar avatar_preview">
-                <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp" onchange="avatar_validation()">
+                <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp">
             </div>
             <span id="avatar_span"></span>
         </div>
@@ -40,7 +41,7 @@
         </div>
     </div>
 
-    <div id="add_new_chat_form">   
+    <div id="add_new_chat_form" class="pop_up">   
         <h3 class="title">Let's Add more Chatters!</h3>
 
         <!-- Buttons -->
@@ -70,4 +71,5 @@
 
 </div>
 </body>
+</html>
 

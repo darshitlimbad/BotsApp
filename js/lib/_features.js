@@ -1,4 +1,5 @@
 // global var
+    var disabled_img_pop_up_btn=true;
     document.addEventListener('DOMContentLoaded' , () => {
         List = document.querySelector("#floatingList");
         submit_btn = document.querySelectorAll('#upload_img_form .pop_up_yes_btn ');
@@ -170,7 +171,7 @@
 const _edit_user_data = (ele) => {
     var field=ele.name;
     var value=ele.value;  
-    var edit_table = false;
+    var edit_table = null;
 
     switch(field){
         case 'user-name': 
@@ -180,6 +181,7 @@ const _edit_user_data = (ele) => {
             edit_table = "users_details";
     }
 
+    console.log(ele);
     
     if(value == "" && field == "user-name"){
         ele.value = ele.getAttribute("value");
@@ -187,19 +189,18 @@ const _edit_user_data = (ele) => {
         return;
     }
     
-    data = JSON.stringify(
-        {
+    data = JSON.stringify({
         table: edit_table,
         edit_column: field,
         data : value ,
         });
 
-    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
+    var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
         .then(res => {
             if(res.status == "success"){
-                if ( res.resText == 1 ){
+                if ( res.responseText == 1 ){
                     new_notification('data changed succesfully');
                 }else{
                     ele.value = ele.getAttribute("value");
@@ -233,7 +234,7 @@ const _togle_user_data = (ele) => {
 
     postReq(url , data) 
         .then(res => {
-                if((res.status == "success") && (res.resText == 0)){
+                if((res.status == "success") && (res.responseText == 0)){
                     ele.checked = (value == 1) ?  false : true;
                     new_Alert('Something Went Wrong , Please Try Again');
                 }
@@ -279,7 +280,8 @@ const _upload_img_form = (title , action , theme = 'blue') => {
     _submit_btn_disable();
 
     var upload_img_form = document.querySelector('#upload_img_form');
-
+    upload_img_form.querySelector("#avatar").onchange=()=>avatar_validation();
+    
     var title_ele = upload_img_form.querySelector('.title');
     title_ele.style.color = 'aliceblue';
     title_ele.textContent = title;
@@ -293,8 +295,10 @@ const _upload_img_form = (title , action , theme = 'blue') => {
         yes_btn.addEventListener('click',_uploadDP);
     }else if(action == "USER_SEND_IMG"){
         yes_btn.onclick = ()=> {
-            _submit_btn_disable();
-            _trigerSendMsg("img");
+            if(!disabled_img_pop_up_btn){
+                _submit_btn_disable();
+                _trigerSendMsg("img");
+            }
         };
     }
 
@@ -436,6 +440,7 @@ function _submit_btn_disable() {
         ele.style.filter = "brightness(0.05)";
         ele.setAttribute('disabled' , true);
     })
+    disabled_img_pop_up_btn =true; 
 }
 
 function _submit_btn_enable() {
@@ -443,6 +448,8 @@ function _submit_btn_enable() {
         ele.style.removeProperty("filter");
         ele.removeAttribute('disabled');
     })
+
+    disabled_img_pop_up_btn =false; 
 }
 
 function _show_this_pop_up(pop_up) {

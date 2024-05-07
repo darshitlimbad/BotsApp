@@ -82,7 +82,6 @@ function uploadImg($userID , $imgObj ){
 
             $sqlfire = $stmt->execute();
             $stmt ->close();
-
             return ($sqlfire)?1:0;
     }catch(Exception $e) {
         return $e->getCode();

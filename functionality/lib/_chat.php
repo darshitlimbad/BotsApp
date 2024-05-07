@@ -20,8 +20,11 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             case "sendMsg":
                 echo sendMsg($data);
                 break;
+            case "genNewID":
+                echo json_encode(gen_new_id($data['preFix']));
+                break;
             default:
-                echo 0;
+                echo 400;
         }
     }
 }
@@ -97,7 +100,7 @@ function getMsgs($toUnm){
             $i=0;
             while($row = $result->fetch_assoc()){
                 $msgs[$i]['msgID']=$row['msgID'];
-                $msgs[$i]['unm']= ($row['fromID'] == $fromID) ? $fromUnm : $toUnm ;
+                $msgs[$i]['toUnm']= ($row['fromID'] == $fromID) ? $toUnm : $fromUnm ;
                 $msgs[$i]['type']= $row['type'];
                 $msgs[$i]['msg']=$row['msg'];
                 $msgs[$i]['time']=$row['time'];
@@ -138,10 +141,9 @@ function getDoc($msgID) {
 
 function sendMsg($data){
     try{
-        $newMsgID = gen_new_id("Msg");
+        $newMsgID = $data['msgID'];
         $fromID = getDecryptedUserID();
         $toID = _get_userID_by_UNM($data['toUnm']);
-        $input = $data['input'];//this is input by user it can be anything
         $type= $data['type'];
         $time = $data['time'];
     
@@ -149,30 +151,37 @@ function sendMsg($data){
         $msg_value = null;
         if($type == "text"){
             $msg_column = "msg";
-            $msg_value = "$input";
+            $msg_value = $data['msg'];
         }else {
+            $fileName = $data['fileName'];
+            
             if($type == "img"){
-                $fileName = "Img-".date("d-m-Y").'-'.rand(10,1000).".webp";
+                $blob = explode(',',$data['blob']);
+                if( (explode('/',$blob[0]))[0] != "data:image" )
+                    throw new Exception("Not an image",415);
                 
+                $blob = $blob[1];
+
                 $imgObj['tmp_name'] = $_COOKIE['imgDir'].$fileName;
-                if(file_put_contents($imgObj['tmp_name'] , base64_decode($input)) == false)
+
+                if(file_put_contents($imgObj['tmp_name'] , base64_decode($blob)) == false)
                     throw new Exception("File uploading error",0);
-                
+                    
                 $imgObj=compressImg($imgObj);
+                if(gettype($imgObj) == "integer")//error code return by compress image
+                    throw new Exception("something went wrong in compression",$imgObj); 
+
                 $fileSize = filesize($imgObj['tmp_name']);
-
-
-                if(gettype($imgObj) == "integer")
-                    throw new Exception("something went wrong in compression",$imgObj); //error code return by compress image
-
                 if($fileSize > 16777200 )
                     throw new Exception("Media size is larger then maximum size",413);
                 
-                $input = base64_encode(file_get_contents($imgObj['tmp_name']));
+                $blob = base64_encode(file_get_contents($imgObj['tmp_name']));
+            }else{
+
             }
 
             $msg_column = "msg,doc";
-            $msg_value = "$fileName, $input";
+            $msg_value = "$fileName, $blob";
         }
 
         if($msg_column && $msg_value){
@@ -180,15 +189,10 @@ function sendMsg($data){
             if($msgRes == 0)
                 throw new Exception("error on data insertion",400);
 
-            if($type == "text"){
-                return $msgRes;
-            }else{
-                $resObj = json_encode(array(
-                    "fileName" => $fileName,
-                ));
-                return $resObj;
-            }
+            return $msgRes;
         }
+
+        // if anything went wrong and the code has not been return yet it will occure something went wrong error.
         throw new Exception("",400);
     }catch(Exception $e){
         return $e->getCode();;

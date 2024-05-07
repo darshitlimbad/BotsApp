@@ -206,13 +206,10 @@ function avatar_validation() {
         avatar_span.style.display='block';
         _submit_btn_disable();
     }else {
-        var fReader = new FileReader();
-
-        fReader.onload = (event) => {
-            avatar_preview.src = event.target.result;
-        }
-
-        fReader.readAsDataURL(file);
+        _read_img(file)
+            .then(res=>{
+                avatar_preview.src = res;
+            });
 
         avatar.style.color = 'var(--text-color)';
         avatar_span.style.display = 'none';

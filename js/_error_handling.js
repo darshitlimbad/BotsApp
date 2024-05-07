@@ -53,10 +53,13 @@ handler.err_405 = () => {
     new_Alert( "Name can't be Empty");
 }
 handler.err_415 = () => {
-    new_Alert(" Media type is Unsupprted. ");
+    new_Alert(" This Media type is not Allowed. ");
 }
 handler.err_413 = () => {
     new_Alert(" File Size is larger then allowed. ");
+}
+handler.err_500 = ()=>{
+    new_Alert(" Internal Server Error ")
 }
 
 

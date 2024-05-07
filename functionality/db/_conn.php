@@ -12,12 +12,10 @@
     $GLOBALS['conn'] = new mysqli( $host , $unm , $pass , $db );
     $GLOBALS['status'] = new mysqli( $host , $unm , $pass , "botsapp_statusDB" );
 
-    if($GLOBALS['conn'] -> connect_error) {
+    if($GLOBALS['conn'] -> connect_error)
         die("Database Connection failed: " . $GLOBALS['conn']->connect_error);
-    } 
-    if($GLOBALS['status'] -> connect_error) {
+    if($GLOBALS['status'] -> connect_error)
         die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
-    } 
 
     $imgDir = sys_get_temp_dir()."/images/";
     if(!file_exists($imgDir))

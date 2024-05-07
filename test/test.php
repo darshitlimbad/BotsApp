@@ -1,8 +1,7 @@
 <?php
-    // include "../interface.php";
-    // include "../functionality/lib/_chat.php";
-
-    // echo getDoc("Msg00000050");
+$data['blob']="hello,hi";
+    $imgBlob = (explode(',',$data['blob']))[1];
+    echo $imgBlob;
 ?>
 
 <img src="" alt="">

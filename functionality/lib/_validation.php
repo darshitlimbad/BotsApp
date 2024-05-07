@@ -1,9 +1,8 @@
-<?php   
-
+<?php  
 function getDecryptedUserID(){
     try{
         if(!isset($_SESSION['userID']))
-            throw new Exception();
+            throw new Exception("",400);
 
         $encryptedUserID = base64_decode($_SESSION['userID']);
         $nonce = base64_decode($_SESSION['nonce']);
@@ -59,32 +58,38 @@ function session_check(){
 }
 
 function gen_new_id($preFix)  {
-    $preFix = ucfirst(strtolower(trim($preFix)));
+    try{
+        $preFix = ucfirst(strtolower(trim($preFix)));
 
-    switch($preFix){
-        case "User":
-            $table = "users";
-            $clm = "userID";
-            break;
-        case "Msg":
-            $table = "messages";
-            $clm = "msgID";
-            break;
+        switch($preFix){
+            case "User":
+                $table = "users";
+                $clm = "userID";
+                break;
+            case "Msg":
+                $table = "messages";
+                $clm = "msgID";
+                break;
+            default:
+                throw new Exception("",400);
+        }
+
+        $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
+        $sqlfire = $GLOBALS['conn'] -> query($sql);
+
+        if($sqlfire && ($sqlfire -> num_rows > 0)) {
+            $ID = $sqlfire->fetch_column();
+            $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
+            $newID =  sprintf("%08d" , ++$oldID);    
+        }
+        else {
+            $newID = sprintf("%08d" , 1);
+        }
+
+        return $preFix.$newID;
+    }catch(Exception $e){
+        return $e->getCode();
     }
-
-    $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
-    $sqlfire = $GLOBALS['conn'] -> query($sql);
-
-    if($sqlfire && ($sqlfire -> num_rows > 0)) {
-        $ID = $sqlfire->fetch_column();
-        $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
-        $newID =  sprintf("%08d" , ++$oldID);    
-    }
-    else {
-        $newID = sprintf("%08d" , 1);
-    }
-
-    return $preFix.$newID;
 }
 
 function compressImg($imgObj , $quality = 50) {
