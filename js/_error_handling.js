@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded' , function () {
             },10);
 });
 
+const customError = (msg, code) => {
+    let err=new Error(msg);
+    err.code = code;
+    return err;
+};
+
 const handler={};
 
 handler.err_400 = () => {
@@ -61,5 +67,3 @@ handler.err_413 = () => {
 handler.err_500 = ()=>{
     new_Alert(" Internal Server Error ")
 }
-
-

@@ -383,7 +383,7 @@
     width: auto;
     margin: 0 5px;
     opacity: 50%;
-    font-size: 10px;
+    font-size: 12px;
 }
 
 .chat .chatBody .msgContainer {
@@ -402,7 +402,7 @@
     width: auto;
     display: flex;
     flex-direction: column;
-    max-width: 65%;
+    max-width: 55%;
     min-width: 30%;
     padding: 5px;
     background-color:var(--light-grey-color);
@@ -410,6 +410,19 @@
     text-wrap: pretty;
     user-select: text;
     overflow-wrap: break-word;
+}
+
+@media screen and ( max-width: 900px ) {
+    .chat .chatBody .msgContainer .msg{
+        max-width: 14rem;
+    }
+}
+
+
+@media screen and ( max-width: 700px ) {
+    .chat .chatBody .msgContainer .msg{
+        max-width: 10rem;
+    }
 }
 
 .chat .chatBody .receive {
@@ -453,6 +466,7 @@
 .chat .chatBody .msgContainer .msg .msgData{
     padding: 2px;
     margin: 0;
+    white-space: pre-wrap;
 }
 
 .chat .chatBody .msgContainer .msg .msgImg {
@@ -471,11 +485,51 @@
 }
 
 .chat .chatBody .msgContainer .msg .optionBtn {
+    display: block;
+    right: 3%;
+    opacity: 0;
     position: absolute;
-    backdrop-filter: brightness(0.8);
-    border-top-right-radius: 0;
-    border-top-left-radius: 10%;
+    backdrop-filter: brightness(0.3);
+    box-shadow: -5px 5px 20px #00000069;
+    border-radius: 3px;
     border: none;
+}
+
+.chat .chatBody .msgContainer .msg:hover > .optionBtn {
+    display: block;
+    opacity: 1;
+    z-index: 1;
+    right: 4%;
+    transition: all .1s cubic-bezier(0.04, 0.37, 0.49, 1.04);
+}
+
+.chat .chatBody .msgContainer .msg .optionBtn svg{
+    height: 1.5em;
+    width: 1.5em;
+    fill: aliceblue;
+}
+
+.chat .chatBody .msgContainer .msg .optionBtn:hover{
+    backdrop-filter: brightness(0.1);
+}
+.chat .chatBody .msgContainer .msg .optionBtn:hover > svg{
+    fill: rgb(83, 83, 83);
+}
+
+.chat .chatBody .msgContainer .msg .progressDiv{
+    display: flex;
+    height: auto;
+    width: auto;
+    align-items: end;
+    justify-content: end;
+}
+
+.chat .chatBody .msgContainer .msg .loadedPr{
+    position: absolute;
+}
+
+.chat .chatBody .msgContainer .msg .msgDoc .progressDiv .loaded {
+    width: 4em;
 }
 
 .chat .footer{

@@ -1,19 +1,17 @@
 <?php
     if($data = json_decode(file_get_contents("php://input") , true) ){
-        if(isset($data['action'])){
-            include '../db/_conn.php';
+        if(isset($data['req'])){
+            include_once('../db/_conn.php');
             include_once('./_validation.php');
-            if($data['action'] == "get_dp"){
-                echo get_dp( null,$data['unm']);
-            }
-            if($data['action'] == "get_unm"){
-                echo search_user($data['from'] , $data['value']);
-            }
+            if($data['req'] == "get_dp")    echo get_dp( null,$data['unm']);
+            if($data['req'] == "get_unm")   echo search_user($data['from'] , $data['value']);
+            if($data['req'] == "getDocBlob")    echo getDocBlob($data);
+
         }
     }
 
     function _get_userID_by_UNM($unm){
-        $fetchUID = fetch_columns('users_account', "unm", $unm, "userID");
+        $fetchUID = fetch_columns('users_account', "unm", $unm, array("userID"));
         return $fetchUID->fetch_column();
     }
 
@@ -21,7 +19,7 @@
         if($userID == null)
             $userID = getDecryptedUserID();
 
-        $res = fetch_columns("users_account", "userID", $userID, "unm");
+        $res = fetch_columns("users_account", "userID", $userID, array("unm"));
         
         if($res->num_rows == 1){
             $unm = $res->fetch_column();
@@ -35,7 +33,7 @@
         if($userID == null)
             $userID = getDecryptedUserID();
 
-        $res = fetch_columns("users", "userID", $userID, "email");
+        $res = fetch_columns("users", "userID", $userID, array("email"));
         
         if($res->num_rows == 1){
             $email = $res->fetch_column();
@@ -49,7 +47,7 @@
         if($unm)
             $userID = _get_userID_by_UNM($unm);
         
-        $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , "type" , "imgData" );
+        $fetch_img = fetch_columns( 'users_avatar' , "userID" , $userID , array("type" , "imgData"));
 
         if($fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
@@ -70,7 +68,7 @@
         try{
             $userID = _get_userID_by_UNM($unm);
 
-            $fetch_name = fetch_columns('users' , 'userID' , $userID , 'surname' , 'name');
+            $fetch_name = fetch_columns('users' , 'userID' , $userID , array('surname' , 'name'));
 
             if($fetch_name != '400' && $fetch_name->num_rows == 1){
                 $name = $fetch_name->fetch_assoc();
@@ -86,7 +84,7 @@
     }
 
     function fetch_data_from_users_details($userID , $column){
-        $data = fetch_columns('users_details' , 'userID' , $userID , $column);
+        $data = fetch_columns('users_details' , 'userID' , $userID , array($column));
 
         if($data != '400' && $data->num_rows == 1){
             $data = $data->fetch_assoc()[$column];
@@ -97,7 +95,7 @@
     }
 
     function fetch_data_from_users($userID , $column){
-        $data = fetch_columns('users' , 'userID' , $userID , $column);
+        $data = fetch_columns('users' , 'userID' , $userID , array($column));
 
         if($data != '400' && $data->num_rows == 1){
             $data = $data->fetch_assoc()[$column];
@@ -130,7 +128,7 @@
     }
 
     function getPassKey($userID) {
-        $result = fetch_columns( "users" ,'userID' , $userID , 'pass_key');
+        $result = fetch_columns( "users" ,'userID' , $userID , array('pass_key'));
         if($result != '400') {
             if($result->num_rows == 1){
                 return $result->fetch_assoc()['pass_key'];
@@ -143,5 +141,21 @@
         }
     
         return false;
+    }
+
+    function getDocBlob($obj){
+        try{
+            $pValue = array($obj['msgID'],$obj['fileName']);
+            $result = fetch_columns("messages",("msgID, msg"), "$pValue[0],$pValue[1]" ,array('doc'));
+            
+            if(gettype($result) == "integer" ) throw new Exception("something went wrong.",$result);
+            
+            if($result->num_rows == 1)
+                return json_encode($result->fetch_column());
+            else
+                return $result->num_rows;
+        }catch(Exception $e){
+            return $e->getCode();
+        }
     }
 ?>

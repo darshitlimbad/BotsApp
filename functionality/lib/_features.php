@@ -41,6 +41,25 @@
         </div>
     </div>
 
+    <div id="upload_doc_form" class="pop_up">
+
+        <h3 class="title"></h3>
+        <hr>
+
+        <!-- img -->
+        <div class="input_field" name="doc_field">
+            <div class="input-doc">
+                <input type="file" name="doc" id="doc" accept="*">
+            </div>
+        </div>
+
+
+        <div class="buttons">
+            <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#upload_doc_form'))" >No</button>
+            <button class="pop_up_yes_btn button">Yes</button>
+        </div>
+    </div>
+
     <div id="add_new_chat_form" class="pop_up">   
         <h3 class="title">Let's Add more Chatters!</h3>
 

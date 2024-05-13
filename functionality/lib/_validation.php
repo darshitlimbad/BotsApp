@@ -19,7 +19,7 @@ function getDecryptedUserID(){
 
 // this function matches the Encrypted passwords with password_hash bcrypt
 function metchEncryptedPasswords($Pass , $userID){
-    $result = fetch_columns(  "users" , 'userID' , $userID , 'pass');
+    $result = fetch_columns(  "users" , 'userID' , $userID , array('pass'));
     if($result->num_rows == 1) {
         $pwd = $result->fetch_column();
         
@@ -37,7 +37,7 @@ function metchEncryptedPasswords($Pass , $userID){
 
 // if there will be data the is_data_present will return 1 
 function is_data_present($table , $point , $point_val , $column='userID'){
-    $result = fetch_columns($table , $point , $point_val , $column);
+    $result = fetch_columns($table , $point , $point_val , array($column));
     
     if($result->num_rows == 1){
         return 1;
@@ -103,10 +103,14 @@ function compressImg($imgObj , $quality = 50) {
         $success = false;
         switch ($imgObj['type']) {
             case 'image/jpeg':
+            case 'image/jpg':
                 $image = imagecreatefromjpeg($imgObj['tmp_name']);
                 break;
             case 'image/png':
                 $image   = imagecreatefrompng($imgObj['tmp_name']);
+                imagepalettetotruecolor($image);
+                imagealphablending($image,true);
+                imagesavealpha($image,true);
                 break;
             case 'image/webp':
                 $image = imagecreatefromwebp($imgObj['tmp_name']);
@@ -117,7 +121,7 @@ function compressImg($imgObj , $quality = 50) {
 
         unlink($imgObj['tmp_name']);
         $success = imagewebp($image, $imgObj['tmp_name'], $quality);
-        
+
         if (!$success)
             throw new Exception("Failed to compress image",400);
         

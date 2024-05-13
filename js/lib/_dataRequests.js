@@ -51,39 +51,40 @@ const _getMsgs = async (unm) => {
     }
 }
 
-//// work in progress
-// const _getDoc = (msgID)=> {
-//     var url = "/functionality/lib/_chat.php";
+const _getDocBolb = (msgID,fileName)=> {
+    var url = "/functionality/lib/_fetch_data.php";
 
-//     var data = JSON.stringify({
-//         req : "getDoc",
-//         msgID : msgID,
-//     });
-
-//     postReq(url,data)
-//         .then(res => {
-//             console.log(res);
-//         })
-// }
-////
+    var data = JSON.stringify({
+        req : "getDocBlob",
+        msgID,
+        fileName,
+    });
+    
+    return new Promise((resolve,reject)=>{
+        postReq(url,data)
+            .then(res => {
+                resolve(res);
+            });
+    });
+}
 
 const _sendMsg = async (data) =>{  
     if(!(data.type && (data.msg || (data.fileName && data.blob))))  return 0;
-    let {type} = data;
     var url="/functionality/lib/_chat.php";
-    data = JSON.stringify({
-        req:"sendMsg",
-        ...data,
-    });
+    let {type} = data;
+    data.req="sendMsg";
+    data=JSON.stringify(data);
+
 
     try{
         return new Promise((resolve,reject)=>{
-            if(type == "text")  postReq(url,data).then(resObj=>resolve(resObj));
+            if(type === "text")
+                postReq(url,data).then(resObj=>resolve(resObj));
             else{
                 fetch(url,{method:"POST",body:data})
                     .then(res=>{
-                        if(res.ok && (res.status == 200))
-                            return res.json();
+                        if(res.ok && (res.status == 200)){
+                            return res.json();}
                         else
                         resolve(400);
                     })
@@ -93,10 +94,6 @@ const _sendMsg = async (data) =>{
                     });
             }
         });
-        
-        
-
-        // return resObj;
     }catch(err){
         return 0;
     }
@@ -115,7 +112,22 @@ const _genNewID=async (preFix)=>{
     return (res.status === "success") ? res.responseText : 400;
 }
 
+const _setMsgStatus = async (msgStatusImage,msgID) => {
+    if(!msgID) return;
+    var url = "/functionality/lib/_chat.php";
+    var data=JSON.stringify({
+        req:"getMsgStatus",
+        msgID,
+    });
 
+    return new Promise( (resolve,reject) => {
+        postReq(url,data)
+            .then(res=>{
+                let msgStatusURL = "/img/icons/chat/msg_status/";
+                msgStatusImage.src = msgStatusURL+((res.status == "success" && res.responseText != 0) ? res.responseText:"uploading")+".svg";
+            });
+    });
+}
 
 
 

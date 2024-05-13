@@ -1,8 +1,12 @@
 // global var
-    var disabled_img_pop_up_btn=true;
+    var disabled_pop_up_btn={
+        upload_img_form : true,
+        upload_doc_form : true,
+    };
     document.addEventListener('DOMContentLoaded' , () => {
         List = document.querySelector("#floatingList");
-        submit_btn = document.querySelectorAll('#upload_img_form .pop_up_yes_btn ');
+        img_submit_btn = document.querySelector('#upload_img_form .pop_up_yes_btn ');
+        doc_submit_btn = document.querySelector('#upload_doc_form .pop_up_yes_btn ');
     });
 
     // get dp function // note : this function returns Promise obj
@@ -10,7 +14,7 @@
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
             var data = JSON.stringify({
                 unm: unm,
-                action : "get_dp"  
+                req : "get_dp"  
             });
 
             var res= await postReq(url_for_get_dp , data);
@@ -276,8 +280,43 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 
 }
 
+
+const _upload_doc_form = (title , action , theme = 'blue') => {
+    _submit_btn_disable(doc_submit_btn);
+
+    var upload_doc_form = document.querySelector('#upload_doc_form');
+    upload_doc_form.querySelector("#doc").onchange=(e)=>upload_doc_validation(e.target);
+    
+    var title_ele = upload_doc_form.querySelector('.title');
+    title_ele.style.color = 'aliceblue';
+    title_ele.textContent = title;
+
+    upload_doc_form.querySelector('hr').style.border='1px solid '.concat(theme);
+    var yes_btn = upload_doc_form.querySelector(".buttons .pop_up_yes_btn");
+    yes_btn.style.backgroundColor = theme;
+    yes_btn.style.outlineColor=theme;
+
+    if(action == "USER_SEND_DOC"){
+        yes_btn.onclick = ()=> {
+            if(!disabled_pop_up_btn.upload_doc_form){
+                _submit_btn_disable(doc_submit_btn);
+                _trigerSendMsg("doc");
+            }
+        };
+    }
+
+    _show_this_pop_up(upload_doc_form);
+
+    function upload_doc_validation(doc_input){
+        if(doc_input.value != null || doc_input.value != "")
+            _submit_btn_enable(doc_submit_btn);
+        else
+            _submit_btn_disable(doc_submit_btn);
+    }
+}
+
 const _upload_img_form = (title , action , theme = 'blue') => {
-    _submit_btn_disable();
+    _submit_btn_disable(img_submit_btn);
 
     var upload_img_form = document.querySelector('#upload_img_form');
     upload_img_form.querySelector("#avatar").onchange=()=>avatar_validation();
@@ -295,22 +334,21 @@ const _upload_img_form = (title , action , theme = 'blue') => {
         yes_btn.addEventListener('click',_uploadDP);
     }else if(action == "USER_SEND_IMG"){
         yes_btn.onclick = ()=> {
-            if(!disabled_img_pop_up_btn){
-                _submit_btn_disable();
+            if(!disabled_pop_up_btn.upload_img_form){
+                _submit_btn_disable(img_submit_btn);
                 _trigerSendMsg("img");
             }
         };
     }
 
     _show_this_pop_up(upload_img_form);
-
 }
 
 const _uploadDP = () => {
-    _submit_btn_disable(); 
+    _submit_btn_disable(img_submit_btn); 
     img = avatar.files[0];
 
-    _read_img(img)
+    _read_doc(img)
         .then( result => {
             
             img_binary_data = result.split(',').pop();
@@ -357,7 +395,7 @@ const _uploadDP = () => {
         });
 };
 
-const _read_img = (img, field = 'data') => {
+const _read_doc = (data, field = 'data') => {
     return new Promise( (resolve,reject) => {
         var fReader = new FileReader();
 
@@ -367,8 +405,24 @@ const _read_img = (img, field = 'data') => {
             else if(field == 'details')
                 resolve(event);
         }
+
         fReader.onerror = ()=>reject();
-        fReader.readAsDataURL(img);
+        fReader.readAsDataURL(data);
+    } );
+}
+
+const _getDocPages = (file) => {
+    return new Promise( (resolve,reject) => {
+        var fReader = new FileReader();
+
+        fReader.onload = (event) => {
+            let pageCount = event.target.result.match(/\/Type[\s]*\/Page[^s]/g).length;
+            pageCount += (pageCount>1) ? ' Pages' : ' Page';
+            resolve(pageCount);
+        }
+
+        fReader.onerror = ()=>reject();
+        fReader.readAsText(file);
     } );
 }
 
@@ -390,7 +444,7 @@ const _search_users_by_unm = (unm) => {
     }
 
     var data = JSON.stringify({
-        action :"get_unm",
+        req :"get_unm",
         from : "add_new_chat",
         value : unm,
     });
@@ -435,21 +489,16 @@ const _addDataInList = (data) => {
 
 }
 
-function _submit_btn_disable() {
-    submit_btn.forEach( (ele)=>{
-        ele.style.filter = "brightness(0.05)";
-        ele.setAttribute('disabled' , true);
-    })
-    disabled_img_pop_up_btn =true; 
+function _submit_btn_disable(btn=img_submit_btn) {
+    btn.style.filter = "brightness(0.05)";
+    btn.setAttribute('disabled' , true);
+    disabled_pop_up_btn[btn.closest('.pop_up').id] = true;
 }
 
-function _submit_btn_enable() {
-    submit_btn.forEach( (ele)=>{
-        ele.style.removeProperty("filter");
-        ele.removeAttribute('disabled');
-    })
-
-    disabled_img_pop_up_btn =false; 
+function _submit_btn_enable(btn=img_submit_btn) {
+    btn.style.removeProperty("filter");
+    btn.removeAttribute('disabled');
+    disabled_pop_up_btn[btn.closest('.pop_up').id] = false;
 }
 
 function _show_this_pop_up(pop_up) {
@@ -473,6 +522,10 @@ function _show_this_pop_up(pop_up) {
         setTimeout(()=>{
             document.addEventListener('click', hide_upload_img_form)
         },20);
+    }else if(pop_up.id == "upload_doc_form"){
+        setTimeout(()=>{
+            document.addEventListener('click', hide_upload_doc_form)
+        },20);
     }
 }
 function _hide_this_pop_up(pop_up) {
@@ -492,6 +545,10 @@ function _hide_this_pop_up(pop_up) {
         document.removeEventListener('click' , _hide_add_new_form)
     }else if(pop_up.id == "confirmation_pop_up"){
         document.removeEventListener('click',hide_confirmation_pop_up);
+    }else if(pop_up.id == "upload_doc_form"){
+        doc.value = null;
+        doc.style.color = 'aliceblue';
+        document.removeEventListener('click',hide_upload_doc_form);
     }
     setTimeout(() => {
         pop_up.style.opacity = '0%';
@@ -503,7 +560,10 @@ const hide_confirmation_pop_up = (e=null)=>{
     if( e!=null && (!e.target.closest('#confirmation_pop_up')))  _hide_this_pop_up(document.querySelector('div#confirmation_pop_up'));
 };
 const hide_upload_img_form = (e)=>{
-    if( e!=null && (!e.target.closest('#upload_img_form'))) _hide_this_pop_up(document.querySelector('div#upload_img_form'))
+    if( e!=null && (!e.target.closest('#upload_img_form'))) _hide_this_pop_up(document.querySelector('div#upload_img_form'));
+};
+const hide_upload_doc_form = (e)=>{
+    if( e!=null && (!e.target.closest('#upload_doc_form'))) _hide_this_pop_up(document.querySelector('div#upload_doc_form'));
 };
 
 const _hide_all_pop_up = () => {
@@ -542,20 +602,4 @@ const _closeList = () => {
     setTimeout( ()=>{
         List.style.display='none';
     } , 100) 
-}
-
-const getImgDimension = (imgFile) => {
-    return new Promise((resolve,reject)=>{
-        var newImg = new Image();
-        newImg.src = URL.createObjectURL(imgFile);
-    
-        newImg.onload= ()=>{
-            var dimension={
-                w:newImg.width,
-                h:newImg.height,
-            }
-            resolve(dimension);
-        };
-    });
-    
 }

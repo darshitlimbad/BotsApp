@@ -23,6 +23,9 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             case "genNewID":
                 echo json_encode(gen_new_id($data['preFix']));
                 break;
+            case 'getMsgStatus':
+                echo getMsgStatus($data['msgID']);
+                break;
             default:
                 echo 400;
         }
@@ -33,7 +36,7 @@ function getChatList($chatType){
     try{
         $userID = getDecryptedUserID();
         if($chatType === "personal")
-            $dataFromInbox = fetch_columns('inbox', 'fromID', $userID, "toID" , "last_msg");
+            $dataFromInbox = fetch_columns('inbox', 'fromID', $userID, array("toID", "last_msg"));
         else if($chatType === "group")
             return 0;
         
@@ -76,34 +79,42 @@ function getMsgs($toUnm){
 
         if($fromID == $toID){
             $condition = "(`fromID` , `toid` ) IN ( (? , ?))";
+            $bind_Param_placeholders = "ss";
+            $bind_Param = array($fromID,$toID);
         }
         else{
             $condition = "( `fromID` , `toid` ) IN ( (? , ?), (? , ?) )";
+            $bind_Param_placeholders = "ssss";
+            $bind_Param = array($fromID, $toID, $toID, $fromID);
+
         }
 
-        $data = "SELECT `msgID`,`fromID`, `type`, `msg`, `time` FROM `messages` WHERE $condition ORDER BY `time`";
+        $data = "SELECT `msgID`,`fromID`, `type`, `msg`, `details` ,`time` FROM `messages` WHERE $condition ORDER BY `time`";
 
         $stmt = $GLOBALS['conn'] -> prepare($data);
-        if($fromID == $toID){
-            $stmt ->bind_param("ss" , $fromID , $toID);
-        }else{
-            $stmt ->bind_param("ssss" , $fromID, $toID, $toID, $fromID);
-        }
+        $stmt ->bind_param($bind_Param_placeholders , ...$bind_Param);
         $sqlquery= $stmt->execute();
 
         if($sqlquery){
             $result=$stmt->get_result();
 
-            if($result->num_rows == 0)
-                return 0;
+            if($result->num_rows == 0)  return 0;
 
             $i=0;
             while($row = $result->fetch_assoc()){
-                $msgs[$i]['msgID']=$row['msgID'];
-                $msgs[$i]['toUnm']= ($row['fromID'] == $fromID) ? $toUnm : $fromUnm ;
                 $msgs[$i]['type']= $row['type'];
-                $msgs[$i]['msg']=$row['msg'];
-                $msgs[$i]['time']=$row['time'];
+                
+                if($row['type'] == 'text'){
+                    $msgColNm = "msg";
+                }else{
+                    $msgColNm = "fileName";
+                    $msgs[$i]['details'] = unserialize($row['details']);
+                }
+
+                $msgs[$i][$msgColNm]=$row['msg'];
+                $msgs[$i]['msgID']= $row['msgID'];
+                $msgs[$i]['toUnm']= ($row['fromID'] == $fromID) ? $toUnm : $fromUnm ;
+                $msgs[$i]['time']= $row['time'];
                 $i++;
             }
 
@@ -118,8 +129,9 @@ function getMsgs($toUnm){
 }
 
 function getDoc($msgID) {
+    // RIP this fucking thing and remaster it
     try{
-        $docData = fetch_columns("messages", "msgID", "$msgID", "toID","msg","doc");
+        $docData = fetch_columns("messages", "msgID", "$msgID", array("toID","msg","doc"));
 
         if(!$docData || $docData->num_rows != 1)
             throw new Exception("Data not found",400);
@@ -149,21 +161,22 @@ function sendMsg($data){
     
         $msg_column = null;
         $msg_value = null;
-        if($type == "text"){
+        if($type === "text"){
             $msg_column = "msg";
             $msg_value = $data['msg'];
         }else {
             $fileName = $data['fileName'];
             
-            if($type == "img"){
+            if($type === "img"){
                 $blob = explode(',',$data['blob']);
+
                 if( (explode('/',$blob[0]))[0] != "data:image" )
                     throw new Exception("Not an image",415);
                 
                 $blob = $blob[1];
 
                 $imgObj['tmp_name'] = $_COOKIE['imgDir'].$fileName;
-
+                
                 if(file_put_contents($imgObj['tmp_name'] , base64_decode($blob)) == false)
                     throw new Exception("File uploading error",0);
                     
@@ -171,32 +184,73 @@ function sendMsg($data){
                 if(gettype($imgObj) == "integer")//error code return by compress image
                     throw new Exception("something went wrong in compression",$imgObj); 
 
-                $fileSize = filesize($imgObj['tmp_name']);
-                if($fileSize > 16777200 )
-                    throw new Exception("Media size is larger then maximum size",413);
-                
+                $data['details']['size'] = filesize($imgObj['tmp_name']);
+                $mime = $imgObj['type'];
                 $blob = base64_encode(file_get_contents($imgObj['tmp_name']));
+                unlink($imgObj['tmp_name']);
             }else{
-
+                $blob = explode(',',$data['blob'])[1];
+                $mime= $data['mime'];
             }
 
-            $msg_column = "msg,doc";
-            $msg_value = "$fileName, $blob";
+            if($data['details']['size'] > MAX_DOC_SIZE )
+                throw new Exception("Media size is larger then maximum size",413);
+
+            convert_bytes($data['details']['size']);
+            $details = serialize($data['details']);
+            $msg_column = "mime, msg, doc, details";
+            $msg_value = "$mime, $fileName, $blob, $details";
         }
 
         if($msg_column && $msg_value){
             $msgRes = insertData('messages' , "msgID, fromID, toID, time, type, $msg_column" ,"$newMsgID ,$fromID ,$toID, $time, $type, $msg_value");
-            if($msgRes == 0)
-                throw new Exception("error on data insertion",400);
-
+                if($msgRes == 0)    throw new Exception("error on data insertion",400);
+                // updating status of message
+            insertData("messages","msgID,status","$newMsgID,send","status");
             return $msgRes;
         }
 
         // if anything went wrong and the code has not been return yet it will occure something went wrong error.
         throw new Exception("",400);
     }catch(Exception $e){
-        return $e->getCode();;
+        return json_encode($e->getCode());
     }
 }
 
+function convert_bytes(&$size){
+    if ($size === null) {
+        return;
+    }
+
+    $count = 0; 
+    while( $size >= 1024){
+        $size /= 1024;
+        $count++;
+    }
+
+    $size = number_format($size, 2, '.', ',');
+    switch($count){
+        case 1:
+            $size .= " KB";
+            break;
+        case 2:
+            $size .= " MB";
+            break;
+        case 3:
+            $size .= " GB";
+            break;  
+    }
+
+    return $size;
+}
+
+function getMsgStatus($msgID) {
+    if(!$msgID) return 0;
+
+    $res = fetch_columns("messages", "msgID", $msgID, array("status"), 'status');
+    
+    if(gettype($res)=='integer') return 0;
+
+    return ($res->num_rows== 1) ? json_encode($res->fetch_column()) : 0 ;
+}
 ?>

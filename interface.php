@@ -226,7 +226,7 @@
                 <div class="profile-dp">
                     <img src="/img/dp-moon.png" onerror="defaultDp(this);" title="<?= $nm?>" class="avatar">
                 </div>
-                    <img src="/img/icons/settings/profile/edit_img.png" class="edit_img" title="Edit Profile Picture" onclick="toggle_img_upload_form('upload_new_dp')"/>
+                    <img src="/img/icons/settings/profile/edit_img.png" class="edit_img ele" title="Edit Profile Picture" onclick="toggle_img_upload_form('upload_new_dp')"/>
                 <br>
                 
                 <div class="text"><?= $unm?></div>
@@ -234,13 +234,13 @@
                 <p class="margin-dead">Name:</p>
                 <div class="flex edit_box" name="edit-user-name">
                 <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= $nm; ?>" readonly /> 
-                    <img name="edit-icon" class="edit-icon" src="/img/icons/settings/profile/edit.png" title="edit"/>  
+                    <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
                 
                 <p class="margin-dead">About:</p>
                 <div class="flex edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="30" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
-                    <img name="edit-icon" class="edit-icon" src="/img/icons/settings/profile/edit.png" title="edit" /> 
+                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
+                    <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 
                 <p class="margin-dead">E-mail:</p>

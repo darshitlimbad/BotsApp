@@ -338,11 +338,17 @@ footer {
     left: 1%;
     height: 500px;
     max-height: 80%;
-    width: 500px;
+    width: 30rem;
     z-index: 1;
     border-radius: var(--border-radius);
     background-image: linear-gradient(to right , rgba(6, 27, 48, 0.426) 30% , rgba(6, 27, 48, 0.625));
     transition: bottom .5s cubic-bezier(0, 0.81, 0.27, 1.02) ;
+}
+
+@media screen and (max-width:700px) {
+    .settings-box ,.noti-box{
+        width: 25em;
+    }
 }
 
 .settings-box_hide , .noti-box_hide {
@@ -563,7 +569,7 @@ footer {
 .settings-box .settings-container .body .edit_img{
     height: 1rem;
     width: 1rem;
-    position: fixed;
+    position: absolute;
     transform: translate(59px, -20px);
     border-radius: 4px;
     background-color: aliceblue;
@@ -571,19 +577,12 @@ footer {
     transition: all .2s;
 }
 
-.settings-box .settings-container .body .edit_img:hover{
-    filter: brightness(.5);
-    cursor: pointer;
-    
-}
-
 .settings-box .settings-container .body .profile-dp img{
     border-radius: 100%;
 }
 
 .settings-box .settings-container .body .flex{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
     align-content: center;
     align-items: center;
     height: 30px;
@@ -591,8 +590,6 @@ footer {
 
 .settings-box .settings-container .body .text{
     display: block;
-    width: 80% !important;
-    max-width: 80%;
     height: 30px;
     margin: 3px 0;
     background-color: transparent;
@@ -600,6 +597,7 @@ footer {
     border: none;
     color: white;
     user-select: text;
+    grid-column: 1;
 }
 
 .settings-box .settings-container .body .flex .edit {
@@ -615,11 +613,12 @@ footer {
     position: relative;
     padding: 3px;
     margin: 0px 10px;
-    right: 0;
+    grid-column: 2;
+    border: none;
 }
 
 .settings-box .settings-container .body .flex .edit-icon:hover {
-    background-color: rgba(161, 161, 161, 0.58);
+    border: none;
     border-radius: 3px;
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }

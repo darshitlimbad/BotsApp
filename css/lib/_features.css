@@ -1,5 +1,5 @@
 /* pop-up box */
-#confirmation_pop_up ,#upload_img_form , #add_new_chat_form{
+#confirmation_pop_up ,#upload_img_form , #add_new_chat_form , #upload_doc_form{
     display: none;
     opacity: 0%;
     height: auto;
@@ -21,6 +21,10 @@
 #add_new_chat_form{
     z-index: 1;
     left: 10%;
+}
+
+#upload_doc_form{
+    
 }
 
 .buttons {

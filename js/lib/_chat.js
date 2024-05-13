@@ -200,7 +200,6 @@ const setChatHeader = (unm) =>{
 
 const setChatBody = async (unm) =>{
     const msgs = await _getMsgs(unm);
-    console.log(msgs);
     if(!msgs)  return;
     msgs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
 }
@@ -214,12 +213,13 @@ const setChatFooter= (unm) =>{
                     <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 455 455" xml:space="preserve" ><path d="M0,0v455h455V0H0z M259.405,80c17.949,0,32.5,14.551,32.5,32.5s-14.551,32.5-32.5,32.5s-32.5-14.551-32.5-32.5S241.456,80,259.405,80z M375,375H80v-65.556l83.142-87.725l96.263,68.792l69.233-40.271L375,299.158V375z"/></svg>
                 `;
             let nodeDoc=newNode();nodeDoc.name="sendFilesBtn";nodeDoc.title="Send Files";
+            nodeDoc.onclick = ()=>{_upload_doc_form("Choose File to Send","USER_SEND_DOC")}
                 nodeDoc.innerHTML=`
                     <svg width="20px" height="20px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="rgba(255, 255, 255, 0.349)" fill="none"><path d="M49.78,31.63,32,49.39c-2.09,2.09-10.24,6-16.75-.45-4.84-4.84-5.64-11.75-.95-16.58,5-5.17,15.24-15.24,20.7-20.7,2.89-2.89,7.81-4.28,12.17.07s2.41,9.44,0,11.82L27.81,43a4.61,4.61,0,0,1-6.89-.06c-2.19-2.19-1.05-5.24.36-6.66l18-17.89"/></svg>
                 `;
         let msgInput=document.createElement("textarea");msgInput.classList.add("msgInput","ele");msgInput.placeholder="Type a Message";msgInput.autocomplete="off";msgInput.accessKey="/";msgInput.lang="en";msgInput.title="Type a Message";chatStruct.footer.appendChild(msgInput);
         let sendMsgDiv = document.createElement("div");sendMsgDiv.classList.add("sendMsg");chatStruct.footer.appendChild(sendMsgDiv);
-            sendMsgImg= new Image();sendMsgImg.src="img/icons/send.png";sendMsgImg.alt="Send Message";sendMsgImg.setAttribute('onclick',"_trigerSendMsg('text')");sendMsgDiv.appendChild(sendMsgImg);
+            let sendMsgImg= new Image();sendMsgImg.src="img/icons/send.png";sendMsgImg.alt="Send Message";sendMsgImg.onclick = ()=>_trigerSendMsg('text');sendMsgDiv.appendChild(sendMsgImg);
     
     function newNode(){
         let node= document.createElement("div");
@@ -244,49 +244,84 @@ const closeChat = (e=null) =>{
 }
 
 const _trigerSendMsg = async (type) => {
-    var msgObj={};
-    switch(type){
-        case 'text':
-            var inputBox = chatStruct.footer.querySelector(".msgInput");
-            var msg=inputBox.value.trim();
-            if(!msg) return;
-            msgObj['msg'] = msg;
-            inputBox.value = "";
-            inputBox.style.height = "auto";    
-            break;
-        case 'img':
-            var inputBox = document.querySelector("#upload_img_form");
-            var imgFile =inputBox.querySelector("#avatar").files[0];
-            msgObj.blob = (await _read_img(imgFile));
-            if(!msgObj.blob) return;
-            _hide_this_pop_up(inputBox);
-            break;
-    }
-
-    if(type != 'text') {
-        let date = new Date();
-        msgObj.fileName = `${type.toLowerCase()}-${date.getDay()}-${date.getMonth()+1}-${date.getFullYear()}-${Math.ceil(Math.random()*1000)}.webp`;
-    } 
-        
-    msgObj={
-        msgID:await _genNewID("msg"),
-        toUnm:getCookie("currOpenedChat"),
-        time:Date.now(),
-        type,
-        ...msgObj,
-    };
-    addNewMsgInCurrChat(msgObj);
-    let res= await _sendMsg(msgObj);
-
-    if( (res.status != 'success') || (res.responseText != 1)){
-        try{
-            handler['err_'+res.responseText]();
-        }catch(e){
-            handler.err_400();
+    try{
+        var msgObj={};
+        switch(type){
+            case 'text':
+                var inputBox = chatStruct.footer.querySelector(".msgInput");
+                var msg=inputBox.value.trim();
+                if(!msg) return;
+                msgObj['msg'] = msg;
+                inputBox.value = "";
+                inputBox.style.height = "auto";    
+                break;
+            case 'img':
+                var inputBox = document.querySelector("#upload_img_form");
+                var input =inputBox.querySelector("#avatar").files[0];
+                break;
+            case 'doc':
+                var inputBox = document.querySelector("#upload_doc_form");
+                var input =inputBox.querySelector("#doc").files[0];
+                break;
         }
-        return;
+
+        if(type != 'text') {
+            msgObj.details={
+                size : input.size,
+                ext : input.name.split('.').pop().toUpperCase(),
+            }
+
+            if(msgObj.details.ext === "PDF" ) msgObj.details.pages = await _getDocPages(input);
+
+            if(msgObj.details.size > 16777200) throw customError("File Size is to Big.",413);
+            
+            msgObj.blob = (await _read_doc(input));
+            if(!msgObj.blob) throw customError('Please try again',400);
+            
+            msgObj.mime = msgObj.blob.substring(msgObj.blob.indexOf(':')+1,msgObj.blob.indexOf(';'));
+            _hide_this_pop_up(inputBox);
+            
+            if(input.name){
+                msgObj.fileName = (type!='img')?
+                                    input.name :
+                                    input.name.replace(input.name.substring(input.name.indexOf('.')+1),'webp');                
+            }else{ 
+                let date = new Date();
+                msgObj.fileName = `${type}-${date.getDay()}-${date.getMonth()+1}-${date.getFullYear()}-${Math.ceil(Math.random()*1000)}.`;
+                msgObj.fileName += (type == 'img') ? 'webp' : msgObj.details.ext.toLowerCase();
+            }
+        } 
+            
+        msgObj={
+            msgID:await _genNewID("msg"),
+            toUnm:getCookie("currOpenedChat"),
+            time:Date.now(),
+            type,
+            ...msgObj,
+        };
+        
+        addNewMsgInCurrChat(msgObj);
+        let res= await _sendMsg(msgObj);
+
+        if( (res.status != 'success') || (res.responseText != 1))
+            throw customError('Something Went Wrong while sending the msg.',res.responseText());
+        else if(res.responseText == 1){
+
+            _setMsgStatus(msgObj.status,msgObj.msgID);
+            
+            switch(type){
+                case 'text':
+                    
+            }
+        }
+    }catch(err){
+        console.warn(`[${err.code}] , Message : ${err.message}`);
+        try{
+            handler['err_'+err.code]();
+        }catch(e){
+            handler['err_400']();
+        }
     }
-    
 }
 
 // new message chat
@@ -297,8 +332,7 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     var prevDate = document.querySelectorAll(".msgDate");
     
-    if(prevDate.length != 0)
-        prevDate=prevDate[prevDate.length-1].textContent;
+    if(prevDate.length != 0)    prevDate=prevDate[prevDate.length-1].textContent;
     
     if( prevDate != date ){
         var msgDate=document.createElement("div");
@@ -319,43 +353,73 @@ const addNewMsgInCurrChat = (msgObj) => {
     msgContainer.classList.add(whichTransmit);
     msgContainer.id=msgObj.msgID;
     
-    msg=document.createElement("div");msg.classList.add('msg');
+    msg=document.createElement("div");
+    msg.classList.add('msg');
 
     switch(msgObj['type']){
         case 'text':
-            
             let msgData = document.createElement("p");
             msgData.classList.add("msgData");
             msgData.textContent=msgObj.msg;
             msg.appendChild(msgData);
 
             break;
-        case 'img':
 
+        case 'img':                
             let msgImg = new Image();
             msgImg.classList.add("msgImg");
-            msgImg.src=msgObj.blob;
             msgImg.alt="Image";
+            msgImg.src="/img/icons/loader.svg";
             msgImg.onerror=()=>msgImg.style.padding="5px";
             msg.appendChild(msgImg);
             
+            if(!msgObj.blob){
+                _getDocBolb(msgObj.msgID,msgObj.fileName)
+                    .then(res=>{
+                        if(res.status ==="success")
+                            msgImg.src=`data:${msgObj.mime};base64,${res.responseText}`;
+                    });
+            }else{
+                msgImg.src=msgObj.blob;
+            }
             break;
 
+            case 'doc':
+                msg.style.flexDirection = 'row';
+                let msgDoc = document.createElement('div');
+                msgDoc.classList.add('msgDoc');
+
+                    let progressDiv = document.createElement('div');
+                    progressDiv.classList.add('progressDiv');
+                    msgDoc.appendChild(progressDiv);
+                        
+                        let loader = new Image();
+                        loader.classList.add('loader');
+                        loader.src="/img/icons/loader.svg";
+                        progressDiv.appendChild(loader);
+
+                        let loadedPr = document.createElement('b');
+                        loadedPr.classList.add("loadedPr");
+                        loadedPr.textContent="65%";
+                        progressDiv.appendChild(loadedPr);
+
+                msg.appendChild(msgDoc);
     }
 
     if(msgObj.type != "text"){  
         let fileName = document.createElement('b');
         fileName.classList.add('fileName');
         fileName.textContent=msgObj.fileName;
-        msg.appendChild(fileName);   
+        msg.appendChild(fileName); 
     }
 
     let optionBtn = document.createElement('div');
     optionBtn.classList.add("optionBtn");
+    optionBtn.classList.add("ele");
     optionBtn.name="optionBtn";
     optionBtn.title="Options";
         optionBtn.innerHTML=`
-        <svg width="20px" height="20px" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="#000000" >
+        <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" >
         <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
         </svg>`;
     msg.appendChild(optionBtn);
@@ -368,6 +432,14 @@ const addNewMsgInCurrChat = (msgObj) => {
         msgContainer.appendChild(msg);
         msgContainer.appendChild(msgTime);    
     }else{
+        let msgStatus = document.createElement('div');
+        msgStatus.classList.add('msgStatus');
+        msgContainer.appendChild(msgStatus);
+            msgObj.status = new Image();
+            msgStatus.appendChild(msgObj.status); 
+
+            _setMsgStatus(msgObj.status,msgObj.msgID);
+
         msgContainer.appendChild(msgTime);    
         msgContainer.appendChild(msg);
     }    

@@ -1,7 +1,7 @@
 <?php
-$data['blob']="hello,hi";
-    $imgBlob = (explode(',',$data['blob']))[1];
-    echo $imgBlob;
-?>
+ include_once('../functionality/db/_conn.php');
 
-<img src="" alt="">
+   $res = fetch_columns('users_account', "unm", "darshitlimbad", array("userID"));
+
+   echo $res->num_rows==0;
+?>

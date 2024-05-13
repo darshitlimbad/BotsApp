@@ -206,7 +206,7 @@ function avatar_validation() {
         avatar_span.style.display='block';
         _submit_btn_disable();
     }else {
-        _read_img(file)
+        _read_doc(file)
             .then(res=>{
                 avatar_preview.src = res;
             });

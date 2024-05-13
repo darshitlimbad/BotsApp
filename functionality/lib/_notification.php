@@ -29,7 +29,7 @@ function add_new_noti($data) {
         $toID = (isset($data['toID'])) ? $data['toID'] : "";
 
         if($action == "addUserReq" && $toID == ""){
-            $fetchID = fetch_columns( 'users_account' , "unm" , $unm , "userID" );
+            $fetchID = fetch_columns( 'users_account' , "unm" , $unm , array("userID") );
             if( $fetchID->num_rows == 1 ){
                 $toID = $fetchID->fetch_column();
                     if(is_user_is_alredy_added($fromID , $toID) == 1)
@@ -98,7 +98,7 @@ function getNewNoti(){
         
         $i = 0;
         while($row = $res->fetch_assoc()){
-            $unmQuery = fetch_columns("users_account" , "userID" , $row['fromID'] , "unm");
+            $unmQuery = fetch_columns("users_account" , "userID" , $row['fromID'] , array("unm"));
                 if( $unmQuery !== 0 ){
                     if($unmQuery->num_rows == 1){
                         $row['unm'] = $unmQuery->fetch_column();

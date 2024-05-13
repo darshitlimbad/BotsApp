@@ -1,6 +1,6 @@
 <?php
     // php.ini changes
-    // SET GLOBAL max_allowed_packet = 32 * 1024 * 1024;
+        define("MAX_DOC_SIZE" , 16777200);
 
     // 
 
@@ -33,7 +33,7 @@
             foreach($values as $key => $val){
                 $values[$key] = trim($val);
             }
-    
+
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);
     
@@ -49,7 +49,6 @@
         }catch(Exception $e) {
             return 0;
         }
-        
         if($sqlfire) {
             return 1;
         }else {
@@ -58,7 +57,7 @@
     }
 
     // fetch data by table name , column for where point , point value , parameter of columns you want to fetch
-    function fetch_columns( $table , $points , $point_values , ...$columns){
+    function fetch_columns( $table , $points , $point_values , $columns, $db="conn"){
         try{
             $points = explode(',', $points);
             $point_values = explode( ',', $point_values);
@@ -68,7 +67,7 @@
             }
             foreach($points as $key => $val){
                 $points[$key] = trim($val);
-        }
+            }
             foreach($point_values as $key => $val){
                 $point_values[$key] = trim($val);
             }
@@ -89,7 +88,7 @@
             $bind_param = str_repeat("s" , count($point_values));
 
             $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE $point_str ";
-            $stmt  = $GLOBALS['conn'] -> prepare($query);
+            $stmt  = $GLOBALS[$db] -> prepare($query);
             $stmt->bind_param($bind_param , ...$point_values);
             $sqlfire = $stmt->execute();
 
