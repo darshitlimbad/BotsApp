@@ -45,9 +45,9 @@
 <body class="main">
     <header>
             <?php custom_header();?>
-        <div class="status red">
-            <div class="status-icon"></div>
-        </div>
+        <span class="status red">
+            <span class="status-icon"></span>
+        </span>
     </header>
     <div class="side-bar">
         <div class="top">
@@ -154,7 +154,7 @@
             <div class="body" name="account-body" style="display: none;">
                 <div class="headding">Account</div>
                 <h4>Privacy</h4>
-                <div class="flex checkbox" name="edit-can_see_online_status">
+                <div class="checkbox" name="edit-can_see_online_status">
                     <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'can_see_online_status') == '1') { echo 'checked';} ?>>
                     <label for="can_see_online_status">Everyone can see online status </label>
                 </div>
@@ -232,14 +232,14 @@
                 <div class="text"><?= $unm?></div>
 
                 <p class="margin-dead">Name:</p>
-                <div class="flex edit_box" name="edit-user-name">
+                <div class="grid edit_box" name="edit-user-name">
                 <input type="text" name="user-name" class="text" style="font-size: 15px;" placeholder="Enter User Name" minlength="5" maxlength="30" onkeydown="_submit_data(event)" value="<?= $nm; ?>" readonly /> 
                     <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
                 
                 <p class="margin-dead">About:</p>
-                <div class="flex edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" style="font-size: 13px;min-height: 65px; max-height: 65px; height:65px;" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
+                <div class="grid edit_box" name="edit-about" style="margin:30px 0">
+                    <textarea name="about" class="text" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 

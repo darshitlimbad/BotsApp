@@ -206,11 +206,9 @@ function avatar_validation() {
         avatar_span.style.display='block';
         _submit_btn_disable();
     }else {
-        _read_doc(file)
-            .then(res=>{
-                avatar_preview.src = res;
-            });
-
+        url= URL.createObjectURL(file);
+        avatar_preview.src = url;
+        avatar_preview.onload=()=>URL.revokeObjectURL(url);
         avatar.style.color = 'var(--text-color)';
         avatar_span.style.display = 'none';
         _submit_btn_enable();

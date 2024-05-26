@@ -196,7 +196,7 @@ function show_setting_body(listitem)  {
 
 //toggle edit box of profile 
 function profile_edit_box_toggle(edit_icon) {
-    var edit_box =  edit_icon.closest(".flex");
+    var edit_box =  edit_icon.closest(".edit_box");
         if(edit_box)    {
             var text_box = edit_box.querySelector(".text");
             var icon = edit_box.querySelector(".edit-icon");
@@ -320,14 +320,4 @@ const getCookie = (name) => {
 
     };
 
-    // loader animation function
-    const loader = (loc)=>{
-        let i=1;
-        
-        return  setInterval(()=>{
-                loc.querySelector('.loader .loader-img').style.rotate=`${i}deg`;
-                    i+=6;
-                    if(i>=356)  i=0;
-                },20 ); 
-    }
 // 

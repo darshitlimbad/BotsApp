@@ -3,28 +3,42 @@
         upload_img_form : true,
         upload_doc_form : true,
     };
-    document.addEventListener('DOMContentLoaded' , () => {
+    document.addEventListener('DOMContentLoaded' ,() => {
         List = document.querySelector("#floatingList");
         img_submit_btn = document.querySelector('#upload_img_form .pop_up_yes_btn ');
         doc_submit_btn = document.querySelector('#upload_doc_form .pop_up_yes_btn ');
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp =async (unm) => {
+    const get_dp =(unm) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
             var data = JSON.stringify({
                 unm: unm,
                 req : "get_dp"  
             });
 
-            var res= await postReq(url_for_get_dp , data);
-                if(res.status == "success"){
-                    const { data , type } = res.responseText;
-                    return `data:${type};base64,${data}`;
-                }
+            return new Promise((resolve,reject) =>{
+                postReq(url_for_get_dp , data)
+                .then(res=>{
+                    
+                    if(res.status == "success"){
+                        const { data , type } = res.responseText;
+                        let base64 = `data:${type};base64,${data}`;
+                        
+                        _getDataURL(base64)
+                            .then(res=>{
+                                if(res.status == 'success')
+                                    resolve(res.url);
+                            })
+                            .catch(err=>{
+                                console.warn(err);
+                            })
+                    }  
+                })
+            })
     }
 
-    const _sendAddInChatReq = async (unm)=>{
+    const _sendAddInChatReq = (unm)=>{
         _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
         
         url = "/functionality/lib/_notification.php";
@@ -176,7 +190,7 @@ const _edit_user_data = (ele) => {
     var field=ele.name;
     var value=ele.value;  
     var edit_table = null;
-
+    var req;
     switch(field){
         case 'user-name': 
             edit_table = "users";
@@ -184,8 +198,6 @@ const _edit_user_data = (ele) => {
         default : 
             edit_table = "users_details";
     }
-
-    console.log(ele);
     
     if(value == "" && field == "user-name"){
         ele.value = ele.getAttribute("value");
@@ -194,9 +206,10 @@ const _edit_user_data = (ele) => {
     }
     
     data = JSON.stringify({
+        req:field,
         table: edit_table,
         edit_column: field,
-        data : value ,
+        value,
         });
 
     var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
@@ -359,9 +372,10 @@ const _uploadDP = () => {
 
             data = JSON.stringify(
                 {
+                    req: 'updateDP',
                     table: 'users_avatar',
                     edit_column: '',
-                    data : value ,
+                    value ,
                 });
 
             var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
@@ -426,6 +440,21 @@ const _getDocPages = (file) => {
     } );
 }
 
+function _getDataURL(source){
+    return new Promise((resolve,reject)=>{
+        fetch(source)
+        .then(res=>{
+            if(res.ok && res.status == 200)
+                return res.blob()
+            else
+                resolve({status:'error',error:400 });
+        })
+        .then(blob=>{
+            let url = URL.createObjectURL(blob);
+            resolve({status:'success',url:url});
+        })
+    })
+}
 
 const _add_new_chatter_form = () => {
     theme = 'blue';
@@ -602,4 +631,84 @@ const _closeList = () => {
     setTimeout( ()=>{
         List.style.display='none';
     } , 100) 
+}
+
+function convert_bytes(size){
+    if (size == null) {
+        return;
+    }
+
+    count = 0; 
+    while( size >= 1024){
+        size /= 1024;
+        count++;
+    }
+    regExp = /\./;
+    if(regExp.test(size))   size=size.toFixed(2);
+
+    switch(count){
+        case 1:
+            size += " KB";
+            break;
+        case 2:
+            size += " MB";
+            break;
+        case 3:
+            size += " GB";
+            break;  
+    }
+
+    return size;
+}
+
+function previewImg(imgUrl,imgName,imgSize){   
+    let preview = document.createElement('div');
+    preview.id="preview";
+    preview.classList.add('fullScreen');
+
+        let details = document.createElement('div');
+        details.classList.add('details');
+        preview.appendChild(details);
+        
+            let name = document.createElement('h4');
+            name.classList.add('name');
+            name.textContent= imgName;
+            details.appendChild(name);
+            
+            let size = document.createElement('span');
+            size.classList.add('size');
+            size.textContent= imgSize;
+            details.appendChild(size);
+        
+        let imgObj = new Image();
+        imgObj.classList.add('img');
+        imgObj.alt="Image was not able to load, Please try again."
+        imgObj.src=imgUrl;
+        preview.appendChild(imgObj);
+
+        let fullScreenIcon = document.createElement('button');
+        fullScreenIcon.classList.add('fullScreenIcon','ele');
+        fullScreenIcon.title = "Full Screen View";
+        fullScreenIcon.tabIndex= '0';
+        fullScreenIcon.onclick=()=>imgObj.requestFullscreen();
+        preview.appendChild(fullScreenIcon);
+
+            let fullScreenIconImg = document.createElement('div');
+            fullScreenIconImg.classList.add('icon');
+            fullScreenIcon.appendChild(fullScreenIconImg);
+
+        let close = document.createElement('button');
+        close.classList.add('close','ele');
+        close.title = "Close";
+        close.tabIndex= '0';
+        close.onclick=()=>preview.remove();
+        preview.appendChild(close);
+
+            let imgClose=new Image();
+            imgClose.src="img/icons/close.png";
+            imgClose.alt="Close";
+            close.appendChild(imgClose);
+    
+    chat.appendChild(preview);
+    return 1;
 }

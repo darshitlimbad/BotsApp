@@ -22,10 +22,10 @@ function createUser($column_str , $values_str , $avatar ) {
                 
             }
 
-            $res2 = insertData('users_account' , "userID , unm" , "$userID , $unm");
+            $res2 = insertData('users_account' , ["userID" , "unm"] , [$userID , $unm]);
 
             if($res2 === 1) {
-                $res3 = insertData('users_details' , "userID" , "$userID");
+                $res3 = insertData('users_details' , ["userID"] , [$userID]);
 
                 if($res3 === 1){
 

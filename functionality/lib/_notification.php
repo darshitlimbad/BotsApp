@@ -29,7 +29,7 @@ function add_new_noti($data) {
         $toID = (isset($data['toID'])) ? $data['toID'] : "";
 
         if($action == "addUserReq" && $toID == ""){
-            $fetchID = fetch_columns( 'users_account' , "unm" , $unm , array("userID") );
+            $fetchID = fetch_columns( 'users_account' , ["unm"] , [$unm] , array("userID") );
             if( $fetchID->num_rows == 1 ){
                 $toID = $fetchID->fetch_column();
                     if(is_user_is_alredy_added($fromID , $toID) == 1)
@@ -44,8 +44,8 @@ function add_new_noti($data) {
         }
 
         $res = insertData(
-                "notification" , "notificationID , fromID , toID , action" ,
-                "$newNotiID , $fromID , $toID , $action" , "status");
+                "notification" , ["notificationID" , "fromID" , "toID" , "action"] ,
+                [$newNotiID , $fromID , $toID , $action] , "status");
         
         return $res;
 
@@ -98,7 +98,7 @@ function getNewNoti(){
         
         $i = 0;
         while($row = $res->fetch_assoc()){
-            $unmQuery = fetch_columns("users_account" , "userID" , $row['fromID'] , array("unm"));
+            $unmQuery = fetch_columns("users_account" , ["userID"] , [$row['fromID']] , array("unm"));
                 if( $unmQuery !== 0 ){
                     if($unmQuery->num_rows == 1){
                         $row['unm'] = $unmQuery->fetch_column();
@@ -138,10 +138,10 @@ function acceptChatterReq($data){
             $req = deleteThisNoti($notiID);
             if($req){
                 // add user both side
-                $req = insertData('inbox' , "fromID , toID " , "$fromID, $toID" );
+                $req = insertData('inbox' , ["fromID" , "toID"] , [$fromID, $toID] );
                 if($req){
                     if($fromID != $toID){
-                        $req2 = insertData('inbox' , "fromID , toID " , "$toID, $fromID" );
+                        $req2 = insertData('inbox' , ["fromID" , "toID"] , [$toID, $fromID] );
 
                         if($req2 == 0){
                             $del =  "DELETE FROM `inbox` WHERE `fromID` = ?";
@@ -191,8 +191,8 @@ function rejectedChatterReq($data){
             if($req){
                 $newNotiID = gen_new_notification_id();
                 $action = "chatterReqRejected";
-                $req = insertData('notification' , "notificationID , fromID , toID , action" , 
-                                                    "$newNotiID    , $fromID, $toID ,$action" , "status" );
+                $req = insertData('notification' , ["notificationID" , "fromID" , "toID" , "action"] , 
+                                                    [$newNotiID    , $fromID, $toID ,$action] , "status" );
                 echo $req;
             }else{
                 throw new Exception();

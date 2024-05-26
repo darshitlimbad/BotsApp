@@ -1,6 +1,4 @@
 main insert ops:
-insert pass in session if the uid and pass is correct then keep the session on or else just flash it
-get all notifications not only requests , ex.request rejected , ex.request accepted
 
 
 side insert ops:

@@ -24,6 +24,7 @@
 ::-webkit-scrollbar-thumb {
     background-color: rgb(140 65 179);
 }
+
 .red{
     color: red;
     --color: red;
@@ -33,6 +34,16 @@
     color: green;
     --color: green;
     border-color: green;
+}
+.orange{
+    color: orange;
+    --color: orange;
+    border-color: orange;
+}
+.blue{
+    color: blue;
+    --color: blue;
+    border-color: blue;
 }
 
 span{
@@ -52,6 +63,88 @@ span{
 }
 .loader-text{
 
+}
+
+#preview {
+    display: block;
+    height: auto;
+    width: auto;
+}
+
+#preview.fullScreen {
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter:blur(4px);
+    height: 90%;
+    width: 90%;
+    padding: 10px;
+    border-radius: 2em;
+}
+
+.fullScreen .details{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    align-self: flex-end;
+}
+
+.fullScreen .details .name {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.fullScreen .details *{
+    padding: 5px;
+}
+
+.fullScreen .close, .fullScreen .fullScreenIcon{
+    position: absolute;
+    display: block;
+    justify-self: end;
+    align-self: center;
+    right: 2em;
+    top: 2em;
+    padding: .5em;
+    background-color: transparent;
+}
+
+.fullScreen .fullScreenIcon{
+    right: 6em;
+}
+
+.fullScreen .close img,.fullScreen .fullScreenIcon .icon{
+    height: 1em;
+    width: 1em;
+}
+
+.fullScreen .fullScreenIcon .icon{
+    border-top: 1px solid aliceblue;
+    border-right: 1px solid aliceblue;
+    outline: 1px solid aliceblue;
+    outline-offset: 2px;
+}
+
+.fullScreen .img{
+    max-height: 80%;
+    max-width: 80%;
+    outline: .1em solid aliceblue;
+    outline-offset: .4em;
+    border-radius: 1em;
+}
+
+/* for chat meme sharing */
+#preview.small-img .img {
+    height: 1em;
+    width: 1em;
+}
+#preview.big-img .img {
+    height: 5em;
+    width: 5em;
 }
 
 .ele{
@@ -581,7 +674,7 @@ footer {
     border-radius: 100%;
 }
 
-.settings-box .settings-container .body .flex{
+.settings-box .settings-container .body .grid{
     display: grid;
     align-content: center;
     align-items: center;
@@ -591,6 +684,7 @@ footer {
 .settings-box .settings-container .body .text{
     display: block;
     height: 30px;
+    width: 100%;
     margin: 3px 0;
     background-color: transparent;
     outline: none;
@@ -600,14 +694,23 @@ footer {
     grid-column: 1;
 }
 
-.settings-box .settings-container .body .flex .edit {
+.settings-box .settings-container .body textarea.text{
+    font-size: 13px;
+    min-height: 65px; 
+    max-height: 65px; 
+    height:65px;
+    min-width: 100%;
+    max-width: 100%;
+}
+
+.settings-box .settings-container .body .grid .edit {
     border: 1px solid rgba(255, 255, 255, 0.373);
     border-radius: 5.5px;
     padding: 5px 10px;
     background-color: rgba(0, 0, 0, 0.64);
 }
 
-.settings-box .settings-container .body .flex .edit-icon{
+.settings-box .settings-container .body .grid .edit-icon{
     height:20px;
     width:20px;
     position: relative;
@@ -617,7 +720,7 @@ footer {
     border: none;
 }
 
-.settings-box .settings-container .body .flex .edit-icon:hover {
+.settings-box .settings-container .body .grid .edit-icon:hover {
     border: none;
     border-radius: 3px;
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);

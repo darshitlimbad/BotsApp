@@ -8,8 +8,9 @@
 
     <link rel="stylesheet" type="text/css" href="css/index.css">
 
-    <script src="js/index.js"></script>
-    <script src="/js/lib/_dsa.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="/js/lib/_dsa.js"></script>
+    <script type="text/javascript" src="/js/lib/_status.js"></script>
 </head>
 <body>
 
@@ -30,7 +31,7 @@
                 <input type="search" name="seach" placeholder="search" autocomplete="off" accesskey="f">
             </div>
             
-            <table class="list"> 
+            <table class="list" id="chatterList" title="Chatter List"> 
                 <tbody class="listBody">
 
                 </tbody>
@@ -40,7 +41,7 @@
         <!-- opened-chat -->
         <div class="chat">
         </div>
-
+        
     </div>
     </div>
 </body>

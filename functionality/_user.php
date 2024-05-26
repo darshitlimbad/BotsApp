@@ -43,7 +43,7 @@ try{
             $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] : null ;
             $is_user_username = (str_contains($user, '@') && str_contains($user , '.')) ? '1' : '0';
             
-            $result = fetch_columns( "users" , (($is_user_username == 0) ? "unm" : "email") , $user , array('userID' , 'pass' , 'pass_key'));
+            $result = fetch_columns( "users" , (($is_user_username == 0) ? ["unm"] : ["email"]) , [$user] , array('userID' , 'pass' , 'pass_key'));
 
             if($result->num_rows == 0){
                 throw new Exception( "User not Found", 404);

@@ -6,14 +6,15 @@
         try{
             $data = json_decode(file_get_contents("php://input") , true);
 
+            $req = $data['req'];
             $table = $data['table'];
             $edit_column = $data['edit_column'];
 
             // if the profile picture is requested to change
-            if($table == 'users_avatar') {
+            if($req == 'updateDP') {
                 include_once('lib/_insert_data.php');
-                $imgObj['img_data'] = base64_decode($data['data']['img_data']);
-                $imgObj['size'] = $data['data']['size'];
+                $imgObj['img_data'] = base64_decode($data['value']['img_data']);
+                $imgObj['size'] = $data['value']['size'];
 
                 $imgObj['tmp_name'] = tempnam(sys_get_temp_dir() , 'upImg');
                 file_put_contents($imgObj['tmp_name'] , $imgObj['img_data']);
@@ -22,8 +23,9 @@
                 exit();
             }
 
-            if($edit_column == 'user-name'){
-                $full_name = explode(" " , ucwords(trim($data['data'])));
+            if($req == 'user-name'){
+            // if($edit_column == 'user-name'){
+                $full_name = explode(" " , ucwords(trim($data['value'])));
                 if(count($full_name) == 1){
                     $surname = null;
                     $name = $full_name[0];
@@ -38,11 +40,14 @@
                     exit();
                 }
 
-                $edit_column = "surname,name";
-                $data['data'] = "$surname , $name";
+                $edit_column = array("surname","name");
+                $value = array($surname , $name);
+            }else{
+                $edit_column = array($edit_column);
+                $value = array($data['value']);
             }
 
-            $edit_req = updateData($table , $edit_column , $data['data'] , "userID" , getDecryptedUserID());
+            $edit_req = updateData($table , $edit_column , $value , "userID" , getDecryptedUserID());
             
             echo $edit_req;
         }catch(Exception $e){

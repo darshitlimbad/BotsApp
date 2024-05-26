@@ -45,15 +45,21 @@ document.addEventListener('DOMContentLoaded' , function () {
 });
 
 const customError = (msg, code) => {
-    let err=new Error(msg);
-    err.code = code;
-    return err;
+    try{
+        handler['err_'+code]();
+    }catch(e){
+        handler['err_400']();
+    }
+    return new Error(msg);
 };
 
 const handler={};
 
 handler.err_400 = () => {
     new_Alert( " Something went Wrong :( , Please try again");
+}
+handler.err_401 = () => {
+    new_Alert( " NO NETWORK, PLEASE TRY AGAIN ");
 }
 handler.err_405 = () => {
     new_Alert( "Name can't be Empty");
@@ -67,3 +73,4 @@ handler.err_413 = () => {
 handler.err_500 = ()=>{
     new_Alert(" Internal Server Error ")
 }
+

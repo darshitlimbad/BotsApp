@@ -35,63 +35,78 @@ const _getChatList = async (chatType) => {
     }
 }
 
-const _getMsgs = async (unm) => {
+const _getAllMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
     var data = JSON.stringify({
-        req: "getMsgs",
-        unm: unm,
+        req: "getAllMsgs",
     });
 
     try{
         const res = await postReq(url , data);
-        if(res.status == "success")
+        if(res.status == "success" && !res.responseText.code)
             return res.responseText;
+        else 
+            throw new Error(res.responseText);
     }catch(err){
+        console.warn(err);
         return 0;
     }
 }
 
-const _getDocBolb = (msgID,fileName)=> {
+const _getNewMsgs = async () => {
+    var url = "/functionality/lib/_chat.php";
+    var data = JSON.stringify({
+        req: "getNewMsgs",
+    });
+
+    try{
+        const res = await postReq(url , data);
+        if(res.status == "success" && !res.responseText.code)
+            return res.responseText;
+        else 
+            throw new Error(res.responseText);
+    }catch(err){
+        console.warn(err);
+        return 0;
+    }
+}
+
+const _getDocBolb = (msgID,toUnm,fileName)=> {
     var url = "/functionality/lib/_fetch_data.php";
 
     var data = JSON.stringify({
         req : "getDocBlob",
         msgID,
+        toUnm,
         fileName,
     });
-    
     return new Promise((resolve,reject)=>{
-        postReq(url,data)
-            .then(res => {
+        postReq(url, data)
+            .then(res=>{
                 resolve(res);
             });
     });
 }
 
-const _sendMsg = async (data) =>{  
+const _sendMsg = (data) =>{  
     if(!(data.type && (data.msg || (data.fileName && data.blob))))  return 0;
+    
     var url="/functionality/lib/_chat.php";
-    let {type} = data;
     data.req="sendMsg";
-    data=JSON.stringify(data);
-
 
     try{
         return new Promise((resolve,reject)=>{
-            if(type === "text")
-                postReq(url,data).then(resObj=>resolve(resObj));
+            if(data.type === "text" || data.type === 'img')
+                postReq(url,JSON.stringify(data)).then(resObj=>resolve(resObj));
             else{
-                fetch(url,{method:"POST",body:data})
-                    .then(res=>{
-                        if(res.ok && (res.status == 200)){
-                            return res.json();}
-                        else
-                        resolve(400);
-                    })
-                    .then(res=>{
-                        var resObj = {status:'success',responseText:res};
-                        resolve(resObj);
-                    });
+                postReq(url, JSON.stringify(data), {
+                    onUploadProgress:(progressEvent)=>{
+                        var progressPR = data.msgLoad.childNodes[0].childNodes[0];
+                        progressPR.textContent = Math.ceil(progressEvent.loaded*100 / progressEvent.total)+"%";
+                    }
+                }).then(res=>{
+                    resolve(res);
+                })
             }
         });
     }catch(err){
@@ -99,7 +114,7 @@ const _sendMsg = async (data) =>{
     }
 }
 
-const _genNewID=async (preFix)=>{
+const _genNewID= async (preFix)=>{
     if(!preFix) return;
 
     var url = "/functionality/lib/_chat.php";
@@ -112,39 +127,62 @@ const _genNewID=async (preFix)=>{
     return (res.status === "success") ? res.responseText : 400;
 }
 
-const _setMsgStatus = async (msgStatusImage,msgID) => {
-    if(!msgID) return;
-    var url = "/functionality/lib/_chat.php";
-    var data=JSON.stringify({
-        req:"getMsgStatus",
+const _downloadThisDoc = (msgID,toUnm,fileName,msgLoad)=>{
+    var url = "/functionality/lib/_fetch_data.php";
+    
+    var progressDiv = msgLoad.firstChild;
+    msgLoad.removeChild(progressDiv);
+    
+    msgLoad.appendChild(setDocumentProgressBar());
+    var progressPR = msgLoad.querySelector(".progressPR");
+
+    var data = JSON.stringify({
+        req : "getDocBlob",
         msgID,
+        toUnm,
+        fileName,
     });
+    
+    postReq(url, data , { 
+        onDownloadProgress:(progressEvent) =>{
+            progressPR.textContent = Math.ceil(progressEvent.loaded*100 / progressEvent.total)+"%";
+            
+            if(progressEvent.done)
+                progressPR.remove();
+        }
+    })
+        .then(res=>{
+            if(res.status == "success"){
+                let {mime,data} = res.responseText;
+                let base64 = `data:${mime};base64,${data}`;
+                
+                let a = document.createElement('a');
+                a.download=fileName;
+                
+                _getDataURL(base64)
+                    .then(res=>{
+                        if(res.status=='success'){
+                            a.href = res.url;
+                            a.click();
+                        }else{
+                            try{
+                                handler['err'+res.error]();
+                            }catch(e){
+                                handler.err_400();
+                            }
+                        }
 
-    return new Promise( (resolve,reject) => {
-        postReq(url,data)
-            .then(res=>{
-                let msgStatusURL = "/img/icons/chat/msg_status/";
-                msgStatusImage.src = msgStatusURL+((res.status == "success" && res.responseText != 0) ? res.responseText:"uploading")+".svg";
-            });
-    });
+                        window.onfocus= ()=>{
+                            msgLoad.firstChild.remove();
+                            msgLoad.appendChild(progressDiv);
+
+                            if(res.url)
+                                URL.revokeObjectURL(res.url);
+                        }
+                    });
+                
+            }else{
+                handler.err_400();
+            }
+        });
 }
-
-
-
-
-
-
-
-
-// reader
-// var reader = res.body.getReader();
-    // var result= '';
-    // async function read(){
-    //     var {value,done}= await reader.read();
-    //     if(done) {console.log("done"); console.log(result);}
-    //     else{ 
-    //         result+=new TextDecoder().decode(value);
-    //         read();
-    //     }
-    // }
-    // read();

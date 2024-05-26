@@ -9,17 +9,20 @@ function getDecryptedUserID(){
         $key = base64_decode($_SESSION['key']);
 
         $res = sodium_crypto_secretbox_open($encryptedUserID , $nonce , $key) ?: 0;
+
+        // if the description process completes it will return userid but if it ocures any errors by the wrong value it will return 0.
+        return $res;
+
     }catch( Exception $err){
-        session_destroy();
+        if(isset($_SESSION['userID']))
+            session_destroy();
     }
 
-    // if the description process completes it will return userid but if it ocures any errors by the wrong value it will return 0.
-    return $res;
 }
 
 // this function matches the Encrypted passwords with password_hash bcrypt
 function metchEncryptedPasswords($Pass , $userID){
-    $result = fetch_columns(  "users" , 'userID' , $userID , array('pass'));
+    $result = fetch_columns(  "users" , ['userID'] , [$userID] , array('pass'));
     if($result->num_rows == 1) {
         $pwd = $result->fetch_column();
         
@@ -37,7 +40,7 @@ function metchEncryptedPasswords($Pass , $userID){
 
 // if there will be data the is_data_present will return 1 
 function is_data_present($table , $point , $point_val , $column='userID'){
-    $result = fetch_columns($table , $point , $point_val , array($column));
+    $result = fetch_columns($table , [$point] , [$point_val] , array($column));
     
     if($result->num_rows == 1){
         return 1;

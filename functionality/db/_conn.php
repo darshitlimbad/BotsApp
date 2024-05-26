@@ -22,11 +22,8 @@
         mkdir($imgDir, 0777, true);
     setcookie("imgDir", $imgDir, time()+86400,"/");
 
-    // insert data by table , column as string seprated by ',' , values as string seprated by ',' 
-    function insertData($table, $column_str , $values_str , $db = "conn")   {
+    function insertData(string $table, array $columns , array $values , $db = "conn")   {
         try{
-            $columns = explode(',' , $column_str);
-            $values = explode(',' , $values_str);
             foreach($columns as $key => $val){
                 $columns[$key] = trim($val);
             }
@@ -37,9 +34,9 @@
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);
     
-            $paramtypes =   str_repeat('s' , count($values));
-            $column_str =   implode(',' , $columns);
-            $values_str =   implode( ',' , array_fill(0 , count($values) , '?') );
+            $paramtypes =  str_repeat('s' , count($values));
+            $column_str =  implode(',' , $columns);
+            $values_str =  implode( ',' , array_fill(0 , count($values) , '?') );
     
             $query = "INSERT INTO `$table`($column_str) VALUES ($values_str)";
             $stmt = $GLOBALS[$db]->prepare($query);
@@ -57,11 +54,8 @@
     }
 
     // fetch data by table name , column for where point , point value , parameter of columns you want to fetch
-    function fetch_columns( $table , $points , $point_values , $columns, $db="conn"){
+    function fetch_columns( $table , array $points , array $point_values , array $columns, $db="conn"){
         try{
-            $points = explode(',', $points);
-            $point_values = explode( ',', $point_values);
-
             foreach($columns as $key => $val){
                 $columns[$key] = trim($val);
             }
@@ -127,10 +121,8 @@
         }
     }
 
-    function updateData($table, $column_str , $values_str , $point, $point_value )   {
+    function updateData($table,array $columns ,array $values , $point, $point_value , $db="conn" )   {
         try{
-            $columns = explode(',' , $column_str);
-            $values = explode(',' , $values_str);
             foreach($columns as $key => $val){
                 $columns[$key] = trim($val);
             }
@@ -141,7 +133,10 @@
             if(sizeof($columns) != sizeof($values))
                 die(throw new Exception( "Columns size is not equal to values size", 400));
 
-            $paramtypes =  str_repeat('s' , count($values));
+            //adding point value in the value variable for using bind_param
+            $values[]=$point_value;
+            
+            $bind_param =  str_repeat('s' , count($values));
 
             $str="";
             foreach($columns as $column){
@@ -151,9 +146,9 @@
                 $str .= $column . " = ". ' ? ';
             }
 
-            $query = "UPDATE `$table` SET $str WHERE `$point` = '$point_value'";
-            $stmt = $GLOBALS['conn']->prepare($query);
-            $stmt->bind_param($paramtypes , ...$values);
+            $query = "UPDATE `$table` SET $str WHERE `$point` = ?";
+            $stmt = $GLOBALS[$db]->prepare($query);
+            $stmt->bind_param($bind_param , ...$values);
             $sqlfire = $stmt->execute();
             $stmt ->close();
         }catch(Exception $e){
