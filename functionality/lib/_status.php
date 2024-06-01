@@ -54,19 +54,36 @@
 
             $userID = getDecryptedUserID();
             
-            switch($_COOKIE['chat']){
-                case 'Personal':
-                    $chatterIDList = fetch_columns("inbox",["fromID"],[$userID],['toID']);
+            $chatType = strtolower($_COOKIE['chat']);
+            switch($chatType){
+                case 'personal':
+                    $sql= " SELECT i.toID
+                            FROM inbox as i JOIN users_details as ud
+                            ON i.fromID = '$userID' 
+                            WHERE i.toID = ud.userID 
+                            AND ud.can_see_online_status = '1' ";
+
                     break;
-                case 'Group':
-                    //update this when group chat functionality will be added.
-                    return 0;
+                case 'group':
+                    $sql= " SELECT i.toID
+                            FROM inbox as i JOIN groups as g
+                            ON i.fromID = '$userID' 
+                            WHERE i.toID = g.groupID ";
+                    
                     break;
                 default:
                     throw new Exception("Select Chat Type first.",0);
             }
 
-            if(gettype($chatterIDList)=="integer")//error code return by fetch_column
+            $stmt = $GLOBALS['conn']->prepare($sql);
+            $fire=$stmt->execute();
+                if(!$fire)
+                    throw new Exception("MySQL DB Error",0);
+
+            $chatterIDList = $stmt->get_result();
+            $stmt->close();
+
+            if(gettype($chatterIDList) == "integer")//error code return by fetch_column
                 throw new Exception("Something want wrong during fatching Chatter List please try again",$chatterIDList);
             
             if($chatterIDList->num_rows === 0)  return 0;
@@ -74,54 +91,75 @@
             $chatterList;
             $i=0;
             while($toID = $chatterIDList->fetch_column()){
-                $userOn =null;
-                $lastOnTime =null;
+                if($chatType == "personal"){
+                    $userOn =null;
+                    $lastOnTime =null;
+    
+                    $userOnTime = fetch_columns("on_status",["userID"],[$toID],['last_on_time'],"status");
+    
+                    if(gettype($userOnTime) == 'Integer')
+                        continue;
+                    
+                    if($userOnTime->num_rows == 0)
+                        $userOn =  false;
+                    else{
+                        $lastOnTime = $userOnTime->fetch_column();
+                        //if you do any changes in requst time then please change here also
+                        $userOn = $lastOnTime >= time()-2;
+                    } 
 
-                $userOnTime = fetch_columns("on_status",["userID"],[$toID],['last_on_time'],"status");
+                    if(!$userOn) {
+                        if($lastOnTime){
+                            if(date('d-m',$lastOnTime) >= date('d-m',time()))
+                                $chatterList[$i]['lastOnDay'] = 'Today';
+                            else if(date('d-m',$lastOnTime) >= date('d-m',date_create('-1 days')->getTimestamp()))
+                                $chatterList[$i]['lastOnDay'] = 'Yesterday';
+                            else
+                                $chatterList[$i]['lastOnDay'] = date("d-m-Y",$lastOnTime);
+                        }else  
+                            $chatterList[$i]['lastOnDay'] = "New User";
+                    }
 
-                if(gettype($userOnTime) == 'Integer')
-                    continue;
-                if($userOnTime->num_rows == 0)
-                    $userOn =  false;
-                else{
-                    $lastOnTime = $userOnTime->fetch_column();
-                    //if you do any changes in requst time then please change here also
-                    $userOn = $lastOnTime >= time()-2;
-                } 
-                
-                $chatterList[$i]['unm']= _fetch_unm($toID);
-                $chatterList[$i]['online'] =  $userOn;
-                if(!$userOn) {
-                    if($lastOnTime){
-                        if(date('d-m',$lastOnTime) >= date('d-m',time()))
-                            $chatterList[$i]['lastOnDay'] = 'Today';
-                        else if(date('d-m',$lastOnTime) >= date('d-m',date_create('-1 days')->getTimestamp()))
-                            $chatterList[$i]['lastOnDay'] = 'Yesterday';
-                        else
-                            $chatterList[$i]['lastOnDay'] = date("d-m-Y",$lastOnTime);
-                    }else  
-                        $chatterList[$i]['lastOnDay'] = "New User";
+                    $chatterList[$i]['unm']= _fetch_unm($toID);
+                    $chatterList[$i]['online'] =  $userOn;
+
+                    $newMsgQuery = "SELECT count(*) 
+                                    FROM `botsapp`.messages as t1 
+                                    RIGHT JOIN `botsapp_statusdb`.messages as t2 
+                                    on t1.msgID = t2.msgID 
+                                    WHERE t1.fromID = '$toID' 
+                                    AND t1.toID = '$userID' 
+                                    AND t2.status = 'send' 
+                                    ORDER BY t2.msgID";
+
+                }else if($chatType == 'group'){
+                    $chatterList[$i]['GID']= base64_encode($toID);
+
+                    $newMsgQuery = "SELECT count(*) 
+                                    FROM `botsapp`.messages as t1 
+                                    RIGHT JOIN `botsapp_statusdb`.messages as t2 
+                                    on t1.msgID = t2.msgID 
+                                    WHERE NOT t1.fromID = '$userID' 
+                                    AND t1.toID = '$toID' 
+                                    AND t2.status = 'send' 
+                                    ORDER BY t2.msgID";
+
+                }else{
+                    throw new Exception("Something went wrong.",400);
                 }
-
-                $newMsgQuery = "SELECT count(*) 
-                                FROM `botsapp`.messages as t1 
-                                RIGHT JOIN `botsapp_statusdb`.messages as t2 
-                                on t1.msgID = t2.msgID 
-                                WHERE t1.fromID = '$toID' 
-                                AND t1.toID = '$userID' 
-                                AND t2.status = 'send' 
-                                ORDER BY t2.msgID";
+                
+                
 
                 $newMsgStmt = $GLOBALS['status']->prepare($newMsgQuery);
                 $fire = $newMsgStmt->execute();
                 if(!$fire)
                     throw new Exception("New Message SQL error.",0);
-                else
-                    $newMsgObj= $newMsgStmt->get_result();
-                    $newMsgStmt ->close();
 
+                $newMsgObj= $newMsgStmt->get_result();
+                $newMsgStmt ->close();
+
+                $chatterList[$i]['last_msg'] = _fetchLastMsg($userID,$toID,$chatType);
                 $chatterList[$i]['total_new_messages'] = ($newMsgObj->num_rows != 0) ? $newMsgObj->fetch_column() : 0;
-
                 $i++;
             }
 
@@ -141,25 +179,37 @@
         try{
             if(!$msgIDs) throw new Exception("No Msg ID has been provided",0);
             if(!$_COOKIE['currOpenedChat']) throw new Exception("Chat is not Opened",0);
+            if(!$_COOKIE['chat']) throw new Exception("Chat section is not Opened",0);
 
             session_start();
             include_once('../lib/_fetch_data.php');
 
             $userID = getDecryptedUserID();
-            $oppoUserID = _get_userID_by_UNM($_COOKIE['currOpenedChat']);
-                if(!$oppoUserID)  throw new Exception("Something Went Wrong",400);
+
+            if(strtolower($_COOKIE['chat']) === 'personal'){
+                $oppoUserID = _get_userID_by_UNM($_COOKIE['currOpenedChat']);
+            }else if(strtolower($_COOKIE['chat']) === 'group'){
+                if(isset($data['toGID']) && is_data_present('groups','groupID', base64_decode($data['toGID']),'groupID'))
+                    $oppoUserID = base64_decode($data['toGID']);
+                else
+                    throw new Exception("GID not detected",0);
+            }else{
+                throw new Exception("Something Went wrong.",400);
+            }
+
+            if(!$oppoUserID)  throw new Exception("Something Went Wrong",400);
 
             $bindParamQ = str_repeat("?,",count($msgIDs)-1).'?';
             $bindParamS = str_repeat("s",count($msgIDs));
 
+            //continue
             $sql =" SELECT t2.msgID ,t2.status 
                     FROM `botsapp`.messages as t1
                     RIGHT JOIN `botsapp_statusdb`.messages as t2
                     on t1.msgID = t2.msgID
-                    WHERE t1.fromID IN ('$userID','$oppoUserID')
-                    AND t1.toID IN ('$userID','$oppoUserID' )
+                    WHERE ((t1.fromID = '$userID' AND t1.toID = '$oppoUserID')
+                    OR (t1.fromID = '$oppoUserID' AND t1.toID = '$userID'))
                     AND t2.msgID IN ($bindParamQ)";
-                    
             $msgStatusStmt = $GLOBALS['status']->prepare($sql);
             $msgStatusStmt->bind_param($bindParamS,...$msgIDs);
             $fire = $msgStatusStmt->execute();
@@ -180,7 +230,7 @@
             return json_encode($msgStatus) ;
         }catch(Exception $e){
             $error = [
-                'error'=>1,
+                'error'=>true,
                 'code'=> $e->getCode(),
                 'message'=> $e->getMessage(),
             ];
@@ -199,21 +249,72 @@
                 default: throw new Exception("status code is wrong",0);
             }
     
-            $res = fetch_columns("messages", ["msgID"], [$msgID], ["status"], 'status');
+            session_start();
+            $userID = getDecryptedUserID();
+            $res = fetch_columns("messages", ["msgID"], [$msgID], ['status','seenByIDs'], 'status');
             if(gettype($res) == 'integer')
-                throw new Exception("Something went wrong Please try again",400);
+                throw new Exception("Something went wrong while fetching message response",400);
             
             if($res->num_rows == 0)
-                $result = insertData('messages', ['msgID','status'],[$msgID,$status],'status');
-            else if($res->num_rows == 1)
-                $result = updateData('messages',['status'],[$status],'msgID',$msgID,'status');
-            else
+                $result = insertData('messages', ['msgID','status','seenByIDs'],[$msgID,$status,$userID],'status');
+            else if($res->num_rows == 1){
+                $chatType = strtolower($_COOKIE['chat']);
+                $row = $res->fetch_assoc();
+
+                $updateCol = [];
+                $updateVal = [];
+                
+                if($row['status'] != 'read'){
+                
+                    if($chatType == 'personal'){
+                    
+                        $updateCol= ['status','seenByIDs'];
+                        $updateVal= ['read',serialize($userID)];
+                    
+                    }else if($chatType == 'group'){
+                    
+                        $sql = "SELECT memCount 
+                                FROM groups 
+                                WHERE groupID 
+                                IN (SELECT toID FROM messages WHERE msgID = ?);";
+
+                        $stmt = $GLOBALS['conn']->prepare($sql);
+                        $stmt->bind_param('s',$msgID);
+                        $fire = $stmt->execute();
+
+                        if(!$fire)
+                            throw new Exception("Sql for fetching Data of Group has occured error.",0);
+
+                        $res = $stmt->get_result();
+                        $stmt->close();
+
+                        if($res->num_rows != 1)
+                            throw new Exception("Unable to fetch Group details from DB.",0);
+
+                        $seenByIDs = unserialize($row['seenByIDs']);
+                        $memCount = $res->fetch_column();//it will fetch memberes count from groups
+
+                        //-1 for the user who send the messages
+                        if(count($seenByIDs) == $memCount-1){
+                            $updateCol= ['status'];
+                            $updateVal= ['read'];
+                        }
+
+                        $updateCol[]='seenByIDs';
+                        $updateVal[]= serialize($seenByIDs[]=$userID);
+
+                    }else
+                        throw new Exception("Something Went Wrong",400);
+                } 
+
+                $result = ($updateCol && $updateVal) ? updateData('messages',$updateCol,$updateVal,'msgID',$msgID,'status') : 1 ;
+            }else
                 throw new Exception("More then one records for same msg status",0);
 
             return json_encode($result);
         }catch(Exception $e){
             $error = [
-                'error'=>1,
+                'error'=>true,
                 'code'=> $e->getCode(),
                 'message'=> $e->getMessage(),
             ];

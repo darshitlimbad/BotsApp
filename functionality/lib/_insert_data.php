@@ -65,7 +65,7 @@ function uploadImg($userID , $imgObj ){
         if(gettype($imgObj)=="integer")
             throw new Exception("Something Went wrong",$imgObj);//this will return error code
 
-        $table = 'users_avatar';
+        $table = 'avatar';
         $type = $imgObj['type'];
 
         $img_data = file_get_contents($imgObj['tmp_name']);

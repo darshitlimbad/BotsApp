@@ -51,16 +51,15 @@ const initiateChatBox = (chatType) => {
     heading.textContent = chatType + " Chat";
     document.title = heading.textContent + " -- Botsapp"; 
     // 
-    document.querySelectorAll(".side-bar .top .options").forEach( (ele) => {
-        ele.classList.remove("selected");
-    });
+    if(option = document.querySelector(".side-bar .top .options.selected"))
+        option.classList.remove("selected");
     document.querySelector(`div[title=${chatType}]`).classList.add("selected");
 
     setCookie('chat', chatType);
     _flash_chatList();
     _cht_sk_loading();
     closeChat();
-    openChatList(chatType);
+    openChatList();
 }
 
 // toggle add new Chatter
@@ -70,10 +69,10 @@ function toggleAddNewChatter(){
         _add_new_chatter_form(); 
         document.querySelector('input#username').focus();
 
-        document.addEventListener('keypress',(e)=>{
-            // if(e.keyCode )
-            console.log(e.key);
-        });
+        // document.addEventListener('keypress',(e)=>{
+        //     // if(e.keyCode )
+        //     console.log(e.key);
+        // });
     }else{
         _hide_this_pop_up(newChatterForm);
     }

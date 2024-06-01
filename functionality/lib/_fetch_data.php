@@ -3,7 +3,15 @@
         if(isset($data['req'])){
             include_once('../db/_conn.php');
             include_once('./_validation.php');
-            if($data['req'] == "get_dp")    echo get_dp( null,$data['unm']);
+            if($data['req'] == "get_dp") {
+                
+                if(isset($data['unm']))
+                    echo get_dp( null,$data['unm']);
+                
+                else if(isset($data['GroupID']))
+                    echo get_dp( null,null,$data['GroupID']);
+
+            } 
             if($data['req'] == "get_unm")   echo search_user($data['from'] , $data['value']);
             if($data['req'] == "getDocBlob") { 
                     $res = getDocBlob($data);
@@ -34,6 +42,19 @@
             return "USER_NOT_FOUND";
         }
     }
+    
+    function _fetch_group_nm($groupID=null){
+        if($groupID == null) return;
+
+        $res = fetch_columns("groups", ["groupID"], [$groupID], array("groupName"));
+        
+        if($res->num_rows == 1){
+            $nm = $res->fetch_column();
+            return $nm;
+        }else{
+            return 0;
+        }
+    }
 
     function _fetch_email($userID = null){
         if($userID == null)
@@ -49,11 +70,18 @@
         }
     }
 
-    function get_dp($userID,$unm=null) {
-        if($unm)
-            $userID = _get_userID_by_UNM($unm);
+    function get_dp($userID,$unm=null,$groupID=null) {
+        if($userID)
+            $ID = $userID;
+        else if(!$userID && $unm)
+            $ID = _get_userID_by_UNM($unm);
+        elseif($groupID)
+            $ID = base64_decode($groupID);
+        else
+            return 0;
+
         
-        $fetch_img = fetch_columns( 'users_avatar' , ["userID"] , [$userID] , array("type" , "imgData"));
+        $fetch_img = fetch_columns( 'avatar' , ["userID"] , [$ID] , array("type" , "imgData"));
 
         if($fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
@@ -169,6 +197,44 @@
                 throw new Exception("there is more then one file",400);
         }catch(Exception $e){
             return $e->getCode();
+        }
+    }
+
+    function _fetchLastMsg($userID,$oppoUserID,$chatType='personal'){
+        try{
+            if($chatType == 'personal'){
+                $sql =" SELECT msg
+                        FROM messages
+                        WHERE (fromID = '$userID' AND toID = '$oppoUserID')
+                        OR (fromID = '$oppoUserID' AND toID = '$userID')
+                        ORDER BY msgID
+                        DESC
+                        limit 1";
+            }else if($chatType == 'group'){
+                //here opposite user id will be a group ID.
+                $sql =" SELECT msg
+                        FROM messages
+                        WHERE toID = '$oppoUserID'
+                        ORDER BY msgID
+                        DESC
+                        limit 1";
+            }else 
+                return '';
+
+            $stmt = $GLOBALS['conn']->prepare($sql);
+            $fire=$stmt->execute();
+            if(!$fire)
+                throw new Exception();
+
+            $result = $stmt->get_result();
+            $stmt->close();
+
+            $last_msg = $result->fetch_column();
+            if(strlen($last_msg) > 40)
+                $last_msg= str_split($last_msg,40)[0]."...";
+            return ($result->num_rows == 1) ? $last_msg : '' ;
+        }catch(Exception $e){
+            return '';
         }
     }
 ?>

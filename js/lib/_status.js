@@ -64,44 +64,58 @@ class Status {
     }
 
     checkChatListStatus(){
+        let chatType= getCookie('chat');
         if(!this.intervalID.checkChatListStatus)
             this.intervalID.checkChatListStatus = setInterval(()=>this.checkChatListStatus(),this.#requestTime);
-        
+
         let data={
             req:"checkChatListStatus",
         }
 
         postReq(this.statusURL,JSON.stringify(data))
             .then(res=>{
-                if(res.status == 'success'){
+                console.log(res.responseText);
+                if(res.status == 'success' && res.responseText != 0){
                     res.responseText.forEach(chatter => {
-                        let inboxUser = chatterList.querySelector(`.inbox-user[title='${chatter.unm}']`);
+                        
+                        let inboxUser = (chatType == 'Personal') ? 
+                                        chatterList.querySelector(`.inbox-user[title='${chatter.unm}']`)
+                                        :chatterList.querySelector(`.inbox-user[id='${chatter.GID}']`);
                         
                         if(inboxUser){
-                            let userStatusColor='null';
-                            if(chatter.online)
-                                userStatusColor = 'green';
-                            else if(chatter.lastOnDay){
-                                if(chatter.lastOnDay === "Today")
-                                    userStatusColor = 'orange';
-                                else if(chatter.lastOnDay === "New User")
-                                    userStatusColor = 'Blue';
-                                else
-                                    userStatusColor = 'red';
+                                let lastChatDiv = inboxUser.querySelector('.last-chat');
+                            if(chatter.last_msg && lastChatDiv && lastChatDiv.title != chatter.last_msg){
+                                lastChatDiv.textContent = chatter.last_msg;
+                                lastChatDiv.title =  chatter.last_msg;
                             }
 
-                            inboxUser.style.setProperty('--userStatusColor',userStatusColor);
-                            if(getCookie('currOpenedChat') == chatter.unm){
-                                currentChatterStatus.classList.value=`status ${userStatusColor}`;
-
+                            if(chatType == 'Personal'){
+                                let userStatusColor='null';
                                 if(chatter.online)
-                                    currentChatterStatus.textContent = "Online";
-                                else 
-                                    currentChatterStatus.textContent = chatter.lastOnDay;
+                                    userStatusColor = 'green';
+                                else if(chatter.lastOnDay){
+                                    if(chatter.lastOnDay === "Today")
+                                        userStatusColor = 'orange';
+                                    else if(chatter.lastOnDay === "New User")
+                                        userStatusColor = 'Blue';
+                                    else
+                                        userStatusColor = 'red';
+                                }
 
+                                inboxUser.style.setProperty('--userStatusColor',userStatusColor);
+                                
+                                if(getCookie('currOpenedChat') == chatter.unm){
+                                    currentChatterStatus.classList.value=`status ${userStatusColor}`;
+
+                                    if(chatter.online)
+                                        currentChatterStatus.textContent = "Online";
+                                    else 
+                                        currentChatterStatus.textContent = chatter.lastOnDay;
+                            }
                                 //  when the opposite Chatter is reading msg send by us.
                                 if((chatter.online == true)&& (getCookie('currOpenedChat') != getCookie('unm'))){
                                     let msgStatusSendIcons = chat.querySelectorAll(".msgStatusIcon[data-status='send']");
+                                
                                     if(msgStatusSendIcons[0] != null){
                                         let msgIDs=[];
 
@@ -118,7 +132,6 @@ class Status {
                                                         .filter(msgStatus=>msgStatus.status == 'read')
                                                         .map(msgStatus=> {
                                                             let msgStatusIcon = chat.querySelector('#'+msgStatus.msgID+" .msgStatus .msgStatusIcon");
-                                                            console.log(msgStatusIcon);
                                                             if(msgStatusIcon)   {
                                                                 msgStatusIcon.src=msgStatusIcon.src.replace('send','read');
                                                                 msgStatusIcon.setAttribute('data-status','read');   
@@ -162,23 +175,33 @@ class Status {
 // msg status functions
 
     const _getMsgStatus = (msgIDs) => {
+        try{
+            if(!msgIDs) return;
+            
+            let data={
+                req:"getMsgStatus",
+                msgIDs,
+            };
 
-        if(!msgIDs) return;
-        
-        var data=JSON.stringify({
-            req:"getMsgStatus",
-            msgIDs,
-        });
-
-        return new Promise( (resolve,reject) => {
-            postReq(userStatus.statusURL,data)
-                .then(res=>{
-                    if(res.status == 'success' && !res.responseText.code)
-                        resolve(res.responseText);
-                    else
-                        reject(res.responseText);
-                });
-        });
+            if(getCookie('chat') === 'Group')
+                if(!user)
+                    throw new Error("Message status could not be loaded");
+                else
+                    data.toGID = user.id;
+            
+            return new Promise( (resolve,reject) => {
+                postReq(userStatus.statusURL,JSON.stringify(data))
+                    .then(res=>{
+                        if(res.status == 'success' && !res.responseText.code)
+                            resolve(res.responseText);
+                        else
+                            reject(res.responseText);
+                    });
+            });
+        }catch(err){
+            new_Alert(err);
+            console.error(err);
+        }
     }
 
     const _placeMsgStatus = (msgStatusImage,msgID)=>{
@@ -215,6 +238,7 @@ class Status {
             return new Promise((resolve,reject)=>{
                 postReq(userStatus.statusURL, JSON.stringify(data))
                     .then(res=>{
+                        console.log(res.responseText);
                         if(res.status == 'success' && res.responseText == 1)
                             resolve(res.responseText);
                         else{

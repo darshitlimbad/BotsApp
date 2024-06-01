@@ -10,18 +10,17 @@ const sendNoti = (req , notiID) => {
         postReq(url , data)
             .then(res =>{
                 if(res.status == "success")
-                    resolve(res);
+                    resolve(res.responseText);
             }).catch(err=>{
                 console.error(err);
             })
     })
 }
 
-const _getChatList = async (chatType) => {
+const _getChatList = async () => {
     var url = "/functionality/lib/_chat.php";
     var data = JSON.stringify({
         req: "getChatList",
-        chatType: chatType,
     });
 
     try{
@@ -35,32 +34,35 @@ const _getChatList = async (chatType) => {
     }
 }
 
-const _getAllMsgs = async () => {
+const _getAllMsgs = async (ID=null) => {
     var url = "/functionality/lib/_chat.php";
-    var data = JSON.stringify({
+    var data = {
         req: "getAllMsgs",
-    });
-
+        ID,
+    };
+    
     try{
-        const res = await postReq(url , data);
-        if(res.status == "success" && !res.responseText.code)
+        const res = await postReq(url , JSON.stringify(data));
+        if(res.status == "success" && !res.responseText.error)
             return res.responseText;
         else 
             throw new Error(res.responseText);
     }catch(err){
-        console.warn(err);
+        console.error(err);
         return 0;
     }
 }
 
-const _getNewMsgs = async () => {
+const _getNewMsgs = async (ID=null) => {
     var url = "/functionality/lib/_chat.php";
     var data = JSON.stringify({
         req: "getNewMsgs",
+        ID,
     });
 
     try{
         const res = await postReq(url , data);
+        console.log(res.responseText);
         if(res.status == "success" && !res.responseText.code)
             return res.responseText;
         else 
@@ -93,7 +95,6 @@ const _sendMsg = (data) =>{
     
     var url="/functionality/lib/_chat.php";
     data.req="sendMsg";
-
     try{
         return new Promise((resolve,reject)=>{
             if(data.type === "text" || data.type === 'img')

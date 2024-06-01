@@ -40,8 +40,7 @@ function metchEncryptedPasswords($Pass , $userID){
 
 // if there will be data the is_data_present will return 1 
 function is_data_present($table , $point , $point_val , $column='userID'){
-    $result = fetch_columns($table , [$point] , [$point_val] , array($column));
-    
+    $result = fetch_columns($table , [$point] , [$point_val] , array("count($column)"));
     if($result->num_rows == 1){
         return 1;
     }else{

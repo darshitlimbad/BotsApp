@@ -47,7 +47,7 @@ const msgBoxSizing = (e) => {
 const toggleSearchTxt = () => {
     let searchTxt = document.querySelector("div#searchTxt");
 
-    var searchBtn = document.querySelector("div.search-btn");
+    var searchBtn = document.querySelector(".search-btn");
     var searchTxtInput = searchTxt.querySelector("input");
     let icon;
     _clearSearchedWords();
@@ -218,13 +218,14 @@ function moveSearch(dir){
 
 const toggleDocsContainer = () => {
     var upDocsContainer = document.querySelector("div.upDocsContainer");
-    var upDocsBtn = document.querySelector("div.upDocsBtn");
+    var upDocsBtn = document.querySelector(".upDocsBtn");
     
     if(upDocsContainer.style.display == 'flex'){
         upDocsContainer.style.bottom = "0%" ;
         upDocsBtn.style.outline = "none";
 
         setTimeout(()=>{ 
+            upDocsBtn.style.rotate = "0deg";
             upDocsContainer.style.zIndex = "-1";
             upDocsContainer.style.display = "none";
         },100);
@@ -235,6 +236,7 @@ const toggleDocsContainer = () => {
         upDocsContainer.style.display = "flex";
         upDocsBtn.style.outline = "1px solid aliceblue";
         setTimeout(()=>{
+            upDocsBtn.style.rotate = "45deg";
             upDocsContainer.style.zIndex = "1";
             upDocsContainer.style.bottom = "110%" ;
             document.addEventListener('click' , toggleDocsContainer);

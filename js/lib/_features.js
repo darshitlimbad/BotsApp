@@ -10,31 +10,33 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp =(unm) => {
+    const get_dp =(unm,groupID=null) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
-            var data = JSON.stringify({
-                unm: unm,
+            var data = {
                 req : "get_dp"  
-            });
+            };
+            if(unm && !groupID)     data.unm=unm;
+            else if(!unm && groupID)    data.groupID=groupID;
 
             return new Promise((resolve,reject) =>{
-                postReq(url_for_get_dp , data)
-                .then(res=>{
-                    
-                    if(res.status == "success"){
-                        const { data , type } = res.responseText;
-                        let base64 = `data:${type};base64,${data}`;
-                        
-                        _getDataURL(base64)
-                            .then(res=>{
-                                if(res.status == 'success')
-                                    resolve(res.url);
-                            })
-                            .catch(err=>{
-                                console.warn(err);
-                            })
-                    }  
-                })
+                postReq(url_for_get_dp , JSON.stringify(data))
+                    .then(res=>{
+                        if(res.status == "success" && res.responseText != 0 ){
+                            const { data , type } = res.responseText;
+                            let base64 = `data:${type};base64,${data}`;
+                            
+                            _getDataURL(base64)
+                                .then(res=>{
+                                    if(res.status == 'success')
+                                        resolve(res.url);
+                                })
+                                .catch(err=>{
+                                    console.warn(err);
+                                })
+                        }else{
+                            resolve("/img/default_dp.png");
+                        }  
+                    });
             })
     }
 
@@ -240,14 +242,15 @@ const _togle_user_data = (ele) => {
     }
     var field=ele.name;
     var value=(ele.checked) ? '1' : '0';    
-    data = JSON.stringify(
-        {
+
+    data = JSON.stringify({
+        req:field,
         table: 'users_details',
         edit_column: field,
-        data : value 
+        value,
         });
 
-    var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
+    var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
 
     postReq(url , data) 
         .then(res => {
@@ -348,6 +351,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
     }else if(action == "USER_SEND_IMG"){
         yes_btn.onclick = ()=> {
             if(!disabled_pop_up_btn.upload_img_form){
+                upload_img_form.querySelector(".avatar_preview").src="/img/icons/loader.svg";
                 _submit_btn_disable(img_submit_btn);
                 _trigerSendMsg("img");
             }
@@ -502,7 +506,6 @@ const _addDataInList = (data) => {
             let tr= document.createElement('tr');body.appendChild(tr);
                 let td= document.createElement('td');td.style.color="red";td.textContent="No Data Found!!";tr.appendChild(td);
     }else{
-        console.log(data);
         data.forEach( ele => {
             var unm = ele.unm;
 
