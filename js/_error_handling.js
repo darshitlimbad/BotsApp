@@ -44,13 +44,18 @@ document.addEventListener('DOMContentLoaded' , function () {
             },10);
 });
 
-const customError = (msg, code) => {
+const customError = (msg, code , alert=true) => {
     try{
-        handler['err_'+code]();
+        if(msg && code){
+            if(alert)
+                new_Alert(`[ ${code} ] : ${msg}`);
+            
+            console.warn(`[ ${code} ] : ${msg}`);
+        }else
+            handler['err_'+code]();
     }catch(e){
         handler['err_400']();
     }
-    return new Error(msg);
 };
 
 const handler={};

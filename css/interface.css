@@ -114,15 +114,16 @@ span{
 }
 
 .fullScreen .fullScreenIcon{
+    border: none;
     right: 6em;
 }
 
-.fullScreen .close img,.fullScreen .fullScreenIcon .icon{
+.fullScreen .close img,.fullScreenIcon .icon{
     height: 1em;
     width: 1em;
 }
 
-.fullScreen .fullScreenIcon .icon{
+.fullScreenIcon .icon{
     border-top: 1px solid aliceblue;
     border-right: 1px solid aliceblue;
     outline: 1px solid aliceblue;

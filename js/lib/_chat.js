@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded' , () => {
     var online = "green";
     var offline = "red";
     var user = null;
+
+    var lastMsg = null;
 // 
 
 const openChatList = async () =>  {
@@ -23,6 +25,7 @@ const openChatList = async () =>  {
             console.error('Something Went wrong');
             return;
         }
+        
         chatType = chatType.toLowerCase();
 
         const chatList = await _getChatList();  _flash_chatList();
@@ -52,13 +55,12 @@ const chatListTemplate = ( chat ) => {
     // ummm just ignore this :) 
         let unmTitle = (unm==="You") ? getCookie("unm") : unm ;
     // 
-
     var inboxUser = document.createElement('td');
     inboxUser.classList.add('inbox-user');
     inboxUser.title=unmTitle;
     inboxUser.tabIndex = 0;
-    if(chatType == 'group') inboxUser.id = chat.groupID;
-    inboxUser.onclick = ()=> (chatType == 'personal') ? openChat(unmTitle) : (chatType == 'group') ? openChat(unmTitle,chat.groupID) : '';
+    if(chatType == 'group') inboxUser.id = chat.GID;
+    inboxUser.onclick = ()=> (chatType == 'personal') ? openChat(unmTitle) : (chatType == 'group') ? openChat(unmTitle,chat.GID) : '';
     list.appendChild(inboxUser);
 
         var imgDiv= document.createElement("div");
@@ -76,8 +78,9 @@ const chatListTemplate = ( chat ) => {
         inboxUser.appendChild(details);
 
             var inboxName = document.createElement('h5');
-            inboxName.classList.add("skeleton");inboxName.classList.add("skeleton-text");inboxName.classList.add("inbox-name");
-            inboxName.title=unmTitle;inboxName.textContent=unm;
+            inboxName.classList.add("skeleton","skeleton-text","inbox-name");
+            inboxName.title=unmTitle;
+            inboxName.textContent=unm;
             details.appendChild(inboxName);
             
             var lastChatDiv = document.createElement('div');
@@ -86,22 +89,42 @@ const chatListTemplate = ( chat ) => {
             lastChatDiv.textContent=last_msg;
             details.appendChild(lastChatDiv);
 
-
             //fetching dp img
-                get_dp((chatType=="personal") ? unmTitle : null,chat.groupID)
-                    .then(imgData=>img.src=imgData);
-
+                get_dp((chatType=="personal") ? unmTitle : null,chat.GID)
+                    .then(imgData=> img.src=imgData );
             //
         }
 
 const _cht_sk_loading = () => {
     for(var i=0 ; i<8 ; i++){
-        var inboxUser = document.createElement("td");inboxUser.classList.add('inbox-user');list.appendChild(inboxUser);
-            var imgDiv = document.createElement("div");imgDiv.classList.add('img');inboxUser.appendChild(imgDiv);
-                var span = document.createElement("span");span.classList.add('skeleton');imgDiv.appendChild(span);
-            var details = document.createElement("div");details.classList.add('details');inboxUser.appendChild(details);
-                var inboxName = document.createElement('h5');inboxName.classList.add("skeleton");inboxName.classList.add("skeleton-text");inboxName.classList.add("inbox-name");details.appendChild(inboxName);
-                var lastChatDiv = document.createElement('div');lastChatDiv.classList.add("skeleton");lastChatDiv.classList.add("skeleton-text");lastChatDiv.classList.add("last-chat");details.appendChild(lastChatDiv);
+        var inboxUser = document.createElement("td");
+        inboxUser.classList.add('inbox-user');
+        list.appendChild(inboxUser);
+
+            var imgDiv = document.createElement("div");
+            imgDiv.classList.add('img');
+            inboxUser.appendChild(imgDiv);
+
+                var span = document.createElement("span");
+                span.classList.add('skeleton');
+                imgDiv.appendChild(span);
+
+            var details = document.createElement("div");
+            details.classList.add('details');
+            details.style.minWidth = '7em';
+            inboxUser.appendChild(details);
+
+                var inboxName = document.createElement('h5');
+                inboxName.classList.add("skeleton");
+                inboxName.classList.add("skeleton-text");
+                inboxName.classList.add("inbox-name");
+                details.appendChild(inboxName);
+
+                var lastChatDiv = document.createElement('div');
+                lastChatDiv.classList.add("skeleton");
+                lastChatDiv.classList.add("skeleton-text");
+                lastChatDiv.classList.add("last-chat");
+                details.appendChild(lastChatDiv);
     }
 } 
 
@@ -148,6 +171,7 @@ const _st_chLi_skltn = () => {
 const openChat =async (unm,ID=null) => {
     //prefix
         chat.innerHTML=""; 
+        lastMsg=null;
 
         chatStruct.heading = document.createElement('div');
         chatStruct.heading.classList.add("heading","align-center");
@@ -191,10 +215,9 @@ const removeLoader = (loc)=>{
 }
 
 const selectChat = (unm,ID=null) => {
-    let oldSelectedChat = list.querySelector(".inbox-user.selected");
     let newSelectchat = list.querySelector((ID) ? `.inbox-user[id='${ID}']` : `.inbox-user[title='${unm}']` );  
-    if(oldSelectedChat)
-        oldSelectedChat.classList.remove('selected');
+    if(user)
+        user.classList.remove('selected');
     if(newSelectchat)
         newSelectchat.classList.add('selected');
 
@@ -239,16 +262,30 @@ const setChatHeader = (unm,ID) =>{
             status.classList.add("status","offline");
             detailsDiv.appendChild(status);
 
-        let searchBtnDiv = document.createElement('button');
-        searchBtnDiv.classList.add("search-btn","icon","align-center");
-        searchBtnDiv.onclick= ()=> toggleSearchTxt();
-        searchBtnDiv.disabled=true;
-        chatStruct.heading.appendChild(searchBtnDiv);
+        let flexBox = document.createElement('div');
+        flexBox.classList.add('flexBox','right-3');
+        chatStruct.heading.appendChild(flexBox);
 
-            let searchBtnImg = new Image();
-            searchBtnImg.src="img/icons/search.png";
-            searchBtnImg.alt="Search";
-            searchBtnDiv.appendChild(searchBtnImg);
+            let fullScreenIcon = document.createElement('button');
+            fullScreenIcon.classList.add('fullScreenIcon');
+            fullScreenIcon.title = "Full Screen View";
+            fullScreenIcon.onclick=()=>fullScreen(document.querySelector('body'));
+            flexBox.appendChild(fullScreenIcon);
+
+                let fullScreenIconImg = document.createElement('div');
+                fullScreenIconImg.classList.add('icon');
+                fullScreenIcon.appendChild(fullScreenIconImg);
+
+            let searchBtnDiv = document.createElement('button');
+            searchBtnDiv.classList.add("search-btn","icon");
+            searchBtnDiv.onclick= ()=> toggleSearchTxt();
+            searchBtnDiv.disabled=true;
+            flexBox.appendChild(searchBtnDiv);
+
+                let searchBtnImg = new Image();
+                searchBtnImg.src="img/icons/search.png";
+                searchBtnImg.alt="Search";
+                searchBtnDiv.appendChild(searchBtnImg);
     
         let searchTxtInput = document.createElement('input');searchTxtInput.type="search";searchTxtInput.name="searchTxtInput";searchTxtInput.placeholder="search";searchTxtInput.autocomplete="off";searchTxtInput.setAttribute('oninput','_searchWords(this.value)');chatStruct.searchDiv.appendChild(searchTxtInput);
         let search_found_span = document.createElement('span');search_found_span.classList.add('search_found_span');chatStruct.searchDiv.appendChild(search_found_span);
@@ -331,11 +368,21 @@ const closeChat = (e=null) =>{
     if(e!=null) msgInput.removeEventListener( 'keydown' , msgBoxSizing);
 
     chat.innerHTML=null;
-    let header= document.createElement("header");chat.appendChild(header);
-        let img=new Image();img.src="../img/logo.png";header.appendChild(img);
-        let b=document.createElement('b');b.textContent="BotsApp";header.appendChild(b);
+    lastMsg=null;
+    
+    let header= document.createElement("header");
+    chat.appendChild(header);
+        let img=new Image();
+        img.src="../img/logo.png";
+        header.appendChild(img);
+        
+        let b=document.createElement('b');
+        b.textContent="BotsApp";
+        header.appendChild(b);
         
     setCookie('currOpenedChat' ,0);
+    if(user)
+        user.classList.remove('selected');
 }
 
 const _trigerSendMsg = async (type) => {
@@ -440,7 +487,6 @@ const _trigerSendMsg = async (type) => {
             });
     }catch(err){
         console.warn(`[${err.code}] , Message : ${err.message}`);
-        
     }
 }
 
@@ -450,26 +496,27 @@ const addNewMsgInCurrChat = (msgObj) => {
     let date = fullDate.getDate() +'/'+ (fullDate.getMonth()+1) +'/'+ fullDate.getFullYear();
     let time= fullDate.toLocaleTimeString();
 
-    var prevDate = document.querySelectorAll(".msgDate");
+    let prevDate = null;
     
-    if(prevDate.length != 0)    prevDate=prevDate[prevDate.length-1].textContent;
-    
+    if(lastMsg != null ){
+        let prevFullDate=new Date(Number(lastMsg['time']));
+        prevDate = prevFullDate.getDate() +'/'+ (prevFullDate.getMonth()+1) +'/'+ prevFullDate.getFullYear();
+    }
+
     if( prevDate != date ){
-        var msgDate=document.createElement("div");
+        let msgDate=document.createElement("div");
         msgDate.classList.add("msgDate");
         msgDate.textContent=date;
 
         chatStruct.chatBody.appendChild(msgDate);
-        prevDate = date;
     }  
 
     let whichTransmit = ( getCookie('unm') == msgObj['fromUnm'] ) ? 'send' : 'receive';
 
-    var msgContainer=document.createElement("div");
-    msgContainer.classList.add('msgContainer');
-    msgContainer.classList.add(whichTransmit);
+    let msgContainer=document.createElement("div");
+    msgContainer.classList.add('msgContainer',whichTransmit);
     msgContainer.id=msgObj.msgID;
-    
+
     msg=document.createElement("div");
     msg.classList.add('msg');
 
@@ -485,6 +532,36 @@ const addNewMsgInCurrChat = (msgObj) => {
             detailsDiv.appendChild(fileName);
     }
 
+    // for groups to show msg sender usernames.
+    if(getCookie('chat').toLowerCase() === "group" && (!lastMsg || (lastMsg && lastMsg.fromUnm != msgObj.fromUnm) ) ){
+        let msgUserDiv = document.createElement('div');
+        msgUserDiv.classList.add('msgUserDiv');
+        if(whichTransmit == 'receive')
+            msgUserDiv.onclick=()=>toggle_confirmation_pop_up('add_new_chatter',msgObj.fromUnm);
+
+        (msgObj.type != 'text') ?
+            fileName.before(msgUserDiv):
+            msg.appendChild(msgUserDiv);
+
+            let msgUserDP = new Image();
+            msgUserDP.src = default_dp_src;
+            msgUserDP.classList.add('msgUserDP');
+            msgUserDiv.appendChild(msgUserDP);
+
+            let msgUserUnm= document.createElement('span');
+            msgUserUnm.classList.add('msgUserUnm');
+            msgUserUnm.title= msgObj.fromUnm;
+            msgUserUnm.textContent= (whichTransmit == 'send') ? 'You' : '@'+msgObj.fromUnm;
+            msgUserDiv.appendChild(msgUserUnm);
+
+            // fetching dp
+            get_dp(msgObj.fromUnm)
+                .then(imgURL => {
+                    msgUserDP.src=imgURL;
+                    msgUserDP.onload=()=>URL.revokeObjectURL(imgURL);
+                });
+    }
+
     switch(msgObj['type']){
         case 'text':
             let msgData = document.createElement("p");
@@ -493,26 +570,38 @@ const addNewMsgInCurrChat = (msgObj) => {
             msg.appendChild(msgData);
 
             break;
-
+        
         case 'img':                
             let msgImg = new Image();
             msgImg.classList.add("msgImg");
-            msgImg.alt="Image";
+            msgImg.alt="Image Error";
             msgImg.src="/img/icons/loader.svg";
             msgImg.onerror=()=>msgImg.style.padding="5px";
             msg.appendChild(msgImg);
             
             if(!msgObj.blob){
-                _getDocBolb(msgObj.msgID,msgObj.toUnm,msgObj.fileName)
-                    .then(res=>{
-                        if(res.status ==="success"){
-                            _getDataURL(`data:${res.responseText.mime};base64,${res.responseText.data}`)
+                var observer=new IntersectionObserver(async (entries)=>{
+                    entries.every(entry=>{
+                        if(entry.isIntersecting){
+                            _getDocBolb(msgObj.msgID)
                                 .then(res=>{
-                                    if(res.status == "success")
-                                        addMsgImgUrl(res.url);
-                                })
+                                    if(res.status ==="success" ){
+                                        _getDataURL(`data:${res.responseText.mime};base64,${res.responseText.data}`)
+                                            .then(res=>{
+                                                if(res.status == "success"){
+                                                    observer.unobserve(msgContainer);
+                                                    addMsgImgUrl(res.url);
+                                                }
+                                            })
+                                    }else{
+                                        msgImg.src = "";
+                                    }
+                                });
                         }
-                    });
+                    })
+                },{threshold:.5});
+
+                observer.observe(msgContainer);
             }else{
                 _getDataURL(msgObj.blob)
                     .then(res=>{
@@ -528,33 +617,39 @@ const addNewMsgInCurrChat = (msgObj) => {
 
             break;
 
-            case 'doc':
-                msg.style.flexDirection = 'row';
-                msgObj.msgLoad = document.createElement('div');
-                msgObj.msgLoad.classList.add('msgLoad');
+        case 'doc':
+            msg.style.flexDirection = 'row';
+            msgObj.msgLoad = document.createElement('div');
+            msgObj.msgLoad.classList.add('msgLoad');
 
-                    progressDiv = (msgObj.upload)?
-                                            setDocumentProgressBar() :
-                                            setDocumentDownloadBtn(msgObj);
+                progressDiv = (msgObj.upload)?
+                                        setDocumentProgressBar() :
+                                        setDocumentDownloadBtn(msgObj);
 
-                msgObj.msgLoad.appendChild(progressDiv);
+            msgObj.msgLoad.appendChild(progressDiv);
 
-                msg.appendChild(msgObj.msgLoad);
+            msg.appendChild(msgObj.msgLoad);
 
-                let node = document.createElement('div');
-                node.classList.add('node');
-                detailsDiv.appendChild(node);
+            let node = document.createElement('div');
+            node.classList.add('node');
+            detailsDiv.appendChild(node);
 
-                let {size,pages,ext} = msgObj.details;
-                var detailsStr = "";
+            let {size,pages,ext} = msgObj.details;
+            let detailsStr = "";
 
-                detailsStr += convert_bytes(size) + "   |   " + ext;
-                if(pages){
-                    if(detailsStr != "") detailsStr += "   |   ";
-                    detailsStr += pages;
-                }
+            detailsStr += convert_bytes(size) + "   |   " + ext;
+            if(pages){
+                if(detailsStr != "") detailsStr += "   |   ";
+                detailsStr += pages;
+            }
 
-                node.textContent = detailsStr;
+            node.textContent = detailsStr;
+
+            break;
+
+        default:
+            customError("Not a valid Type",0);
+            return;
     }
 
     let optionBtn = document.createElement('div');
@@ -606,8 +701,6 @@ const addNewMsgInCurrChat = (msgObj) => {
                             .then(res=>{
                                 if(res==1)
                                     msgObj.status = 'read';
-                            }).catch(err=>{
-                                console.error(err);
                             });
                     }
                 }
@@ -623,6 +716,7 @@ const addNewMsgInCurrChat = (msgObj) => {
     }  
 
     chatStruct.chatBody.appendChild(msgContainer);
+    lastMsg = msgObj;
     scrollToBottom();        
 }
 
@@ -631,8 +725,8 @@ const scrollToBottom = () => setTimeout(()=>chatStruct.chatBody.scrollTop = chat
 function setDocumentDownloadBtn(msgObj){
     var progressDiv = document.createElement('div');
     progressDiv.classList.add('progressDiv','download','ele');
-        let {msgID,toUnm,fileName} = msgObj;
-        progressDiv.onclick = () => _downloadThisDoc(msgID,toUnm,fileName,msgObj.msgLoad);
+        let {msgID,fileName} = msgObj;
+        progressDiv.onclick = () => _downloadThisDoc(msgID,fileName,msgObj.msgLoad);
     return progressDiv;
 }
 

@@ -12,10 +12,10 @@ if($data = json_decode( file_get_contents("php://input") , true)){
                 echo getChatList();
                 break;
             case "getAllMsgs":
-                echo getAllMsgs($data['ID']);
+                echo getAllMsgs($data);
                 break;
             case "getNewMsgs":
-                echo getNewMsgs($data['ID']);
+                echo getNewMsgs($data);
                 break;
             case "sendMsg":
                 echo sendMsg($data);
@@ -69,7 +69,7 @@ function getChatList(){
                     }
 
                     $chatList[$i]['unm'] = _fetch_group_nm($toID);
-                    $chatList[$i]['groupID'] = base64_encode($toID);
+                    $chatList[$i]['GID'] = base64_encode($toID);
                 }
                 $chatList[$i]['last_msg']= _fetChLastMsg($userID,$toID);
 
@@ -89,7 +89,7 @@ function getChatList(){
     }
 }
 
-function getAllMsgs($groupID){
+function getAllMsgs($data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
@@ -105,8 +105,11 @@ function getAllMsgs($groupID){
         
         if( $chatType == "personal"){
             $oppoUserID = _get_userID_by_UNM($oppoUserUNM);
-        }else if( $chatType == "group" && $groupID != null) {
-            $oppoUserID = base64_decode($groupID);
+        }else if( $chatType == "group") {
+            $oppoUserID = base64_decode($data['toGID']);
+
+            if(!is_data_present('groups','groupID', $oppoUserID ,'groupID'))
+                throw new Exception("There is no group with the GID.",404);
         }else{
             return 0;
         }
@@ -137,19 +140,13 @@ function getAllMsgs($groupID){
         $msgObjs = null;
         $i=0;
         while($row = $result->fetch_assoc()){
-            $msgObjs[$i]['type']= $row['type'];
-            
-            if($row['type'] == 'text'){
-                $msgColNm = "msg";
-            }else{
-                $msgColNm = "fileName";
-            }
-
-            $msgObjs[$i]['details'] = unserialize($row['details']);
-            $msgObjs[$i][$msgColNm]=$row['msg'];
             $msgObjs[$i]['msgID']= $row['msgID'];
             $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
-            $msgObjs[$i]['toUnm']= ($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM ;
+            //if chatType will be a group than always 'toUNM' will be the group name
+            $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
+            $msgObjs[$i][($row['type'] == 'text') ? 'msg' : 'fileName']=$row['msg'];
+            $msgObjs[$i]['type']= $row['type'];
+            $msgObjs[$i]['details'] = unserialize($row['details']);
             $msgObjs[$i]['time']= $row['time'];
             $i++;
         }
@@ -170,7 +167,7 @@ function getAllMsgs($groupID){
     this function is used get new msgs from msgID,
     before returning the msgObj it check if given msgID has the matching toID or FromID as the chatter and the opposite chatter.
 */
-function getNewMsgs($groupID){
+function getNewMsgs($data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
@@ -183,37 +180,38 @@ function getNewMsgs($groupID){
         $oppoUserUNM = $_COOKIE['currOpenedChat'];
         $chatType = strtolower($_COOKIE['chat']);
 
-        $oppoUserUNM = $_COOKIE['currOpenedChat'];
-        
         if( $chatType == "personal"){
             $oppoUserID = _get_userID_by_UNM($oppoUserUNM);
-        }else if( $chatType == "group" && $groupID != null) {
-            $oppoUserID = base64_decode($groupID);
+        }else if( $chatType == "group") {
+            $oppoUserID = base64_decode($data['toGID']);
+            
+            if(!is_data_present('groups','groupID', $oppoUserID ,'groupID'))
+                throw new Exception("There is no group with the GID.",404);
         }else{
-            return 0;
+            throw new Exception("please reload this page :(",400);
         }
 
         if(!$oppoUserID)
             throw new Exception('Something went wrong',400);
 
         if($chatType == 'personal'){
-            $sql =" SELECT t1.msgID, t1.type, t1.msg, t1.details, t1.time, t2.status
-                    FROM `botsapp`.messages as t1 
-                    LEFT JOIN `botsapp_statusdb`.messages as t2
-                    ON t1.msgID = t2.msgID 
-                    WHERE t1.fromID = ? 
-                    AND t1.toID = ?
-                    AND t2.status = 'send' ";
+            // t1.fromID = 'the opposite user'
+            // t1.toID = 'the user'
+            $condition ="   t1.fromID = ? 
+                            AND t1.toID = ?     ";
         }else{
-            $sql =" SELECT t1.msgID, t1.type, t1.msg, t1.details, t1.time, t2.status
-                    FROM `botsapp`.messages as t1 
-                    LEFT JOIN `botsapp_statusdb`.messages as t2
-                    ON t1.msgID = t2.msgID 
-                    WHERE NOT t1.fromID = ?
-                    AND t1.toID = ?
-                    AND t2.status = 'send' ";
-
+            // t1.fromID = 'the User'
+            // t1.toID = 'the opposite User'
+            $condition = "  t1.toID = ?
+                            AND NOT t1.fromID = ? ";
         }
+
+        $sql =" SELECT t1.msgID, t1.fromID,t1.type, t1.msg, t1.details, t1.time, t2.status
+                FROM `botsapp`.messages as t1 
+                LEFT JOIN `botsapp_statusdb`.messages as t2
+                ON t1.msgID = t2.msgID 
+                WHERE $condition
+                AND t2.status = 'send' ";
 
         $stmt = $GLOBALS['conn'] -> prepare($sql);
         $stmt ->bind_param('ss' , $oppoUserID,$userID);        
@@ -229,17 +227,16 @@ function getNewMsgs($groupID){
 
         $msgObjs = null;
         $i=0;
+
         while($row = $result->fetch_assoc()){
             $msgObjs[$i]['msgID']= $row['msgID'];
-            $msgObjs[$i]['toUnm']= $userUNM ;
+            $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
+            //if chatType will be a group than always 'toUNM' will be the group name
+            $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
+            $msgObjs[$i][($row['type'] == 'text') ? 'msg' : 'fileName']=$row['msg'];
             $msgObjs[$i]['type']= $row['type'];
-            
-            $msgColNm = ($row['type'] == 'text') ? 'msg' : 'fileName';
-            $msgObjs[$i][$msgColNm]=$row['msg'];
-            
             $msgObjs[$i]['details'] = unserialize($row['details']);
             $msgObjs[$i]['time']= $row['time'];
-            
             $i++;
         }
 
@@ -247,12 +244,13 @@ function getNewMsgs($groupID){
 
     }catch(Exception $e){
         $error = [
+            'error'=>true,
             'code'=> $e->getCode(),
             'message'=> $e->getMessage(),
         ];
         return json_encode($error);
     }
-}
+}   
 
 function sendMsg($data){
     try{

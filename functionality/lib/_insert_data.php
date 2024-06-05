@@ -70,12 +70,12 @@ function uploadImg($userID , $imgObj ){
 
         $img_data = file_get_contents($imgObj['tmp_name']);
 
-        if(is_data_present($table , 'userID' , $userID , "imgData")){
-            $query = "UPDATE `$table` SET `type` = ? , `imgData` = ?  WHERE `userID` = ? ";
+        if(is_data_present($table , 'ID' , $userID , "imgData")){
+            $query = "UPDATE `$table` SET `type` = ? , `imgData` = ?  WHERE `ID` = ? ";
             $stmt = $GLOBALS['conn']->prepare($query);
             $stmt->bind_param('sss' , $type , $img_data ,  $userID);
         }else{
-            $query = "INSERT INTO `$table` (`userID` , `type` , `imgData`) VALUES (?,?,?)";
+            $query = "INSERT INTO `$table` (`ID` , `type` , `imgData`) VALUES (?,?,?)";
             $stmt = $GLOBALS['conn']->prepare($query);
             $stmt->bind_param('sss' , $userID , $type , $img_data );
         } 

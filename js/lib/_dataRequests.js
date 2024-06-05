@@ -34,12 +34,12 @@ const _getChatList = async () => {
     }
 }
 
-const _getAllMsgs = async (ID=null) => {
+const _getAllMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
     var data = {
         req: "getAllMsgs",
-        ID,
     };
+    if(getCookie('chat').toLowerCase() === 'group') data.toGID = user.id;
     
     try{
         const res = await postReq(url , JSON.stringify(data));
@@ -53,40 +53,46 @@ const _getAllMsgs = async (ID=null) => {
     }
 }
 
-const _getNewMsgs = async (ID=null) => {
+const _getNewMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
-    var data = JSON.stringify({
+    var data = {
         req: "getNewMsgs",
-        ID,
-    });
+    };
+    if(getCookie('chat').toLowerCase() === 'group') data.toGID = user.id;
 
     try{
-        const res = await postReq(url , data);
-        console.log(res.responseText);
-        if(res.status == "success" && !res.responseText.code)
+        const res = await postReq(url , JSON.stringify(data));
+        if(res.status == "success" && !res.responseText.error)
             return res.responseText;
         else 
-            throw new Error(res.responseText);
+            customError(res.responseText.message,res.responseText.code,false);
     }catch(err){
         console.warn(err);
         return 0;
     }
 }
 
-const _getDocBolb = (msgID,toUnm,fileName)=> {
+const _getDocBolb = (msgID)=> {
     var url = "/functionality/lib/_fetch_data.php";
 
-    var data = JSON.stringify({
+    var data = {
         req : "getDocBlob",
         msgID,
-        toUnm,
-        fileName,
-    });
+    };
+
+    if(getCookie('chat') == 'Group')    data.toGID = user.id;
+
     return new Promise((resolve,reject)=>{
-        postReq(url, data)
+        postReq(url, JSON.stringify(data))
             .then(res=>{
+                if(res.responseText.error)
+                    throw new Error(res.responseText);
+
                 resolve(res);
-            });
+            }).catch((err)=>{
+                new_Alert(`[${err.code} : ${err.message}]`);
+                console.warn(`[${err.code} : ${err.message}]`);
+            })
     });
 }
 
@@ -128,7 +134,7 @@ const _genNewID= async (preFix)=>{
     return (res.status === "success") ? res.responseText : 400;
 }
 
-const _downloadThisDoc = (msgID,toUnm,fileName,msgLoad)=>{
+const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
     var url = "/functionality/lib/_fetch_data.php";
     
     var progressDiv = msgLoad.firstChild;
@@ -137,14 +143,13 @@ const _downloadThisDoc = (msgID,toUnm,fileName,msgLoad)=>{
     msgLoad.appendChild(setDocumentProgressBar());
     var progressPR = msgLoad.querySelector(".progressPR");
 
-    var data = JSON.stringify({
+    var data = {
         req : "getDocBlob",
         msgID,
-        toUnm,
-        fileName,
-    });
-    
-    postReq(url, data , { 
+    };
+    if(getCookie('chat') == 'Group')  data.toGID = user.id;
+
+    postReq(url, JSON.stringify(data) , { 
         onDownloadProgress:(progressEvent) =>{
             progressPR.textContent = Math.ceil(progressEvent.loaded*100 / progressEvent.total)+"%";
             

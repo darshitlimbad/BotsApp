@@ -1,4 +1,27 @@
 main insert ops:
-
+    1. when group and user delete function are created add the functionality of deleting empty group at _status.php 
+        line number 334 in this condition : if($memCount == 0)
 
 side insert ops:
+    1. add option menu for messages.
+
+    2. sortout new messages function in fitures.js.make it more js friendly.
+
+    3. in the confirmation box for addnewuser add the dp also
+
+    
+
+next session ops:
+    //1. file:_status.php func:updatemsgStatus line number 338
+        the problem is in the updateCol and updateVal              
+        add full screen option in chat section so user can chat in full screen. -- done 
+
+    2. make it mobile user friendly
+        
+    //3. add user unm and their dp in chat  -- done
+
+    4. create a indexed DB table for storing dp as hashmap. 
+        and flush it in every new session so if the user changes the dp then it can refresh
+
+    5. make api for adding groups and deleting groups and users.
+        create a api and table for blocking users.

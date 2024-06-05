@@ -4,13 +4,10 @@
             include_once('../db/_conn.php');
             include_once('./_validation.php');
             if($data['req'] == "get_dp") {
-                
                 if(isset($data['unm']))
-                    echo get_dp( null,$data['unm']);
-                
-                else if(isset($data['GroupID']))
-                    echo get_dp( null,null,$data['GroupID']);
-
+                    echo get_dp( null,$data['unm']);    
+                else if(isset($data['GID']))
+                    echo get_dp( null,null,$data['GID']);
             } 
             if($data['req'] == "get_unm")   echo search_user($data['from'] , $data['value']);
             if($data['req'] == "getDocBlob") { 
@@ -70,18 +67,18 @@
         }
     }
 
-    function get_dp($userID,$unm=null,$groupID=null) {
+    function get_dp($userID,$unm=null,$GID=null) {
         if($userID)
             $ID = $userID;
         else if(!$userID && $unm)
             $ID = _get_userID_by_UNM($unm);
-        elseif($groupID)
-            $ID = base64_decode($groupID);
+        elseif($GID)
+            $ID = base64_decode($GID);
         else
             return 0;
 
         
-        $fetch_img = fetch_columns( 'avatar' , ["userID"] , [$ID] , array("type" , "imgData"));
+        $fetch_img = fetch_columns( 'avatar' , ["ID"] , [$ID] , array("type" , "imgData"));
 
         if($fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
@@ -173,20 +170,54 @@
         else{
             throw new Exception("Can't connect to Database through Indexed DB" , 400);
         }
-    
         return false;
     }
 
     function getDocBlob($obj){
         try{
+            if(!isset($_COOKIE['chat']))
+                throw new Error('chat section is not opened',0);
+            if(!isset($_COOKIE['currOpenedChat']))
+                throw new Error('Chat is not opened, Please open chat first.',0);
+
             $msgID = $obj['msgID'];
             session_start();
-            $toID = _get_userID_by_UNM($obj['toUnm']);
-            $fileName = $obj['fileName'];
+
+            $chatType = strtolower($_COOKIE['chat']);
+            $table = "messages";
             
             //fetching document data from the column doc as data
-            $result = fetch_columns("messages", ['msgID', 'toID', 'msg'], [$msgID, $toID, $fileName] ,array('mime,doc as data'));
+            if(isset($obj['toGID']) && $chatType == 'group'){
+
+                $result = fetch_columns($table, ['msgID', 'toID'], [$msgID, base64_decode($obj['toGID'])] ,array('mime','doc as data'));
             
+            }else if($chatType == 'personal'){
+            
+                $userID = getDecryptedUserID();
+                $oppoUserID = _get_userID_by_UNM($_COOKIE['currOpenedChat']);
+
+                if(!$userID || !$oppoUserID)
+                    throw new Exception("Something went wrong",400);
+
+                $sql = "SELECT mime,doc as data
+                        FROM $table 
+                        WHERE msgID = ?
+                        AND ( fromID , toid ) IN ( (? , ?), (? , ?) );";
+
+                $stmt = $GLOBALS['conn'] -> prepare($sql);
+                $stmt ->bind_param('sssss' , $msgID, $userID, $oppoUserID , $oppoUserID, $userID);
+                $sqlquery= $stmt->execute();
+
+                if(!$sqlquery)
+                    throw new Exception("SQL query didn't fire.",400);
+
+                $result = $stmt->get_result();
+                $stmt->close();
+            
+            }else{
+                throw new Exception("Something went wrong",400);
+            }
+
             if(gettype($result) == "integer" ) throw new Exception("something went wrong.",$result);
             
             if($result->num_rows == 1){
@@ -194,9 +225,14 @@
                 session_abort();
                 return json_encode($row);
             }else
-                throw new Exception("there is more then one file",400);
+                throw new Exception("either file has been deleted or some error has ocured",400);
         }catch(Exception $e){
-            return $e->getCode();
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
         }
     }
 

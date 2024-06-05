@@ -1,3 +1,5 @@
+var default_dp_src = '/img/default_dp.png';
+
 document.addEventListener('DOMContentLoaded' , function () {
 
     // keyboard sortcuts (_srtc stands for sortcut)
@@ -245,7 +247,7 @@ const set_profile_dp = (() => {
 
 // default img loader functions
 const defaultDp = (tag) => {
-    tag.src='/img/default_dp.png';
+    tag.src= default_dp_src;
 };
 
 // submit user data on enter press

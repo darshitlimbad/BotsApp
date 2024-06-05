@@ -10,13 +10,13 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp =(unm,groupID=null) => {
+    const get_dp =(unm,GID=null) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
             var data = {
                 req : "get_dp"  
             };
-            if(unm && !groupID)     data.unm=unm;
-            else if(!unm && groupID)    data.groupID=groupID;
+            if(unm && !GID)     data.unm=unm;
+            else if(!unm && GID)    data.GID=GID;
 
             return new Promise((resolve,reject) =>{
                 postReq(url_for_get_dp , JSON.stringify(data))
@@ -46,7 +46,7 @@
         url = "/functionality/lib/_notification.php";
         data = JSON.stringify({
             req:'addNoti',
-            unm:unm,
+            unm,
             action:"addUserReq",
         });
         
@@ -60,10 +60,13 @@
                             getNewNoti();
                             break;
                         case 409:
-                            new_Alert(`oops,'@${unm}' is already in Your Chatter List`);
+                            if(getCookie('chat').toLowerCase() != 'personal' )
+                                initiateChatBox('Personal');
+                            setTimeout(()=>openChat(unm),500);
+                            new_notification(`'@${unm}' is already in Your Chatter List`);
                             break;
                         case 403:
-                            new_Alert(`oops,You have already send Chatter request to this '@${unm}'`);
+                            new_Alert(`sorry,You have already send Chatter request to this '@${unm}'`);
                             break;
     
                         default:
@@ -689,29 +692,40 @@ function previewImg(imgUrl,imgName,imgSize){
         imgObj.src=imgUrl;
         preview.appendChild(imgObj);
 
-        let fullScreenIcon = document.createElement('button');
-        fullScreenIcon.classList.add('fullScreenIcon','ele');
-        fullScreenIcon.title = "Full Screen View";
-        fullScreenIcon.tabIndex= '0';
-        fullScreenIcon.onclick=()=>imgObj.requestFullscreen();
-        preview.appendChild(fullScreenIcon);
+        let flexBox = document.createElement('div');
+        flexBox.classList.add('flexBox');
+        preview.appendChild(flexBox);
 
-            let fullScreenIconImg = document.createElement('div');
-            fullScreenIconImg.classList.add('icon');
-            fullScreenIcon.appendChild(fullScreenIconImg);
+            let fullScreenIcon = document.createElement('button');
+            fullScreenIcon.classList.add('fullScreenIcon','ele');
+            fullScreenIcon.title = "Full Screen View";
+            fullScreenIcon.tabIndex= '0';
+            fullScreenIcon.onclick=()=>fullScreen(preview);
+            flexBox.appendChild(fullScreenIcon);
 
-        let close = document.createElement('button');
-        close.classList.add('close','ele');
-        close.title = "Close";
-        close.tabIndex= '0';
-        close.onclick=()=>preview.remove();
-        preview.appendChild(close);
+                let fullScreenIconImg = document.createElement('div');
+                fullScreenIconImg.classList.add('icon');
+                fullScreenIcon.appendChild(fullScreenIconImg);
 
-            let imgClose=new Image();
-            imgClose.src="img/icons/close.png";
-            imgClose.alt="Close";
-            close.appendChild(imgClose);
+            let close = document.createElement('button');
+            close.classList.add('close','ele');
+            close.title = "Close";
+            close.tabIndex= '0';
+            close.onclick=()=>preview.remove();
+            flexBox.appendChild(close);
+
+                let imgClose=new Image();
+                imgClose.src="img/icons/close.png";
+                imgClose.alt="Close";
+                close.appendChild(imgClose);
     
     chat.appendChild(preview);
     return 1;
+}
+
+function fullScreen(node){
+    if(document.fullscreenElement === node)
+        document.exitFullscreen();
+    else
+        node.requestFullscreen();
 }
