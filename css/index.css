@@ -363,7 +363,7 @@
     min-width: 200px;
     position: fixed;
     top: -6%;
-    right: 5em;
+    right: 9em;
     justify-content: space-around;
     background-color: rgba(0, 0, 0, 0.694);
     border-radius: 10px;
@@ -435,11 +435,24 @@
 .chat .chatBody .msgDate {
     display: flex;
     justify-content: center;
-    padding: .2em;
+    padding: 5px;
     margin: .2em;
     font-size: var(--chat-font-small);
+    --date:"";
 }
 
+.chat .chatBody .msgDate::before{
+    content: var(--date);
+    position: relative;
+    display: block;
+    height: auto;
+    width: auto;
+    padding: 5px;
+    transform: translateY(-3px);
+    border: 1px solid var(--thin-wh-border);
+    background-color: rgba(0, 0, 0, 0.42);
+    border-radius: 5px;
+}
 
 .chat .chatBody .msgTime{
     height: auto;
@@ -589,6 +602,10 @@
     margin: 0;
     position: relative;
     white-space: nowrap;
+    font-size: small;
+    font-family: 'Times New Roman', Times, serif;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .chat .chatBody .msgContainer .msg .details .node   {
@@ -613,7 +630,6 @@
 }
 
 .chat .chatBody .msgContainer .msg:hover > .optionBtn {
-    display: block;
     opacity: 1;
     transition: all .1s cubic-bezier(0.04, 0.37, 0.49, 1.04);
 }
@@ -787,11 +803,46 @@
     filter: brightness(50%);
 }
 
+#option-container {
+    display: block;
+    position: absolute;
+    height: auto;
+    width: auto;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+#option-container .option{
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 5px;
+}
+#option-container .option:hover{
+    background-color: rgba(35,35,35 , 0.4);
+    transition: all .7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#option-container .option .option-icon{
+    height: 15px;
+    width: 15px;
+    padding: 0 10px;
+}
+#option-container .option .option-name{
+    height: auto;
+    width: auto;
+    font-size: 10px;
+    text-transform: capitalize;
+}
+
 
 /* responsive for mobile styles */
 
 .mobile .chat-box{
     min-width: 200px;
+}
+
+.mobile .chat #searchTxt{
+    right: 5em;
 }
 
 .mobile .chat-box .inbox{
@@ -819,5 +870,9 @@
 .mobile .chat-box .chat .heading .fullScreenIcon .icon{
     height: 0.8em;
     width: 0.8em;
+}
+
+.mobile .chat .chatBody .msgContainer .msg .optionBtn {
+    opacity: 1;
 }
 /*  */

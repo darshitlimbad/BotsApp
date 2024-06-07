@@ -295,12 +295,42 @@ const setChatHeader = (unm,ID) =>{
                 searchBtnImg.alt="Search";
                 searchBtnDiv.appendChild(searchBtnImg);
     
-        let searchTxtInput = document.createElement('input');searchTxtInput.type="search";searchTxtInput.name="searchTxtInput";searchTxtInput.placeholder="search";searchTxtInput.autocomplete="off";searchTxtInput.setAttribute('oninput','_searchWords(this.value)');chatStruct.searchDiv.appendChild(searchTxtInput);
-        let search_found_span = document.createElement('span');search_found_span.classList.add('search_found_span');chatStruct.searchDiv.appendChild(search_found_span);
-            let span= [document.createElement('span'),document.createElement('span')];span.forEach(s=>{s.textContent='0'});search_found_span.appendChild(span[0]);search_found_span.append('/');search_found_span.appendChild(span[1]);
-        let moveBtnsDiv = document.createElement('div');moveBtnsDiv.classList.add('move');chatStruct.searchDiv.appendChild(moveBtnsDiv);
-            let upBtn = document.createElement('button');upBtn.classList.add('up');upBtn.title="up";upBtn.textContent="<";upBtn.onclick=()=>moveSearch('up');upBtn.tabIndex=0;moveBtnsDiv.appendChild(upBtn);
-            let downBtn = document.createElement('button');downBtn.classList.add('down');downBtn.title="down";downBtn.textContent=">";downBtn.onclick=()=>moveSearch('down');downBtn.tabIndex=0;moveBtnsDiv.appendChild(downBtn);
+        let searchTxtInput = document.createElement('input');
+        searchTxtInput.type="search";
+        searchTxtInput.name="searchTxtInput";
+        searchTxtInput.placeholder="search";
+        searchTxtInput.autocomplete="off";
+        searchTxtInput.onkeyup=(e)=>_searchWords(e,searchTxtInput.value);
+        chatStruct.searchDiv.appendChild(searchTxtInput);
+
+        let search_found_span = document.createElement('span');
+        search_found_span.classList.add('search_found_span');
+        chatStruct.searchDiv.appendChild(search_found_span);
+            let span= [document.createElement('span'),document.createElement('span')];
+            span.forEach(s=>{s.textContent='0'});
+            search_found_span.appendChild(span[0]);
+            search_found_span.append('/');
+            search_found_span.appendChild(span[1]);
+
+        let moveBtnsDiv = document.createElement('div');
+        moveBtnsDiv.classList.add('move');
+        chatStruct.searchDiv.appendChild(moveBtnsDiv);
+
+            let upBtn = document.createElement('button');
+            upBtn.classList.add('up');
+            upBtn.title="up";
+            upBtn.textContent="<";
+            upBtn.onclick=()=>moveSearch('up');
+            upBtn.tabIndex=0;
+            moveBtnsDiv.appendChild(upBtn);
+
+            let downBtn = document.createElement('button');
+            downBtn.classList.add('down');
+            downBtn.title="down";
+            downBtn.textContent=">";
+            downBtn.onclick=()=>moveSearch('down');
+            downBtn.tabIndex=0;
+            moveBtnsDiv.appendChild(downBtn);
 };
 
 const setChatBody = async (ID) =>{
@@ -442,8 +472,6 @@ const _trigerSendMsg = async (type) => {
                 ext : input.name.split('.').pop().toUpperCase(),
             }
 
-            if(msgObj.details.ext === "PDF" ) msgObj.details.pages = await _getDocPages(input);
-
             if(msgObj.details.size > 16777200) throw customError("File Size is to Big.",413);
             
             msgObj.blob = (await _read_doc(input));
@@ -477,6 +505,7 @@ const _trigerSendMsg = async (type) => {
             msgObj.toGID = user.id;
         
         addNewMsgInCurrChat(msgObj);
+        console.log(msgObj);
         _sendMsg(msgObj)
             .then(res=>{
                 if( (res.status != 'success') || (res.responseText != 1)){
@@ -515,9 +544,12 @@ const _trigerSendMsg = async (type) => {
 
 // new message chat
 const addNewMsgInCurrChat = (msgObj) => {
+    let whichTransmit = ( getCookie('unm') == msgObj['fromUnm'] ) ? 'send' : 'receive';
+
+    let currFullDate = new Date();
     let fullDate=new Date(Number(msgObj['time']));
-    let date = fullDate.getDate() +'/'+ (fullDate.getMonth()+1) +'/'+ fullDate.getFullYear();
     let time= fullDate.toLocaleTimeString();
+    let date = fullDate.getDate() +'/'+ (fullDate.getMonth()+1) +'/'+ fullDate.getFullYear();
 
     let prevDate = null;
     
@@ -527,14 +559,22 @@ const addNewMsgInCurrChat = (msgObj) => {
     }
 
     if( prevDate != date ){
+        
+        if((currFullDate.getMonth()+1 == fullDate.getMonth()+1) 
+            && (currFullDate.getFullYear() == fullDate.getFullYear())){
+    
+                if(currFullDate.getDate() == fullDate.getDate())
+                    date='Today';
+                else if(currFullDate.getDate()-1 == fullDate.getDate())
+                    date='Yesterday';
+        }
+
         let msgDate=document.createElement("div");
         msgDate.classList.add("msgDate");
-        msgDate.textContent=date;
-
+        msgDate.style.setProperty('--date',`'${date}'`);
         chatStruct.chatBody.appendChild(msgDate);
     }  
 
-    let whichTransmit = ( getCookie('unm') == msgObj['fromUnm'] ) ? 'send' : 'receive';
 
     let msgContainer=document.createElement("div");
     msgContainer.classList.add('msgContainer',whichTransmit);
@@ -556,11 +596,14 @@ const addNewMsgInCurrChat = (msgObj) => {
     }
 
     // for groups to show msg sender usernames.
-    if(getCookie('chat').toLowerCase() === "group" && (!lastMsg || (lastMsg && lastMsg.fromUnm != msgObj.fromUnm) ) ){
+    if(getCookie('chat').toLowerCase() === "group" 
+        && (!lastMsg || (lastMsg && lastMsg.fromUnm != msgObj.fromUnm) ) ){
+        
         let msgUserDiv = document.createElement('div');
         msgUserDiv.classList.add('msgUserDiv');
+        
         if(whichTransmit == 'receive')
-            msgUserDiv.setAttribute('onclick',`toggle_confirmation_pop_up('add_new_chatter','${msgObj.fromUnm}')`);
+            msgUserDiv.onclick=()=>toggle_confirmation_pop_up('add_new_chatter',msgObj.fromUnm);
 
         (msgObj.type != 'text') ?
             fileName.before(msgUserDiv):
@@ -660,10 +703,6 @@ const addNewMsgInCurrChat = (msgObj) => {
             let detailsStr = "";
 
             detailsStr += convert_bytes(size) + "   |   " + ext;
-            if(pages){
-                if(detailsStr != "") detailsStr += "   |   ";
-                detailsStr += pages;
-            }
 
             node.textContent = detailsStr;
 
@@ -675,20 +714,65 @@ const addNewMsgInCurrChat = (msgObj) => {
     }
 
     let optionBtn = document.createElement('div');
-    optionBtn.classList.add("optionBtn");
-    optionBtn.classList.add("ele");
+    optionBtn.classList.add("optionBtn","ele");
     optionBtn.name="optionBtn";
     optionBtn.title="Options";
         optionBtn.innerHTML=`
         <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" >
         <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
         </svg>`;
+    
+    // optionBtn.setAttribute('onclick',())
         if(msgObj.type == 'doc'){
             optionBtn.style.position="relative";
             optionBtn.style.alignSelf="start";
         }
     msg.appendChild(optionBtn);
     
+    // optionContainer();
+    function optionContainer(){
+
+        let optionContainer = document.createElement('div');
+        optionContainer.id="option-container";
+        optionContainer.classList.add("option-container");
+        optionBtn.appendChild(optionContainer);
+    
+            let optionIconURL = "/img/icons/chat/options/";
+            let deleteOption = new_option("delete");
+    
+            function new_option(optionName){
+
+                let option = document.createElement('div');
+                option.classList.add('option');
+
+                    let optionIcon= new Image();
+                    optionIcon.classList.add('option-icon');
+                    optionIcon.src= optionIconURL+optionName+".svg";
+                    option.appendChild(optionIcon);
+
+                    // let optionName= document.createElement('div');
+                    //coninue
+                
+                return option;
+            }
+            // <div id="option-container" class="option-container">
+            //     <div class="option">
+            //         <img class="option-icon" src="/img/icons/chat/options/delete.svg">
+                    
+            //         <b class="option-name">
+            //             Delete for me
+            //         </b>
+            //     </div>
+            //     <div class="option">
+            //         <img class="option-icon" src="/img/icons/chat/options/info.svg">
+                    
+            //         <b class="option-name">
+            //             Info
+            //         </b>
+            //     </div>
+            // </div>
+    }
+
     let msgTime=document.createElement("div");
     msgTime.classList.add('msgTime');
     msgTime.textContent=time;

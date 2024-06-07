@@ -38,17 +38,19 @@
             $column_str =  implode(',' , $columns);
             $values_str =  implode( ',' , array_fill(0 , count($values) , '?') );
     
+
             $query = "INSERT INTO `$table`($column_str) VALUES ($values_str)";
             $stmt = $GLOBALS[$db]->prepare($query);
             $stmt->bind_param($paramtypes , ...$values);
             $sqlfire = $stmt->execute();
             $stmt ->close();
+
+            if($sqlfire) {
+                return 1;
+            }else {
+                return 0;
+            }
         }catch(Exception $e) {
-            return 0;
-        }
-        if($sqlfire) {
-            return 1;
-        }else {
             return 0;
         }
     }

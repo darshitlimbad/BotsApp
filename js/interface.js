@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded' , function () {
     // responsive for mobile changes
     if(window.innerWidth < 600){
         document.querySelector('body.main').classList.add('mobile');
-        device= 'mobile';
+        device='mobile';
     }
 
     //functions to be called
@@ -113,11 +113,12 @@ function toggle_settings_box()   {
     }
 }
 
-// toggle_log_out_pop_up
+// toggle_confirmation_pop_up
 function toggle_confirmation_pop_up(pop_up_name , title=null){
     let confirmation_pop_up=document.querySelector('div#confirmation_pop_up');
+
     if(confirmation_pop_up.style.display != 'block'){
-        if(pop_up_name == "log_out")    _confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');
+        if(pop_up_name == "log_out")  _confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');
         else if(pop_up_name == "deleteAccount") _confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');
         else if(pop_up_name == "add_new_chatter") _confirmation_pop_up( title , 'Are you sure , You want to send Chatter request to this User?' , 'addUserReqConfirm' );
     }

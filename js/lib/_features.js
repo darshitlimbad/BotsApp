@@ -431,21 +431,6 @@ const _read_doc = (data, field = 'data') => {
     } );
 }
 
-const _getDocPages = (file) => {
-    return new Promise( (resolve,reject) => {
-        var fReader = new FileReader();
-
-        fReader.onload = (event) => {
-            let pageCount = event.target.result.match(/\/Type[\s]*\/Page[^s]/g).length;
-            pageCount += (pageCount>1) ? ' Pages' : ' Page';
-            resolve(pageCount);
-        }
-
-        fReader.onerror = ()=>reject();
-        fReader.readAsText(file);
-    } );
-}
-
 function _getDataURL(source){
     return new Promise((resolve,reject)=>{
         fetch(source)

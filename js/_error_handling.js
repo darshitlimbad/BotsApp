@@ -44,13 +44,10 @@ document.addEventListener('DOMContentLoaded' , function () {
             },10);
 });
 
-const customError = (msg, code , alert=true) => {
+const customError = (msg, code) => {
     try{
         if(msg && code){
-            if(alert)
-                new_Alert(`[ ${code} ] : ${msg}`);
-            
-            console.warn(`[ ${code} ] : ${msg}`);
+            console.error(`[ ${code} ] : ${msg}`);
         }else
             handler['err_'+code]();
     }catch(e){

@@ -65,7 +65,7 @@ const _getNewMsgs = async () => {
         if(res.status == "success" && !res.responseText.error)
             return res.responseText;
         else 
-            customError(res.responseText.message,res.responseText.code,false);
+            customError(res.responseText.message,res.responseText.code);
     }catch(err){
         console.warn(err);
         return 0;
@@ -178,14 +178,20 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                             }
                         }
 
-                        window.onfocus= ()=>{
-                            msgLoad.firstChild.remove();
-                            msgLoad.appendChild(progressDiv);
-
-                            if(res.url)
-                                URL.revokeObjectURL(res.url);
-                        }
+                        if(device === 'mobile')
+                            backToDownloadBtn();
+                        else
+                            window.onfocus= ()=> backToDownloadBtn();
+                        
                     });
+
+                    function backToDownloadBtn(){
+                        msgLoad.firstChild.remove();
+                        msgLoad.appendChild(progressDiv);
+
+                        if(res.url)
+                            URL.revokeObjectURL(res.url);
+                    }
                 
             }else{
                 handler.err_400();

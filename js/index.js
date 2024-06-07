@@ -72,7 +72,7 @@ const toggleSearchTxt = () => {
     searchBtn.querySelector('img').src = `img/icons/${icon}.png`;
 }
 
-function _searchWords(val) {
+function _searchWords(e,val) {
     val=val.trim();
     let searchTxt = document.querySelector("div#searchTxt");
 
@@ -80,7 +80,7 @@ function _searchWords(val) {
     var SfSpan = searchTxt.querySelectorAll('.search_found_span span');
     _clearSearchedWords();
 
-    if((val.length < 3) && (event.keyCode != 13) || val == "") 
+    if((val.length < 3) && (e.keyCode != 13) || val == "") 
         return;
 
     chatMsgs = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
@@ -109,11 +109,18 @@ const _clearSearchedWords = ()=> {
     var SfSpan = searchTxt.querySelectorAll('.search_found_span span');
     if(searchedMsgList.rear != -1){
         try{
-            var msgToRmHl = chatBody.querySelectorAll(".msg");
+            var msgToRmHl = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
+
             var rmContainerClass = chatBody.querySelector("div.selectedWordContainer");
+
                 if(rmContainerClass)
                     rmContainerClass.classList.remove('selectedWordContainer');
-            msgToRmHl.forEach(msg=> msg.innerHTML = msg.innerHTML.replace(new RegExp(`<span class=".*?">`,'gi') , "") );
+            
+            msgToRmHl.forEach(msg => {
+                if(msg.children[0] && msg.children[0].classList.contains('highlight'))
+                    msg.removeChild(msg.children[0]);
+            })
+
         }catch(err){
             console.error(err);
         }

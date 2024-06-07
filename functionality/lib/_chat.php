@@ -331,6 +331,7 @@ function sendMsg($data){
         }
 
         if($msg_columns && $msg_values){
+            
             $msgRes = insertData('messages' , $msg_columns ,$msg_values);
                 if($msgRes == 0)    throw new Exception("error on data insertion",400);
             
@@ -340,7 +341,7 @@ function sendMsg($data){
         }
 
         // if anything went wrong and the code has not been return yet it will occure something went wrong error.
-        throw new Exception("",400);
+        throw new Exception("",0);
     }catch(Exception $e){
         return json_encode($e->getCode());
     }

@@ -8,7 +8,7 @@
     --heading-color:#8c41b8;
     --thin-wh-border : rgba(240, 248, 255, 0.321);
     --default-font : 'Courier New', Courier, monospace;
-    --text-font : 'Arial Narrow', Arial, sans-serif;
+    --text-font : Arial, sans-serif;
     font-family: var(--default-font);
 }
 
@@ -986,7 +986,6 @@ footer {
 .mobile .settings-box .settings-container p ,
 .mobile .link {
     font-size: 10px !important;
-    font-family: Arial, sans-serif;
 }
 
 .mobile .settings-box .settings-container .body .swipe-btn {

@@ -191,6 +191,7 @@ header h1{
         height: 35rem;
         width: 85%;
         padding: 5px;
+        transform: translateY(50px);
     }
 
     .square{

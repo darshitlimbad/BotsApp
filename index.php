@@ -41,7 +41,7 @@
         <!-- opened-chat -->
         <div class="chat">
         </div>
-        
+
     </div>
     </div>
 </body>

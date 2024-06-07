@@ -26,7 +26,7 @@
 <div id="alert" class=""></div>
 
 <style>
-    #notification , #alert{
+#notification , #alert{
     display: flex;
     opacity: 0;
     flex-wrap: wrap;
@@ -44,6 +44,7 @@
     transition:all .5s cubic-bezier(0.4, 0.6, 0, 1.17);
     border-radius: 5px;
     font-family: var(--text-font);
+    font-size: 10px;
 }
 
 #notification   {
@@ -58,5 +59,13 @@
     background-color: aliceblue;
     box-shadow: 3px 3px 30px rgba(255, 0, 0, 0.296);
 
+}
+
+@media screen and ( max-width:768px ){
+    #notification,#alert{
+        height: 30px;
+        margin: 10px;
+
+    }
 }
 </style>
