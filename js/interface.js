@@ -1,5 +1,7 @@
 var default_dp_src = '/img/default_dp.png';
+var device;
 
+const tohomepage=()=>window.location.assign('/');
 document.addEventListener('DOMContentLoaded' , function () {
 
     // keyboard sortcuts (_srtc stands for sortcut)
@@ -37,9 +39,15 @@ document.addEventListener('DOMContentLoaded' , function () {
         })
     });
 
+    // responsive for mobile changes
+    if(window.innerWidth < 600){
+        document.querySelector('body.main').classList.add('mobile');
+        device= 'mobile';
+    }
+
     //functions to be called
     set_profile_dp();
-    getNewNoti();    
+    getNewNoti();   
 });  
 
 // 
@@ -48,6 +56,7 @@ const initiateChatBox = (chatType) => {
         setCookie("chat", chatType);
         window.location.assign('/');
     }
+
     // Title Names
     let heading =  document.querySelector('#cname');
     heading.textContent = chatType + " Chat";
@@ -165,6 +174,7 @@ function closesettingsbox(event) {
         (!event.target.closest("div[id='confirmation_pop_up']")) &&
         (!event.target.closest("div[id='upload_img_form']"))  ) {
         
+        event.preventDefault();
         toggle_settings_box();
         // all settings options to noramal
         settings_options_to_default();
@@ -322,3 +332,16 @@ const getCookie = (name) => {
     };
 
 // 
+
+function showInbox(){
+    const inbox=document.querySelector('.chat-box .inbox');
+
+    chat.style.display='none';
+    inbox.style.display='block';
+}
+function hideInbox(){
+    const inbox=document.querySelector('.chat-box .inbox');
+
+    chat.style.display='flex';
+    inbox.style.display='none';
+}

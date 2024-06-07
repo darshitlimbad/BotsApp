@@ -104,7 +104,6 @@
                                     <div class="hr"></div>
                 
                                     <div class="msg">${row['unm']} wants to add you in the Personal chat list,</div>
-                                    <div class="msg"> Do you want to add him/her as a chatter?</div>
                 
                                     <div class="buttons">
                                         <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}')">Reject</button>

@@ -74,6 +74,7 @@ class Status {
 
         postReq(this.statusURL,JSON.stringify(data))
             .then(res=>{
+                // console.log(res.responseText);
                 if(res.status == 'success' && res.responseText != 0){
                     res.responseText.forEach(chatter => {
                         
@@ -154,6 +155,7 @@ class Status {
 
                                         _getNewMsgs()
                                         .then(msgObjs=>{
+                                            console.log(msgObjs);
                                             if( msgObjs )
                                                 msgObjs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
                                         })

@@ -302,9 +302,11 @@
     height: 60%;
     margin: 0 5px;
 }
-.chat .heading .dp img {
+
+.dp img {
     height: 2em;
     width: 2em;
+    border: 1px solid aliceblue;
     border-radius: 50%;
 }
 
@@ -332,8 +334,6 @@
 
 .chat .heading .fullScreenIcon{
     background-color: transparent;
-    border: none;
-    height: 2.3em;
     margin: 5px;
     border: none;
     /* position: absolute; */
@@ -363,7 +363,7 @@
     min-width: 200px;
     position: fixed;
     top: -6%;
-    right: 8em;
+    right: 5em;
     justify-content: space-around;
     background-color: rgba(0, 0, 0, 0.694);
     border-radius: 10px;
@@ -421,6 +421,17 @@
     font-size: var(--chat-font-medium);
 }
 
+.chat .chatBody .chatEmptyMsg{
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+    margin: 1em;
+    font-size: 10px;
+    background-color: var(--heading-color);
+    color: white;
+    border-radius: 10px;
+}
+
 .chat .chatBody .msgDate {
     display: flex;
     justify-content: center;
@@ -429,17 +440,6 @@
     font-size: var(--chat-font-small);
 }
 
-.chat .chatBody .msgDate::before{
-    content: "";
-    position: absolute;
-    display: block;
-    height: 1.5em;
-    width: 5em;
-    transform: translateY(-3px);
-    border: 1px solid var(--thin-wh-border);
-    background-color: rgba(0, 0, 0, 0.42);
-    border-radius: 5px;
-}
 
 .chat .chatBody .msgTime{
     height: auto;
@@ -615,7 +615,6 @@
 .chat .chatBody .msgContainer .msg:hover > .optionBtn {
     display: block;
     opacity: 1;
-    z-index: 1;
     transition: all .1s cubic-bezier(0.04, 0.37, 0.49, 1.04);
 }
 
@@ -787,3 +786,38 @@
 .chat .sendMsg:hover > img {
     filter: brightness(50%);
 }
+
+
+/* responsive for mobile styles */
+
+.mobile .chat-box{
+    min-width: 200px;
+}
+
+.mobile .chat-box .inbox{
+    width: 85%;
+}
+
+.mobile .chat-box .chat{
+    width: 100%;
+    margin: 0 5px;
+}
+.mobile .chat-box .chat .chatBody .msgTime{
+    font-size: 0.6em;
+}
+
+.mobile .icon {
+    margin: 0 !important;
+}
+
+.mobile .chat .heading .details .name {
+    font-weight: 500;
+}
+.mobile .chat-box .chat .heading .fullScreenIcon{
+    margin: 0;
+}
+.mobile .chat-box .chat .heading .fullScreenIcon .icon{
+    height: 0.8em;
+    width: 0.8em;
+}
+/*  */

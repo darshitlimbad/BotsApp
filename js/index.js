@@ -16,6 +16,7 @@ document.addEventListener( 'DOMContentLoaded' , () => {
     _cht_sk_loading();
     initiateChatBox(currCht);
     // 
+
 });
 
 const msgBoxSizing = (e) => {    
@@ -82,8 +83,8 @@ function _searchWords(val) {
     if((val.length < 3) && (event.keyCode != 13) || val == "") 
         return;
 
-    chatMsgs = chatBody.querySelectorAll(".msgContainer .msg");
-    
+    chatMsgs = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
+
     Object.entries(chatMsgs)
         .filter(msgObj=> new RegExp(val,'i').test(msgObj[1].textContent))
         .map(msgObj=> {

@@ -72,6 +72,7 @@
 #add_new_chat_form .input_field {
     display: flex;
     align-items: flex-start;
+    justify-content: center;
 }
 
 .input_field .input input:focus + label ,.input_field .input input:not(:placeholder-shown) + label    {
@@ -81,7 +82,7 @@
 #floatingList{
     display: none;
     position: absolute;
-    top: 80%;
+    top: 89%;
     padding: 5px;
     height: auto;
     max-height: 280px;
@@ -98,7 +99,7 @@
     content: "";
     position: fixed;
     right: 50%;
-    top: 82%;
+    top: 85%;
     height: 10px;
     width: 10px;
     transform: rotate(45deg);
@@ -138,3 +139,21 @@
 tbody.center{
     align-items: center;
 }
+
+/* responsive for mobile styles */
+.mobile #confirmation_pop_up, .mobile #upload_img_form, .mobile #add_new_chat_form, .mobile #upload_doc_form{
+    width: 10%;
+}
+
+.mobile #confirmation_pop_up .input_field .message{
+    font-size: small;
+}
+
+.mobile #confirmation_pop_up .title, .mobile #upload_img_form .title, .mobile #add_new_chat_form .title, .mobile #upload_doc_form .title{
+    font-size: medium;
+}
+.mobile #add_new_chat_form #username{
+    width: 15em;
+}
+
+/*  */

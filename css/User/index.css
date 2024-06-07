@@ -85,7 +85,7 @@ header h1{
 .box {
     height: var(--user-box-height);
     width: var(--user-box-width);
-    top: 20%;
+    top: 13%;
     display: flex;
     position: absolute;
     align-items: center;

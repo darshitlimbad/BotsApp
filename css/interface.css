@@ -25,6 +25,13 @@
     background-color: rgb(140 65 179);
 }
 
+.icon {
+    -webkit-tap-highlight-color: transparent;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .red{
     color: red;
     --color: red;
@@ -244,6 +251,7 @@ footer {
     align-items: center;
     color: aliceblue;
     font-size: 12px;
+    padding: 15px;
 }
 
 .side-bar   {
@@ -260,6 +268,11 @@ footer {
 .side-bar .options  {
     margin: 0 2px;
     cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .side-bar .bottom   {
@@ -378,7 +391,7 @@ footer {
 }
 
 .noti-box .conteiner .box_data .unm {
-    padding: none;
+    padding: 0;
     margin: 5px;
     color: var(--text-color);
 }
@@ -386,13 +399,14 @@ footer {
 .noti-box .conteiner .box_data .hr {
     display: block;
     height: 1.5px;
-    width: 80%;
+    width: 100%;
     background-color: var(--text-color);
     margin: 5px 0   ;
 }
 
 .noti-box .conteiner .box_data .msg {
     font-size: small;
+    padding: 5px;
     font-family: var(--text-font);
 }
 
@@ -561,7 +575,6 @@ footer {
 
 .settings-box .settings-container .body .checkbox {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
 
 }
@@ -601,7 +614,6 @@ footer {
 
 .settings-box .settings-container .body .swipe-btn {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     margin: 10px;
     font-size: 17px;
@@ -767,25 +779,28 @@ footer {
     text-decoration: none;
     filter: brightness(100%);
     font-weight: 700;
-    width: 40% !important;
-    left: 55%;
+    width: 50% !important;
+    left: 40%;
     --margin: 5px;
     --color: aliceblue;
     --background-image: linear-gradient(to bottom right , rgb(89, 43, 226) ,rgba(33, 16, 84, 0.797) , rgb(89, 43, 226) );
     --btn-shadow: rgba(12, 56, 145, 0.489);
 }
 .danger-button {
-    position: relative;
     text-decoration: none;
     filter: brightness(100%);
     font-weight: 700;
-    width: 40% !important;
-    left: 55%;
+    width: 50% !important;
     --margin: 5px;
     --color: rgb(98 0 0);
     --background-image: linear-gradient(to bottom right, rgb(0 0 0 / 83%), rgb(255 130 130 / 80%), rgb(34 34 34));
     --btn-shadow: rgba(206, 82, 82, 0.466);
     
+}
+
+.settings-container .danger-button{
+    position: relative;
+    left: 40%;
 }
 
 .button {
@@ -800,6 +815,11 @@ footer {
     border: none;
     outline: 2px solid #a9a9a96b;
     transition: all .3s cubic-bezier(0.215, 0.610, 0.355, 1);
+
+    -webkit-tap-highlight-color: transparent;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .button:hover {
@@ -925,3 +945,53 @@ footer {
     }
 
 }
+
+/* responsive for mobile styles */
+.mobile .side-bar{
+    left: 0;
+    padding: 5px 0;
+    margin: 4px 0;
+}
+
+.mobile .settings-box, .mobile .noti-box{
+    width: 20em;
+    height: 18em;
+}
+.mobile .settings-box ul{
+    width: 6.5em;
+}
+.mobile .settings-box ul li{
+    padding: 0;
+    margin: 5px 0;
+}
+.mobile .settings-box ul li div img{
+    height: 15px;
+    width: 15px;
+}
+.mobile .settings-box ul li p{
+    font-size: 12px;
+}
+
+.mobile .avatar {
+    height: 40px;
+    width: 40px;
+    
+}
+
+.mobile .settings-box .settings-container .body .edit_img{
+    transform: translate(30px, -20px);
+}
+.mobile .settings-box .settings-container .body .text ,
+.mobile .settings-box .settings-container .body .checkbox ,
+.mobile .settings-box .settings-container p ,
+.mobile .link {
+    font-size: 10px !important;
+    font-family: Arial, sans-serif;
+}
+
+.mobile .settings-box .settings-container .body .swipe-btn {
+    margin: 0px;
+    font-size: 10px;
+}
+
+/*  */

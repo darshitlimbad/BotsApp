@@ -24,8 +24,8 @@ try{
                 is_data_present("users" , "email" , $email , 'email') )
                 throw new Exception(400);
 
-            $user = createUser("userID , surname , name , unm , email , pass , pass_key" ,
-                    "$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key" , $avatar);
+            $user = createUser(["userID" , "surname" , "name" , "unm" , "email" , "pass" , "pass_key"] ,
+                    [$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key] , $avatar);
                 
             if($user == 1)
                 header('location: /user/?SUCCESS=201&USER='.$unm); 

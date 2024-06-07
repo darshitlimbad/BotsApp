@@ -9,6 +9,8 @@ side insert ops:
 
     3. in the confirmation box for addnewuser add the dp also
 
+    4. status update even if the user made it hide
+
     
 
 next session ops:

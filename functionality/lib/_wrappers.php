@@ -14,7 +14,7 @@
         // if any changes made in this also change in _chat.php for inbox footer.
         ?>
         <div>
-            All right reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.
+            All rights NOT -_- reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.
         </div>
         <a href="/help/user-help.php" class="link">Need help?</a>
         <?php
@@ -40,7 +40,7 @@
     border: 1px solid black;
     padding: 5px 30px;
     margin: 20px;
-    z-index: 1;
+    z-index: 2;
     transition:all .5s cubic-bezier(0.4, 0.6, 0, 1.17);
     border-radius: 5px;
     font-family: var(--text-font);

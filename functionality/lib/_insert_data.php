@@ -2,15 +2,13 @@
     include_once('_validation.php');
 
 // create users param string of columns with ',' seprater , string of column values , img type , img data in binary 
-function createUser($column_str , $values_str , $avatar ) {
+function createUser($columns , $values , $avatar ) {
     try{
         $fleg = 0;
         $userID=NULL;$unm=NULL;
         $main_table = "users";
-        $res1 = insertData($main_table, $column_str , $values_str);
+        $res1 = insertData($main_table, $columns , $values);
         if($res1 == 1) {
-            $columns = explode(',' , $column_str) ;
-            $values = explode(',' , $values_str);
 
             for($i = 0 ; $i<count($columns) ; $i++) {
                 if(trim($columns[$i]) == "userID"){

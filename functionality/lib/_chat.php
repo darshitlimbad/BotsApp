@@ -120,7 +120,8 @@ function getAllMsgs($data){
         if($chatType == 'personal'){
             $sql =" SELECT m.`msgID`,m.`fromID`, m.`type`, m.`msg`, m.`details` ,m.`time` 
                     FROM `messages` as m
-                    WHERE ( m.`fromID` , m.`toid` ) IN ( (? , ?), (? , ?) )";
+                    WHERE ( m.`fromID` , m.`toid` ) IN ( (? , ?), (? , ?) )
+                    ORDER BY m.time ASC";
         
             $stmt = $GLOBALS['conn'] -> prepare($sql);
             $stmt ->bind_param('ssss' , $userID, $oppoUserID , $oppoUserID, $userID);

@@ -64,7 +64,7 @@ const chatListTemplate = ( chat ) => {
     list.appendChild(inboxUser);
 
         var imgDiv= document.createElement("div");
-        imgDiv.classList.add('img');
+        imgDiv.classList.add('img','dp');
         inboxUser.appendChild(imgDiv);
 
             var img = new Image();
@@ -143,7 +143,7 @@ const _chatList_footer = ()=> {
     var footer=document.createElement('footer');
         var div = document.createElement('div');
         div.style.textAlign="center";
-        div.textContent="All right reserverd by ";
+        div.textContent="All rights NOT -_- reserverd by ";
             var a_botsapp=document.createElement('a');a_botsapp.href="/t&c/policy.php";a_botsapp.classList.add('link');a_botsapp.textContent="BotsApp";div.appendChild(a_botsapp);
         div.append(".");
         footer.appendChild(div);
@@ -178,7 +178,8 @@ const openChat =async (unm,ID=null) => {
         chat.appendChild(chatStruct.heading);
 
         chatStruct.searchDiv = document.createElement('div');
-        chatStruct.searchDiv.classList.add('search');chatStruct.searchDiv.id="searchTxt";
+        chatStruct.searchDiv.classList.add('search');
+        chatStruct.searchDiv.id="searchTxt";
         chat.appendChild(chatStruct.searchDiv);
 
         chatStruct.chatBody=document.createElement("div");
@@ -189,16 +190,21 @@ const openChat =async (unm,ID=null) => {
         chatStruct.footer.classList.add("footer","align-center");
         chat.appendChild(chatStruct.footer);
 
-
     selectChat(unm,ID);
     setCookie('currOpenedChat' ,unm);
+    setLoader(chat);
     setChatHeader(unm,ID);
+    removeLoader(chat);
     setLoader(chatStruct.chatBody);
     setChatFooter(unm);
     await setChatBody(ID);
     removeLoader(chatStruct.chatBody);
     
      // post-fix
+    //for mobile
+    if(device == 'mobile'){
+        hideInbox();
+    }
 };
 const setLoader = (loc)=>{
     let loaderDiv = document.createElement('div');loaderDiv.classList.add('loader');loaderDiv.classList.add('blank-layer-chat');loc.appendChild(loaderDiv);
@@ -226,13 +232,10 @@ const selectChat = (unm,ID=null) => {
 
 const setChatHeader = (unm,ID) =>{
 
-    let dpData= user.querySelector('.img img').src;
-    if(unm == getCookie('unm'))
-        unm="You";
-
         let closeIconDiv = document.createElement('div');
         closeIconDiv.classList.add("icon","center","align-center");
-        closeIconDiv.title="Close";closeIconDiv.name="closeChat";
+        closeIconDiv.title="Close";
+        closeIconDiv.name="closeChat";
         closeIconDiv.onclick=()=>closeChat();
         closeIconDiv.tabIndex=0;
         chatStruct.heading.appendChild(closeIconDiv);
@@ -245,8 +248,13 @@ const setChatHeader = (unm,ID) =>{
         dpDiv.classList.add("dp","align-center");
         chatStruct.heading.appendChild(dpDiv);
             let dpImg = new Image();
-            dpImg.src=dpData;dpImg.alt="DP";
+            dpImg.alt="DP";
+            get_dp(unm)
+                .then(dp_url=>dpImg.src=dp_url);
             dpDiv.appendChild(dpImg);
+
+        if(unm == getCookie('unm'))
+            unm="You";
 
         let detailsDiv = document.createElement('div');
         detailsDiv.classList.add('details');
@@ -297,14 +305,22 @@ const setChatHeader = (unm,ID) =>{
 
 const setChatBody = async (ID) =>{
     const msgObjs = await _getAllMsgs(ID);
-    if(!msgObjs)  return;
+    if(!msgObjs)  {
+        let chatEmptyMsg=document.querySelector('div');
+        chatEmptyMsg.id="";
+        chatEmptyMsg.classList.add('chatEmptyMsg');
+        chatEmptyMsg.textContent="Let's start new convertation.";
+        chatStruct.chatBody.appendChild(chatEmptyMsg);
+        console.log(chatStruct.chatBody);
+        return;
+    }
     msgObjs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
 }
 
 const setChatFooter= (unm) =>{
 
         let upDocsBtn= document.createElement("button");
-        upDocsBtn.classList.add("upDocsBtn","ele");
+        upDocsBtn.classList.add("upDocsBtn","ele","icon");
         upDocsBtn.title="Send Documents";
         upDocsBtn.onclick=()=>toggleDocsContainer();
         upDocsBtn.textContent="+";
@@ -342,7 +358,7 @@ const setChatFooter= (unm) =>{
         chatStruct.footer.appendChild(msgInput);
 
         let sendMsgBtn = document.createElement("button");
-        sendMsgBtn.classList.add("sendMsg");
+        sendMsgBtn.classList.add("sendMsg","icon");
         sendMsgBtn.tabIndex=0;
         sendMsgBtn.disabled=true;
         chatStruct.footer.appendChild(sendMsgBtn);
@@ -371,6 +387,7 @@ const closeChat = (e=null) =>{
     lastMsg=null;
     
     let header= document.createElement("header");
+    header.classList.add('loader');
     chat.appendChild(header);
         let img=new Image();
         img.src="../img/logo.png";
@@ -381,8 +398,14 @@ const closeChat = (e=null) =>{
         header.appendChild(b);
         
     setCookie('currOpenedChat' ,0);
+
     if(user)
         user.classList.remove('selected');
+
+    //for mobile
+    if(device == 'mobile'){
+        showInbox();
+    }
 }
 
 const _trigerSendMsg = async (type) => {
@@ -537,7 +560,7 @@ const addNewMsgInCurrChat = (msgObj) => {
         let msgUserDiv = document.createElement('div');
         msgUserDiv.classList.add('msgUserDiv');
         if(whichTransmit == 'receive')
-            msgUserDiv.onclick=()=>toggle_confirmation_pop_up('add_new_chatter',msgObj.fromUnm);
+            msgUserDiv.setAttribute('onclick',`toggle_confirmation_pop_up('add_new_chatter','${msgObj.fromUnm}')`);
 
         (msgObj.type != 'text') ?
             fileName.before(msgUserDiv):
@@ -548,7 +571,7 @@ const addNewMsgInCurrChat = (msgObj) => {
             msgUserDP.classList.add('msgUserDP');
             msgUserDiv.appendChild(msgUserDP);
 
-            let msgUserUnm= document.createElement('span');
+            let msgUserUnm= document.createElement('b');
             msgUserUnm.classList.add('msgUserUnm');
             msgUserUnm.title= msgObj.fromUnm;
             msgUserUnm.textContent= (whichTransmit == 'send') ? 'You' : '@'+msgObj.fromUnm;
@@ -558,7 +581,6 @@ const addNewMsgInCurrChat = (msgObj) => {
             get_dp(msgObj.fromUnm)
                 .then(imgURL => {
                     msgUserDP.src=imgURL;
-                    msgUserDP.onload=()=>URL.revokeObjectURL(imgURL);
                 });
     }
 
@@ -580,8 +602,8 @@ const addNewMsgInCurrChat = (msgObj) => {
             msg.appendChild(msgImg);
             
             if(!msgObj.blob){
-                var observer=new IntersectionObserver(async (entries)=>{
-                    entries.every(entry=>{
+                var observer=new IntersectionObserver((entries)=>{
+                    entries.every(async entry=>{
                         if(entry.isIntersecting){
                             _getDocBolb(msgObj.msgID)
                                 .then(res=>{
@@ -589,8 +611,8 @@ const addNewMsgInCurrChat = (msgObj) => {
                                         _getDataURL(`data:${res.responseText.mime};base64,${res.responseText.data}`)
                                             .then(res=>{
                                                 if(res.status == "success"){
-                                                    observer.unobserve(msgContainer);
                                                     addMsgImgUrl(res.url);
+                                                    observer.unobserve(msgContainer);
                                                 }
                                             })
                                     }else{
@@ -599,7 +621,7 @@ const addNewMsgInCurrChat = (msgObj) => {
                                 });
                         }
                     })
-                },{threshold:.5});
+                },{threshold:0.2});
 
                 observer.observe(msgContainer);
             }else{

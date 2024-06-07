@@ -21,7 +21,6 @@
         }
     }
 
-
     function onlineStatusUpdate(){
         try{
             session_start();
@@ -40,6 +39,7 @@
             return json_encode($result);
         }catch(Exception $e){
             $error = [
+                'error'=>true,
                 'code'=> $e->getCode(),
                 'message'=> $e->getMessage(),
             ];
@@ -167,7 +167,7 @@
             return json_encode($chatterList);
         }catch(Exception $e){
             $error = [
-                'error'=>1,
+                'error'=>true,
                 'code'=> $e->getCode(),
                 'message'=> $e->getMessage(),
             ];
