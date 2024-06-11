@@ -69,8 +69,8 @@ header h1{
 }
 
 .square {
-    height: 6rem;
-    width: 6rem;
+    height: 5rem;
+    width: 5rem;
     border: 2px solid white;
     margin: 10px;
     opacity: 20%;

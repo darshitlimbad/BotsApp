@@ -1,5 +1,5 @@
 <?php
-    include '../functionality/_auto_login.php';
+    include_once('../functionality/_auto_login.php');
     
     if(isset($_SESSION['userID'])){
         header('location: /');
@@ -36,7 +36,7 @@
             var sq_row = Math.ceil(screen.height / sq.clientHeight);
             var sq_column = Math.ceil(screen.width / sq.clientWidth);
 
-            for(var i=1 ; i<=sq_row ; i++)
+            for(var i=1 ; i<=sq_row/2 ; i++)
                 for(var j=1 ; j<=sq_column ; j++)
                     sq_con.innerHTML+=`<span class="square"></span>`;
         </script>
@@ -47,13 +47,13 @@
             <h1 class="fadeout">Log-in</h1>
         </div>
 
-        <form action="/functionality/_user.php?action=log-in" method="post" id="form" name="log-in" enctype="multipart/form-data" onsubmit="return check_all_fields()">
+        <form action="/functionality/_user.php?action=log-in" method="post" id="form" name="log-in" enctype="multipart/form-data">
 
             <!-- avatar -->
             <div class="input_field validation fadeout toggle_field hide" name="avatar_field">
                 <div class="input-img avatar_block">
                     <img src="../img/default_dp.png" alt="" class="avatar avatar_preview">
-                    <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp" onchange="avatar_validation()">
+                    <input type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp">
                 </div>
                 <span id="avatar_span"></span>
             </div>
@@ -82,7 +82,7 @@
             <!-- e-mail -->
             <div class="input_field validation fadeout toggle_field hide" name="e-mail_field">
                 <div class="input">
-                    <input type="text" id="e-mail" name="e-mail" placeholder=" " autocomplete="off" onkeyup="email_validation()"/>
+                    <input type="text" id="e-mail" name="e-mail" placeholder=" " autocomplete="off"/>
                     <label for="e-mail">E-mail</label>
                 </div>
                 <span id="e-mail_span" ></span>
@@ -92,7 +92,7 @@
             <div class="input_field validation fadeout" name="pass_field">  
                 <div class="input">
                     <div style="height:0px">
-                        <img src="/img/icons/form/eye.png" name="eye" height="20px" width="20px" onclick="toggle_pass_box(this)"> 
+                        <img src="/img/icons/form/eye.png" name="eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
                     </div>
                     <input type="password" id="pass" name="pass" placeholder=" " autocomplete="off"/>
                     <label for="pass">Password</label>
@@ -111,10 +111,9 @@
             <div class="input_field validation fadeout toggle_field hide" name="con_pass_field">  
                 <div class="input">
                     <div style="height:0px">
-                        <!-- url change when uploading -->
-                        <img src="/img/icons/form/eye.png" name="eye" class="con_eye" height="20px" width="20px" onclick="toggle_pass_box(this)"> 
+                        <img src="/img/icons/form/eye.png" name="eye" class="con_eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
                     </div>
-                    <input type="password" id="con_pass" name="con_pass" placeholder=" " autocomplete="off" onkeyup="con_pass_validation()"/>
+                    <input type="password" id="con_pass" name="con_pass" placeholder=" " autocomplete="off"/>
                     <label for="con_pass">Confirm Password</label>
                 </div>
                 <span id="con_pass_span"></span>
@@ -132,7 +131,7 @@
                     <input type="submit" name="submit" value="Log in" spellcheck="false" class="button" disabled/>
                 </div>
                 <div class="button-div change fadeout">
-                    <input type="button" name="change" value="Register" onclick="form.reset()" class="button" disabled />        
+                    <input type="button" name="change" value="Register"  class="button" disabled />        
                 </div>
             </div>
             

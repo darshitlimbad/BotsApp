@@ -1,12 +1,25 @@
 <?php
-session_start();
 try{
 if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
+    session_start();
+
     include_once('db/_conn.php');
     include_once('lib/_validation.php');
 
     if(isset($_SESSION['userID'])) {
         $userID = getDecryptedUserID();
+
+        $fetchJoinedGroups= fetch_columns('inbox',['fromID','chatType'],[$userID,'group'],['toID']);
+        $deleteInbox = "DELETE FROM `inbox` WHERE (`fromID`= '$userID' OR toID = '$userID');";
+        $GLOBALS['conn']->query($deleteInbox);
+
+        if($fetchJoinedGroups->num_rows !== 0){
+            while($GID = $fetchJoinedGroups->fetch_column()){
+                $gMemberCount= fetch_total_group_member_count($groupID);
+                if($gMemberCount == 0)
+                    delete_group($GID);
+            }
+        }
 
         $delete = deleteData('users',$userID);
 
@@ -27,5 +40,6 @@ else{
 catch(Exception $error){
     // print_r($error);
     header('location: /?ERROR=400');
+    die();
 }
 ?>

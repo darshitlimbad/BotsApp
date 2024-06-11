@@ -39,9 +39,55 @@ function metchEncryptedPasswords($Pass , $userID){
 }
 
 // if there will be data the is_data_present will return 1 
-function is_data_present($table , $point , $point_val , $column='userID'){
-    $result = fetch_columns($table , [$point] , [$point_val] , array("$column"));
+function is_data_present($table , array $point , array $point_val , $column='userID'){
+    $result = fetch_columns($table , $point , $point_val , array("$column"));
     if($result->num_rows == 1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+// @param groupID
+// @return total number of group members
+function fetch_total_group_member_count(string $groupID){
+
+    if(!is_data_present("groups",['groupID'],[$groupID],'groupID'))
+        return "GROUP_DOESN'T_EXCIST";
+
+    $result = fetch_columns('inbox',['toID','chatType'],[$groupID,'group'],['count(*)']);
+
+    if($result->num_rows == 1){
+        return $result->fetch_column();;
+    }else{
+        return 0;
+    }
+}
+
+// @param userID,groupID
+// @return user is memeber of group or not
+function is_member_of_group(string $userID, string $groupID){
+
+    $result = fetch_columns('inbox',['fromID','toID','chatType'],[$userID,$groupID,'group'],['count(*)']);
+
+    if($result->num_rows == 1){
+        return $result->fetch_column();;
+    }else{
+        return 0;
+    }
+}
+
+// @param userID,oppoUserID
+// @return does chat exists or not
+function is_chat_exist(string $userID, string $oppoUserID){
+    
+    $maxEntry = ($userID === $oppoUserID) ? 1 : 2;
+    
+    $SQL =" SELECT count(*) FROM inbox 
+            WHERE (fromID,toID) IN (('$userID','$oppoUserID'),('$oppoUserID','$userID'));";
+    $result=$GLOBALS['conn']->query($SQL);
+
+    if(($result->num_rows == 1) && ($result->fetch_column() == $maxEntry)){
         return 1;
     }else{
         return 0;
@@ -50,7 +96,7 @@ function is_data_present($table , $point , $point_val , $column='userID'){
 
 function session_check(){
     $userID = getDecryptedUserID();
-    if(is_data_present('users' , 'userID' , $userID) == 0)  {
+    if(is_data_present('users' , ['userID'] , [$userID]) == 0)  {
         session_abort();
         session_destroy();
         header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
@@ -123,7 +169,8 @@ function compressImg($imgObj , $quality = 50) {
 
         unlink($imgObj['tmp_name']);
         $success = imagewebp($image, $imgObj['tmp_name'], $quality);
-
+        imagedestroy($image);
+        
         if (!$success)
             throw new Exception("Failed to compress image",400);
         

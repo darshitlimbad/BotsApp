@@ -1,7 +1,6 @@
 <?php
     // php.ini changes
         define("MAX_DOC_SIZE" , 16777200);
-
     // 
 
     $host = "localhost";
@@ -153,23 +152,23 @@
             $stmt->bind_param($bind_param , ...$values);
             $sqlfire = $stmt->execute();
             $stmt ->close();
-        }catch(Exception $e){
-            return 0;
-        }
 
-        if($sqlfire) {
-            return 1;
-        }else {
+            if($sqlfire) {
+                return 1;
+            }else {
+                return 0;
+            }
+        }catch(Exception $e){
             return 0;
         }
     }
 
     // delete users table data
-    function deleteData($table,$userID ,$where = "userID", $db='conn'){
+    function deleteData($table,$ID ,$where = "userID", $db='conn'){
         try{
             $query = "DELETE FROM `$table` WHERE `$where` = ?";
             $stmt = $GLOBALS[$db]->prepare($query);
-            $stmt->bind_param('s' , $userID);
+            $stmt->bind_param('s' , $ID);
             $sqlfire = $stmt->execute();
             $stmt->close();
 

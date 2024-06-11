@@ -1,10 +1,12 @@
 <?php
-    include_once('db/_conn.php');
-    include_once('lib/_fetch_data.php');
-    include_once('lib/_validation.php');
     $data = json_decode( file_get_contents("php://input") , true );
     if(isset($data)) {
-        try{
+
+        include_once('db/_conn.php');
+        include_once('lib/_fetch_data.php');
+        include_once('lib/_validation.php');
+        
+    try{
         if(isset($data['keyPass']) && $data['keyPass'] == 'khuljasimsim'){
             $encryptedUserID = base64_decode($data['userID']);
             $user_nonce = base64_decode($data['user_nonce']);
@@ -30,6 +32,8 @@
             }else{
                 throw new Exception("saved Password is wrong try log-in again." , 404);
             }
+        }else{
+            header('Location: /');
         }
     
         
@@ -42,6 +46,8 @@
         ));
         echo $err;;
     }
+}else{
+    header('Location: /');
 }
 
 ?>

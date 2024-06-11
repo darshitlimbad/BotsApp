@@ -4,8 +4,9 @@ if($data = json_decode( file_get_contents("php://input") , true)){
     session_start();
     if(isset($_SESSION['userID'])){
         include_once('../db/_conn.php');
-        include_once('../lib/_validation.php');
-        include_once('../lib/_fetch_data.php');
+        include_once('_validation.php');
+        include_once('_fetch_data.php');
+        include_once('_status.php');
         
         switch($data['req']){
             case "getChatList":
@@ -26,7 +27,13 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             default:
                 echo 400;
         }
+        
+    }else{
+        header('Location: /');
     }
+    session_abort();
+}else{
+    header('Location: /');
 }
 
 function getChatList(){
@@ -42,12 +49,9 @@ function getChatList(){
             $i=0;
             while( $toID = $dataFromInbox->fetch_column() ){
                 if( $chatType == 'personal' ){
-                    if(!is_data_present('users_account', 'userID', $toID)){
-                        $del = "DELETE FROM `messages` 
-                                WHERE (`fromID` , `toID`) IN (('$userID', '$toID'), ('$toID', '$userID'));
-                                DELETE FROM `inbox` 
-                                WHERE  `fromID` = '$userID' 
-                                AND `toID` = '$toID';"; 
+                    if(!is_data_present('users_account', ['userID'], [$toID] )){
+                        $del = "DELETE FROM `inbox` 
+                                WHERE (`fromID` , `toID`) IN (('$userID', '$toID'), ('$toID', '$userID'));";
                         $GLOBALS['conn']->query($del);
                         continue;
                     }
@@ -56,15 +60,8 @@ function getChatList(){
 
                 }elseif($chatType == 'group'){
 
-                    if(!is_data_present('groups', 'groupID', $toID, 'groupName')){
-                        $del = "DELETE FROM `messages` 
-                                WHERE  `fromID` = '$userID' 
-                                AND `toID` = '$toID';
-                                DELETE FROM `inbox` 
-                                WHERE  `fromID` = '$userID' 
-                                AND `toID` = '$toID'; "; 
-
-                        $GLOBALS['conn']->query($del);
+                    if(!is_data_present('groups', ['groupID'], [$toID], 'groupName')){
+                        $del = deleteData('inbox',$toID,'toID');
                         continue;
                     }
 
@@ -84,8 +81,8 @@ function getChatList(){
             return 0;        
         }
         
-    }catch(Exception){
-        return 400;
+    }catch(Exception $e){
+        return $e;
     }
 }
 
@@ -97,34 +94,40 @@ function getAllMsgs($data){
             throw new Error('Chat is not opened, Please open chat first.',0);
 
         $userUNM = _fetch_unm();
-        $userID = getDecryptedUserID();
+        $userID = getDecryptedUserID();        
         
         $chatType = strtolower($_COOKIE['chat']);
-
         $oppoUserUNM = $_COOKIE['currOpenedChat'];
         
         if( $chatType == "personal"){
             $oppoUserID = _get_userID_by_UNM($oppoUserUNM);
-        }else if( $chatType == "group") {
-            $oppoUserID = base64_decode($data['toGID']);
 
-            if(!is_data_present('groups','groupID', $oppoUserID ,'groupID'))
+            if(!$oppoUserID)
+                throw new Exception('Something went wrong',400);
+            else if(!is_chat_exist($userID,$oppoUserID))
+                throw new Exception("There is no Chat.",0);
+
+        }else if( $chatType == "group") {
+            $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
+
+            if(!is_data_present('groups',['groupID'], [$oppoUserID] ,'groupID'))
                 throw new Exception("There is no group with the GID.",404);
+            else if(!is_member_of_group($userID,$oppoUserID))
+                throw new Exception("You are not a member of this group.",410);   
         }else{
             return 0;
         }
 
-        if(!$oppoUserID)
-                throw new Exception('Something went wrong',400);
-
         if($chatType == 'personal'){
-            $sql =" SELECT m.`msgID`,m.`fromID`, m.`type`, m.`msg`, m.`details` ,m.`time` 
-                    FROM `messages` as m
-                    WHERE ( m.`fromID` , m.`toid` ) IN ( (? , ?), (? , ?) )
+            $sql =" SELECT m.msgID, m.fromID, m.toID, m.type, m.msg, m.details, m.time, ms.status, ms.hide
+                    FROM messages AS m
+                    RIGHT JOIN `botsapp_statusdb`.messages AS ms
+                    ON m.msgID = ms.msgID
+                    WHERE (m.fromID = '$userID' AND m.toID = '$oppoUserID')
+                    OR (m.fromID = '$oppoUserID' AND m.toID = '$userID' AND ms.hide = 0)
                     ORDER BY m.time ASC";
         
             $stmt = $GLOBALS['conn'] -> prepare($sql);
-            $stmt ->bind_param('ssss' , $userID, $oppoUserID , $oppoUserID, $userID);
             $sqlquery= $stmt->execute();
 
             if(!$sqlquery)
@@ -133,14 +136,24 @@ function getAllMsgs($data){
             $result=$stmt->get_result();
             $stmt ->close();
 
-        }else
-            $result = fetch_columns('messages',['toID'],[$oppoUserID],['msgID','fromID','type','msg','details','time']);
+        }else{
+            $sql =" SELECT m.msgID, m.fromID,m.`toID`, m.`type`, m.`msg`, m.`details` ,m.`time` , ms.status, ms.seenByIDs, ms.hide, ms.hide_by
+                    FROM botsapp.`messages` as m
+                    RIGHT JOIN `botsapp_statusdb`.messages as ms
+                    ON m.msgID = ms.msgID
+                    WHERE m.toID = '$oppoUserID'
+                    AND (ms.hide = 0 OR ms.hide_by IS NULL OR LOCATE('$userID',ms.hide_by) = 0)
+                    ORDER BY m.time ASC";
+
+            $result= $GLOBALS['conn'] -> query($sql);
+        }
 
         if($result->num_rows == 0)  return 0;
 
         $msgObjs = null;
         $i=0;
         while($row = $result->fetch_assoc()){
+
             $msgObjs[$i]['msgID']= $row['msgID'];
             $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
             //if chatType will be a group than always 'toUNM' will be the group name
@@ -150,9 +163,14 @@ function getAllMsgs($data){
             $msgObjs[$i]['details'] = unserialize($row['details']);
             $msgObjs[$i]['time']= $row['time'];
             $i++;
+
+
+            if($row['status'] !== 'read' && $row['fromID'] !== $userID){
+                updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
+            }
         }
 
-        return json_encode($msgObjs);
+        return ($msgObjs) ? json_encode($msgObjs) : 0 ;
 
     }catch(Exception $e){
         $error = [     
@@ -183,17 +201,27 @@ function getNewMsgs($data){
 
         if( $chatType == "personal"){
             $oppoUserID = _get_userID_by_UNM($oppoUserUNM);
+
+            if(!$oppoUserID)
+                throw new Exception('Something went wrong',400);
+            else if(!is_chat_exist($userID,$oppoUserID))
+                throw new Exception("There is no Chat.",0);
+
         }else if( $chatType == "group") {
-            $oppoUserID = base64_decode($data['toGID']);
-            
-            if(!is_data_present('groups','groupID', $oppoUserID ,'groupID'))
+            $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
+
+            if(!is_data_present('groups',['groupID'], [$oppoUserID] ,'groupID'))
                 throw new Exception("There is no group with the GID.",404);
+            else if(!is_member_of_group($userID,$oppoUserID)){
+                if(!fetch_total_group_member_count($oppoUserID))
+                    delete_group($oppoUserID);
+
+                throw new Exception("You are not a member of this group.",410);
+            }
+
         }else{
             throw new Exception("please reload this page :(",400);
         }
-
-        if(!$oppoUserID)
-            throw new Exception('Something went wrong',400);
 
         if($chatType == 'personal'){
             // t1.fromID = 'the opposite user'
@@ -207,7 +235,7 @@ function getNewMsgs($data){
                             AND NOT t1.fromID = ? ";
         }
 
-        $sql =" SELECT t1.msgID, t1.fromID,t1.type, t1.msg, t1.details, t1.time, t2.status
+        $sql =" SELECT t1.msgID, t1.fromID,t1.toID,t1.type, t1.msg, t1.details, t1.time, t2.status, t2.seenByIDs
                 FROM `botsapp`.messages as t1 
                 LEFT JOIN `botsapp_statusdb`.messages as t2
                 ON t1.msgID = t2.msgID 
@@ -230,6 +258,12 @@ function getNewMsgs($data){
         $i=0;
 
         while($row = $result->fetch_assoc()){
+            $seenByIDs = ($row['seenByIDs'] != null) ? unserialize($row['seenByIDs']) : [] ;
+            if($seenByIDs && in_array($userID,$seenByIDs))
+                continue;
+
+            updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
+
             $msgObjs[$i]['msgID']= $row['msgID'];
             $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
             //if chatType will be a group than always 'toUNM' will be the group name
@@ -241,7 +275,7 @@ function getNewMsgs($data){
             $i++;
         }
 
-        return json_encode($msgObjs);
+        return ($msgObjs) ? json_encode($msgObjs) : 0;
 
     }catch(Exception $e){
         $error = [
@@ -267,18 +301,33 @@ function sendMsg($data){
             case 'personal':
                 $oppoUserID = _get_userID_by_UNM($data['toUnm']);
 
-                if(!is_data_present('users_account','userID', $oppoUserID, 'userID'))
+                if(!$oppoUserID)
+                    throw new Exception('Something went wrong',400);
+                else if(!is_data_present('users_account',['userID'], [$oppoUserID], 'userID'))
                     return 0;
+                else if(!is_chat_exist($fromID,$oppoUserID))
+                    throw new Exception("There is no Chat.",0);
                 break;
             case 'group' :
-                if(isset($data['toGID']) && is_data_present('groups','groupID', base64_decode($data['toGID']),'groupID') )
-                    $oppoUserID = base64_decode($data['toGID']);
-                else
+                if(isset($_COOKIE['currOpenedGID']) 
+                    && is_data_present('groups',['groupID'], [base64_decode($_COOKIE['currOpenedGID'])] ,'groupID') ){
+                    $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
+
+                    if(!is_member_of_group($fromID,$oppoUserID)){
+                        if(!fetch_total_group_member_count($oppoUserID))
+                            delete_group($oppoUserID);
+
+                        throw new Exception("You are not a member of this group.",410);
+                    }
+                }else
                     throw new Exception("GID not detected",0);   
                 break;
             default:
                 return 0;
         }
+        
+        if(!is_data_present('inbox',['fromID','toID'],[$fromID,$oppoUserID],'id'))
+            throw new Exception("Unauthorise Access !!!",410);
 
         $type = $data['type'];
         $time = $data['time'];
@@ -336,7 +385,8 @@ function sendMsg($data){
                 if($msgRes == 0)    throw new Exception("error on data insertion",400);
             
             // updating status of message
-            insertData("messages",["msgID","status"],[$newMsgID,"send"],"status");
+            $status = ($fromID == $oppoUserID) ? 'read' : 'send' ;
+            insertData("messages",["msgID","status"],[$newMsgID,$status],"status");
             return $msgRes;
         }
 

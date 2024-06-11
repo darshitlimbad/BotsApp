@@ -19,23 +19,18 @@ document.addEventListener('DOMContentLoaded' , () => {
 
 const openChatList = async () =>  {
     try{
-        var chatType = getCookie('chat');
+        var chatType = getCookie('chat').toLowerCase();
         if(!chatType){
             new_Alert("Something Went Wrong");
             console.error('Something Went wrong');
             return;
         }
         
-        chatType = chatType.toLowerCase();
-
         const chatList = await _getChatList();  _flash_chatList();
-        
         userStatus.checkChatListStatus();
 
-        if(chatList !== null){
-                chatList.forEach(chat => {
-                    chatListTemplate(chat);
-                });       
+        if(chatList){
+            chatList.forEach(chat => chatListTemplate(chat));       
         }else{
             _chatList_isEmpty();
         }
@@ -60,7 +55,8 @@ const chatListTemplate = ( chat ) => {
     inboxUser.title=unmTitle;
     inboxUser.tabIndex = 0;
     if(chatType == 'group') inboxUser.id = chat.GID;
-    inboxUser.onclick = ()=> (chatType == 'personal') ? openChat(unmTitle) : (chatType == 'group') ? openChat(unmTitle,chat.GID) : '';
+    inboxUser.onclick = ()=> (chatType == 'personal') ? openChat(unmTitle) : openChat(unmTitle,chat.GID);
+
     list.appendChild(inboxUser);
 
         var imgDiv= document.createElement("div");
@@ -169,6 +165,9 @@ const _st_chLi_skltn = () => {
 
                                         // chat open functions //
 const openChat =async (unm,ID=null) => {
+    if( (getCookie('chat').toLowerCase() === 'personal') && (getCookie('currOpenedChat') == unm) 
+        || ID && ID == getCookie('currOpenedGID') )
+        return;
     //prefix
         chat.innerHTML=""; 
         lastMsg=null;
@@ -192,6 +191,8 @@ const openChat =async (unm,ID=null) => {
 
     selectChat(unm,ID);
     setCookie('currOpenedChat' ,unm);
+    if(getCookie('chat').toLowerCase() =='group')   setCookie('currOpenedGID',user.id);
+
     setLoader(chat);
     setChatHeader(unm,ID);
     removeLoader(chat);
@@ -248,6 +249,7 @@ const setChatHeader = (unm,ID) =>{
         dpDiv.classList.add("dp","align-center");
         chatStruct.heading.appendChild(dpDiv);
             let dpImg = new Image();
+            dpImg.src=default_dp_src;
             dpImg.alt="DP";
             get_dp(unm)
                 .then(dp_url=>dpImg.src=dp_url);
@@ -269,6 +271,7 @@ const setChatHeader = (unm,ID) =>{
             status.id="currentChatterStatus";
             status.classList.add("status","offline");
             detailsDiv.appendChild(status);
+        
 
         let flexBox = document.createElement('div');
         flexBox.classList.add('flexBox','right-3');
@@ -331,20 +334,108 @@ const setChatHeader = (unm,ID) =>{
             downBtn.onclick=()=>moveSearch('down');
             downBtn.tabIndex=0;
             moveBtnsDiv.appendChild(downBtn);
+
+        detailsDiv.onclick=()=>openUserProfile(unm,ID);
 };
 
-const setChatBody = async (ID) =>{
-    const msgObjs = await _getAllMsgs(ID);
-    if(!msgObjs)  {
-        let chatEmptyMsg=document.querySelector('div');
-        chatEmptyMsg.id="";
-        chatEmptyMsg.classList.add('chatEmptyMsg');
-        chatEmptyMsg.textContent="Let's start new convertation.";
-        chatStruct.chatBody.appendChild(chatEmptyMsg);
-        console.log(chatStruct.chatBody);
-        return;
-    }
-    msgObjs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
+function openUserProfile(unm,ID){
+    if(unm=='You') unm= getCookie('unm');
+    if(ID)
+        return;//
+
+    // if(userProfile){
+    //     userProfile.style.display="block";
+    //     return;
+    // }
+    let userProfile = document.createElement('div');
+    userProfile.classList.add('user-profile');
+    chatStruct.heading.appendChild(userProfile);
+
+        let dp = new Image();
+        dp.classList.add('avatar');
+        get_dp(unm).then(res=>dp.src=res);
+        userProfile.appendChild(dp);
+
+        let deleteBtn= document.createElement('button');
+        deleteBtn.classList.add('danger-button','button');
+        deleteBtn.textContent='Remove User' ;
+        userProfile.appendChild(deleteBtn);
+
+        let userName = document.createElement('p');
+        userName.textContent='@'+unm;
+        userProfile.appendChild(userName);
+
+        let detailName = document.createElement('d6');
+        detailName.classList.add('margin-dead','detailName');
+        detailName.textContent="Name: ";
+        userProfile.appendChild(detailName);
+
+        let fullName = document.createElement('p');
+        fullName.classList.add('margin-dead');
+        userProfile.appendChild(fullName);
+        
+        detailName = document.createElement('d6');
+        detailName.classList.add('margin-dead','detailName');
+        detailName.textContent="email: ";
+        userProfile.appendChild(detailName);
+
+        let email= document.createElement('p');
+        email.classList.add('margin-dead');
+        userProfile.appendChild(email);
+
+        detailName = document.createElement('d6');
+        detailName.classList.add('margin-dead','detailName');
+        detailName.textContent="About: ";
+        userProfile.appendChild(detailName);
+
+        let about= document.createElement('p');
+        about.classList.add('margin-dead');
+        about.style.fontSize="10px";
+        userProfile.appendChild(about);
+
+        detailName = document.createElement('d6');
+        detailName.classList.add('margin-dead','detailName');
+        detailName.textContent="Users can see on status: ";
+        userProfile.appendChild(detailName);
+
+        let can_see_on_status= document.createElement('p');
+        can_see_on_status.classList.add('margin-dead');
+        userProfile.appendChild(can_see_on_status);
+
+    getUserProfile(unm)
+        .then(res=>{
+            fullName.textContent=res.fullName;
+            email.textContent=res.email;
+            about.textContent=res.about;
+            can_see_on_status.textContent= (res.can_see_on_status==0)? 'No' : 'Yes';
+        });
+
+        let action={
+            req:"delete_this_user",
+            unm,
+        }
+        deleteBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Remove this user?",action,'red');
+        
+    setTimeout(()=>{document.onclick=(e)=>{
+        if(!e.target.closest('.user-profile'))
+            userProfile.remove();
+    }},100 );
+}
+
+const setChatBody = (ID) =>{
+    return new Promise((resolve)=>{
+        _getAllMsgs(ID)
+            .then(msgObjs=>{
+                
+            if(!msgObjs)  {
+                new_notification("Let's start new convertation.");
+            }else{
+                msgObjs
+                    .forEach(msgObj => addNewMsgInCurrChat(msgObj));
+            }
+            resolve();
+        })
+    });
 }
 
 const setChatFooter= (unm) =>{
@@ -428,6 +519,8 @@ const closeChat = (e=null) =>{
         header.appendChild(b);
         
     setCookie('currOpenedChat' ,0);
+    setCookie('currOpenedGID' ,0);
+    
 
     if(user)
         user.classList.remove('selected');
@@ -501,29 +594,20 @@ const _trigerSendMsg = async (type) => {
             ...msgObj,
         };
         
-        if(getCookie('chat').toLowerCase() === 'group')
-            msgObj.toGID = user.id;
-        
         addNewMsgInCurrChat(msgObj);
-        console.log(msgObj);
         _sendMsg(msgObj)
             .then(res=>{
                 if( (res.status != 'success') || (res.responseText != 1)){
-                    throw customError('Something Went Wrong while sending the msg.',res.responseText);
-                        //delete the msg From chat
-                }else if(res.responseText == 1){
-                    if( (msgObj.toUnm == getCookie('unm'))){
-                        updateMsgStatus(msgObj.msgID,2)
-                            .then(res=>{
-                                if(res==1){
-                                    _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
-                                        .then(res=>msgObj.status = res);
-                                } 
-                            })
-                    }else{
-                        _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
-                            .then(res=>msgObj.status = res);
+                    try{
+                        handler['err_'+res.responseText]();
+                    }catch(e){
+                        handler['err_400']();
                     }
+                    throw new Error(res.responseText);
+
+                }else if(res.responseText == 1){
+                    _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
+                        .then(res=>msgObj.status = res);
                     
                     switch(type){
                         case 'text':
@@ -538,7 +622,7 @@ const _trigerSendMsg = async (type) => {
                 }
             });
     }catch(err){
-        console.warn(`[${err.code}] , Message : ${err.message}`);
+        console.warn(`Message : ${err.message}`);
     }
 }
 
@@ -582,6 +666,7 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     msg=document.createElement("div");
     msg.classList.add('msg');
+    msg.setAttribute('data-type',msgObj.type);
 
     // type == 'img' || type == 'doc' //
     if(msgObj.type != "text"){ 
@@ -638,7 +723,7 @@ const addNewMsgInCurrChat = (msgObj) => {
         
         case 'img':                
             let msgImg = new Image();
-            msgImg.classList.add("msgImg");
+            msgImg.classList.add("msgImg","no-select");
             msgImg.alt="Image Error";
             msgImg.src="/img/icons/loader.svg";
             msgImg.onerror=()=>msgImg.style.padding="5px";
@@ -714,7 +799,7 @@ const addNewMsgInCurrChat = (msgObj) => {
     }
 
     let optionBtn = document.createElement('div');
-    optionBtn.classList.add("optionBtn","ele");
+    optionBtn.classList.add("optionBtn","ele",'icon');
     optionBtn.name="optionBtn";
     optionBtn.title="Options";
         optionBtn.innerHTML=`
@@ -727,51 +812,26 @@ const addNewMsgInCurrChat = (msgObj) => {
             optionBtn.style.position="relative";
             optionBtn.style.alignSelf="start";
         }
-    msg.appendChild(optionBtn);
     
-    // optionContainer();
-    function optionContainer(){
-
-        let optionContainer = document.createElement('div');
-        optionContainer.id="option-container";
-        optionContainer.classList.add("option-container");
-        optionBtn.appendChild(optionContainer);
     
-            let optionIconURL = "/img/icons/chat/options/";
-            let deleteOption = new_option("delete");
-    
-            function new_option(optionName){
+    let msgOptionMenu = new OptionContainer();
+    optionBtn.appendChild(msgOptionMenu.optionContainer);
 
-                let option = document.createElement('div');
-                option.classList.add('option');
+    //options
+    let deleteOption = msgOptionMenu.new_option("delete");
+        if(whichTransmit == 'receive')
+            deleteOption.children[1].textContent= "Delete For Me";
+        let action={
+            req:"delete_this_msg",
+            msgID:msgObj.msgID,
+        }
+        deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to do this?",action,'red');
 
-                    let optionIcon= new Image();
-                    optionIcon.classList.add('option-icon');
-                    optionIcon.src= optionIconURL+optionName+".svg";
-                    option.appendChild(optionIcon);
-
-                    // let optionName= document.createElement('div');
-                    //coninue
-                
-                return option;
-            }
-            // <div id="option-container" class="option-container">
-            //     <div class="option">
-            //         <img class="option-icon" src="/img/icons/chat/options/delete.svg">
-                    
-            //         <b class="option-name">
-            //             Delete for me
-            //         </b>
-            //     </div>
-            //     <div class="option">
-            //         <img class="option-icon" src="/img/icons/chat/options/info.svg">
-                    
-            //         <b class="option-name">
-            //             Info
-            //         </b>
-            //     </div>
-            // </div>
-    }
+    let report= msgOptionMenu.new_option('report');
+    let info= msgOptionMenu.new_option("info");
+    //
+    optionBtn.addEventListener('click',()=>toggleOptionContainer(optionBtn));
+    msg.addEventListener('contextmenu',()=>toggleOptionContainer(optionBtn));
 
     let msgTime=document.createElement("div");
     msgTime.classList.add('msgTime');
@@ -786,40 +846,18 @@ const addNewMsgInCurrChat = (msgObj) => {
             msgStatus.appendChild(msgObj.statusIcon); 
 
             _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
-                .then(res=>{
-                    msgObj.status = res
-                    if((msgObj.toUnm == getCookie('unm')) && msgObj.status == "send"){
-                        updateMsgStatus(msgObj.msgID,2)
-                            .then(res=>{
-                                if(res == 1)
-                                    _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
-                                        .then(res=>msgObj.status = res);
-                            });
-                    }
-                });
-    }else{
-        _getMsgStatus([msgObj.msgID])
-            .then(res=>{
-                if(res != 0) {
-                    msgObj.status = res[0].status;
-                    if(msgObj.status == "send"){
-                        updateMsgStatus(msgObj.msgID,2)
-                            .then(res=>{
-                                if(res==1)
-                                    msgObj.status = 'read';
-                            });
-                    }
-                }
-            });
+                .then(res=> msgObj.status = res);
     }
 
     if(whichTransmit == 'receive'){
         msgContainer.appendChild(msg);
-        msgContainer.appendChild(msgTime);    
+        msgContainer.appendChild(optionBtn);
+        msgContainer.appendChild(msgTime); 
     }else{
         msgContainer.appendChild(msgTime);    
+        msgContainer.appendChild(optionBtn);    
         msgContainer.appendChild(msg);
-    }  
+    } 
 
     chatStruct.chatBody.appendChild(msgContainer);
     lastMsg = msgObj;

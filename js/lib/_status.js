@@ -38,7 +38,7 @@ class Status {
         }
     }
     
-    onlineStatusUpdate(){
+    async onlineStatusUpdate(){
         let data = {
             req:"onlineStatusUpdate",
         }
@@ -63,7 +63,7 @@ class Status {
             })
     }
 
-    checkChatListStatus(){
+    async checkChatListStatus(){
         let chatType= getCookie('chat').toLowerCase();
         if(!this.intervalID.checkChatListStatus)
             this.intervalID.checkChatListStatus = setInterval(()=>this.checkChatListStatus(),this.#requestTime);
@@ -71,10 +71,9 @@ class Status {
         let data={
             req:"checkChatListStatus",
         }
-
+    
         postReq(this.statusURL,JSON.stringify(data))
             .then(res=>{
-                // console.log(res.responseText);
                 if(res.status == 'success' && res.responseText != 0){
                     res.responseText.forEach(chatter => {
                         
@@ -85,7 +84,7 @@ class Status {
                         if(inboxUser){
                                 let lastChatDiv = inboxUser.querySelector('.last-chat');
 
-                            if(chatter.last_msg && lastChatDiv.title != chatter.last_msg){
+                            if((chatter.last_msg && lastChatDiv.title != chatter.last_msg) || chatter.last_msg == ''){
                                 lastChatDiv.textContent = lastChatDiv.title = chatter.last_msg;
                             }
 
@@ -117,8 +116,8 @@ class Status {
 
                             //  when the opposite Chatter is reading msg send by us.
                             if( ((chatType === 'personal' && chatter.online == true) && (getCookie('currOpenedChat') != getCookie('unm'))) 
-                                || chatType === 'group'){                            
-
+                                || chatType === 'group' &&  getCookie('currOpenedGID')){                            
+                                
                                 let msgIDs=[];
                                 chat.querySelectorAll(".msgStatusIcon[data-status='send']").forEach(msgStatusSendIcon=>{
                                     msgIDs.push(msgStatusSendIcon.closest(".msgContainer").id);
@@ -155,9 +154,12 @@ class Status {
 
                                         _getNewMsgs()
                                         .then(msgObjs=>{
-                                            console.log(msgObjs);
-                                            if( msgObjs )
+                                            if( msgObjs ){
                                                 msgObjs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
+                                                return 1;
+                                            }
+                                        }).then(res=>{
+                                            if(res) this.checkChatListStatus();
                                         })
                                 
                                 }
@@ -189,12 +191,6 @@ class Status {
                 req:"getMsgStatus",
                 msgIDs,
             };
-
-            if(getCookie('chat') === 'Group')
-                if(!user)
-                    throw new Error("Message status could not be loaded");
-                else
-                    data.toGID = user.id;
                         
             return new Promise( (resolve,reject) => {
                 postReq(userStatus.statusURL,JSON.stringify(data))
@@ -225,37 +221,4 @@ class Status {
         })
         
     }
-
-        /*
-            status values can be = 0, 1, 2
-            0:uploading
-            1:send
-            2:read
-        */
-        function updateMsgStatus(msgID,status){
-            if(typeof status != 'number' || msgID == null)
-                return;
-
-            let data={
-                req: 'updateMsgStatus',
-                msgID,
-                status,
-            }
-            if(getCookie('chat') == 'Group')    data.toGID = user.id;
-
-            return new Promise((resolve,reject)=>{
-                postReq(userStatus.statusURL, JSON.stringify(data))
-                    .then(res=>{
-                        if(res.status == 'success' && res.responseText == 1)
-                            resolve(res.responseText);
-                        else{
-                            customError(res.responseText.message,res.responseText.code);
-                            throw new Error(res.responseText.code);
-                        }
-                    })
-                    .catch(err=>{
-                        console.error(err);
-                    })
-            });
-        }
 //

@@ -4,7 +4,8 @@ if($data = json_decode( file_get_contents("php://input") , true)){
     session_start();
     if(isset($_SESSION['userID'])){
         include_once('../db/_conn.php');
-        include_once('../lib/_validation.php');
+        include_once('_fetch_data.php');
+        include_once('_validation.php');
         
         if($data['req'] == "addNoti"){
                 echo add_new_noti($data);
@@ -18,26 +19,30 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             echo deleteThisNoti($data['notiID']);
         }
     }
+}else{
+    header('Location: /');
 }
 
 function add_new_noti($data) {
     try{
         $newNotiID = gen_new_notification_id();
         $fromID = getDecryptedUserID();
+
         $unm = (isset($data['unm'])) ? $data['unm'] : "";
         $action = (isset($data['action'])) ? $data['action'] : "newMessage" ;
         $toID = (isset($data['toID'])) ? $data['toID'] : "";
 
         if($action == "addUserReq" && $toID == ""){
-            $fetchID = fetch_columns( 'users_account' , ["unm"] , [$unm] , array("userID") );
-            if( $fetchID->num_rows == 1 ){
-                $toID = $fetchID->fetch_column();
-                    if(is_user_is_alredy_added($fromID , $toID) == 1)
-                        return '409';
-                    if(is_noti($fromID,$toID,"addUserReq") != 0)
-                        return '403';
-                    else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)//sending to id as from and from id as to
-                        return '499';
+            $toID = _get_userID_by_UNM($unm);
+            
+            if( $toID && is_data_present('users_account',['userID'],[$toID])){
+
+                if(is_user_is_alredy_added($fromID , $toID) == 1)
+                    return '409';
+                if(is_noti($fromID,$toID,"addUserReq") != 0)
+                    return '403';
+                else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)//sending to id as from and from id as to
+                    return '499';
             }else{
                 throw new Exception("No user found!!");
             }
@@ -50,7 +55,7 @@ function add_new_noti($data) {
         return $res;
 
     }catch(Exception $e){
-        // print_r($e);
+        print_r($e);
         return 0;
     }
 }
@@ -98,19 +103,12 @@ function getNewNoti(){
         
         $i = 0;
         while($row = $res->fetch_assoc()){
-            $unmQuery = fetch_columns("users_account" , ["userID"] , [$row['fromID']] , array("unm"));
-                if( $unmQuery !== 0 ){
-                    if($unmQuery->num_rows == 1){
-                        $row['unm'] = $unmQuery->fetch_column();
-                        
-                        $rows[$i]['notiID'] = $row['notiID'];
-                        $rows[$i]['fromID'] = $row['fromID'];
-                        $rows[$i]['unm'] = $row['unm'];
-                        $rows[$i]['action'] = $row['action'];
-                        $i++;
-                    } else {
-                        throw new Exception();
-                    }
+            $row['unm'] = _fetch_unm($row['fromID']);
+                if( $row['unm'] !== 0 ){
+                    $rows[$i]['notiID'] = $row['notiID'];
+                    $rows[$i]['unm'] = $row['unm'];
+                    $rows[$i]['action'] = $row['action'];
+                    $i++;
                 }else{
                     throw new Exception();
                 }
@@ -131,36 +129,38 @@ function acceptChatterReq($data){
         $feFrmNoti = fetchThisNoti($notiID);
         if($feFrmNoti !== 0){
 
-            $fromID = $feFrmNoti['fromID'];
-            $toID = $feFrmNoti['toID']; 
-            
-            // delete old notification
-            $req = deleteThisNoti($notiID);
-            if($req){
-                // add user both side
-                $req = insertData('inbox' , ["fromID" , "toID"] , [$fromID, $toID] );
+            $fromID =   $feFrmNoti['fromID'];
+            $toID =     $feFrmNoti['toID']; 
+            $action=    $feFrmNoti['action'];
+            if($action === 'addUserReq'){
+                // delete old notification
+                $req = deleteThisNoti($notiID);
                 if($req){
-                    if($fromID != $toID){
-                        $req2 = insertData('inbox' , ["fromID" , "toID"] , [$toID, $fromID] );
+                    // add user both side
+                    $req = insertData('inbox' , ["fromID" , "toID"] , [$fromID, $toID] );
+                    if($req){
+                        if($fromID != $toID){
+                            $req2 = insertData('inbox' , ["fromID" , "toID"] , [$toID, $fromID] );
 
-                        if($req2 == 0){
-                            $del =  "DELETE FROM `inbox` WHERE `fromID` = ?";
-                            $stmt = $GLOBALS['conn']->prepare($del);
-                            $stmt->bind_param('s' , $fromID);
-                            $stmt->execute(); $stmt->close();
+                            if($req2 == 0){
+                                $del =  "DELETE FROM `inbox` WHERE `fromID` = ?";
+                                $stmt = $GLOBALS['conn']->prepare($del);
+                                $stmt->bind_param('s' , $fromID);
+                                $stmt->execute(); $stmt->close();
 
-                            throw new Exception();
+                                throw new Exception();
+                            }
                         }
+
+                        $notiData = array(
+                            "toID" => $fromID,
+                            "action" => "acceptedChatterReq",
+                        );
+                        add_new_noti($notiData);
+                        
+                        return $req;
+
                     }
-
-                    $notiData = array(
-                        "toID" => $fromID,
-                        "action" => "acceptedChatterReq",
-                    );
-                    add_new_noti($notiData);
-                    
-                    return $req;
-
                 }
             }
         }
@@ -169,7 +169,7 @@ function acceptChatterReq($data){
         throw new Exception();
 
     }catch(Exception $e){
-        print_r($e);
+        // print_r($e);
         return 0;
     }
     

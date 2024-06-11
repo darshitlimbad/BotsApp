@@ -44,7 +44,8 @@
     transition:all .5s cubic-bezier(0.4, 0.6, 0, 1.17);
     border-radius: 5px;
     font-family: var(--text-font);
-    font-size: 10px;
+    font-size: 14px;
+
 }
 
 #notification   {
@@ -65,6 +66,7 @@
     #notification,#alert{
         height: 30px;
         margin: 10px;
+        font-size: 10px;
 
     }
 }

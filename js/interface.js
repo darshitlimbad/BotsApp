@@ -3,6 +3,8 @@ var device;
 
 const tohomepage=()=>window.location.assign('/');
 document.addEventListener('DOMContentLoaded' , function () {
+    //context menu off
+        document.oncontextmenu=(e)=>e.preventDefault();
 
     // keyboard sortcuts (_srtc stands for sortcut)
         document.addEventListener('keydown' , _srtc);
@@ -44,6 +46,14 @@ document.addEventListener('DOMContentLoaded' , function () {
         document.querySelector('body.main').classList.add('mobile');
         device='mobile';
     }
+
+    //delete account and logout button events
+        const logOutbtn= document.querySelector("button[name='log-out']");
+        logOutbtn.onclick=()=>toggle_confirmation_pop_up('log_out');
+
+        const deleteAccount = document.querySelector("button[name='Delete-Account']");
+        deleteAccount.onclick=()=>toggle_confirmation_pop_up('DeleteAccount');
+    // 
 
     //functions to be called
     set_profile_dp();
@@ -119,7 +129,7 @@ function toggle_confirmation_pop_up(pop_up_name , title=null){
 
     if(confirmation_pop_up.style.display != 'block'){
         if(pop_up_name == "log_out")  _confirmation_pop_up('Log out', 'Are you sure.. You want to Log out?' , 'LogOut' , 'red');
-        else if(pop_up_name == "deleteAccount") _confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAcount' , 'red');
+        else if(pop_up_name == "DeleteAccount") _confirmation_pop_up('Delete Account', 'Are you sure ,You want to delete your account?' , 'DeleteAccount' , 'red');
         else if(pop_up_name == "add_new_chatter") _confirmation_pop_up( title , 'Are you sure , You want to send Chatter request to this User?' , 'addUserReqConfirm' );
     }
 }
@@ -263,7 +273,7 @@ const defaultDp = (tag) => {
 
 // submit user data on enter press
 const _submit_data = (event) => {
-    if(event.key === 'Enter') event.target.parentElement.querySelector('.edit-icon').click();
+    if(event.key === 'Enter' && !event.shiftKey ) event.target.parentElement.querySelector('.edit-icon').click();
 }
 
 // cookies store
@@ -340,6 +350,7 @@ function showInbox(){
     chat.style.display='none';
     inbox.style.display='block';
 }
+
 function hideInbox(){
     const inbox=document.querySelector('.chat-box .inbox');
 

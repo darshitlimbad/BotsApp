@@ -39,16 +39,21 @@ const _getAllMsgs = async () => {
     var data = {
         req: "getAllMsgs",
     };
-    if(getCookie('chat').toLowerCase() === 'group') data.toGID = user.id;
     
     try{
         const res = await postReq(url , JSON.stringify(data));
         if(res.status == "success" && !res.responseText.error)
             return res.responseText;
-        else 
-            throw new Error(res.responseText);
-    }catch(err){
-        console.error(err);
+        else{
+            throw new Error(res.responseText.code);
+        }
+    }catch(code){
+        try{
+            handler['err_'+code]();
+        }catch(e){
+            handler.err_400();
+        }
+        console.error(code);
         return 0;
     }
 }
@@ -58,16 +63,21 @@ const _getNewMsgs = async () => {
     var data = {
         req: "getNewMsgs",
     };
-    if(getCookie('chat').toLowerCase() === 'group') data.toGID = user.id;
 
     try{
         const res = await postReq(url , JSON.stringify(data));
         if(res.status == "success" && !res.responseText.error)
             return res.responseText;
-        else 
-            customError(res.responseText.message,res.responseText.code);
-    }catch(err){
-        console.warn(err);
+        else{
+            throw new Error(res.responseText.code);
+        }
+    }catch(code){
+        try{
+            handler['err_'+code]();
+        }catch(e){
+            handler.err_400();
+        }
+        console.error(code);
         return 0;
     }
 }
@@ -79,8 +89,6 @@ const _getDocBolb = (msgID)=> {
         req : "getDocBlob",
         msgID,
     };
-
-    if(getCookie('chat') == 'Group')    data.toGID = user.id;
 
     return new Promise((resolve,reject)=>{
         postReq(url, JSON.stringify(data))
@@ -101,6 +109,7 @@ const _sendMsg = (data) =>{
     
     var url="/functionality/lib/_chat.php";
     data.req="sendMsg";
+
     try{
         return new Promise((resolve,reject)=>{
             if(data.type === "text" || data.type === 'img')
@@ -147,7 +156,6 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
         req : "getDocBlob",
         msgID,
     };
-    if(getCookie('chat') == 'Group')  data.toGID = user.id;
 
     postReq(url, JSON.stringify(data) , { 
         onDownloadProgress:(progressEvent) =>{
@@ -197,4 +205,48 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                 handler.err_400();
             }
         });
+}
+
+const _deleteMsg=(msgID)=>{
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"delete_msg",
+        msgID,
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            if(res.status === 'success' && res.responseText === 1){
+                chat.querySelector(`#${msgID}`)?.remove();
+            }else if(res.responseText.error){
+                console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
+                handler['err_'+res.responseText.code]();
+            }
+        }).catch(err=>{
+            handler.err_400();
+        })
+}
+
+function getUserProfile(unm){
+    let url = '/functionality/lib/_fetch_data.php';
+    let data={
+        req:'getUserProfile',
+        unm
+    }
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && !res.responseText.error){
+                    resolve(res.responseText);
+                }else if(res.responseText.error){
+                    console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
+                    handler['err_'+res.responseText.code]();
+                }else{
+                    throw new Error();
+                }
+            }).catch(err=>{
+                handler.err_400();
+            })
+    });
 }

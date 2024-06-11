@@ -5,9 +5,9 @@ document.addEventListener('DOMContentLoaded' , function () {
             
             setTimeout(() => {
                 // ERROR
-                if( URL_params.get('ERROR') == '400') {
-                    handler.err_400();
-                }
+                if(URL_params.get('ERROR'))
+                    handler['err_'+URL_params.get('ERROR')]();
+
                 if(URL_params.get('ACTION') == 'sign-in')    {
                     buttons[1].click();
                 }
@@ -19,9 +19,7 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '409') {
                     new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
                 }
-                if(URL_params.get('ERROR') == '405') {
-                    handler.err_405();
-                }
+                
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
                 }
@@ -41,6 +39,7 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('SUCCESS') == '203')    {
                     new_notification(" Your Accout has Successfully Deleted.");
                 }
+
             },10);
 });
 
@@ -66,13 +65,26 @@ handler.err_401 = () => {
 handler.err_405 = () => {
     new_Alert( "Name can't be Empty");
 }
-handler.err_415 = () => {
-    new_Alert(" This Media type is not Allowed. ");
+handler.err_410 = () => {
+    new_Alert( " Unauthorised Access Denied !!! ");
+}
+handler.err_411 = ()=>{
+    new_Alert(" No Data Found !! ")
+}
+handler.err_412 = ()=>{
+    new_Alert(" Data Already Exists !! ")
 }
 handler.err_413 = () => {
     new_Alert(" File Size is larger then allowed. ");
 }
+handler.err_414 = ()=>{
+    new_Alert(" Username is Invalid! ")
+}
+handler.err_415 = () => {
+    new_Alert(" This Media type is not Allowed. ");
+}
 handler.err_500 = ()=>{
     new_Alert(" Internal Server Error ")
 }
+
 

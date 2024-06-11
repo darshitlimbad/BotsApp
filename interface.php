@@ -162,12 +162,12 @@
                 <!-- log-out -->
                 <h4 class="danger">Log Out</h4>
                         <p>Log out from your account</p>
-                <button class="danger-button button" onclick="toggle_confirmation_pop_up('log_out')">Log Out</button>
+                <button class="danger-button button " name="log-out">Log Out</button>
 
                 <!-- Delete Account -->
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
-                <button class="danger-button button" onclick="toggle_confirmation_pop_up('deleteAccount')">Delete Account</button>
+                <button class="danger-button button" name="Delete-Account">Delete Account</button>
             </div>
 
             <!-- Chat-body -->
@@ -239,7 +239,7 @@
                 
                 <p class="margin-dead">About:</p>
                 <div class="grid edit_box" name="edit-about" style="margin:30px 0">
-                    <textarea name="about" class="text" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
+                    <textarea name="about" class="text" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" data-oldValue='<?= fetch_data_from_users_details($userID , 'about');?>' readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit" /> 
                 </div>
 

@@ -109,16 +109,17 @@ const _clearSearchedWords = ()=> {
     var SfSpan = searchTxt.querySelectorAll('.search_found_span span');
     if(searchedMsgList.rear != -1){
         try{
-            var msgToRmHl = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
+            var msgDataToRmHl = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
 
             var rmContainerClass = chatBody.querySelector("div.selectedWordContainer");
 
                 if(rmContainerClass)
                     rmContainerClass.classList.remove('selectedWordContainer');
             
-            msgToRmHl.forEach(msg => {
-                if(msg.children[0] && msg.children[0].classList.contains('highlight'))
-                    msg.removeChild(msg.children[0]);
+            msgDataToRmHl.forEach(msgData => {
+                if(msgData.children[0] && msgData.children[0].classList.contains('highlight')){
+                    msgData.textContent=msgData.textContent;
+                }
             })
 
         }catch(err){

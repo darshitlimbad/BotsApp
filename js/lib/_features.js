@@ -10,13 +10,12 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp =(unm,GID=null) => {
+    const get_dp =(unm) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
-            var data = {
-                req : "get_dp"  
+            let data = {
+                req : "get_dp",
+                unm,
             };
-            if(unm && !GID)     data.unm=unm;
-            else if(!unm && GID)    data.GID=GID;
 
             return new Promise((resolve,reject) =>{
                 postReq(url_for_get_dp , JSON.stringify(data))
@@ -52,8 +51,7 @@
         
         postReq(url , data)
             .then(res=>{
-                if(res.status == "success")
-                {
+                if(res.status == "success"){
                     switch(res.responseText){
                         case 1:
                             new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
@@ -84,7 +82,7 @@
     const getNewNoti = ()=>{
         var URL = "/functionality/lib/_notification.php";
 
-        data=JSON.stringify({
+        let data=JSON.stringify({
             req:"getNewNoti",
         })
 
@@ -192,39 +190,31 @@
     // edit data by user
 const _edit_user_data = (ele) => {
     var field=ele.name;
-    var value=ele.value;  
-    var edit_table = null;
-    var req;
-    switch(field){
-        case 'user-name': 
-            edit_table = "users";
-            break;
-        default : 
-            edit_table = "users_details";
-    }
+    var value=ele.value;
     
     if(value == "" && field == "user-name"){
         ele.value = ele.getAttribute("value");
         handler.err_405();
         return;
-    }
+    }else if(ele.name == 'about')
+        value = ele.textContent;
     
-    data = JSON.stringify({
+    let data = {
         req:field,
-        table: edit_table,
         edit_column: field,
         value,
-        });
+        };
+
 
     var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
-
-    postReq(url , data) 
+    postReq(url , JSON.stringify(data)) 
         .then(res => {
+            console.log(res.responseText);
             if(res.status == "success"){
                 if ( res.responseText == 1 ){
                     new_notification('data changed succesfully');
                 }else{
-                    ele.value = ele.getAttribute("value");
+                    ele.value = (ele.name == 'about')? ele.getAttribute('data-oldValue'): ele.getAttribute("value");
                     new_Alert("Something went Wrong :( , Please try again");
                 }
             }
@@ -267,7 +257,6 @@ const _togle_user_data = (ele) => {
 };
 
 const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
-
     var confirmation_pop_up = document.querySelector('#confirmation_pop_up');
     
     var title_ele = confirmation_pop_up.querySelector('.title');
@@ -278,12 +267,18 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
     message_ele.textContent = message;
 
     var yes_btn = confirmation_pop_up.querySelector('.pop_up_yes_btn');
+
     if(action == "DeleteAccount"){
-        yes_btn.setAttribute('onclick' , `window.location.assign('/functionality/_delete_account.php?key_pass=khulJaSimSim')` );
+        yes_btn.onclick=()=> window.location.assign('/functionality/_delete_account.php?key_pass=khulJaSimSim');
     }else if(action == "LogOut"){
-        yes_btn.setAttribute('onclick' , `window.location.assign('/functionality/_log_out.php?key_pass=khulJaSimSim')` );
+        yes_btn.onclick=()=> window.location.assign('/functionality/_log_out.php?key_pass=khulJaSimSim');
     }else if(action == "addUserReqConfirm"){
-        yes_btn.setAttribute('onclick' , `_sendAddInChatReq('${title}')`);
+        yes_btn.onclick=()=> _sendAddInChatReq(`${title}`);
+    }else if(action.req == "delete_this_msg"){
+        yes_btn.onclick=()=> {
+            _deleteMsg(action.msgID);
+            _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
+        }
     }
 
     if(theme == 'blue'){
@@ -713,3 +708,19 @@ function fullScreen(node){
     else
         node.requestFullscreen();
 }
+
+    function toggleOptionContainer(optionBtn) {    
+        if(!optionBtn.getAttribute('data-option-show')){ 
+            optionBtn.setAttribute('data-option-show','true');
+            if(document.onclick)
+                document.onclick();
+            setTimeout(()=>document.onclick=()=>hideOptionBtn(optionBtn),200);
+        }else{
+            hideOptionBtn(optionBtn);
+        }
+    }
+            
+    const hideOptionBtn=(optionBtn)=>{
+        optionBtn.removeAttribute('data-option-show');
+        document.onclick=null;
+    }

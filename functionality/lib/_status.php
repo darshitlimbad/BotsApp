@@ -13,11 +13,6 @@
             case 'getMsgStatus':
                 echo getMsgStatus($data);
                 break;
-            case 'updateMsgStatus':
-                echo updateMsgStatus($data);
-                break;
-            default:
-                echo json_encode(['code'=>400,'message'=>"BAD REQUEST"]);
         }
     }
 
@@ -135,21 +130,19 @@
                 }else if($chatType == 'group'){
                     $chatterList[$i]['GID']= base64_encode($toID);
 
-                    $newMsgQuery = "SELECT count(*) 
+                    $newMsgQuery = "SELECT t2.seenByIDs 
                                     FROM `botsapp`.messages as t1 
-                                    RIGHT JOIN `botsapp_statusdb`.messages as t2 
+                                    LEFT JOIN `botsapp_statusdb`.messages as t2 
                                     on t1.msgID = t2.msgID 
-                                    WHERE NOT t1.fromID = '$userID' 
-                                    AND t1.toID = '$toID' 
+                                    WHERE t1.toID = '$toID' 
                                     AND t2.status = 'send' 
+                                    AND NOT t1.fromID = '$userID' 
                                     ORDER BY t2.msgID";
 
                 }else{
                     throw new Exception("Something went wrong.",400);
                 }
                 
-                
-
                 $newMsgStmt = $GLOBALS['status']->prepare($newMsgQuery);
                 $fire = $newMsgStmt->execute();
                 if(!$fire)
@@ -159,7 +152,25 @@
                 $newMsgStmt ->close();
 
                 $chatterList[$i]['last_msg'] = _fetchLastMsg($userID,$toID,$chatType);
-                $chatterList[$i]['total_new_messages'] = ($newMsgObj->num_rows != 0) ? $newMsgObj->fetch_column() : 0;
+                if($chatType === 'personal')
+                    $chatterList[$i]['total_new_messages'] = ($newMsgObj->num_rows != 0) ? $newMsgObj->fetch_column() : 0;
+                else {
+                    $count=0;
+                    if($newMsgObj->num_rows != 0){
+                        for($j=1;$j<=$newMsgObj->num_rows;$j++){
+                            $seenByIDs= $newMsgObj->fetch_column();
+                            if($seenByIDs){
+                                $seenByIDs=unserialize($seenByIDs);
+                                if(in_array($userID,$seenByIDs))
+                                    continue;
+                                
+                            }
+                            $count++;
+                        }
+                    }
+                    
+                    $chatterList[$i]['total_new_messages']= $count;
+                }
                 $i++;
             }
 
@@ -191,8 +202,8 @@
             if($chatType === 'personal'){
                 $oppoUserID = _get_userID_by_UNM($_COOKIE['currOpenedChat']);
             }else if($chatType === 'group'){
-                if(isset($data['toGID']) && is_data_present('groups','groupID', base64_decode($data['toGID']),'groupID'))
-                    $oppoUserID = base64_decode($data['toGID']);
+                if(isset($_COOKIE['currOpenedGID']) && is_data_present('groups',['groupID'], [base64_decode($_COOKIE['currOpenedGID'])],'groupID'))
+                    $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
                 else
                     throw new Exception("GID not detected",0);
             }else{
@@ -256,35 +267,22 @@
         }
     }
 
-    function updateMsgStatus($data) {
+    function updateMsgStatus($chatType,$msgID,$fromID,$toID,$seenID) {
         try{
-            $msgID = $data['msgID'];
-            $chatType=strtolower($_COOKIE['chat']);
-            
-            if($chatType === 'group' && !is_data_present('groups','groupID', base64_decode($data['toGID']),'groupID'))
-                throw new Exception("GID is not Valid, please do not touch user IDs.",0);
+            if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
+                throw new Error('No data found',411);
 
-            switch($data['status']){
-                case 0: $status = 'uploading'; break;
-                case 1: $status = 'send'; break;
-                case 2: $status = 'read'; break;
-                default: throw new Exception("status code is wrong",0);
-            }
+            $totMem= ($chatType == 'group') ? fetch_total_group_member_count($toID) : 1;
 
-            session_start();
-            $userID = getDecryptedUserID();
-
-            $msgUserID = ($chatType === 'personal') ? $userID : base64_decode($data['toGID']);
-
-            $sql = "SELECT ms.status, ms.seenByIDs
+            $sql =" SELECT ms.status, ms.seenByIDs
                     FROM `botsapp`.messages as m
                     JOIN `botsapp_statusdb`.messages as ms
                     ON m.msgID = ms.msgID
                     WHERE ms.msgID = ?
-                    AND (m.fromID = ? OR m.toID = ?);";
+                    AND m.fromID = ? AND m.toID = ?;";
 
             $stmt = $GLOBALS['conn']->prepare($sql);
-            $stmt->bind_param('sss',$msgID,$msgUserID,$msgUserID);
+            $stmt->bind_param('sss',$msgID,$fromID,$toID);
             $fire = $stmt->execute();
             if(!$fire)
                 throw new Exception("Something went wrong while fetching message status",400);
@@ -293,9 +291,16 @@
             $stmt->close();
             
             
-            if($res->num_rows == 0)
-                $result = insertData('messages', ['msgID','status','seenByIDs'],[$msgID,$status,$userID],'status');
-            else if($res->num_rows == 1){
+            if($res->num_rows == 0){
+                if($chatType == 'personal')
+                    $status = 'read';
+                else{
+                    $status = ($totMem > 2) ? 'send' : 'read';
+                }
+
+                $result = insertData('messages', ['msgID','status','seenByIDs'],[$msgID,$status,serialize([$seenID])],'status');
+
+            }else if($res->num_rows == 1){
                 $row = $res->fetch_assoc();
 
                 $updateCol = [];
@@ -306,43 +311,22 @@
                     if($chatType == 'personal'){
                     
                         $updateCol= ['status','seenByIDs'];
-                        $updateVal= ['read',serialize([$userID])];
+                        $updateVal= ['read',serialize([$seenID])];
                     
                     }else if($chatType == 'group'){
-                    
-                        $sql = "SELECT count(*) 
-                                FROM inbox 
-                                WHERE toID = (SELECT toID FROM messages WHERE msgID = ?);";
-
-                        $stmt = $GLOBALS['conn']->prepare($sql);
-                        $stmt->bind_param('s',$msgID);
-                        $fire = $stmt->execute();
-
-                        if(!$fire)
-                            throw new Exception("Sql for fetching Data of Group Member has occured error.",0);
-
-                        $res = $stmt->get_result();
-                        $stmt->close();
-
-                        if($res->num_rows != 1)
-                            throw new Exception("Something Went Wrong.",400);
 
                         $seenByIDs = ($row['seenByIDs'] != null) ? unserialize($row['seenByIDs']) : [] ;
-                        $memCount = $res->fetch_column();//it will fetch memberes count from groups
-   
-                            if($memCount == 0){
-                                //do delte operation
-                            }
 
                         $updateCol=[];
                         $updateVal=[];
-                        
-                        if(!in_array($userID,$seenByIDs)){
+
+                        if(!in_array($seenID,$seenByIDs)){
                             $updateCol[]='seenByIDs';
-                            $updateVal[]= serialize($seenByIDs[]=$userID);
+                            $seenByIDs[]=$seenID;
+                            $updateVal[]= serialize($seenByIDs);
                         }
                         //-1 for the user who send the messages
-                        if(count($seenByIDs) == $memCount-1){
+                        if(count($seenByIDs) == $totMem-1){
                             $updateCol[]= 'status';
                             $updateVal[]= 'read';
                         }

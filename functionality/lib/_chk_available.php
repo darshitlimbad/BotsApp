@@ -11,9 +11,7 @@
             $point_val = $_GET['EMAIL'];
         }
 
-        // if there will be data the is_data_present will return 1 
-        echo (is_data_present('users' , $point , $point_val ) == 0);
-}
-
-
+        // if there will be data the is_data_present will return 1 so 1 == 0 : false
+        echo (is_data_present('users' , [$point] ,[$point_val] ) == 0);
+    }
 ?>

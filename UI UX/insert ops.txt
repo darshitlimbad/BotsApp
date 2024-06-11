@@ -3,7 +3,7 @@ main insert ops:
         line number 334 in this condition : if($memCount == 0)
 
 side insert ops:
-    1. add option menu for messages.
+    //1. add option menu for messages. --done 50%
 
     2. sortout new messages function in fitures.js.make it more js friendly.
 
@@ -11,6 +11,7 @@ side insert ops:
 
     4. status update even if the user made it hide
 
+    5. User about section edit glitch at backend side res return 1 but no changer are happening
     
 
 next session ops:
@@ -18,7 +19,7 @@ next session ops:
         the problem is in the updateCol and updateVal              
         add full screen option in chat section so user can chat in full screen. -- done 
 
-    2. make it mobile user friendly
+    //2. make it mobile user friendly --done
         
     //3. add user unm and their dp in chat  -- done
 

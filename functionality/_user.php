@@ -3,13 +3,12 @@ include_once('db/_conn.php');
 include_once('lib/_insert_data.php');
 include_once('lib/_validation.php');
 try{
-    if( (isset($_POST['submit']))&& (isset($_GET['action'])) )
+    if( (isset($_POST['submit'])) && (isset($_GET['action'])) )
     {
         $action = $_GET['action'];
         if($action == "sign-in")
         {
             // user uploaded values
-            $userID = gen_new_id("user"); 
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
@@ -19,13 +18,17 @@ try{
 
             $avatar = $_FILES['avatar'];
 
-            // validate user here also
-            if(is_data_present("users" , "unm" , $unm , 'unm') || 
-                is_data_present("users" , "email" , $email , 'email') )
-                throw new Exception(400);
-
-            $user = createUser(["userID" , "surname" , "name" , "unm" , "email" , "pass" , "pass_key"] ,
-                    [$userID , $surname , $name , $unm , $email , $hashed_pass , $pass_key] , $avatar);
+            // validation
+            if(!$surname || !$name || !$unm || !$email || !$hashed_pass || !$pass_key )
+                throw new Exception('',400);
+            if(strpos($unm,'@'))
+                throw new Exception("Username is Invalid!!",414);
+            if(is_data_present("users" , ["unm"] , [$unm] , 'unm') || 
+                is_data_present("users" , ["email"] , [$email] , 'email') )
+                throw new Exception("Username or Email is already exsits",412);
+        
+            $user = createUser(["surname" , "name" , "unm" , "email" , "pass" , "pass_key"] ,
+                    [ $surname , $name , $unm , $email , $hashed_pass , $pass_key ] , $avatar);
                 
             if($user == 1)
                 header('location: /user/?SUCCESS=201&USER='.$unm); 
@@ -58,9 +61,9 @@ try{
                     $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
                     $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
                         
-                    $_SESSION['userID'] = base64_encode($encryptedUserID);
-                    $_SESSION['key'] = base64_encode($user_key);
-                    $_SESSION['nonce'] = base64_encode($user_nonce);
+                    $_SESSION['userID'] =   base64_encode($encryptedUserID);
+                    $_SESSION['key'] =      base64_encode($user_key);
+                    $_SESSION['nonce'] =    base64_encode($user_nonce);
 
                     if($rememberMe == 'on' ) {
 
@@ -79,7 +82,6 @@ try{
 
                             request.onupgradeneeded = (event) => {
                                 var db = event.target.result;
-
                                 var objectStore = db.createObjectStore("session" , { keyPath: "id"});
 
                                 objectStore.createIndex("id" , "id" , { unique: true });
@@ -121,7 +123,12 @@ try{
                 throw new Exception( "Username Conflicts ", 409);
             }
             
+        }else{
+            header('Location: /');
         }
+
+    }else{
+        header('location: /');
     }
 } catch (Exception $error) {
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));

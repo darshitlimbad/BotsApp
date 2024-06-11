@@ -5,19 +5,22 @@
 function createUser($columns , $values , $avatar ) {
     try{
         $fleg = 0;
-        $userID=NULL;$unm=NULL;
+
+        $userID = gen_new_id("user"); 
+        $unm=NULL;
+
+        $columns[]='userID';
+        $values[]=$userID;
+        
         $main_table = "users";
+        
         $res1 = insertData($main_table, $columns , $values);
         if($res1 == 1) {
 
             for($i = 0 ; $i<count($columns) ; $i++) {
-                if(trim($columns[$i]) == "userID"){
-                    $userID = trim($values[$i]);
-                }
                 if(trim($columns[$i]) == "unm"){
                     $unm = trim($values[$i]);
                 }
-                
             }
 
             $res2 = insertData('users_account' , ["userID" , "unm"] , [$userID , $unm]);
@@ -47,7 +50,7 @@ function createUser($columns , $values , $avatar ) {
         } 
 
     if($fleg == 1) {
-            deleteData($main_table,$userID);
+            // deleteData($main_table,$userID);
             throw new Exception( "something went wrong", 400);
     }
     
@@ -68,7 +71,7 @@ function uploadImg($userID , $imgObj ){
 
         $img_data = file_get_contents($imgObj['tmp_name']);
 
-        if(is_data_present($table , 'ID' , $userID , "imgData")){
+        if(is_data_present($table , ['ID'] , [$userID] , "imgData")){
             $query = "UPDATE `$table` SET `type` = ? , `imgData` = ?  WHERE `ID` = ? ";
             $stmt = $GLOBALS['conn']->prepare($query);
             $stmt->bind_param('sss' , $type , $img_data ,  $userID);

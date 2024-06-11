@@ -54,7 +54,6 @@ if(!isset($_SESSION['userID'])) {
                                 if(res.status === 'success'){
                                     window.location.reload();
                                 }else{
-                                    new_Alert(`[${res.code}] : ${res.message}`);
                                     console.warn(`[${res.code}] :` , `${res.message}`);
                                     db.close();
                                     indexedDB.deleteDatabase('Botsapp');

@@ -3,13 +3,17 @@
         if(isset($data['req'])){
             include_once('../db/_conn.php');
             include_once('./_validation.php');
+
             if($data['req'] == "get_dp") {
                 if(isset($data['unm']))
                     echo get_dp( null,$data['unm']);    
-                else if(isset($data['GID']))
-                    echo get_dp( null,null,$data['GID']);
+                else if(strtolower($_COOKIE['chat']) =='group')
+                    echo get_dp( null,null);
             } 
-            if($data['req'] == "get_unm")   echo search_user($data['from'] , $data['value']);
+            
+            if($data['req'] == "get_unm")   
+                    echo search_user($data['from'] , $data['value']);
+            
             if($data['req'] == "getDocBlob") { 
                     $res = getDocBlob($data);
                     $size = strlen($res);
@@ -17,11 +21,13 @@
                     header('Content-Length:'.$size);
                     echo $res;
                 }
+            if($data['req'] == "getUserProfile")   
+                echo getUserProfile($data['unm']);
 
         }
     }
 
-    function _get_userID_by_UNM($unm){
+    function _get_userID_by_UNM(string $unm){
         $fetchUID = fetch_columns('users_account', ["unm"], [$unm], array("userID"));
         return ($fetchUID->num_rows != 0) ? $fetchUID->fetch_column() : 0 ;
     }
@@ -67,20 +73,25 @@
         }
     }
 
-    function get_dp($userID,$unm=null,$GID=null) {
-        if($userID)
-            $ID = $userID;
-        else if(!$userID && $unm)
-            $ID = _get_userID_by_UNM($unm);
-        elseif($GID)
-            $ID = base64_decode($GID);
-        else
+    function get_dp($userID,$unm=null) {
+        if($userID || $unm){
+            if($userID)
+                $ID = $userID;
+            else
+                $ID = _get_userID_by_UNM($unm);
+
+            $fetch_img = fetch_columns( 'avatar' , ["ID"] , [$ID] , array("type" , "imgData"));
+            
+        }elseif(isset($_COOKIE['currOpenedGID'])){
+            $ID = base64_decode($_COOKIE['currOpenedGID']);
+
+            $fetch_img = 0;
+        }else
             return 0;
 
         
-        $fetch_img = fetch_columns( 'avatar' , ["ID"] , [$ID] , array("type" , "imgData"));
 
-        if($fetch_img->num_rows == 1){
+        if($fetch_img && $fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
             $type = $img['type'];
             $data = base64_encode($img['imgData']);
@@ -95,9 +106,10 @@
         }  
     }
 
-    function get_user_full_name($unm){
+    function get_user_full_name($unm,$userID=null){
         try{
-            $userID = _get_userID_by_UNM($unm);
+            if(!$userID)
+                $userID = _get_userID_by_UNM($unm);
 
             $fetch_name = fetch_columns('users' , ['userID'] , [$userID] , array('surname' , 'name'));
 
@@ -184,16 +196,19 @@
             session_start();
 
             $chatType = strtolower($_COOKIE['chat']);
+            $userID = getDecryptedUserID();
             $table = "messages";
             
             //fetching document data from the column doc as data
-            if(isset($obj['toGID']) && $chatType == 'group'){
-
-                $result = fetch_columns($table, ['msgID', 'toID'], [$msgID, base64_decode($obj['toGID'])] ,array('mime','doc as data'));
+            if(isset($_COOKIE['currOpenedGID']) &&$chatType == 'group'){
+                $groupID= base64_decode($_COOKIE['currOpenedGID']);
+                if(!is_member_of_group($userID,$groupID))
+                    throw new Exception("Unauthorised !!",410);
+                
+                $result = fetch_columns($table, ['msgID', 'toID'], [$msgID, $groupID] ,array('mime','doc as data'));
             
             }else if($chatType == 'personal'){
             
-                $userID = getDecryptedUserID();
                 $oppoUserID = _get_userID_by_UNM($_COOKIE['currOpenedChat']);
 
                 if(!$userID || !$oppoUserID)
@@ -239,21 +254,24 @@
     function _fetchLastMsg($userID,$oppoUserID,$chatType='personal'){
         try{
             if($chatType == 'personal'){
-                $sql =" SELECT msg
-                        FROM messages
-                        WHERE (fromID = '$userID' AND toID = '$oppoUserID')
-                        OR (fromID = '$oppoUserID' AND toID = '$userID')
-                        ORDER BY msgID
-                        DESC
-                        limit 1";
+                $sql =" SELECT m.msg
+                        FROM messages as m
+                        RIGHT JOIN `botsapp_statusdb`.`messages` as ms
+                        ON m.msgID = ms.msgID
+                        WHERE ( m.`fromID` = '$userID' AND m.`toID` = '$oppoUserID') 
+                        OR (m.fromID = '$oppoUserID' AND m.toID = '$userID' AND ms.hide = 0)
+                        ORDER BY m.time
+                        DESC limit 1";
             }else if($chatType == 'group'){
                 //here opposite user id will be a group ID.
-                $sql =" SELECT msg
-                        FROM messages
-                        WHERE toID = '$oppoUserID'
-                        ORDER BY msgID
-                        DESC
-                        limit 1";
+                $sql =" SELECT m.msg
+                        FROM messages as m
+                        RIGHT JOIN `botsapp_statusdb`.`messages` as ms
+                        ON m.msgID = ms.msgID
+                        WHERE m.toID = '$oppoUserID'
+                        AND (ms.hide = 0 OR ms.hide_by IS NULL OR LOCATE('$userID',ms.hide_by) = 0)
+                        ORDER BY m.time
+                        DESC limit 1";
             }else 
                 return '';
 
@@ -271,6 +289,38 @@
             return ($result->num_rows == 1) ? $last_msg : '' ;
         }catch(Exception $e){
             return '';
+        }
+    }
+
+    function getUserProfile($unm){
+        try{
+            session_start();
+            $userID=getDecryptedUserID();
+            $reqUserID= _get_userID_by_UNM($unm);
+
+            if(!$userID || !is_chat_exist($userID,$reqUserID) )
+                throw new Exception("No data found.",411);
+            session_abort();
+
+            $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about",'can_see_online_status'));
+            if(!$sqlObj)
+                throw new Exception('',400);
+
+            $data = $sqlObj->fetch_assoc();
+            $data['fullName']= get_user_full_name('',$reqUserID);
+            $data['email']= _fetch_email($reqUserID);
+
+
+
+            return json_encode($data);
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
         }
     }
 ?>

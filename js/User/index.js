@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded' , function () {
     buttons = document.querySelectorAll('.button-div input');
     // 
 
+    form.onsubmit=()=>{return check_all_fields()};
     // chnage button toggle //log-in ,sign-in toggle
     document.querySelector('input[name="change"]').addEventListener( 'click' , function (){
+        form.reset();
 
         let form_name = (form.attributes.name.value == 'sign-in') ? 'log-in' : 'sign-in' ;
         var toggle_field = document.querySelectorAll(".toggle_field");
@@ -27,23 +29,22 @@ document.addEventListener('DOMContentLoaded' , function () {
             // hide sign-in fields
                 toggle_field.forEach(ele => { hide(ele) });
             
-            // remove  validation attribute
-                var elements = [user,email,pass];
-                var spans = [document.querySelector('#user_span'), document.querySelector('#e-mail_span'), document.querySelector('#pass_rules')];
+            // remove  validation attributes
+                var spans = [document.querySelector('#avatar_span'),
+                            document.querySelector('#user_span'), 
+                            document.querySelector('#e-mail_span'), 
+                            document.querySelector('#pass_rules')];
                 
-                elements.forEach(ele => {
-                    ele.removeAttribute('onkeyup');
-                });
-                spans.forEach(span => {
-                    span.style.display = 'none' ; 
-                })
-            
-            // rememberMe_div showing
-            show(document.querySelector('.rememberMe_div'));
+                avatar.onchange=()=>null;
+                user.onkeyup=()=>null;
+                email.onkeyup=()=>null;
+                pass.onkeyup=()=>null;
+                con_pass.onkeyup=()=>null;
 
-            // enable submit button
-                _submit_btn_enable();
+                spans.forEach(span => span.style.display = 'none' );
             
+            show(document.querySelector('.rememberMe_div'));
+            _submit_btn_enable();
 
         }  else if(form_name == 'sign-in'){  
 
@@ -53,15 +54,17 @@ document.addEventListener('DOMContentLoaded' , function () {
             // show sign-in fields
             toggle_field.forEach(ele => {show(ele)});
 
-            // set user validation attribute
-            user.setAttribute('onkeyup' , 'is_unm_available()');
+            // set validation attributes
+            avatar.style.color="";
+            avatar.onchange=()=>avatar_validation();
+            user.onkeyup=()=>is_unm_available();
+            email.onkeyup=()=>email_validation();
+            pass.onkeyup=()=>pass_validation();
+            con_pass.onkeyup=()=>con_pass_validation();
 
-            // rememberMe_div hiding
             hide(document.querySelector('.rememberMe_div'));
 
-            // set password validation attribute
-            pass.setAttribute('onkeyup' , 'pass_validation()');
-
+            document.querySelector('.box').scroll(0,0);
         }   
 
         //notification 
@@ -72,7 +75,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 
         // content chnage
             // hading h1
-            document.querySelector('.heading > h1').innerHTML = form_name;
+            document.querySelector('.heading > h1').textContent = form_name;
             // buttons
             buttons[0].value = form_name.replace('-' , ' ');
             buttons[1].value = (form_name == 'sign-in') ? 'log in' : 'Register';
@@ -86,8 +89,8 @@ document.addEventListener('DOMContentLoaded' , function () {
         fade_in(ele);
     });
 
-    form.querySelectorAll('.button-div input')[0].attributes.removeNamedItem('disabled');
-    form.querySelectorAll('.button-div input')[1].attributes.removeNamedItem('disabled');
+    buttons[0].removeAttribute('disabled');
+    buttons[1].removeAttribute('disabled');
     // 
 
 });

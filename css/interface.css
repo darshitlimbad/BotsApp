@@ -25,7 +25,7 @@
     background-color: rgb(140 65 179);
 }
 
-.icon {
+.icon , .no-select{
     -webkit-tap-highlight-color: transparent;
     -moz-user-select: none;
     -ms-user-select: none;
