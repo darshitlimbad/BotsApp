@@ -4,9 +4,9 @@ function getDecryptedUserID(){
         if(!isset($_SESSION['userID']))
             throw new Exception("",400);
 
-        $encryptedUserID = base64_decode($_SESSION['userID']);
-        $nonce = base64_decode($_SESSION['nonce']);
-        $key = base64_decode($_SESSION['key']);
+        $encryptedUserID =  base64_decode($_SESSION['userID']);
+        $nonce =            base64_decode($_SESSION['nonce']);
+        $key =              base64_decode($_SESSION['key']);
 
         $res = sodium_crypto_secretbox_open($encryptedUserID , $nonce , $key) ?: 0;
 
@@ -147,8 +147,6 @@ function is_group_admin(string $userID, string $groupID){
 function session_check(){
     $userID = getDecryptedUserID();
     if(is_data_present('users' , ['userID'] , [$userID]) == 0)  {
-        session_abort();
-        session_destroy();
         header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
     }else{
         session_regenerate_id(true);
