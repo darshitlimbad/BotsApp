@@ -4,10 +4,6 @@ document.addEventListener('DOMContentLoaded' , function () {
         
             
             setTimeout(() => {
-                // ERROR
-                if(URL_params.get('ERROR'))
-                    handler['err_'+URL_params.get('ERROR')]();
-
                 if(URL_params.get('ACTION') == 'sign-in')    {
                     buttons[1].click();
                 }
@@ -23,6 +19,9 @@ document.addEventListener('DOMContentLoaded' , function () {
                 if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
                 }
+                // ERROR
+                if(handler['err_'+URL_params.get('ERROR')])
+                    handler['err_'+URL_params.get('ERROR')]();
 
                 // user 
                 if(URL_params.get('USER')){
@@ -56,6 +55,7 @@ const customError = (msg, code) => {
 
 const handler={};
 
+//Alerts
 handler.err_400 = () => {
     new_Alert( " Something went Wrong :( , Please try again");
 }
@@ -87,4 +87,8 @@ handler.err_500 = ()=>{
     new_Alert(" Internal Server Error ")
 }
 
+//Notifications
+handler.suc_dataChanged =()=>{
+    new_notification('data changed succesfully');
+}
 

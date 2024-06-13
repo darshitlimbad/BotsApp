@@ -84,7 +84,8 @@ class Status {
                         if(inboxUser){
                                 let lastChatDiv = inboxUser.querySelector('.last-chat');
 
-                            if((chatter.last_msg && lastChatDiv.title != chatter.last_msg) || chatter.last_msg == ''){
+                            if((chatter.last_msg && (lastChatDiv.title != chatter.last_msg) ) 
+                                || chatter.last_msg == ''){
                                 lastChatDiv.textContent = lastChatDiv.title = chatter.last_msg;
                             }
 
@@ -115,9 +116,11 @@ class Status {
                             }
 
                             //  when the opposite Chatter is reading msg send by us.
-                            if( ((chatType === 'personal' && chatter.online == true) && (getCookie('currOpenedChat') != getCookie('unm'))) 
-                                || chatType === 'group' &&  getCookie('currOpenedGID')){                            
-                                
+                            if(((chatType === 'personal') && getCookie('currOpenedChat') && getCookie('currOpenedChat') == chatter.unm && (getCookie('currOpenedChat') != getCookie('unm'))) 
+                                && ((chatter.online == true) 
+                                    || (chatter.can_not_see_online_status) )
+                                || (chatType === 'group' &&  getCookie('currOpenedGID')) ){
+
                                 let msgIDs=[];
                                 chat.querySelectorAll(".msgStatusIcon[data-status='send']").forEach(msgStatusSendIcon=>{
                                     msgIDs.push(msgStatusSendIcon.closest(".msgContainer").id);

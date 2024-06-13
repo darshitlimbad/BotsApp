@@ -48,6 +48,7 @@ if(!isset($_SESSION['userID'])) {
 
                         const xml = new XMLHttpRequest();
                         xml.onload = (response) => {
+                            console.log(response.target.response);
                             if((xml.readyState == 4) && (xml.status == 200)) {
                                 let res = JSON.parse(response.target.response);
 

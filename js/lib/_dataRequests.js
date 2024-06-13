@@ -227,11 +227,11 @@ const _deleteMsg=(msgID)=>{
         })
 }
 
-function getUserProfile(unm){
+function getProfile(){
+
     let url = '/functionality/lib/_fetch_data.php';
     let data={
-        req:'getUserProfile',
-        unm
+        req:`getProfile`,
     }
 
     return new Promise(resolve=>{
@@ -249,4 +249,30 @@ function getUserProfile(unm){
                 handler.err_400();
             })
     });
+}
+
+function editGroupDetails(column,value){
+    
+    let url = "/functionality/lib/_chat.php";
+    let data={
+        req:"editGroupDetails",
+        column,
+        value,
+    }
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && res.responseText === 1){
+                    handler.suc_dataChanged();
+                    resolve(1);
+                }else{
+                    handler['err_'+res.responseText.error.code]();
+                    resolve(0);
+                }
+            }).catch(err=>{
+                handler.err_400();
+                resolve(0);
+            })
+    })
 }

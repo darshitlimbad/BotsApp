@@ -59,7 +59,7 @@ function createUser($columns , $values , $avatar ) {
     }
 }
 
-// for uploading img it takes user id img type and img tmp name
+// for uploading img it takes user id ,img type and img tmp name
 function uploadImg($userID , $imgObj ){
     try{
         $imgObj = compressImg($imgObj);

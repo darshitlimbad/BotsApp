@@ -196,8 +196,7 @@ const _edit_user_data = (ele) => {
         ele.value = ele.getAttribute("value");
         handler.err_405();
         return;
-    }else if(ele.name == 'about')
-        value = ele.textContent;
+    }
     
     let data = {
         req:field,
@@ -209,10 +208,9 @@ const _edit_user_data = (ele) => {
     var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
     postReq(url , JSON.stringify(data)) 
         .then(res => {
-            console.log(res.responseText);
             if(res.status == "success"){
                 if ( res.responseText == 1 ){
-                    new_notification('data changed succesfully');
+                    handler.suc_dataChanged();
                 }else{
                     ele.value = (ele.name == 'about')? ele.getAttribute('data-oldValue'): ele.getAttribute("value");
                     new_Alert("Something went Wrong :( , Please try again");
@@ -388,7 +386,8 @@ const _uploadDP = () => {
                             document.querySelectorAll('.avatar').forEach(img => {
                                 img.src = result;
                             })
-                            new_notification("data changed succesfully");
+                            
+                            handler.suc_dataChanged();
                         }else{
                             try{
                                 handler["err_"+res]();

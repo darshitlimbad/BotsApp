@@ -215,6 +215,11 @@
 
 .list .inbox-name{
     font-size: 15px;
+    height: 16px;
+    word-break: break-word;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .list .last-chat{
@@ -310,13 +315,26 @@
 }
 
 .chat .heading .details {
+    cursor: pointer;
     width: auto;
     max-width: 15em;
+    min-width: 7em;
+    min-height: 40px;
+    align-content: center;
+    border-radius: 5px;
+}
+.chat .heading .details:hover {
+    background-color: rgba(0,0,0,0.4);
+    transition: background .7s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .chat .heading .details .name{
     font-family: var(--text-font);
     font-weight: 900;
+    word-break: break-word;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 } 
 .chat .heading .details .Status{
     font-size: 10px;
@@ -861,13 +879,26 @@
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-size: 15px;
     overflow: auto  ;
+    animation: fadein 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+@keyframes fadein {
+    0%{
+        top:-10em;
+    }
+}
+
+.user-profile .flexBox{
+    justify-content: space-evenly;
+    align-items: center;
+}
 .user-profile .danger-button{
-    margin:2em;
-    width:30% !important;
-    position: absolute;
-    right: 0;
+    margin: 2em;
+    width: 20% !important;
+    border-radius: 5px;
+    font-size: 10px;
+    text-shadow: 0px 0px 7px black;
+    font-family:  'Times New Roman', Times, serif;
 }
 .user-profile .avatar{
     margin:5px;
@@ -893,6 +924,32 @@
     font-family: 'Times New Roman', Times, serif;
 }
 
+.user-profile .flexBox .avatar{
+    height: 20px;
+    width: 20px;
+}
+
+.user-profile input{
+    width: 70%;
+    background-color: rgba(0, 0, 0, 0.6);
+    outline: none;
+    border: none;
+    color: white;
+    padding: 4px;
+    font-size: 10px;
+    font-family: auto;
+    border-radius: 4px;
+}
+
+.user-profile input:hover:not([readonly]){
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
+    transition: box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.user-profile .icon{
+    height: 1.4em;
+    width: 1.4em;
+}
 /* responsive for mobile styles */
 
 .mobile .chat-box{
@@ -917,6 +974,9 @@
 
 .mobile .icon {
     margin: 0 !important;
+}
+.mobile .chat .heading .details{
+    max-width: 7em;
 }
 
 .mobile .chat .heading .details .name {

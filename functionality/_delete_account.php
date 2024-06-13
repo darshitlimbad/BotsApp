@@ -15,9 +15,7 @@ if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
 
         if($fetchJoinedGroups->num_rows !== 0){
             while($GID = $fetchJoinedGroups->fetch_column()){
-                $gMemberCount= fetch_total_group_member_count($groupID);
-                if($gMemberCount == 0)
-                    delete_group($GID);
+                delete_group($GID);
             }
         }
 

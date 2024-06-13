@@ -52,16 +52,17 @@
             $chatType = strtolower($_COOKIE['chat']);
             switch($chatType){
                 case 'personal':
-                    $sql= " SELECT i.toID
-                            FROM inbox as i JOIN users_details as ud
+                    $sql= " SELECT i.toID , ud.can_see_online_status as can_see
+                            FROM inbox as i 
+                            JOIN users_details as ud
                             ON i.fromID = '$userID' 
-                            WHERE i.toID = ud.userID 
-                            AND ud.can_see_online_status = '1' ";
+                            WHERE i.toID = ud.userID  ";
 
                     break;
                 case 'group':
                     $sql= " SELECT i.toID
-                            FROM inbox as i JOIN groups as g
+                            FROM inbox as i 
+                            JOIN groups as g
                             ON i.fromID = '$userID' 
                             WHERE i.toID = g.groupID ";
                     
@@ -85,65 +86,72 @@
 
             $chatterList;
             $i=0;
-            while($toID = $chatterIDList->fetch_column()){
-                if($chatType == "personal"){
-                    $userOn =null;
-                    $lastOnTime =null;
-    
-                    $userOnTime = fetch_columns("on_status",["userID"],[$toID],['last_on_time'],"status");
-    
-                    if(gettype($userOnTime) == 'Integer')
-                        continue;
-                    
-                    if($userOnTime->num_rows == 0)
-                        $userOn =  false;
-                    else{
-                        $lastOnTime = $userOnTime->fetch_column();
-                        //if you do any changes in requst time then please change here also
-                        $userOn = $lastOnTime >= time()-2;
-                    } 
+            while($row = $chatterIDList->fetch_assoc()){
+                $toID=$row['toID'];
 
-                    if(!$userOn) {
-                        if($lastOnTime){
-                            if(date('d-m',$lastOnTime) >= date('d-m',time()))
-                                $chatterList[$i]['lastOnDay'] = 'Today';
-                            else if(date('d-m',$lastOnTime) >= date('d-m',date_create('-1 days')->getTimestamp()))
-                                $chatterList[$i]['lastOnDay'] = 'Yesterday';
-                            else
-                                $chatterList[$i]['lastOnDay'] = date("d-m-Y",$lastOnTime);
-                        }else  
-                            $chatterList[$i]['lastOnDay'] = "New User";
+                if($chatType == "personal"){
+                    if($row['can_see'] == 1){
+                        $userOn =null;
+                        $lastOnTime =null;
+        
+                        $userOnTime = fetch_columns("on_status",["userID"],[$toID],['last_on_time'],"status");
+        
+                        if(gettype($userOnTime) == 'Integer')
+                            continue;
+                        
+                        if($userOnTime->num_rows == 0)
+                            $userOn =  false;
+                        else{
+                            $lastOnTime = $userOnTime->fetch_column();
+                            //if you do any changes in requst time then please change here also
+                            $userOn = $lastOnTime >= time()-2;
+                        } 
+
+                        if(!$userOn) {
+                            if($lastOnTime){
+                                if(date('d-m',$lastOnTime) >= date('d-m',time()))
+                                    $chatterList[$i]['lastOnDay'] = 'Today';
+                                else if(date('d-m',$lastOnTime) >= date('d-m',date_create('-1 days')->getTimestamp()))
+                                    $chatterList[$i]['lastOnDay'] = 'Yesterday';
+                                else
+                                    $chatterList[$i]['lastOnDay'] = date("d-m-Y",$lastOnTime);
+                            }else  
+                                $chatterList[$i]['lastOnDay'] = "New User";
+                        }
+
+                        $chatterList[$i]['online'] =  $userOn;
+                    }else{
+                        $chatterList[$i]['can_not_see_online_status'] = 1;
                     }
 
                     $chatterList[$i]['unm']= _fetch_unm($toID);
-                    $chatterList[$i]['online'] =  $userOn;
 
-                    $newMsgQuery = "SELECT count(*) 
-                                    FROM `botsapp`.messages as t1 
-                                    RIGHT JOIN `botsapp_statusdb`.messages as t2 
-                                    on t1.msgID = t2.msgID 
-                                    WHERE t1.fromID = '$toID' 
-                                    AND t1.toID = '$userID' 
-                                    AND t2.status = 'send' 
-                                    ORDER BY t2.msgID";
+                    $newMsgCountQuery ="SELECT count(*) 
+                                        FROM `botsapp`.messages as t1 
+                                        RIGHT JOIN `botsapp_statusdb`.messages as t2 
+                                        on t1.msgID = t2.msgID 
+                                        WHERE t1.fromID = '$toID' 
+                                        AND t1.toID = '$userID' 
+                                        AND t2.status = 'send' 
+                                        ORDER BY t2.msgID";
 
                 }else if($chatType == 'group'){
                     $chatterList[$i]['GID']= base64_encode($toID);
 
-                    $newMsgQuery = "SELECT t2.seenByIDs 
-                                    FROM `botsapp`.messages as t1 
-                                    LEFT JOIN `botsapp_statusdb`.messages as t2 
-                                    on t1.msgID = t2.msgID 
-                                    WHERE t1.toID = '$toID' 
-                                    AND t2.status = 'send' 
-                                    AND NOT t1.fromID = '$userID' 
-                                    ORDER BY t2.msgID";
+                    $newMsgCountQuery ="SELECT t2.seenByIDs 
+                                        FROM `botsapp`.messages as t1 
+                                        LEFT JOIN `botsapp_statusdb`.messages as t2 
+                                        on t1.msgID = t2.msgID 
+                                        WHERE t1.toID = '$toID' 
+                                        AND t2.status = 'send' 
+                                        AND NOT t1.fromID = '$userID' 
+                                        ORDER BY t2.msgID";
 
                 }else{
                     throw new Exception("Something went wrong.",400);
                 }
                 
-                $newMsgStmt = $GLOBALS['status']->prepare($newMsgQuery);
+                $newMsgStmt = $GLOBALS['status']->prepare($newMsgCountQuery);
                 $fire = $newMsgStmt->execute();
                 if(!$fire)
                     throw new Exception("New Message SQL error.",0);

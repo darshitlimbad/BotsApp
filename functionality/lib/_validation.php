@@ -40,6 +40,9 @@ function metchEncryptedPasswords($Pass , $userID){
 
 // if there will be data the is_data_present will return 1 
 function is_data_present($table , array $point , array $point_val , $column='userID'){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
+
     $result = fetch_columns($table , $point , $point_val , array("$column"));
     if($result->num_rows == 1){
         return 1;
@@ -51,14 +54,38 @@ function is_data_present($table , array $point , array $point_val , $column='use
 // @param groupID
 // @return total number of group members
 function fetch_total_group_member_count(string $groupID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
 
     if(!is_data_present("groups",['groupID'],[$groupID],'groupID'))
-        return "GROUP_DOESN'T_EXCIST";
+        throw new Exception("GROUP_DOESN'T_EXCIST",411);
 
     $result = fetch_columns('inbox',['toID','chatType'],[$groupID,'group'],['count(*)']);
 
     if($result->num_rows == 1){
-        return $result->fetch_column();;
+        return $result->fetch_column();
+    }else{
+        return 0;
+    }
+}
+
+// @param groupID
+// @return all group members
+function fetch_all_group_members(string $groupID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
+
+    if(!is_data_present("groups",['groupID'],[$groupID],'groupID'))
+        throw new Exception("GROUP_DOESN'T_EXCIST",411);
+
+    $result = fetch_columns('inbox',['toID','chatType'],[$groupID,'group'],['fromID']);
+
+    if($result->num_rows != 0){
+        $members=[];
+        while($userID= $result->fetch_column()){
+            $members[]=_fetch_unm($userID);
+        }
+        return $members;
     }else{
         return 0;
     }
@@ -67,6 +94,8 @@ function fetch_total_group_member_count(string $groupID){
 // @param userID,groupID
 // @return user is memeber of group or not
 function is_member_of_group(string $userID, string $groupID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
 
     $result = fetch_columns('inbox',['fromID','toID','chatType'],[$userID,$groupID,'group'],['count(*)']);
 
@@ -80,6 +109,8 @@ function is_member_of_group(string $userID, string $groupID){
 // @param userID,oppoUserID
 // @return does chat exists or not
 function is_chat_exist(string $userID, string $oppoUserID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
     
     $maxEntry = ($userID === $oppoUserID) ? 1 : 2;
     
@@ -88,6 +119,25 @@ function is_chat_exist(string $userID, string $oppoUserID){
     $result=$GLOBALS['conn']->query($SQL);
 
     if(($result->num_rows == 1) && ($result->fetch_column() == $maxEntry)){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+// @param userID,groupID
+// @return user is group Admin or not
+function is_group_admin(string $userID, string $groupID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
+    
+    $SQL =" SELECT count(*) FROM groups 
+            WHERE groupAdminID='$userID' 
+            AND groupID='$groupID';";
+
+    $result=$GLOBALS['conn']->query($SQL);
+
+    if($result->num_rows == 1){
         return 1;
     }else{
         return 0;

@@ -7,23 +7,21 @@
             if($data['req'] == "get_dp") {
                 if(isset($data['unm']))
                     echo get_dp( null,$data['unm']);    
-                else if(strtolower($_COOKIE['chat']) =='group')
-                    echo get_dp( null,null);
-            } 
+                else if(isset($data['GID']))
+                    echo get_dp( null,null,$data['GID']);
             
-            if($data['req'] == "get_unm")   
+            }else if($data['req'] == "get_unm"){
                     echo search_user($data['from'] , $data['value']);
             
-            if($data['req'] == "getDocBlob") { 
+            }else if($data['req'] == "getDocBlob") { 
                     $res = getDocBlob($data);
                     $size = strlen($res);
                     header('Content-Type: application/json');
                     header('Content-Length:'.$size);
                     echo $res;
-                }
-            if($data['req'] == "getUserProfile")   
-                echo getUserProfile($data['unm']);
-
+            
+            }else if($data['req'] == "getProfile")   
+                echo getProfile();
         }
     }
 
@@ -73,7 +71,7 @@
         }
     }
 
-    function get_dp($userID,$unm=null) {
+    function get_dp($userID,$unm=null,$GID=null) {
         if($userID || $unm){
             if($userID)
                 $ID = $userID;
@@ -82,9 +80,9 @@
 
             $fetch_img = fetch_columns( 'avatar' , ["ID"] , [$ID] , array("type" , "imgData"));
             
-        }elseif(isset($_COOKIE['currOpenedGID'])){
-            $ID = base64_decode($_COOKIE['currOpenedGID']);
-
+        }elseif($GID){
+            $ID = base64_decode($GID);
+            //varification code
             $fetch_img = 0;
         }else
             return 0;
@@ -173,7 +171,7 @@
     function getPassKey($userID) {
         $result = fetch_columns( "users" ,['userID'] , [$userID] , array('pass_key'));
         if($result != '400') {
-            if($result->num_rows == 1){
+            if($result && $result->num_rows == 1){
                 return $result->fetch_assoc()['pass_key'];
             }else{
                 throw new Exception("No user Found from Indexed DB storage." , 404);
@@ -292,27 +290,60 @@
         }
     }
 
-    function getUserProfile($unm){
+    function getProfile(){
         try{
+            if(!isset($_COOKIE['chat']))
+                throw new Error('chat section is not opened',0);
+            if(!isset($_COOKIE['currOpenedChat']))
+                throw new Error('Chat is not opened, Please open chat first.',0);
+
+            $chatType= strtolower($_COOKIE['chat']);
+            
             session_start();
             $userID=getDecryptedUserID();
-            $reqUserID= _get_userID_by_UNM($unm);
 
-            if(!$userID || !is_chat_exist($userID,$reqUserID) )
-                throw new Exception("No data found.",411);
-            session_abort();
+            if($chatType == 'personal'){
+                $reqUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
 
-            $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about",'can_see_online_status'));
-            if(!$sqlObj)
+                if(!$reqUserID || !is_chat_exist($userID,$reqUserID) )
+                    throw new Exception("No data found.",411);
+                session_abort();
+
+                $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about",'can_see_online_status'));
+                if(!$sqlObj)
+                    throw new Exception('',400);
+            
+                $responseData = $sqlObj->fetch_assoc();
+                $responseData['name']= get_user_full_name('',$reqUserID);
+                $responseData['email']= _fetch_email($reqUserID);
+            }else if($chatType == 'group'){
+
+                $reqGroupID= base64_decode($_COOKIE['currOpenedGID']);
+
+                if( !is_member_of_group($userID,$reqGroupID)){
+                    delete_group_if_empty($reqGroupID);
+                    throw new Exception("No data found.",411);
+                }
+
+                $sqlObj = fetch_columns("groups", ["groupID"], [$reqGroupID], array("groupAdminID,groupName"));
+                if(!$sqlObj)
+                    throw new Exception('',400);
+
+                $data=$sqlObj->fetch_assoc();
+
+                $responseData['name']= $data['groupName'];
+                $responseData['admin']= _fetch_unm($data['groupAdminID']);
+
+                //remove admin from member's list
+                $responseData['members']= fetch_all_group_members($reqGroupID);
+                unset( $responseData['members'][array_search($responseData['admin'],$responseData['members'])]);
+                $responseData['members']= json_encode(array_values($responseData['members']));
+
+            }else
                 throw new Exception('',400);
 
-            $data = $sqlObj->fetch_assoc();
-            $data['fullName']= get_user_full_name('',$reqUserID);
-            $data['email']= _fetch_email($reqUserID);
 
-
-
-            return json_encode($data);
+            return json_encode($responseData);
 
         }catch(Exception $e){
             $error = [

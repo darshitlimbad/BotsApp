@@ -20,10 +20,7 @@
                     $imgObj['img_data']=null;
                     echo uploadImg(getDecryptedUserID() , $imgObj);
                     exit();
-                }
-
-                if($req == 'user-name'){
-                // if($edit_column == 'user-name'){
+                }else if($req == 'user-name'){
                     $full_name = explode(" " , ucwords(trim($data['value'])));
                     if(count($full_name) == 1){
                         $surname = null;
@@ -47,8 +44,7 @@
                     $value = array($data['value']);
                 }
 
-                $userID= getDecryptedUserID();
-                $edit_req = updateData($table , $edit_column , $value , "userID" , $userID);
+                $edit_req = updateData($table , $edit_column , $value , 'userID', getDecryptedUserID());
                 echo $edit_req;
             }
         }catch(Exception $e){

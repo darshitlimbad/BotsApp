@@ -24,8 +24,14 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             case "genNewID":
                 echo json_encode(gen_new_id($data['preFix']));
                 break;
+            case "editGroupDetails":
+                if(isset($data['column']) && isset($data['value']))
+                    echo editGroupDetails($data['column'],$data['value']);
+                else
+                    echo '{"error":true,"code":400,"message":""}';
+                break;
             default:
-                echo 400;
+                echo '{"error":true,"code":400,"message":""}';
         }
         
     }else{
@@ -213,9 +219,7 @@ function getNewMsgs($data){
             if(!is_data_present('groups',['groupID'], [$oppoUserID] ,'groupID'))
                 throw new Exception("There is no group with the GID.",404);
             else if(!is_member_of_group($userID,$oppoUserID)){
-                if(!fetch_total_group_member_count($oppoUserID))
-                    delete_group($oppoUserID);
-
+                delete_group_if_empty($oppoUserID);
                 throw new Exception("You are not a member of this group.",410);
             }
 
@@ -314,8 +318,7 @@ function sendMsg($data){
                     $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
 
                     if(!is_member_of_group($fromID,$oppoUserID)){
-                        if(!fetch_total_group_member_count($oppoUserID))
-                            delete_group($oppoUserID);
+                        delete_group_if_empty($oppoUserID);
 
                         throw new Exception("You are not a member of this group.",410);
                     }
@@ -394,6 +397,48 @@ function sendMsg($data){
         throw new Exception("",0);
     }catch(Exception $e){
         return json_encode($e->getCode());
+    }
+}
+
+function editGroupDetails($column,$value){
+    try{
+        if(!$column || !$value)
+            throw new Exception("",0);
+
+        switch($column){
+            case 'name':
+                $column= 'groupName';break;
+            case 'dp':
+                $column= 'groupDp';break;
+            default:
+                throw new Exception("Invalid Column value",410);
+        }
+
+        if(!isset($_COOKIE['chat']))
+            throw new Error('chat section is not opened',0);
+        if(!isset($_COOKIE['currOpenedGID']))
+            throw new Error('Group Chat is not opened, Please open chat first.',0);
+
+        $userID=    getDecryptedUserID();
+        $groupID=   base64_decode($_COOKIE['currOpenedGID']);
+
+        if(!is_member_of_group($userID,$groupID))
+            throw new Exception("You are not A member of this group!",410);
+
+        $editResult= updateData('groups',[$column],[$value],'groupID',$groupID);
+
+        if($editResult === 1)
+            return $editResult;
+        else
+            throw new Exception("",$editResult);
+
+    }catch(Exception $e){
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
 }
 ?>

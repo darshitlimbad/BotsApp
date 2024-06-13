@@ -15,9 +15,21 @@
     }
 
     function delete_group($groupID){
+        //remove member and delete group if it's admin itself
         $delGroupRes= deleteData('groups',$groupID,'groupID');
 
         return $delGroupRes;
+    }
+    
+    function  delete_group_if_empty($groupID){
+        if(!fetch_total_group_member_count($groupID) //==0
+            && is_data_present('groups',['groupID'],[$groupID],'groupID')){
+                $delGroupRes= deleteData('groups',$groupID,'groupID');
+                return $delGroupRes;
+            }else{
+                return 0;
+            }
+
     }
     
     function delete_chat(){
