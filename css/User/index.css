@@ -109,6 +109,7 @@ header h1{
 
 .box .heading h1{
     font-size: 3rem; 
+    margin: 20px;
     text-transform: capitalize;   
 }
 

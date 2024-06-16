@@ -69,7 +69,7 @@ function uploadImg($userID , $imgObj ){
         $table = 'avatar';
         $type = $imgObj['type'];
 
-        $img_data = file_get_contents($imgObj['tmp_name']);
+        $img_data = base64_encode(file_get_contents($imgObj['tmp_name']));
 
         if(is_data_present($table , ['ID'] , [$userID] , "imgData")){
             $query = "UPDATE `$table` SET `type` = ? , `imgData` = ?  WHERE `ID` = ? ";

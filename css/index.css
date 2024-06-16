@@ -43,6 +43,9 @@
     background-color: var(--main-bg-color);
 }
 
+.mobile .chat-box{
+    min-width: 200px;
+}
 
 .chat-box .inbox {
     background-color: var(--main-bg-color);
@@ -65,6 +68,10 @@
     .chat-box .inbox {
         width:25em;
     }
+}
+
+.mobile .chat-box .inbox{
+    width: 85%;
 }
 
 .chat-box .inbox .page-name{
@@ -141,7 +148,7 @@
     width: 90%;
     padding: 5px;
     margin: 0 10px;
-    border-bottom: 1px outset var(--thin-wh-border);
+    border-bottom: var(--thin-wh-border);
     align-content: center;
 
     /* this variables are controlled by JS _status.js */
@@ -278,6 +285,11 @@
     }
 }
 
+.mobile .chat-box .chat{
+    width: 100%;
+    margin: 0 5px;
+}
+
 .chat .heading {
     height: 5em;
     width: 100%;
@@ -323,6 +335,9 @@
     align-content: center;
     border-radius: 5px;
 }
+.mobile .chat .heading .details{
+    max-width: 7em;
+}
 .chat .heading .details:hover {
     background-color: rgba(0,0,0,0.4);
     transition: background .7s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -336,6 +351,10 @@
     white-space: nowrap;
     text-overflow: ellipsis;
 } 
+.mobile .chat .heading .details .name {
+    font-weight: 500;
+}
+
 .chat .heading .details .Status{
     font-size: 10px;
     font-family:  'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -356,9 +375,16 @@
     /* position: absolute; */
     /* right: 5em; */
 }
+.mobile .chat-box .chat .heading .fullScreenIcon{
+    margin: 0;
+}
 
 .chat .heading .fullScreenIcon .icon{
     border-radius: 5%;
+}
+.mobile .heading .fullScreenIcon .icon{
+    height: 0.8em;
+    width: 0.8em;
 }
 
 .chat .heading .search-btn{
@@ -386,6 +412,10 @@
     border-radius: 10px;
     z-index: 1;
     transition: all .5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mobile .chat #searchTxt{
+    right: 5em;
 }
 
 .chat #searchTxt input{
@@ -455,7 +485,7 @@
     width: auto;
     padding: 5px;
     transform: translateY(-3px);
-    border: 1px solid var(--thin-wh-border);
+    border: var(--thin-wh-border);
     background-color: rgba(0, 0, 0, 0.42);
     border-radius: 5px;
 }
@@ -466,6 +496,10 @@
     margin: 0 5px;
     font-size: 12px;
     color: rgba(240, 248, 255, 0.3);
+}
+
+.mobile .chat .chatBody .msgTime{
+    font-size: 0.6em;
 }
 
 .chat .chatBody .msgContainer {
@@ -789,7 +823,12 @@
     box-shadow: -5px 5px 20px #00000069;
     border-radius: 3px;
     border: none;
+    z-index: 2;
 }
+.mobile .chat .chatBody .msgContainer .optionBtn {
+    opacity: 1;
+}
+
 .chat .chatBody .msgContainer.send .optionBtn{
     margin-right: 5px;
 }
@@ -835,11 +874,21 @@
     color: white;
     animation: optionContainerAnimation .8s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+.mobile .option-container{
+    padding: 15px;
+    font-size: 12px;
+    user-select: none;
+}
+.mobile .msgContainer.send .option-container{
+    left:-8em;
+}
+
 @keyframes optionContainerAnimation {
     0%{
         opacity: 0;
     }
 }
+
 .option-container .option{
     cursor: pointer;
     display: flex;
@@ -941,65 +990,21 @@
     border-radius: 4px;
 }
 
-.user-profile input:hover:not([readonly]){
+.user-profile input:hover:not([readonly]) , .user-profile .memberList:hover{
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
     transition: box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
-.user-profile .icon{
-    height: 1.4em;
-    width: 1.4em;
-}
-/* responsive for mobile styles */
-
-.mobile .chat-box{
-    min-width: 200px;
+.user-profile .memberList{
+    border-bottom:  var(--thin-wh-border);
+    border-radius: 5px;
 }
 
-.mobile .chat #searchTxt{
-    right: 5em;
+
+.user-profile .flexBox .icon{
+    position: absolute;
+    right: 5%;
+    height: 2em;
+    width: 2em;
 }
 
-.mobile .chat-box .inbox{
-    width: 85%;
-}
-
-.mobile .chat-box .chat{
-    width: 100%;
-    margin: 0 5px;
-}
-.mobile .chat-box .chat .chatBody .msgTime{
-    font-size: 0.6em;
-}
-
-.mobile .icon {
-    margin: 0 !important;
-}
-.mobile .chat .heading .details{
-    max-width: 7em;
-}
-
-.mobile .chat .heading .details .name {
-    font-weight: 500;
-}
-.mobile .chat-box .chat .heading .fullScreenIcon{
-    margin: 0;
-}
-.mobile .chat-box .chat .heading .fullScreenIcon .icon{
-    height: 0.8em;
-    width: 0.8em;
-}
-
-.mobile .chat .chatBody .msgContainer .msg .optionBtn {
-    opacity: 1;
-}
-
-.mobile .option-container{
-    padding: 15px;
-    font-size: 17px;
-    user-select: none;
-}
-.mobile .msgContainer.send .option-container{
-    left:-8em;
-}
-/*  */

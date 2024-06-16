@@ -6,7 +6,7 @@
     --border-radius :  0px 10px;
     --text-color : rgb(89, 43, 226);
     --heading-color:#8c41b8;
-    --thin-wh-border : rgba(240, 248, 255, 0.321);
+    --thin-wh-border : 1px outset rgba(240, 248, 255, 0.321);
     --default-font : 'Courier New', Courier, monospace;
     --text-font : Arial, sans-serif;
     font-family: var(--default-font);
@@ -30,6 +30,10 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.mobile .icon {
+    margin: 0 !important;
 }
 
 .red{
@@ -264,6 +268,11 @@ footer {
     padding: 5px;
     margin: 4px;
 }
+.mobile .side-bar{
+    left: 0;
+    padding: 5px 0;
+    margin: 4px 0;
+}
 
 .side-bar .options  {
     margin: 0 2px;
@@ -297,7 +306,7 @@ footer {
 
 .avatar_block{
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap:nowrap;
     align-items: center;
 }
 
@@ -312,6 +321,11 @@ footer {
     width: 80px;
     border: 2px solid aliceblue;
     border-radius: 100%;
+}
+.mobile .avatar {
+    height: 40px;
+    width: 40px;
+    
 }
 
 .avatar_preview {
@@ -452,6 +466,10 @@ footer {
     background-image: linear-gradient(to right , rgba(6, 27, 48, 0.426) 30% , rgba(6, 27, 48, 0.625));
     transition: bottom .5s cubic-bezier(0, 0.81, 0.27, 1.02) ;
 }
+.mobile .settings-box, .mobile .noti-box{
+    width: 20em;
+    height: 18em;
+}
 
 @media screen and (max-width:700px) {
     .settings-box ,.noti-box{
@@ -481,6 +499,9 @@ footer {
     list-style-type: none;
     overflow-y: auto;
 }
+.mobile .settings-box ul{
+    width: 6.5em;
+}
 
 .settings-box ul li {
     height: 30px;
@@ -490,6 +511,13 @@ footer {
     position: relative;
     display: flex;
     align-items: center;
+}
+.mobile .settings-box ul li{
+    padding: 0;
+    margin: 5px 0;
+}
+.mobile .settings-box ul li p{
+    font-size: 12px;
 }
 
 .settings-box ul li:last-child {
@@ -532,6 +560,11 @@ footer {
 .settings-box ul li div {
     padding: 0 10px 0 5px;
 }
+.mobile .settings-box ul li div img{
+    height: 15px;
+    width: 15px;
+}
+
 
 .settings-box .settings-container {
     height: calc(100% - 28px);
@@ -618,6 +651,10 @@ footer {
     margin: 10px;
     font-size: 17px;
 }
+.mobile .settings-box .settings-container .body .swipe-btn {
+    margin: 0px;
+    font-size: 10px;
+}
 
 .settings-box .settings-container .body .swipe-btn input[type='checkbox']   {
     appearance: none;    
@@ -682,6 +719,9 @@ footer {
     box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7);
     transition: all .2s;
 }
+.mobile .settings-box .settings-container .body .edit_img{
+    transform: translate(30px, -20px);
+}
 
 .settings-box .settings-container .body .profile-dp img{
     border-radius: 100%;
@@ -692,6 +732,13 @@ footer {
     align-content: center;
     align-items: center;
     height: 30px;
+}
+
+.mobile .settings-box .settings-container .body .text ,
+.mobile .settings-box .settings-container .body .checkbox ,
+.mobile .settings-box .settings-container p ,
+.mobile .link {
+    font-size: 10px !important;
 }
 
 .settings-box .settings-container .body .text{
@@ -945,52 +992,3 @@ footer {
     }
 
 }
-
-/* responsive for mobile styles */
-.mobile .side-bar{
-    left: 0;
-    padding: 5px 0;
-    margin: 4px 0;
-}
-
-.mobile .settings-box, .mobile .noti-box{
-    width: 20em;
-    height: 18em;
-}
-.mobile .settings-box ul{
-    width: 6.5em;
-}
-.mobile .settings-box ul li{
-    padding: 0;
-    margin: 5px 0;
-}
-.mobile .settings-box ul li div img{
-    height: 15px;
-    width: 15px;
-}
-.mobile .settings-box ul li p{
-    font-size: 12px;
-}
-
-.mobile .avatar {
-    height: 40px;
-    width: 40px;
-    
-}
-
-.mobile .settings-box .settings-container .body .edit_img{
-    transform: translate(30px, -20px);
-}
-.mobile .settings-box .settings-container .body .text ,
-.mobile .settings-box .settings-container .body .checkbox ,
-.mobile .settings-box .settings-container p ,
-.mobile .link {
-    font-size: 10px !important;
-}
-
-.mobile .settings-box .settings-container .body .swipe-btn {
-    margin: 0px;
-    font-size: 10px;
-}
-
-/*  */

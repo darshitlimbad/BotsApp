@@ -10,19 +10,20 @@
     });
 
     // get dp function // note : this function returns Promise obj
-    const get_dp =(unm) => {
+    const get_dp =(unm,GID=null) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
             let data = {
                 req : "get_dp",
-                unm,
             };
+
+            (GID) ? data.GID=GID : data.unm=unm ;
 
             return new Promise((resolve,reject) =>{
                 postReq(url_for_get_dp , JSON.stringify(data))
                     .then(res=>{
                         if(res.status == "success" && res.responseText != 0 ){
-                            const { data , type } = res.responseText;
-                            let base64 = `data:${type};base64,${data}`;
+                            const { data , mime } = res.responseText;
+                            let base64 = `data:${mime};base64,${data}`;
                             
                             _getDataURL(base64)
                                 .then(res=>{
@@ -55,7 +56,6 @@
                     switch(res.responseText){
                         case 1:
                             new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
-                            getNewNoti();
                             break;
                         case 409:
                             if(getCookie('chat').toLowerCase() != 'personal' )
@@ -141,15 +141,9 @@
         var req = "rejectedChatterReq";
 
         sendNoti(req , notiID)
-            .then(res =>{
-                if(res == 1){
-                    getNewNoti();
-                }else{
-                    handler.err_400();
-                }
-            }).catch(err=>{
-                console.error(err);
-            })
+            .then(res=>{
+                getNewNoti();
+            });
     }
 
     // accept chatter request
@@ -162,8 +156,6 @@
                     getNewNoti();
                     initiateChatBox(currCht);
                     new_notification("Chatter added succesfully!!!")
-                }else{
-                    handler.err_400();
                 }
             }).catch(err=>{
                 console.error(err);
@@ -175,15 +167,9 @@
         var req = "deleteThisNoti";
 
         sendNoti(req , notiID)
-            .then(res =>{
-                if(res == 1){
-                    getNewNoti();
-                }else{
-                    handler.err_400();
-                }
-            }).catch(err=>{
-                console.error(err);
-            })
+            .then(res=>{
+                getNewNoti();
+            });
     }
 
 // the aditional features
@@ -266,12 +252,14 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 
     var yes_btn = confirmation_pop_up.querySelector('.pop_up_yes_btn');
 
-    if(action == "DeleteAccount"){
+    if(action === "DeleteAccount"){
         yes_btn.onclick=()=> window.location.assign('/functionality/_delete_account.php?key_pass=khulJaSimSim');
-    }else if(action == "LogOut"){
+    }else if(action === "LogOut"){
         yes_btn.onclick=()=> window.location.assign('/functionality/_log_out.php?key_pass=khulJaSimSim');
-    }else if(action == "addUserReqConfirm"){
+    }else if(action === "addUserReqConfirm"){
         yes_btn.onclick=()=> _sendAddInChatReq(`${title}`);
+    }else if(action === "remove_chat"){
+        yes_btn.onclick=()=> _deleteChat();
     }else if(action.req == "delete_this_msg"){
         yes_btn.onclick=()=> {
             _deleteMsg(action.msgID);
@@ -341,17 +329,38 @@ const _upload_img_form = (title , action , theme = 'blue') => {
     yes_btn.style.backgroundColor = theme;
     yes_btn.style.outlineColor=theme;
 
-    if(action == "USER_DP_UPDATE"){
-        yes_btn.addEventListener('click',_uploadDP);
-    }else if(action == "USER_SEND_IMG"){
-        yes_btn.onclick = ()=> {
-            if(!disabled_pop_up_btn.upload_img_form){
-                upload_img_form.querySelector(".avatar_preview").src="/img/icons/loader.svg";
-                _submit_btn_disable(img_submit_btn);
-                _trigerSendMsg("img");
+        if(action == "USER_DP_UPDATE"){
+            yes_btn.onclick=()=>_uploadDP();
+        }else if(action == "USER_SEND_IMG"){
+            yes_btn.onclick = ()=> {
+                if(!disabled_pop_up_btn.upload_img_form){
+                    _submit_btn_disable(img_submit_btn);
+                    _trigerSendMsg("img");
+                }
+            };
+        }else if(action === "UPLOAD_GROUP_DP"){
+            yes_btn.onclick = async ()=> {
+                if(!disabled_pop_up_btn.upload_img_form){
+                    _submit_btn_disable(img_submit_btn);
+                    if(!avatar.files[0])
+                        return;
+                    else{
+                        let blob= (await _read_doc(avatar.files[0]));
+                        editGroupDetails('dp',blob)
+                            .then(res=>{
+                                if(res === 1){
+                                    let imgURL= upload_img_form.querySelector('.avatar_preview').src;
+                                    let selectedGroupImgNodes=document.querySelectorAll( '.inbox-user.selected .dp img, .chat .dp img');
+                                    selectedGroupImgNodes.forEach(node=>node.src=imgURL);
+                                    _hide_this_pop_up(upload_img_form);
+                                }
+                            })
+                        
+                }
+                }
             }
-        };
-    }
+        }
+
 
     _show_this_pop_up(upload_img_form);
 }
@@ -369,8 +378,7 @@ const _uploadDP = () => {
                 size     : img.size,
             };
 
-            data = JSON.stringify(
-                {
+            let data = JSON.stringify({
                     req: 'updateDP',
                     table: 'users_avatar',
                     edit_column: '',
@@ -378,6 +386,7 @@ const _uploadDP = () => {
                 });
 
             var url = window.location.origin+"/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
+            
             postReq(url , data)
                 .then(res => {
                     if(res.status == "success"){

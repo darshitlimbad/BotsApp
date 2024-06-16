@@ -9,8 +9,10 @@ const sendNoti = (req , notiID) => {
 
         postReq(url , data)
             .then(res =>{
-                if(res.status == "success")
+                if(res.status == "success" && res.responseText === 1)
                     resolve(res.responseText);
+                else
+                    throw new Error(res.responseText);
             }).catch(err=>{
                 console.error(err);
             })
@@ -207,26 +209,6 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
         });
 }
 
-const _deleteMsg=(msgID)=>{
-    let url = "/functionality/lib/_data_delete.php";
-    let data={
-        req:"delete_msg",
-        msgID,
-    }
-
-    postReq(url,JSON.stringify(data))
-        .then(res=>{
-            if(res.status === 'success' && res.responseText === 1){
-                chat.querySelector(`#${msgID}`)?.remove();
-            }else if(res.responseText.error){
-                console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
-                handler['err_'+res.responseText.code]();
-            }
-        }).catch(err=>{
-            handler.err_400();
-        })
-}
-
 function getProfile(){
 
     let url = '/functionality/lib/_fetch_data.php';
@@ -252,7 +234,6 @@ function getProfile(){
 }
 
 function editGroupDetails(column,value){
-    
     let url = "/functionality/lib/_chat.php";
     let data={
         req:"editGroupDetails",
@@ -267,6 +248,7 @@ function editGroupDetails(column,value){
                     handler.suc_dataChanged();
                     resolve(1);
                 }else{
+                    console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
                     handler['err_'+res.responseText.error.code]();
                     resolve(0);
                 }
@@ -275,4 +257,36 @@ function editGroupDetails(column,value){
                 resolve(0);
             })
     })
+}
+
+const _deleteMsg=(msgID)=>{
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"deleteMsg",
+        msgID,
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            if(res.status === 'success' && res.responseText === 1){
+                chat.querySelector(`#${msgID}`)?.remove();
+            }else if(res.responseText.error){
+                console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
+                handler['err_'+res.responseText.code]();
+            }
+        }).catch(err=>{
+            handler.err_400();
+        })
+}
+
+const _deleteChat=()=>{
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"deleteChat",
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            console.log(res.responseText);
+        })
 }

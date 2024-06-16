@@ -27,7 +27,7 @@ const openChatList = async () =>  {
         }
         
         const chatList = await _getChatList();  _flash_chatList();
-        userStatus.checkChatListStatus();
+        userStatus.checkStatus();
 
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));       
@@ -87,7 +87,7 @@ const chatListTemplate = ( chat ) => {
 
             //fetching dp img
                 get_dp((chatType=="personal") ? unmTitle : null,chat.GID)
-                    .then(imgData=> img.src=imgData );
+                    .then(imgURL=> img.src=imgURL );
             //
         }
 
@@ -249,10 +249,8 @@ const setChatHeader = async (unm,ID) =>{
         dpDiv.classList.add("dp","align-center");
         chatStruct.heading.appendChild(dpDiv);
             let dpImg = new Image();
-            dpImg.src=default_dp_src;
-            dpImg.alt="DP";
-            get_dp(unm)
-                .then(dp_url=>dpImg.src=dp_url);
+            dpImg.src=user.querySelector('.dp img')?.src;
+            dpImg.onerror=()=>dpImg.src=default_dp_src;
             dpDiv.appendChild(dpImg);
 
         if(unm == getCookie('unm'))
@@ -355,8 +353,12 @@ function openUserProfile(unm){
         // DP
         let dp = new Image();
         dp.classList.add('avatar');
-        dp.src=default_dp_src;
-        get_dp(uName).then(res=>dp.src=res);
+        Object.assign(dp.style,{
+            minWidth: '80px',
+            minHeight: '80px',
+        });
+        dp.src= user.querySelector('.dp img')?.src;
+        dp.onerror=()=>dp.src=default_dp_src;
         userProfile.appendChild(dp);
 
         // Username
@@ -414,6 +416,9 @@ function openUserProfile(unm){
             deleteBtn.textContent='Remove User' ;
             flexBox.appendChild(deleteBtn);
 
+            let action="remove_chat";
+            deleteBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Remove this user?",action,'red');
+    
         if(unm!=='You'){
             var blockBtn= document.createElement('button');
             blockBtn.classList.add('danger-button','button');
@@ -421,12 +426,9 @@ function openUserProfile(unm){
             flexBox.appendChild(blockBtn);
         }        
 
-        let action="delete_this_user";
-        deleteBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Remove this user?",action,'red');
-
     getProfile()
         .then(res=>{
-            fullName.textContent=res.fullName;
+            fullName.textContent=res.name;
             email.textContent=res.email;
             about.textContent=res.about;
             can_see_on_status.textContent= (res.can_see_on_status==0)? 'No' : 'Yes';
@@ -443,18 +445,37 @@ async function openGroupProfile(){
 
     let profile= await getProfile();
     let unm=getCookie('unm');
-    console.log(profile);
+    var admin= (profile.admin === unm)? 1 : 0;
 
     let userProfile = document.createElement('div');
     userProfile.classList.add('user-profile');
 
-    //add dp add opton and retrive option and create a indexDB table to store the data of images and files. as a temp storage
         // DP
         let dp = new Image();
         dp.classList.add('avatar');
-        dp.src=default_dp_src;
-        // get_dp(GID).then(res=>dp.src=res);
+        Object.assign(dp.style,{
+            minWidth: '80px',
+            minHeight: '80px',
+        });
+        dp.src= user.querySelector('.dp img')?.src;
+        dp.onerror=()=>dp.src=default_dp_src;
         userProfile.appendChild(dp);
+
+        let changeDPIcon= new Image();
+        changeDPIcon.classList.add('icon');
+        Object.assign(changeDPIcon.style, {
+            height: '1.4em',
+            width: '1.4em',
+            backgroundColor:'aliceblue',
+            borderRadius:'5px',
+            position:'absolute',
+            top:'25%',
+            left:'25%',
+        });
+        if(device === 'mobile') changeDPIcon.style.top='10%';
+        changeDPIcon.src='/img/icons/settings/profile/edit_img.png';
+        changeDPIcon.onclick=()=>_upload_img_form("Upload New Group DP","UPLOAD_GROUP_DP")
+        userProfile.appendChild(changeDPIcon);
 
         // Full Name
         let detailName = document.createElement('d6');
@@ -473,16 +494,17 @@ async function openGroupProfile(){
             fullName.readOnly=true;
             flexBox.appendChild(fullName);
 
-            let sendIcon= new Image();
-            sendIcon.classList.add('icon');
-            sendIcon.src='/img/icons/settings/profile/edit.png';
-            flexBox.appendChild(sendIcon);
+            let SaveNameIcon= new Image();
+            SaveNameIcon.classList.add('icon');
+            SaveNameIcon.src='/img/icons/settings/profile/edit.png';
+            flexBox.appendChild(SaveNameIcon);
+
             var oldVal;
-            sendIcon.onclick=(e)=>{
+            SaveNameIcon.onclick=(e)=>{
                 if(fullName.readOnly){
                     oldVal= fullName.value;
                     fullName.readOnly=false;
-                    sendIcon.src='img/icons/send.png';
+                    SaveNameIcon.src='img/icons/send.png';
                 }else{
                     if(fullName.value != oldVal) 
                         editGroupDetails('name',fullName.value).then(res=>{
@@ -494,7 +516,7 @@ async function openGroupProfile(){
                                 }
                             })
                     fullName.readOnly=true;
-                    sendIcon.src='/img/icons/settings/profile/edit.png';
+                    SaveNameIcon.src='/img/icons/settings/profile/edit.png';
                 }
             }
 
@@ -505,7 +527,7 @@ async function openGroupProfile(){
         userProfile.appendChild(detailName);
 
         flexBox=document.createElement('div');
-        flexBox.classList.add('flexBox');
+        flexBox.classList.add('memberList','flexBox');
         flexBox.style.justifyContent='flex-start';
         userProfile.appendChild(flexBox);
 
@@ -532,7 +554,7 @@ async function openGroupProfile(){
             JSON.parse(profile.members).forEach(member=>{
 
                 flexBox=document.createElement('div');
-                flexBox.classList.add('flexBox');
+                flexBox.classList.add('memberList','flexBox');
                 flexBox.style.justifyContent='flex-start';
                 userProfile.appendChild(flexBox);
 
@@ -548,6 +570,13 @@ async function openGroupProfile(){
                     groupMember.textContent= '@'+member;
                     groupMember.classList.add('margin-dead');
                     flexBox.appendChild(groupMember);
+
+                    if(admin){
+                        var removeMemberBtn= new Image();
+                        removeMemberBtn.classList.add('icon');
+                        removeMemberBtn.src="/img/icons/options/delete.svg";
+                        flexBox.appendChild(removeMemberBtn);
+                    }
             })
         }
 
@@ -557,16 +586,16 @@ async function openGroupProfile(){
 
             var deleteBtn= document.createElement('button');
             deleteBtn.classList.add('danger-button','button');
-            deleteBtn.textContent= (unm==profile.admin)? 'Delete Group' : 'Leave Group' ;
+            deleteBtn.textContent= (admin) ? 'Delete Group' : 'Leave Group' ;
             flexBox.appendChild(deleteBtn);
 
-            let action= 'delete_this_group' ;
+            let action="remove_chat";
             deleteBtn.onclick=()=>_confirmation_pop_up(unm,`Are You sure you want to ${deleteBtn.textContent}?`,action,'red');
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);
         document.onclick=(e)=>{
-        if(!e?.target.closest('.user-profile'))
+        if(!e?.target.closest('.user-profile',''))
             userProfile.remove();
     }},200 );
 }
@@ -604,7 +633,7 @@ const setChatFooter= (unm) =>{
             let nodeImg=newNode();
             nodeImg.name="sendImgBtn";
             nodeImg.title="Send Image";
-            nodeImg.onclick = ()=>_upload_img_form('Choose a Img to send','USER_SEND_IMG');
+            nodeImg.onclick = ()=> _upload_img_form('Choose a Img to send','USER_SEND_IMG');
                 nodeImg.innerHTML=`
                     <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 455 455" xml:space="preserve" ><path d="M0,0v455h455V0H0z M259.405,80c17.949,0,32.5,14.551,32.5,32.5s-14.551,32.5-32.5,32.5s-32.5-14.551-32.5-32.5S241.456,80,259.405,80z M375,375H80v-65.556l83.142-87.725l96.263,68.792l69.233-40.271L375,299.158V375z"/></svg>
                 `;

@@ -15,7 +15,7 @@ class Status {
      */
 
     statusURL = "/functionality/lib/_status.php";
-    msgStatusURL = "/img/icons/chat/msg_status/";
+    msgStatusPath = "/img/icons/chat/msg_status/";
 
     #requestTime = 2000;
     intervalID={};
@@ -34,11 +34,12 @@ class Status {
         window.onoffline= ()=> window.ononline= ()=>{
             this.setOnlineStatusUpdateInterval();
             if(getCookie('chat'))
-                this.checkChatListStatus();
+                this.checkStatus();
         }
     }
     
     async onlineStatusUpdate(){
+        getNewNoti();
         let data = {
             req:"onlineStatusUpdate",
         }
@@ -63,13 +64,13 @@ class Status {
             })
     }
 
-    async checkChatListStatus(){
+    async checkStatus(){
         let chatType= getCookie('chat').toLowerCase();
-        if(!this.intervalID.checkChatListStatus)
-            this.intervalID.checkChatListStatus = setInterval(()=>this.checkChatListStatus(),this.#requestTime);
+        if(!this.intervalID.checkStatus)
+            this.intervalID.checkStatus = setInterval(()=>this.checkStatus(),this.#requestTime);
 
         let data={
-            req:"checkChatListStatus",
+            req:"checkStatus",
         }
     
         postReq(this.statusURL,JSON.stringify(data))
@@ -162,7 +163,7 @@ class Status {
                                                 return 1;
                                             }
                                         }).then(res=>{
-                                            if(res) this.checkChatListStatus();
+                                            if(res) this.checkStatus();
                                         })
                                 
                                 }
@@ -177,8 +178,8 @@ class Status {
             })
             .catch(err=>{
                 console.error(err);
-                clearInterval(this.intervalID.checkChatListStatus);
-                this.intervalID.checkChatListStatus = null;
+                clearInterval(this.intervalID.checkStatus);
+                this.intervalID.checkStatus = null;
             });
     }
 }
@@ -215,7 +216,7 @@ class Status {
             _getMsgStatus([msgID])
                 .then(res=>{
                     let msgStatus = ((res != 0) ? res[0].status : "uploading");
-                    msgStatusImage.src = userStatus.msgStatusURL+msgStatus+".svg";
+                    msgStatusImage.src = userStatus.msgStatusPath+msgStatus+".svg";
                     msgStatusImage.setAttribute('data-status',msgStatus);
                     resolve(msgStatus);
                 }).catch(err=>{

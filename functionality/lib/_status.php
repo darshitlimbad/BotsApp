@@ -7,8 +7,8 @@
             case 'onlineStatusUpdate':
                 echo onlineStatusUpdate();
                 break;
-            case 'checkChatListStatus':
-                echo checkChatListStatus();
+            case 'checkStatus':
+                echo checkStatus();
                 break;
             case 'getMsgStatus':
                 echo getMsgStatus($data);
@@ -42,7 +42,7 @@
         }
     }
 
-    function checkChatListStatus(){
+    function checkStatus(){
         try{
             session_start();
             include_once('../lib/_fetch_data.php');

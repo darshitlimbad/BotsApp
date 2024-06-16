@@ -7,9 +7,9 @@
             if($data['req'] == "get_dp") {
                 if(isset($data['unm']))
                     echo get_dp( null,$data['unm']);    
-                else if(isset($data['GID']))
+                else if(isset($data['GID'])){
                     echo get_dp( null,null,$data['GID']);
-            
+                }
             }else if($data['req'] == "get_unm"){
                     echo search_user($data['from'] , $data['value']);
             
@@ -71,6 +71,8 @@
         }
     }
 
+    // @param $userID ,$unm,$GID any one of them 
+    // @return array with two value mime and base64 string
     function get_dp($userID,$unm=null,$GID=null) {
         if($userID || $unm){
             if($userID)
@@ -82,20 +84,17 @@
             
         }elseif($GID){
             $ID = base64_decode($GID);
-            //varification code
-            $fetch_img = 0;
+            $fetch_img = fetch_columns( 'groups' , ["groupID"] , [$ID] , array("dp as imgData"));
         }else
             return 0;
 
-        
-
         if($fetch_img && $fetch_img->num_rows == 1){
             $img=$fetch_img->fetch_assoc();
-            $type = $img['type'];
-            $data = base64_encode($img['imgData']);
+            $mime = $img['type'] ?? 'image/webp';
+            $data = $img['imgData'];
 
             $returnData = array( 
-                    "type" => $type,
+                    "mime" => $mime,
                     "data" => $data
                 );
             return json_encode($returnData);
@@ -333,10 +332,13 @@
 
                 $responseData['name']= $data['groupName'];
                 $responseData['admin']= _fetch_unm($data['groupAdminID']);
-
-                //remove admin from member's list
+                
+                //removing admin from member's list
                 $responseData['members']= fetch_all_group_members($reqGroupID);
-                unset( $responseData['members'][array_search($responseData['admin'],$responseData['members'])]);
+
+                $searchedIndex= array_search($responseData['admin'],$responseData['members']);
+                if($searchedIndex != '')
+                    unset( $responseData['members'][$searchedIndex]);
                 $responseData['members']= json_encode(array_values($responseData['members']));
 
             }else

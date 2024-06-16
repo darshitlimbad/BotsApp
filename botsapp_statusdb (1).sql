@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 13, 2024 at 07:08 PM
+-- Generation Time: Jun 16, 2024 at 08:56 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -41,8 +41,6 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`id`, `msgID`, `status`, `seenByIDs`, `hide`, `hide_by`) VALUES
-(2, 'Msg00000002', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 0, NULL),
-(4, 'Msg00000004', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 0, NULL),
 (6, 'Msg00000006', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 0, NULL),
 (8, 'Msg00000008', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 0, NULL),
 (9, 'Msg00000009', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 0, NULL),
@@ -56,42 +54,11 @@ INSERT INTO `messages` (`id`, `msgID`, `status`, `seenByIDs`, `hide`, `hide_by`)
 (22, 'Msg00000022', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 0, NULL),
 (23, 'Msg00000023', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 0, NULL),
 (24, 'Msg00000024', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(25, 'Msg00000025', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(26, 'Msg00000026', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(27, 'Msg00000027', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(28, 'Msg00000028', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(29, 'Msg00000029', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(30, 'Msg00000030', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 0, NULL),
-(31, 'Msg00000031', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 0, NULL),
-(32, 'Msg00000032', 'read', 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000003\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
 (33, 'Msg00000033', 'read', 'a:2:{i:0;s:12:\"User00000002\";i:1;s:12:\"User00000001\";}', 1, 'a:2:{i:0;s:12:\"User00000001\";i:1;s:12:\"User00000002\";}'),
 (34, 'Msg00000034', 'read', 'a:2:{i:0;s:12:\"User00000002\";i:1;s:12:\"User00000001\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
 (35, 'Msg00000035', 'read', 'a:2:{i:0;s:12:\"User00000002\";i:1;s:12:\"User00000001\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
 (36, 'Msg00000036', 'read', 'a:2:{i:0;s:12:\"User00000002\";i:1;s:12:\"User00000001\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(40, 'Msg00000040', 'read', 'a:2:{i:0;s:12:\"User00000003\";i:1;s:12:\"User00000001\";}', 1, 'a:1:{i:0;s:12:\"User00000001\";}'),
-(53, 'Msg00000053', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(54, 'Msg00000054', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(55, 'Msg00000055', 'read', NULL, 0, NULL),
-(85, 'Msg00000056', 'read', NULL, 0, NULL),
-(86, 'Msg00000057', 'read', NULL, 0, NULL),
-(87, 'Msg00000058', 'read', NULL, 0, NULL),
-(88, 'Msg00000059', 'read', NULL, 0, NULL),
-(89, 'Msg00000060', 'read', NULL, 0, NULL),
-(90, 'Msg00000061', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(91, 'Msg00000062', 'read', 'a:1:{i:0;s:12:\"User00000001\";}', 0, NULL),
-(92, 'Msg00000063', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(93, 'Msg00000064', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(94, 'Msg00000065', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(95, 'Msg00000066', 'read', 'a:1:{i:0;s:12:\"User00000001\";}', 0, NULL),
-(96, 'Msg00000067', 'read', 'a:1:{i:0;s:12:\"User00000001\";}', 0, NULL),
-(97, 'Msg00000068', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(98, 'Msg00000069', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(99, 'Msg00000070', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(100, 'Msg00000071', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(101, 'Msg00000072', 'read', NULL, 0, NULL),
-(102, 'Msg00000073', 'read', NULL, 0, NULL),
-(103, 'Msg00000074', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL),
-(104, 'Msg00000075', 'send', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL);
+(136, 'Msg00000037', 'read', 'a:1:{i:0;s:12:\"User00000002\";}', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -124,9 +91,9 @@ CREATE TABLE `on_status` (
 --
 
 INSERT INTO `on_status` (`id`, `userID`, `last_on_time`) VALUES
-(3, 'User00000001', 1718297664),
+(3, 'User00000001', 1718520978),
 (6, 'User00000003', 1717934507),
-(14, 'User00000002', 1718287193);
+(14, 'User00000002', 1718473941);
 
 --
 -- Indexes for dumped tables
@@ -163,19 +130,19 @@ ALTER TABLE `on_status`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=105;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 
 --
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=147;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
 
 --
 -- AUTO_INCREMENT for table `on_status`
 --
 ALTER TABLE `on_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7923;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8039;
 
 --
 -- Constraints for dumped tables

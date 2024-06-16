@@ -323,7 +323,7 @@ function sendMsg($data){
                         throw new Exception("You are not a member of this group.",410);
                     }
                 }else
-                    throw new Exception("GID not detected",0);   
+                    throw new Exception("No data Found",411);   
                 break;
             default:
                 return 0;
@@ -409,7 +409,7 @@ function editGroupDetails($column,$value){
             case 'name':
                 $column= 'groupName';break;
             case 'dp':
-                $column= 'groupDp';break;
+                $column= 'dp';break;
             default:
                 throw new Exception("Invalid Column value",410);
         }
@@ -424,6 +424,28 @@ function editGroupDetails($column,$value){
 
         if(!is_member_of_group($userID,$groupID))
             throw new Exception("You are not A member of this group!",410);
+
+        if($column === 'dp'){
+                $blob = explode(',',$value);
+
+                if( (explode('/',$blob[0]))[0] != "data:image" )
+                    throw new Exception("Not an image",415);
+                
+                $blob = $blob[1];
+
+                $imgObj['tmp_name'] = $_COOKIE['imgDir'].time();
+                
+                if(file_put_contents($imgObj['tmp_name'] , base64_decode($blob)) == false)
+                    throw new Exception("File uploading error",0);
+                
+                $imgObj=compressImg($imgObj);
+                if(gettype($imgObj) == "integer")//error code return by compress image
+                    throw new Exception("something went wrong in compression",$imgObj); 
+
+                //fetching compressed blob data 
+                $value = base64_encode(file_get_contents($imgObj['tmp_name']));
+                unlink($imgObj['tmp_name']);
+        }
 
         $editResult= updateData('groups',[$column],[$value],'groupID',$groupID);
 

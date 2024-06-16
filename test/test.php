@@ -1,9 +1,9 @@
 <?php
 
 include "../functionality/db/_conn.php";
-    // $userID = 
-    $sqlObj = fetch_columns("groups", ["groupID"], ['Group00000001'], array("groupAdminID","about"));;
-
-    echo $sqlObj->fetch_assoc();
-    echo $sqlObj->fetch_column();
+$GID='R3JvdXAwMDAwMDAwMQ==';
+$ID = base64_decode($GID);
+            
+$fetch_img = fetch_columns( 'groups' , ["groupID"] , [$ID] , array("dp as imgData"));
+echo $fetch_img->num_rows;
 ?>

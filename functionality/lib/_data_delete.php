@@ -6,19 +6,115 @@
 
         if(isset($_SESSION['userID'])){
 
-            if($data['req'] == 'delete_msg')
-                echo delete_msg($data['msgID']);
+            if($data['req'] == 'deleteMsg')
+                echo deleteMsg($data['msgID']);
+            else if($data['req'] === 'deleteChat')
+                echo deleteChat();
             
         }
 
         session_abort();
     }
 
-    function delete_group($groupID){
-        //remove member and delete group if it's admin itself
-        $delGroupRes= deleteData('groups',$groupID,'groupID');
+    //!remove user blocks and chat from our side
+    //!make a function to check a person is online or offline
+    //!if he is online use notification to send notification for reloading her chatter list
+    function deleteChat(){
+        try{
+            if(!isset($_COOKIE['chat']))
+                throw new Error('chat section is not opened',0);
+            if(!isset($_COOKIE['currOpenedChat']))
+                throw new Error('Chat is not opened, Please open chat first.',0);
 
-        return $delGroupRes;
+            $userID= getDecryptedUserID();
+            $chatType= strtolower($_COOKIE['chat']);
+
+            if($chatType === 'personal'){
+                $oppoUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
+
+                if(is_chat_exist($userID,$oppoUserID)){
+                    // removing chat from Inbox tables
+                    $query = "  DELETE FROM `inbox` 
+                                WHERE  (`fromID`,`toID`) IN (( ? , ? ),( ? , ? )) ";
+                    $stmt = $GLOBALS['conn']->prepare($query);
+                    $stmt->bind_param('ssss' , $userID,$oppoUserID,$oppoUserID,$userID);
+                    $sqlfire = $stmt->execute();
+                    $stmt->close();
+
+                    if(!$sqlfire)
+                        throw new Exception("Something went wrong while deleting user",400);
+
+                    return $sqlfire;
+                }else
+                    throw new Exception("No User Found",0);
+                    
+            }else if($chatType === 'group' && isset($_COOKIE['currOpenedGID'])){
+                $oppoUserID= base64_decode($_COOKIE['currOpenedGID']);
+
+                if(!is_data_present('groups',['groupID'], [$oppoUserID] ,'groupID'))
+                    throw new Exception("NO DATA FOUND!!",411);
+                else if(!is_member_of_group($userID,$oppoUserID)){
+                    delete_group_if_empty($oppoUserID);
+                    throw new Exception(" Unauthorised Access Denied !!!",410);
+                }
+
+                return delete_group($oppoUserID);
+            }else
+                return 0;
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function delete_group($groupID){
+
+        try{
+            $userID=getDecryptedUserID();
+            $is_data_present=is_data_present('groups',['groupID'],[$groupID],'groupID');
+
+            if($is_data_present){
+                if(is_group_admin($userID, $groupID)){
+                    // removing the group from Inbox table
+                    if(!deleteData('inbox',$groupID,"toID"))
+                        throw new Exception("Something went wrong while deleting user data",400);
+                    // removing the group from Groups table
+                    if(!deleteData('groups',$groupID,"groupID"))
+                        throw new Exception("Something went wrong while deleting user data",400);
+
+                }else if(is_member_of_group($userID,$groupID)){
+                    // removing the user from group by removing him from Inbox table
+                    $query = "DELETE FROM `inbox` WHERE `fromID`= ? AND `toID` = ?";
+                    $stmt = $GLOBALS['conn']->prepare($query);
+                    $stmt->bind_param('ss' , $userID,$groupID);
+                    $sqlfire = $stmt->execute();
+                    $stmt->close();
+
+                    if(!$sqlfire)
+                        throw new Exception("Something went wrong while deleting user data",400);
+
+                }else{
+                    throw new Exception(" Unauthorised Access Denied !!!",410);
+                }
+            }else{
+                return 0;
+            }
+
+            return 1;
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
     }
     
     function  delete_group_if_empty($groupID){
@@ -36,7 +132,7 @@
 
     }
 
-    function delete_msg(string $msgID){
+    function deleteMsg(string $msgID){
         try{
             if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
                 throw new Error('No data found',411);

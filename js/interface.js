@@ -137,14 +137,12 @@ function toggle_confirmation_pop_up(pop_up_name , title=null){
 // 
 function toggle_img_upload_form(pop_up_name){
     let upload_img_form=document.querySelector('div#upload_img_form');
+
     if(upload_img_form.style.display != "block"){
         switch(pop_up_name){
             case "upload_new_dp":
                 _upload_img_form('Upload Your new Profile picture' , `USER_DP_UPDATE`);
                 break;
-            case "send_img":
-
-            break;
         }
     }
 }

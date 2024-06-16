@@ -208,7 +208,6 @@ function avatar_validation() {
     }else {
         url= URL.createObjectURL(file);
         avatar_preview.src = url;
-        avatar_preview.onload=()=>URL.revokeObjectURL(url);
         avatar.style.color = 'var(--text-color)';
         avatar_span.style.display = 'none';
         _submit_btn_enable();

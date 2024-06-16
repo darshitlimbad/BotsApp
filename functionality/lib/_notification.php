@@ -30,18 +30,18 @@ function add_new_noti($data) {
 
         $unm = (isset($data['unm'])) ? $data['unm'] : "";
         $action = (isset($data['action'])) ? $data['action'] : "newMessage" ;
-        $toID = (isset($data['toID'])) ? $data['toID'] : "";
+        $toID = _get_userID_by_UNM($unm);
 
-        if($action == "addUserReq" && $toID == ""){
-            $toID = _get_userID_by_UNM($unm);
+        if($action == "addUserReq"){
             
             if( $toID && is_data_present('users_account',['userID'],[$toID])){
 
-                if(is_user_is_alredy_added($fromID , $toID) == 1)
+                if(is_chat_exist($fromID , $toID) == 1)
                     return '409';
                 if(is_noti($fromID,$toID,"addUserReq") != 0)
                     return '403';
-                else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)//sending to id as from and from id as to
+                //checking is there any messages with action="chatterReqRejected" from the user our user want to send request
+                else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)
                     return '499';
             }else{
                 throw new Exception("No user found!!");
@@ -83,16 +83,17 @@ function is_noti($fromID , $toID , $action = null){
     return $res;
 }
 
-function is_user_is_alredy_added($fromID , $toID){
-    $query = "SELECT count(*) FROM `inbox` WHERE `fromID` = '$fromID' AND `toID` = '$toID'";
-    $result = $GLOBALS['conn']->query($query);
+// new function created in validation called : is_chat_exist
+// function is_user_is_alredy_added($fromID , $toID){
+//     $query = "SELECT count(*) FROM `inbox` WHERE `fromID` = '$fromID' AND `toID` = '$toID'";
+//     $result = $GLOBALS['conn']->query($query);
 
-    if($result->fetch_column() >= 1){
-        return 1;
-    }else{
-        return 0;
-    }
-}
+//     if($result->fetch_column() >= 1){
+//         return 1;
+//     }else{
+//         return 0;
+//     }
+// }
 
 function getNewNoti(){
     try{
