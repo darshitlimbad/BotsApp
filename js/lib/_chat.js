@@ -165,6 +165,11 @@ const _st_chLi_skltn = () => {
 
                                         // chat open functions //
 const openChat =async (unm,ID=null) => {
+    if(userStatus.isOnline == false){
+        handler.err_401();
+        return;
+    }
+    
     if( (getCookie('chat').toLowerCase() === 'personal') && (getCookie('currOpenedChat') == unm) 
         || ID && ID == getCookie('currOpenedGID') )
         return;

@@ -60,7 +60,7 @@ handler.err_400 = () => {
     new_Alert( " Something went Wrong :( , Please try again");
 }
 handler.err_401 = () => {
-    new_Alert( " NO NETWORK, PLEASE TRY AGAIN ");
+    new_Alert( " NO NETWORK, PLEASE TRY AGAIN LATER");
 }
 handler.err_405 = () => {
     new_Alert( "Name can't be Empty");
