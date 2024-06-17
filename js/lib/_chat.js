@@ -202,7 +202,7 @@ const openChat =async (unm,ID=null) => {
     removeLoader(chat);
     setLoader(chatStruct.chatBody);
     setChatFooter(unm);
-    await setChatBody(ID);
+    await setChatBody();
     removeLoader(chatStruct.chatBody);
     
     //for mobile
@@ -545,7 +545,7 @@ async function openGroupProfile(){
             flexBox.appendChild(adminDP);
 
             let groupAdmin= document.createElement('p');
-            groupAdmin.textContent= '@'+profile.admin;
+            groupAdmin.textContent= (profile.admin == unm) ? 'You' : '@'+profile.admin;
             groupAdmin.classList.add('margin-dead');
             flexBox.appendChild(groupAdmin);
         
@@ -572,7 +572,7 @@ async function openGroupProfile(){
                     flexBox.appendChild(memberDP);
 
                     let groupMember= document.createElement('p');
-                    groupMember.textContent= '@'+member;
+                    groupMember.textContent= (member == unm) ? 'You' : '@'+member;
                     groupMember.classList.add('margin-dead');
                     flexBox.appendChild(groupMember);
 
@@ -605,9 +605,9 @@ async function openGroupProfile(){
     }},200 );
 }
 
-const setChatBody = (ID) =>{
+const setChatBody = () =>{
     return new Promise((resolve)=>{
-        _getAllMsgs(ID)
+        _getAllMsgs()
             .then(msgObjs=>{
                 
             if(!msgObjs)  {
@@ -769,7 +769,7 @@ const _trigerSendMsg = async (type) => {
         } 
             
         msgObj={
-            msgID:await _genNewID("msg"),
+            msgID:null,
             fromUnm:getCookie("unm"),
             toUnm:getCookie("currOpenedChat"),
             time:Date.now(),
@@ -780,15 +780,10 @@ const _trigerSendMsg = async (type) => {
         addNewMsgInCurrChat(msgObj);
         _sendMsg(msgObj)
             .then(res=>{
-                if( (res.status != 'success') || (res.responseText != 1)){
-                    try{
-                        handler['err_'+res.responseText]();
-                    }catch(e){
-                        handler['err_400']();
-                    }
-                    throw new Error(res.responseText);
+                if( (res.status == 'success') && res.responseText.msgSend == 1){
+                    msgObj.msgID=res.responseText.msgID;
+                    msgObj.msgContainer.setAttribute('data-msgid', msgObj.msgID);
 
-                }else if(res.responseText == 1){
                     _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
                         .then(res=>msgObj.status = res);
                     
@@ -802,10 +797,17 @@ const _trigerSendMsg = async (type) => {
                             msgObj.msgLoad.appendChild(setDocumentDownloadBtn(msgObj));
                             break;
                     }
+                }else{
+                    throw res.responseText;
                 }
             });
     }catch(err){
-        console.warn(`Message : ${err.message}`);
+        if(err.code && handler['err_'+err.code])
+            handler['err_'+err.code]();
+        else
+            handler.err_400();
+
+        console.warn(`[${err.code}] : ${err.message}`);
     }
 }
 
@@ -845,7 +847,9 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     let msgContainer=document.createElement("div");
     msgContainer.classList.add('msgContainer',whichTransmit);
-    msgContainer.id=msgObj.msgID;
+    msgContainer.setAttribute('data-msgid', msgObj.msgID)
+    if(msgObj.msgID === null)
+        msgObj.msgContainer=msgContainer;   
 
     msg=document.createElement("div");
     msg.classList.add('msg');
@@ -988,14 +992,7 @@ const addNewMsgInCurrChat = (msgObj) => {
         optionBtn.innerHTML=`
         <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" >
         <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-        </svg>`;
-    
-    // optionBtn.setAttribute('onclick',())
-        if(msgObj.type == 'doc'){
-            optionBtn.style.position="relative";
-            optionBtn.style.alignSelf="start";
-        }
-    
+        </svg>`;    
     
     let msgOptionMenu = new OptionContainer();
     optionBtn.appendChild(msgOptionMenu.optionContainer);

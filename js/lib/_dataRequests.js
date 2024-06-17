@@ -12,8 +12,12 @@ const sendNoti = (req , notiID) => {
                 if(res.status == "success" && res.responseText === 1)
                     resolve(res.responseText);
                 else
-                    throw new Error(res.responseText);
+                    throw res.responseText;
             }).catch(err=>{
+                if(handler['err_'+err.code])
+                    handler['err_'+err.code]();
+                else
+                    handler.err_400();
                 console.error(err);
             })
     })
@@ -27,7 +31,7 @@ const _getChatList = async () => {
 
     try{
         const res = await postReq(url,data);
-        if(res.status === "success")
+            if(res.status === "success")
             return res.responseText;
         else throw new Error("Something went wrong while fetching chat list of chatter");
     }catch(err){
@@ -132,18 +136,18 @@ const _sendMsg = (data) =>{
     }
 }
 
-const _genNewID= async (preFix)=>{
-    if(!preFix) return;
+// const _genNewID= async (preFix)=>{
+//     if(!preFix) return;
 
-    var url = "/functionality/lib/_chat.php";
-    var data=JSON.stringify({
-        req:"genNewID",
-        preFix,
-    });
+//     var url = "/functionality/lib/_chat.php";
+//     var data=JSON.stringify({
+//         req:"genNewID",
+//         preFix,
+//     });
 
-    var res =await postReq(url,data);
-    return (res.status === "success") ? res.responseText : 400;
-}
+//     var res =await postReq(url,data);
+//     return (res.status === "success") ? res.responseText : 400;
+// }
 
 const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
     var url = "/functionality/lib/_fetch_data.php";
@@ -269,12 +273,12 @@ const _deleteMsg=(msgID)=>{
     postReq(url,JSON.stringify(data))
         .then(res=>{
             if(res.status === 'success' && res.responseText === 1){
-                chat.querySelector(`#${msgID}`)?.remove();
-            }else if(res.responseText.error){
-                console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
-                handler['err_'+res.responseText.code]();
+                chat.querySelector(`div[data-msgid='${msgID}'`)?.remove();
+            }else{
+                throw res.responseText;
             }
         }).catch(err=>{
+            console.error(err);
             handler.err_400();
         })
 }
@@ -287,6 +291,15 @@ const _deleteChat=()=>{
 
     postReq(url,JSON.stringify(data))
         .then(res=>{
-            console.log(res.responseText);
+            if(res.status === 'success' && res.responseText === 1){
+                let delUserInbox=user;
+                closeChat();
+                delUserInbox.remove();
+            }else{
+                throw res.responseText;
+            }
+        }).catch(err=>{
+            console.error(err);
+            handler.err_400();
         })
 }

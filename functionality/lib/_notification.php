@@ -1,7 +1,12 @@
 <?php
 
 if($data = json_decode( file_get_contents("php://input") , true)){
-    session_start();
+    $fleg=0;
+    if(!session_id()){
+        session_start();
+        $fleg=1;
+    }
+    
     if(isset($_SESSION['userID'])){
         include_once('../db/_conn.php');
         include_once('_fetch_data.php');
@@ -16,47 +21,64 @@ if($data = json_decode( file_get_contents("php://input") , true)){
         }else if($data['req'] == "rejectedChatterReq"){
             echo rejectedChatterReq($data);
         }else if($data['req'] == "deleteThisNoti"){
-            echo deleteThisNoti($data['notiID']);
+            echo deleteThisNoti(base64_decode($data['notiID']));
         }
     }
-}else{
-    header('Location: /');
-}
+    if($fleg==1)
+        session_abort();
+}   
 
 function add_new_noti($data) {
     try{
         $newNotiID = gen_new_notification_id();
         $fromID = getDecryptedUserID();
 
-        $unm = (isset($data['unm'])) ? $data['unm'] : "";
-        $action = (isset($data['action'])) ? $data['action'] : "newMessage" ;
-        $toID = _get_userID_by_UNM($unm);
+        $unm= $data['unm']    ?? "";
+        $toID= $data['toID']   ?? "";
+        $action= $data['action'] ?? "newMessage" ;
+        $msg= $data['msg']   ?? null;
 
-        if($action == "addUserReq"){
-            
-            if( $toID && is_data_present('users_account',['userID'],[$toID])){
+        if(!$toID && $unm)
+            $toID = _get_userID_by_UNM($unm);
 
-                if(is_chat_exist($fromID , $toID) == 1)
-                    return '409';
-                if(is_noti($fromID,$toID,"addUserReq") != 0)
-                    return '403';
-                //checking is there any messages with action="chatterReqRejected" from the user our user want to send request
-                else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)
-                    return '499';
-            }else{
-                throw new Exception("No user found!!");
+        if( $toID && is_data_present('users_account',['userID'],[$toID])){
+            switch($action){
+                case "addUserReq":
+                    if(is_chat_exist($fromID , $toID) == 1)
+                        return '409';
+                    else if(is_noti($fromID,$toID,"addUserReq") != 0)
+                        return '403';
+                    //checking is there any messages with action="chatterReqRejected" from the user our user want to send request
+                    else if(is_noti($toID , $fromID , "chatterReqRejected") != 0)
+                        return '499';
+                break;
+
+                case 'acceptedChatterReq':
+                case 'chatterReqRejected':
+                case "reloadChat":
+                case "msgDeleted":
+                break;
+
+                default:
+                    return 0;
             }
+        }else{
+            throw new Exception("No user found!!");
         }
 
         $res = insertData(
-                "notification" , ["notificationID" , "fromID" , "toID" , "action"] ,
-                [$newNotiID , $fromID , $toID , $action] , "status");
+                "notification" , ["notificationID" , "fromID" , "toID" , "action",'msg'] ,
+                [$newNotiID , $fromID , $toID , $action ,$msg] , "status");
         
         return $res;
 
     }catch(Exception $e){
-        print_r($e);
-        return 0;
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
 }
 
@@ -77,9 +99,18 @@ function gen_new_notification_id()  {
 }
 
 function is_noti($fromID , $toID , $action = null){
-    $query = "SELECT COUNT(`notificationID`) FROM `notification` WHERE `fromID` = '$fromID' AND `toID` = '$toID' ";($action==null) ?: $query.="AND `action` = '$action'";
-    $res = $GLOBALS['status']-> query($query);
-    $res = $res->fetch_column();
+    $p = ['fromID','toID'];
+    $p_values= [$fromID,$toID];
+    
+    if($action != null){
+        $p[]='action';
+        $p_values[]=$action;
+    }
+
+    $res = fetch_columns('notification',$p,$p_values,["count(notificationID)"],'status');
+    if($res)
+        $res = $res->fetch_column();
+    
     return $res;
 }
 
@@ -99,41 +130,47 @@ function getNewNoti(){
     try{
         $userID = getDecryptedUserID();
         
-        $query  = "SELECT `notificationID` as `notiID` , `fromID` , `action` FROM `notification` WHERE `toID` = '$userID' ";
-        $res = $GLOBALS['status']-> query($query);
+        $res= fetch_columns('notification',['toID'],[$userID],['notificationID as notiID','fromID','action','msg'],'status');
         
         $i = 0;
         while($row = $res->fetch_assoc()){
             $row['unm'] = _fetch_unm($row['fromID']);
                 if( $row['unm'] !== 0 ){
-                    $rows[$i]['notiID'] = $row['notiID'];
+                    $rows[$i]['notiID'] = base64_encode($row['notiID']);
                     $rows[$i]['unm'] = $row['unm'];
                     $rows[$i]['action'] = $row['action'];
+                    $rows[$i]['msg']= $row['msg'];
                     $i++;
                 }else{
                     throw new Exception();
                 }
         }
         if(!isset($rows))
-            throw new Exception();
+            return 0;
             
         return json_encode($rows);
-    }catch(Exception){
-        return 0;
+    }catch(Exception $e){
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
     }
 
 function acceptChatterReq($data){
     try{
-        $notiID = $data['notiID'];
+        $notiID = base64_decode($data['notiID']);
         
-        $feFrmNoti = fetchThisNoti($notiID);
-        if($feFrmNoti !== 0){
+        $feDataFromNoti = fetchThisNoti($notiID);
+        if($feDataFromNoti !== 0){
 
-            $fromID =   $feFrmNoti['fromID'];
-            $toID =     $feFrmNoti['toID']; 
-            $action=    $feFrmNoti['action'];
-            if($action === 'addUserReq'){
+            $fromID =   $feDataFromNoti['fromID']; //the user who send a requst 
+            $toID =     $feDataFromNoti['toID'];   //the user who accepted req 
+            $action=    $feDataFromNoti['action'];  
+            
+            if($action === 'addUserReq' && (getDecryptedUserID() === $toID)){
                 // delete old notification
                 $req = deleteThisNoti($notiID);
                 if($req){
@@ -150,6 +187,14 @@ function acceptChatterReq($data){
                                 $stmt->execute(); $stmt->close();
 
                                 throw new Exception();
+                            }
+                            
+                            if(is_user_on($fromID)){
+                                $data=[
+                                    'action'=>'reloadChat',
+                                    'toID'=>$fromID,
+                                ];
+                                add_new_noti($data);
                             }
                         }
 
@@ -170,65 +215,89 @@ function acceptChatterReq($data){
         throw new Exception();
 
     }catch(Exception $e){
-        // print_r($e);
-        return 0;
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
     
 }
 
 function rejectedChatterReq($data){
     try{
-        $oldNotiID = $data['notiID'];
-        
-        $feFrmNoti = fetchThisNoti($oldNotiID);
-        if($feFrmNoti !== 0){
+        $oldNotiID = base64_decode($data['notiID']);
+        $feDataFromNoti = fetchThisNoti($oldNotiID);
+
+        if($feDataFromNoti != 0 
+            && $feDataFromNoti['action'] === 'addUserReq' 
+            && $feDataFromNoti['toID']===getDecryptedUserID()){
+
             //swap id for request rejecting notification
-            $fromID = $feFrmNoti['toID'];
-            $toID = $feFrmNoti['fromID']; 
+            $fromID = $feDataFromNoti['toID'];
+            $toID = $feDataFromNoti['fromID']; 
             
             // delete old notification
             $req = deleteThisNoti($oldNotiID);
         
             if($req){
-                $newNotiID = gen_new_notification_id();
-                $action = "chatterReqRejected";
-                $req = insertData('notification' , ["notificationID" , "fromID" , "toID" , "action"] , 
-                                                    [$newNotiID    , $fromID, $toID ,$action] , "status" );
+                $notiData = array(
+                    "toID" => $toID,
+                    "action" => "chatterReqRejected",
+                );
+                add_new_noti($notiData);
+                
                 echo $req;
             }else{
-                throw new Exception();
+                throw new Exception('',400);
             }
         }else{
-            throw new Exception();
+            throw new Exception('No data Found',411);
         } 
     }catch(Exception $e){
-        return 0;
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
     
 }
 
 function deleteThisNoti($notiID){
     try{
-        $queryDeleteNotiID = "DELETE FROM `notification` WHERE `notificationID` = '$notiID'";
-        $req = $GLOBALS['status']->query($queryDeleteNotiID); 
+        if(is_data_present('notification',['notificationID'],[$notiID],'notificationID','status')){
+            $res= deleteData('notification',$notiID,'notificationID','status');
         
-            if($req){
+            if($res){
                 return 1;
             }else{
                 return 0;
             }
+        }else{
+            throw new Exception("", 0);
+        }
+        
     }catch(Exception $e){
-        return 0;
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
     
 }
 
 function fetchThisNoti($notiID){
     try{
-        $queryFetchData = "SELECT * FROM `notification` WHERE `notificationID` = '$notiID'";
-        $notiData = $GLOBALS['status']->query($queryFetchData); 
+        $res= fetch_columns('notification',['notificationID'],[$notiID],['*'],'status');
+        // $queryFetchData = "SELECT * FROM `notification` WHERE `notificationID` = '$notiID'";
+        // $notiData = $GLOBALS['status']->query($queryFetchData); 
         
-            if($notiData && $row = $notiData->fetch_assoc() ){
+            if($res && $row = $res->fetch_assoc() ){
                 return $row;
             }else{
                 return 0;

@@ -3,11 +3,12 @@
         session_start();
         include_once("_validation.php");
         include_once("_fetch_data.php");
+        include_once('./_notification.php');
 
         if(isset($_SESSION['userID'])){
 
             if($data['req'] == 'deleteMsg')
-                echo deleteMsg($data['msgID']);
+                echo deleteMsg(base64_decode($data['msgID']));
             else if($data['req'] === 'deleteChat')
                 echo deleteChat();
             
@@ -16,9 +17,6 @@
         session_abort();
     }
 
-    //!remove user blocks and chat from our side
-    //!make a function to check a person is online or offline
-    //!if he is online use notification to send notification for reloading her chatter list
     function deleteChat(){
         try{
             if(!isset($_COOKIE['chat']))
@@ -43,8 +41,17 @@
 
                     if(!$sqlfire)
                         throw new Exception("Something went wrong while deleting user",400);
+                    else{
+                        if(is_user_on($oppoUserID) && $userID != $oppoUserID){
+                            $data=[
+                                'action'=>'reloadChat',
+                                'toID'=>$oppoUserID,
+                            ];
+                            add_new_noti($data);
+                        }
 
-                    return $sqlfire;
+                        return $sqlfire;
+                    }
                 }else
                     throw new Exception("No User Found",0);
                     
@@ -127,10 +134,6 @@
             }
 
     }
-    
-    function delete_chat(){
-
-    }
 
     function deleteMsg(string $msgID){
         try{
@@ -152,9 +155,19 @@
                 $msgObjSQL  = fetch_columns('messages',['msgID'],[$msgID],['fromID','toID']);
                 $ids        = $msgObjSQL->fetch_assoc();
 
-                if($ids['fromID'] === $userID && $ids['toID'] === $oppoUserID)
+                if($ids['fromID'] === $userID && $ids['toID'] === $oppoUserID){
                     $deleteRes= deleteData('messages',$msgID,'msgID');
-                else if($ids['fromID'] === $oppoUserID && $ids['toID'] === $userID)
+                    
+                    if($deleteRes && is_user_on($oppoUserID) && $userID != $oppoUserID){
+                        $data=[
+                            'action'=>'msgDeleted',
+                            'msg'=>base64_encode($msgID),
+                            'toID'=>$oppoUserID,
+                        ];
+                        add_new_noti($data);
+                    }
+
+                }else if($ids['fromID'] === $oppoUserID && $ids['toID'] === $userID)
                     $deleteRes= updateData('messages',['hide'],[1],'msgID',$msgID,'status');
                 else
                     throw new Exception("Unauthorise Access !!!",410);
@@ -177,7 +190,7 @@
                 $stmt->bind_param('s',$msgID);
                 $fire= $stmt->execute();
                 if(!$fire)
-                    throw new Exception("SQL is not responding!!",400);
+                    throw new Exception("DATABASE is not responding!!",400);
                 
                 $result=$stmt->get_result();
                 $stmt->close();

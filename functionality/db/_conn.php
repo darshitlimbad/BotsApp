@@ -1,6 +1,7 @@
 <?php
     // php.ini changes
         define("MAX_DOC_SIZE" , 16777200);
+        define("REQUEST_TIME",2);
     // 
 
     $host = "localhost";
@@ -68,7 +69,7 @@
             }
             
             if(sizeof($points) != sizeof($point_values))
-                die(throw new Exception( "Point size is not equal to Point Value size", 400));
+                throw new Exception( "Point size is not equal to Point Value size", 400);
 
             $point_str = "";
             $i=0;
@@ -132,7 +133,7 @@
             }
 
             if(sizeof($columns) != sizeof($values))
-                die(throw new Exception( "Columns size is not equal to values size", 400));
+                throw new Exception( "Columns size is not equal to values size", 400);
 
             //adding point value in the value variable for using bind_param
             $values[]=$point_value;

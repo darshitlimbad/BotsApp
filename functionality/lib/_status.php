@@ -103,8 +103,7 @@
                             $userOn =  false;
                         else{
                             $lastOnTime = $userOnTime->fetch_column();
-                            //if you do any changes in requst time then please change here also
-                            $userOn = $lastOnTime >= time()-2;
+                            $userOn = $lastOnTime >= time()- REQUEST_TIME;
                         } 
 
                         if(!$userOn) {
@@ -202,7 +201,10 @@
             session_start();
             include_once('../lib/_fetch_data.php');
 
-            $msgIDs = $data['msgIDs'];
+            $msgIDs= array_map(function($id){
+                        return base64_decode($id);
+                    },$data['msgIDs']);
+
             $userID = getDecryptedUserID();
 
             $chatType= strtolower($_COOKIE['chat']);
@@ -260,8 +262,10 @@
             
             // $i=0;
             $msgStatus=[];        
-            while($row = $res->fetch_assoc())
+            while($row = $res->fetch_assoc()){
+                $row['msgID']= base64_encode($row['msgID']);
                 $msgStatus[]=$row;
+            }
 
             session_abort();
             return json_encode($msgStatus) ;

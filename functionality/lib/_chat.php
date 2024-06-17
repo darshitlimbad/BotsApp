@@ -21,9 +21,9 @@ if($data = json_decode( file_get_contents("php://input") , true)){
             case "sendMsg":
                 echo sendMsg($data);
                 break;
-            case "genNewID":
-                echo json_encode(gen_new_id($data['preFix']));
-                break;
+            // case "genNewID":
+            //     echo json_encode(gen_new_id($data['preFix']));
+            //     break;
             case "editGroupDetails":
                 if(isset($data['column']) && isset($data['value']))
                     echo editGroupDetails($data['column'],$data['value']);
@@ -160,7 +160,7 @@ function getAllMsgs($data){
         $i=0;
         while($row = $result->fetch_assoc()){
 
-            $msgObjs[$i]['msgID']= $row['msgID'];
+            $msgObjs[$i]['msgID']= base64_encode($row['msgID']);
             $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
             //if chatType will be a group than always 'toUNM' will be the group name
             $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
@@ -244,7 +244,8 @@ function getNewMsgs($data){
                 LEFT JOIN `botsapp_statusdb`.messages as t2
                 ON t1.msgID = t2.msgID 
                 WHERE $condition
-                AND t2.status = 'send' ";
+                AND t2.status = 'send' 
+                ORDER BY t1.time";
 
         $stmt = $GLOBALS['conn'] -> prepare($sql);
         $stmt ->bind_param('ss' , $oppoUserID,$userID);        
@@ -266,9 +267,7 @@ function getNewMsgs($data){
             if($seenByIDs && in_array($userID,$seenByIDs))
                 continue;
 
-            updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
-
-            $msgObjs[$i]['msgID']= $row['msgID'];
+            $msgObjs[$i]['msgID']= base64_encode($row['msgID']);
             $msgObjs[$i]['fromUnm']= _fetch_unm($row['fromID']);
             //if chatType will be a group than always 'toUNM' will be the group name
             $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
@@ -277,6 +276,9 @@ function getNewMsgs($data){
             $msgObjs[$i]['details'] = unserialize($row['details']);
             $msgObjs[$i]['time']= $row['time'];
             $i++;
+
+            updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
+
         }
 
         return ($msgObjs) ? json_encode($msgObjs) : 0;
@@ -291,14 +293,14 @@ function getNewMsgs($data){
     }
 }   
 
-function sendMsg($data){
+function sendMsg(array $data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
         if(!isset($_COOKIE['currOpenedChat']))
             throw new Error('Chat is not opened, Please open chat first.',0);
 
-        $newMsgID = $data['msgID'];
+        $newMsgID = gen_new_id('Msg');
         $fromID = getDecryptedUserID();
         
         switch(strtolower($_COOKIE['chat'])){
@@ -390,13 +392,27 @@ function sendMsg($data){
             // updating status of message
             $status = ($fromID == $oppoUserID) ? 'read' : 'send' ;
             insertData("messages",["msgID","status"],[$newMsgID,$status],"status");
-            return $msgRes;
+
+            if($msgRes)
+                $response=[
+                    'msgSend'=>1,
+                    'msgID'=>base64_encode($newMsgID),
+                ];
+            else
+                $response=['msgSend'=>0];
+
+            return json_encode($response);
         }
 
         // if anything went wrong and the code has not been return yet it will occure something went wrong error.
         throw new Exception("",0);
     }catch(Exception $e){
-        return json_encode($e->getCode());
+        $error = [
+            'error'=>true,
+            'code'=> $e->getCode(),
+            'message'=> $e->getMessage(),
+        ];
+        return json_encode($error);
     }
 }
 

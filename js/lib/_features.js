@@ -64,11 +64,11 @@
                             new_notification(`'@${unm}' is already in Your Chatter List`);
                             break;
                         case 403:
-                            new_Alert(`sorry,You have already send Chatter request to this '@${unm}'`);
+                            new_Alert(`sorry,You have already send Chatter request to this user '@${unm}'`);
                             break;
-    
                         default:
                             new_Alert("Please try again later!! :(");
+                            throw res.responseText;
                         }
                 }else if(res.status == "error") {
                     throw res.error;
@@ -95,8 +95,11 @@
                         document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
                         var i=0;
                         data.forEach(row=>{
-                            box_data=document.createElement("div");box_data.classList.add("box_data");box_data.classList.add(`${row['action']}`);box.appendChild(box_data);
                             if(row['action'] == "addUserReq"){
+                                box_data=document.createElement("div");box_data.classList.add("box_data");
+                                box_data.classList.add(`${row['action']}`);
+                                box.appendChild(box_data);
+
                                 box_data.innerHTML = `
                                     <h4 class="unm">@${row['unm']}</h4>
                                     <div class="hr"></div>
@@ -108,6 +111,10 @@
                                         <button name="accept_btn" id="accept_btn" class="success-button accept_btn button" onclick="_acceptChatterReq('${row['notiID']}')">Accept</button>
                                     </div> ` ;
                             }else if(row['action'] == "chatterReqRejected"){
+                                box_data=document.createElement("div");box_data.classList.add("box_data");
+                                box_data.classList.add(`${row['action']}`);
+                                box.appendChild(box_data);
+
                                 box_data.innerHTML = `
                                     <h4 class="unm"  style="color:red">@${row['unm']}</h4>
                                     <div class="hr" style="background-color:red"></div>
@@ -116,6 +123,10 @@
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
                             }else if(row['action'] == "acceptedChatterReq"){
+                                box_data=document.createElement("div");box_data.classList.add("box_data");
+                                box_data.classList.add(`${row['action']}`);
+                                box.appendChild(box_data);
+                                
                                 box_data.innerHTML = `
                                     <h4 class="unm">@${row['unm']}</h4>
                                     <div class="hr"></div>
@@ -123,6 +134,20 @@
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
+                            }else if(row['action'] === 'reloadChat'){
+                                _deleteThisNoti(row.notiID);
+
+                                if(getCookie('chat').toLowerCase() === 'personal'
+                                    && getCookie('currOpenedChat') === row.unm)
+                                    closeChat();
+                                openChatList();
+                            }else if(row['action'] === 'msgDeleted'){
+                                _deleteThisNoti(row.notiID);
+
+                                if(getCookie('chat').toLowerCase() === 'personal' 
+                                    && getCookie('currOpenedChat') === row.unm)
+                                    chat.querySelector(`div[data-msgid='${row.msg}'`)?.remove();
+
                             }
                         })
                     }else{
@@ -259,7 +284,10 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
     }else if(action === "addUserReqConfirm"){
         yes_btn.onclick=()=> _sendAddInChatReq(`${title}`);
     }else if(action === "remove_chat"){
-        yes_btn.onclick=()=> _deleteChat();
+        yes_btn.onclick=()=>{
+            _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
+            _deleteChat();
+        }
     }else if(action.req == "delete_this_msg"){
         yes_btn.onclick=()=> {
             _deleteMsg(action.msgID);

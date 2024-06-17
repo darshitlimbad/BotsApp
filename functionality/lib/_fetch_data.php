@@ -189,7 +189,7 @@
             if(!isset($_COOKIE['currOpenedChat']))
                 throw new Error('Chat is not opened, Please open chat first.',0);
 
-            $msgID = $obj['msgID'];
+            $msgID = base64_decode($obj['msgID']);
             session_start();
 
             $chatType = strtolower($_COOKIE['chat']);

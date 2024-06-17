@@ -56,8 +56,7 @@ document.addEventListener('DOMContentLoaded' , function () {
     // 
 
     //functions to be called
-    set_profile_dp();
-    getNewNoti();   
+    set_profile_dp();  
 });  
 
 // 

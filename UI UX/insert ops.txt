@@ -11,10 +11,11 @@ side insert ops:
 
     //5. User about section edit glitch at backend side res return 1 but no changer are happening -- solved
 
+    // 6. add DP insertion for groups. --done
+    
     2. sortout new messages function in fitures.js.make it more js friendly.
 
-    6. add DP insertion for groups.
-    
+    7. Enable user Search functionality in inbox of the user by using search function if posible
 
 next session ops:
     //1. file:_status.php func:updatemsgStatus line number 338
@@ -29,7 +30,8 @@ next session ops:
         and flush it in every new session so if the user changes the dp then it can refresh
 
     5. make api for adding groups and deleting groups and users.
-        create a api and table for blocking users.
+        
+    6. create a api and table for blocking users.
 
 ///Delete operations note
 

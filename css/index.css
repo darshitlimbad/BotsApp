@@ -415,6 +415,8 @@
 }
 
 .mobile .chat #searchTxt{
+    height: 5em;
+    min-width: 280px;
     right: 5em;
 }
 
@@ -444,6 +446,12 @@
     color: #bc99e46e;
     outline: none;
     font-size: 16px;
+}
+
+.mobile .chat #searchTxt .move .up,
+.mobile  .chat #searchTxt .move .down{
+    height: 40px;
+    width: 30px;
 }
 
 .chat #searchTxt .move .up:hover,
@@ -917,7 +925,7 @@
     flex-direction: column;
     position: absolute;
     top: 4em;
-    z-index: 1;
+    z-index: 3;
     padding: 10px;
     margin: 11px;
     height: 17em;
@@ -988,6 +996,10 @@
     font-size: 10px;
     font-family: auto;
     border-radius: 4px;
+}
+
+.user-profile input:not([readonly]){
+    outline: 1px solid aliceblue;
 }
 
 .user-profile input:hover:not([readonly]) , .user-profile .memberList:hover{

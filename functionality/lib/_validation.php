@@ -1,4 +1,48 @@
 <?php  
+function session_check(){
+    $userID = getDecryptedUserID();
+    if(is_data_present('users' , ['userID'] , [$userID]) == 0)  {
+        header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
+    }else{
+        session_regenerate_id(true);
+    }
+}
+
+function gen_new_id($preFix)  {
+    try{
+        $preFix = ucfirst(strtolower(trim($preFix)));
+
+        switch($preFix){
+            case "User":
+                $table = "users";
+                $clm = "userID";
+                break;
+            case "Msg":
+                $table = "messages";
+                $clm = "msgID";
+                break;
+            default:
+                throw new Exception("",400);
+        }
+
+        $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
+        $sqlfire = $GLOBALS['conn'] -> query($sql);
+
+        if($sqlfire && ($sqlfire -> num_rows > 0)) {
+            $ID = $sqlfire->fetch_column();
+            $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
+            $newID =  sprintf("%08d" , ++$oldID);    
+        }
+        else {
+            $newID = sprintf("%08d" , 1);
+        }
+
+        return $preFix.$newID;
+    }catch(Exception $e){
+        return $e->getCode();
+    }
+}
+
 function getDecryptedUserID(){
     try{
         if(!isset($_SESSION['userID']))
@@ -39,11 +83,11 @@ function metchEncryptedPasswords($Pass , $userID){
 }
 
 // if there will be data the is_data_present will return 1 
-function is_data_present($table , array $point , array $point_val , $column='userID'){
+function is_data_present($table , array $point , array $point_val , $column='userID',$db='conn'){
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
 
-    $result = fetch_columns($table , $point , $point_val , array("$column"));
+    $result = fetch_columns($table , $point , $point_val , array("$column"),$db);
     if($result->num_rows == 1){
         return 1;
     }else{
@@ -130,61 +174,33 @@ function is_chat_exist(string $userID, string $oppoUserID){
 function is_group_admin(string $userID, string $groupID){
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
-    
-    $SQL =" SELECT count(*) FROM groups 
-            WHERE groupAdminID='$userID' 
-            AND groupID='$groupID';";
+        
+    $result = fetch_columns('groups',['groupAdminID','groupID'],[$userID,$groupID],['count(*)']);
 
-    $result=$GLOBALS['conn']->query($SQL);
-
-    if($result->num_rows == 1){
+    if($result->fetch_column() === 1){
         return 1;
     }else{
         return 0;
     }
 }
 
-function session_check(){
-    $userID = getDecryptedUserID();
-    if(is_data_present('users' , ['userID'] , [$userID]) == 0)  {
-        header('location: /functionality/_log_out.php?key_pass=khulJaSimSim'); 
+// @param userID
+// @return user is on or off by 1 and 0 if there is no user than returns 411
+function is_user_on(string $userID){
+    if(!isset($_SESSION['userID']))
+        throw new Exception("",400);
+    else if(!is_data_present('users_account',['userID'],[$userID],'userID'))
+        throw new Exception('',411);
+
+    $SQL =" SELECT last_on_time FROM on_status 
+            WHERE userID='$userID';";
+
+    $result=$GLOBALS['status']->query($SQL);
+
+    if($result->num_rows == 1 && $result->fetch_column() >= time() - REQUEST_TIME){
+        return 1;
     }else{
-        session_regenerate_id(true);
-    }
-}
-
-function gen_new_id($preFix)  {
-    try{
-        $preFix = ucfirst(strtolower(trim($preFix)));
-
-        switch($preFix){
-            case "User":
-                $table = "users";
-                $clm = "userID";
-                break;
-            case "Msg":
-                $table = "messages";
-                $clm = "msgID";
-                break;
-            default:
-                throw new Exception("",400);
-        }
-
-        $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
-        $sqlfire = $GLOBALS['conn'] -> query($sql);
-
-        if($sqlfire && ($sqlfire -> num_rows > 0)) {
-            $ID = $sqlfire->fetch_column();
-            $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
-            $newID =  sprintf("%08d" , ++$oldID);    
-        }
-        else {
-            $newID = sprintf("%08d" , 1);
-        }
-
-        return $preFix.$newID;
-    }catch(Exception $e){
-        return $e->getCode();
+        return 0;
     }
 }
 
