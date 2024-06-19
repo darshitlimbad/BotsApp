@@ -346,7 +346,6 @@ const _blockChat=()=>{
         })
 }
 
-//!report validation baki che laudya
 const _reportChat=(reportReason=null)=>{
     if(!reportReason || !getCookie('currOpenedChat') || getCookie('chat').toLowerCase() != 'personal')
         return;

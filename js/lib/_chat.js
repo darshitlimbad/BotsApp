@@ -418,7 +418,7 @@ function openUserProfile(unm){
 
             var deleteBtn= document.createElement('button');
             deleteBtn.classList.add('danger-button','button');
-            deleteBtn.textContent='Remove User' ;
+            deleteBtn.textContent='Delete User' ;
             flexBox.appendChild(deleteBtn);
 
             let action="remove_chat";
@@ -542,7 +542,7 @@ async function openGroupProfile(){
         userProfile.appendChild(detailName);
 
         flexBox=document.createElement('div');
-        flexBox.classList.add('memberList','flexBox');
+        flexBox.classList.add('member','flexBox');
         flexBox.style.justifyContent='flex-start';
         userProfile.appendChild(flexBox);
 
@@ -569,7 +569,7 @@ async function openGroupProfile(){
             JSON.parse(profile.members).forEach(member=>{
 
                 flexBox=document.createElement('div');
-                flexBox.classList.add('memberList','flexBox');
+                flexBox.classList.add('member','flexBox');
                 flexBox.style.justifyContent='flex-start';
                 userProfile.appendChild(flexBox);
 

@@ -17,7 +17,7 @@ next session ops:
         
     7. create operations of msgDeleted and reloadChat for group also.
 
-    8. 
+    8. create a box with member class to create a form for creating new group new group
 
 
 

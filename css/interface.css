@@ -32,6 +32,13 @@
     user-select: none;
 }
 
+.icon[data-show="false"]{
+    display: none;
+}
+.icon[data-show="true"]{
+    display: block;
+}
+
 .mobile .icon {
     margin: 0 !important;
 }

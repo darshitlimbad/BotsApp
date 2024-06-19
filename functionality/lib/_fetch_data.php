@@ -210,7 +210,6 @@
                 throw new Error('Chat is not opened, Please open chat first.',0);
 
             $msgID = base64_decode($obj['msgID']);
-            session_start();
 
             $chatType = strtolower($_COOKIE['chat']);
             $userID = getDecryptedUserID();
@@ -254,7 +253,6 @@
             
             if($result->num_rows == 1){
                 $row=$result->fetch_assoc();
-                session_abort();
                 return json_encode($row);
             }else
                 throw new Exception("either file has been deleted or some error has ocured",400);
@@ -318,7 +316,6 @@
 
             $chatType= strtolower($_COOKIE['chat']);
             
-            session_start();
             $userID=getDecryptedUserID();
 
             if($chatType == 'personal'){
@@ -326,7 +323,6 @@
 
                 if(!$reqUserID || is_chat_exist($userID,$reqUserID) != 1 )
                     throw new Exception("No data found.",411);
-                session_abort();
 
                 $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about",'can_see_online_status'));
                 if(!$sqlObj)

@@ -20,8 +20,10 @@
         <!-- chat-list -->
         <div class="inbox">
 
-            <div class="page-name">
+            <div class="page-title">
                 <h2 id="cname">Personal Chat</h2>
+                
+                <img class="icon ele" data-show="false" src="/img/icons/options/plus.png" title="Create New Group">
             </div>
             
             <div class="hr"></div>

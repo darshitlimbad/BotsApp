@@ -70,10 +70,16 @@ const initiateChatBox = (chatType) => {
     let heading =  document.querySelector('#cname');
     heading.textContent = chatType + " Chat";
     document.title = heading.textContent + " -- Botsapp"; 
+
+    if(chatType.toLowerCase() === 'personal'){
+        document.querySelector('.page-title .icon')?.setAttribute('data-show','false')
+    }else if(chatType.toLowerCase() === 'group'){
+        document.querySelector('.page-title .icon')?.setAttribute('data-show','true')
+    }
     // 
     if(option = document.querySelector(".side-bar .top .options.selected"))
         option.classList.remove("selected");
-    document.querySelector(`div[title=${chatType}]`).classList.add("selected");
+    document.querySelector(`div[title=${chatType}]`)?.classList.add("selected");
 
     setCookie('chat', chatType);
     _flash_chatList();
