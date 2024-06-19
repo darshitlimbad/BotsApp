@@ -3,22 +3,23 @@ main insert ops:
 
 side insert ops:
    
-    
     2. sortout new notifications function in fitures.js.make it more js friendly.
 
     7. Enable user Search functionality in inbox of the user by using search function if posible
 
+
 next session ops:
-    
 
     4. create a indexed DB table for storing dp as hashmap. 
         and flush it in every new session so if the user changes the dp then it can refresh
 
     5. make api for adding groups and deleting groups and users.
         
-    6. create a api and table for blocking users.
-
     7. create operations of msgDeleted and reloadChat for group also.
+
+    8. 
+
+
 
 ///Delete operations note
 
@@ -49,3 +50,5 @@ next session ops:
 //2. make it mobile user friendly --done
     
 //3. add user unm and their dp in chat  -- done
+
+///6. create a api and table for blocking & report users. --done

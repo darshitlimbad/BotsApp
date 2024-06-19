@@ -52,7 +52,7 @@
         
         postReq(url , data)
             .then(res=>{
-                if(res.status == "success"){
+                if(res.status == "success" && !res.responseText.error){
                     switch(res.responseText){
                         case 1:
                             new_notification('@'+unm.concat(" has been succesfully invited to be chatter with you."));
@@ -71,11 +71,16 @@
                             throw res.responseText;
                         }
                 }else if(res.status == "error") {
-                    throw res.error;
+                    throw res;
+                }else{
+                    throw res.responseText;
                 }
             }).catch(err=>{
+                if(handler['err_'+err.code])
+                    handler['err_'+err.code]();
+                else
+                    handler.err_400();
                 console.error(err);
-                handler.err_400();
             })
     }
 
@@ -288,6 +293,11 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
             _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
             _deleteChat();
         }
+    }else if(action === "block_chat"){
+        yes_btn.onclick=()=>{
+            _hide_this_pop_up(document.querySelector('#confirmation_pop_up'));
+            _blockChat();
+        }
     }else if(action.req == "delete_this_msg"){
         yes_btn.onclick=()=> {
             _deleteMsg(action.msgID);
@@ -328,7 +338,7 @@ const _report_pop_up = (chatterType) => {
             return;
         }
 
-        reportChat(reportReasonInput.value);
+        _reportChat(reportReasonInput.value);
     }
 
     _show_this_pop_up(report_pop_up);
@@ -527,22 +537,33 @@ const _search_users_by_unm = (unm) => {
         value : unm,
     });
 
-    URL_for_search_users = "/functionality/lib/_fetch_data.php";
+    let URL_for_search_users = "/functionality/lib/_fetch_data.php";
 
     postReq(URL_for_search_users , data )
         .then( res => {
+            console.log(res.responseText);
             if(res.status == "success"){
-                _showList();_addDataInList(res.responseText);
+                if(res.responseText.error)
+                    throw res.responseText;
+
+                _showList();
+                _addDataInList(res.responseText);
+            }else{
+                throw res;
             }
-        })
-        .catch(err=>{
-            console.error(err);
+        }).catch(code=>{
+            console.error(code);
+            try{
+                handler['err_'+code]();
+            }catch(e){
+                handler.err_400();
+            }
         })
 
 }
 
 const _addDataInList = (data) => {
-    body = document.querySelector('#floatingList > tbody');
+    let body = document.querySelector('#floatingList > tbody');
     List.removeChild(body);
     body = document.createElement("tbody");
     List.appendChild(body);

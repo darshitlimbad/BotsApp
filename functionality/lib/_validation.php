@@ -158,9 +158,17 @@ function is_chat_exist(string $userID, string $oppoUserID){
     
     $maxEntry = ($userID === $oppoUserID) ? 1 : 2;
     
+    // $SQL =" SELECT id FROM inbox 
+    //         WHERE (fromID,toID) IN (('$userID','$oppoUserID'),('$oppoUserID','$userID'));";
+    // $result=$GLOBALS['conn']->query($SQL);
+
     $SQL =" SELECT id FROM inbox 
-            WHERE (fromID,toID) IN (('$userID','$oppoUserID'),('$oppoUserID','$userID'));";
-    $result=$GLOBALS['conn']->query($SQL);
+            WHERE (fromID,toID) IN ((?,?),(?,?));";
+    $stmt=$GLOBALS['conn']->prepare($SQL);
+    $stmt->bind_param('ssss',$userID,$oppoUserID,$oppoUserID,$userID);
+    $stmt->execute();
+    $result=$stmt->get_result();
+    $stmt->close();
 
     $count= $result->num_rows;
     if($count == $maxEntry){
@@ -204,6 +212,28 @@ function is_user_on(string $userID){
         return 1;
     }else{
         return 0;
+    }
+}
+
+// @param byID,blockedUserID
+// @return does user Blocked or not
+function is_user_blocked(string $fromID, string $toID){
+    if(!isset($_SESSION['userID']))
+            throw new Exception("",400);
+        
+    $SQL =" SELECT id FROM blocked 
+            WHERE (fromID,toID) IN ((?,?),(?,?));";
+    $stmt=$GLOBALS['status']->prepare($SQL);
+    $stmt->bind_param('ssss',$fromID,$toID,$toID,$fromID);
+    $stmt->execute();
+    $result=$stmt->get_result();
+    $stmt->close();
+
+    $count= $result->num_rows;
+    if($count == 0){
+        return 0;
+    }else{
+        return 1;
     }
 }
 

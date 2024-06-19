@@ -429,7 +429,10 @@ function openUserProfile(unm){
             blockBtn.classList.add('danger-button','button');
             blockBtn.textContent='Block User' ;
             flexBox.appendChild(blockBtn);
-            
+
+            let action="block_chat";
+            blockBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Block this chatter? Your all chats will be deleted also. ",action,'red');
+
             var reportBtn= document.createElement('button');
             reportBtn.classList.add('danger-button','button');
             reportBtn.textContent='Report User' ;
@@ -788,14 +791,21 @@ const _trigerSendMsg = async (type) => {
         addNewMsgInCurrChat(msgObj);
         _sendMsg(msgObj)
             .then(res=>{
-                console.log(msgObj);
                 if( (res.status == 'success') && res.responseText.msgSend == 1){
                     msgObj.msgID=res.responseText.msgID;
                     msgObj.msgContainer.setAttribute('data-msgid', msgObj.msgID);
-
-                    _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
+                    
+                    _placeMsgStatus(msgObj.msgContainer.querySelector("img.msgStatusIcon"),msgObj.msgID)
                         .then(res=>msgObj.status = res);
                     
+                    let action={
+                        req:"delete_this_msg",
+                        msgID:msgObj.msgID,
+                    };
+
+                    msgObj.msgContainer.querySelector(".option-container .option[data-action='delete']").onclick=
+                        ()=>_confirmation_pop_up("Delete","Are You sure you want to delete this message?",action,'red');
+
                     switch(type){
                         case 'text':
                             break;
@@ -1008,13 +1018,17 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     //options
     let deleteOption = msgOptionMenu.new_option("delete");
+
         if(whichTransmit == 'receive')
             deleteOption.children[1].textContent= "Delete For Me";
-        let action={
-            req:"delete_this_msg",
-            msgID:msgObj.msgID,
+            
+        if(msgObj.msgID){
+            let action={
+                req:"delete_this_msg",
+                msgID:msgObj.msgID,
+            }
+            deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to delete this message?",action,'red');
         }
-        deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to delete this Message?",action,'red');
 
     let info= msgOptionMenu.new_option("info");
     //
@@ -1029,11 +1043,12 @@ const addNewMsgInCurrChat = (msgObj) => {
         let msgStatus = document.createElement('div');
         msgStatus.classList.add('msgStatus');
         msgContainer.appendChild(msgStatus);
-            msgObj.statusIcon = new Image();
-            msgObj.statusIcon.classList.add('msgStatusIcon');
-            msgStatus.appendChild(msgObj.statusIcon); 
+            
+            let statusIcon = new Image();
+            statusIcon.classList.add('msgStatusIcon');
+            msgStatus.appendChild(statusIcon); 
 
-            _placeMsgStatus(msgObj.statusIcon,msgObj.msgID)
+            _placeMsgStatus(statusIcon,msgObj.msgID)
                 .then(res=> msgObj.status = res);
     }
 

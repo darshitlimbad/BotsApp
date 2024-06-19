@@ -56,7 +56,8 @@ function getChatList(){
             while( $toID = $dataFromInbox->fetch_column() ){
                 if( $chatType == 'personal' ){
                     if(!is_data_present('users_account', ['userID'], [$toID] ) 
-                        || (is_chat_exist($userID, $toID) == -1)){
+                        || (is_chat_exist($userID, $toID) == -1
+                        || (is_user_blocked($userID,$toID)))){
                         $del = "DELETE FROM `inbox` 
                                 WHERE (`fromID` , `toID`) IN (('$userID', '$toID'), ('$toID', '$userID'));";
                         $GLOBALS['conn']->query($del);
@@ -69,6 +70,11 @@ function getChatList(){
 
                     if(!is_data_present('groups', ['groupID'], [$toID], 'groupName')){
                         $del = deleteData('inbox',$toID,'toID');
+                        continue;
+                    }else if(!is_member_of_group($userID,$toID)){
+                        $del = "DELETE FROM `inbox` WHERE `fromID` = '$userID' , `toID` = '$toID'";
+                        $GLOBALS['conn']->query($del);
+                        delete_group_if_empty($toID);
                         continue;
                     }
 
@@ -97,7 +103,7 @@ function getAllMsgs($data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
-        if(!isset($_COOKIE['currOpenedChat']))
+        if(!$_COOKIE['currOpenedChat'])
             throw new Error('Chat is not opened, Please open chat first.',0);
 
         $userUNM = _fetch_unm();
@@ -197,7 +203,7 @@ function getNewMsgs($data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
-        if(!isset($_COOKIE['currOpenedChat']))
+        if(!$_COOKIE['currOpenedChat'])
             throw new Error('Chat is not opened, Please open chat first.',0);
 
         $userUNM = _fetch_unm();
@@ -298,7 +304,7 @@ function sendMsg(array $data){
     try{
         if(!isset($_COOKIE['chat']))
             throw new Error('chat section is not opened',0);
-        if(!isset($_COOKIE['currOpenedChat']))
+        if(!$_COOKIE['currOpenedChat'])
             throw new Error('Chat is not opened, Please open chat first.',0);
 
         $newMsgID = gen_new_id('Msg');

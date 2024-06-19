@@ -172,8 +172,11 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
         }
     })
         .then(res=>{
-            if(res.status == "success"){
+            if(res.status === "success" ){
                 let {mime,data} = res.responseText;
+                if(!mime || !data)
+                    throw res.responseText;
+
                 let base64 = `data:${mime};base64,${data}`;
                 
                 let a = document.createElement('a');
@@ -181,15 +184,11 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                 
                 _getDataURL(base64)
                     .then(res=>{
-                        if(res.status=='success'){
+                        if(res.status=='success' && res.url){
                             a.href = res.url;
                             a.click();
                         }else{
-                            try{
-                                handler['err'+res.error]();
-                            }catch(e){
-                                handler.err_400();
-                            }
+                            throw res;
                         }
 
                         if(device === 'mobile')
@@ -208,9 +207,15 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                     }
                 
             }else{
-                handler.err_400();
+                throw res;
             }
-        });
+        }).catch(err=>{
+            console.error(err);
+            if(err.code && handler['err_'+err.code])
+                handler['err_'+err.code]();
+            else
+                handler.err_400();
+        })
 }
 
 function getProfile(){
@@ -220,19 +225,21 @@ function getProfile(){
         req:`getProfile`,
     }
 
-    return new Promise(resolve=>{
+    return new Promise((resolve)=>{
         postReq(url,JSON.stringify(data))
             .then(res=>{
                 if(res.status === 'success' && !res.responseText.error){
                     resolve(res.responseText);
-                }else if(res.responseText.error){
-                    console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
-                    handler['err_'+res.responseText.code]();
                 }else{
-                    throw new Error();
+                    throw res.responseText;
                 }
             }).catch(err=>{
-                handler.err_400();
+                console.error(err);
+                if(err.code && handler['err_'+err.code])
+                    handler['err_'+err.code]();
+                else
+                    handler.err_400();
+
             })
     });
 }
@@ -252,13 +259,18 @@ function editGroupDetails(column,value){
                     handler.suc_dataChanged();
                     resolve(1);
                 }else{
-                    console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
-                    handler['err_'+res.responseText.error.code]();
-                    resolve(0);
+                    throw res.responseText;
+                    // console.error(`[${res.responseText.code}] : ${res.responseText.message}`);
+                    // handler['err_'+res.responseText.error.code]();
                 }
             }).catch(err=>{
-                handler.err_400();
-                resolve(0);
+                console.error(err);
+                if(err.code && handler['err_'+err.code])
+                    handler['err_'+err.code]();
+                else
+                    handler.err_400();
+
+                resolve(0); 
             })
     })
 }
@@ -279,7 +291,10 @@ const _deleteMsg=(msgID)=>{
             }
         }).catch(err=>{
             console.error(err);
-            handler.err_400();
+            if(err.code && handler['err_'+err.code])
+                handler['err_'+err.code]();
+            else
+                handler.err_400();
         })
 }
 
@@ -292,34 +307,23 @@ const _deleteChat=()=>{
     postReq(url,JSON.stringify(data))
         .then(res=>{
             if(res.status === 'success' && res.responseText === 1){
-                let delUserInbox=user;
                 closeChat();
-                delUserInbox.remove();
+                openChatList();
             }else{
                 throw res.responseText;
             }
         }).catch(err=>{
             console.error(err);
-            handler.err_400();
-        })
-}
-
-const _reportChat=(reportReason=null)=>{
-    if(!reportReason)
-        return;
-
-    let url = "/functionality/lib/_data_delete.php";
-    let data={
-        req:"reportChat",
-    }
-
-    postReq(url,JSON.stringify(data))
-        .then(res=>{
-            console.log(res);
+            if(err.code && handler['err_'+err.code])
+                handler['err_'+err.code]();
+            else
+                handler.err_400();
         })
 }
 
 const _blockChat=()=>{
+    if(!getCookie('currOpenedChat') || getCookie('chat').toLowerCase() != 'personal')
+        return;
 
     let url = "/functionality/lib/_data_delete.php";
     let data={
@@ -328,6 +332,43 @@ const _blockChat=()=>{
 
     postReq(url,JSON.stringify(data))
         .then(res=>{
-            console.log(res);
+            if( res.status === "success" && res.responseText === 1){
+                closeChat();
+                openChatList();
+            }else
+                throw res.responseText;
+        }).catch(err=>{
+            console.error(err);
+            if(err.code && handler['err_'+err.code])
+                handler['err_'+err.code]();
+            else
+                handler.err_400();
+        })
+}
+
+//!report validation baki che laudya
+const _reportChat=(reportReason=null)=>{
+    if(!reportReason || !getCookie('currOpenedChat') || getCookie('chat').toLowerCase() != 'personal')
+        return;
+
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"reportChat",
+        reportReason,
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            if( res.status === "success" && res.responseText === 1){
+                closeChat();
+                openChatList();
+            }else
+                throw res.responseText;
+        }).catch(err=>{
+            console.error(err);
+            if(err.code && handler['err_'+err.code])
+                handler['err_'+err.code]();
+            else
+                handler.err_400();
         })
 }

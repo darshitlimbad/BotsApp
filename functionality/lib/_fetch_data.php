@@ -1,6 +1,11 @@
 <?php
     if($data = json_decode(file_get_contents("php://input") , true) ){
-        if(isset($data['req'])){
+        $fleg=0;
+        if(!session_id()){
+            session_start();
+            $fleg=1;
+        }
+        if(isset($data['req']) && isset($_SESSION['userID'])){
             require_once('../db/_conn.php');
             require_once('./_validation.php');
 
@@ -23,6 +28,8 @@
             }else if($data['req'] == "getProfile")   
                 echo getProfile();
         }
+        if($fleg)
+            session_abort();
     }
 
     function _get_userID_by_UNM(string $unm){
@@ -147,23 +154,36 @@
 
     function search_user($from , $value) {
         try{
+            $userID=getDecryptedUserID();
+
             if($from == "add_new_chat")
                 $result = search_columns("users_account" , "unm" , $value , "userID" , "unm");
             else   
                 throw new Exception();
     
                 if($result !== 0 ){
+                    // $rows=0;
                     while($row = $result->fetch_assoc()){
+                        if(is_user_blocked($userID,$row['userID']))
+                            continue;
+                        
                         $rows[]['unm'] = $row['unm'];
                     }
-                    
+                    // $rows=$result->fetch_all(true);
+                    if(!isset($rows))
+                        return 0;
                     return json_encode($rows);
                 }else{
-                    throw new Exception();
+                    return 0;
                 }
     
         }catch(Exception $e){
-            return 0;
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
         }
     }
 

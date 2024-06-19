@@ -5,7 +5,9 @@ include_once('../functionality/db/_conn.php');
 include_once('../functionality/lib/_notification.php');
 include_once('../functionality/lib/_validation.php');
 
-    echo is_group_admin('User00000002', 'Group00000001');
-
+    $result=search_columns("users_account" , "unm" , "dar" , "unm");
+    $res;
+   
+    print_r($result->fetch_all(true));
 // print_r($res->fetch_assoc()) ;
 ?>

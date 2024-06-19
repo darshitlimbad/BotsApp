@@ -8,6 +8,9 @@
         exit();
     }else{
         session_check();
+
+        include_once('functionality/lib/_wrappers.php');
+        include_once('functionality/lib/_fetch_data.php');
         require_once('functionality/lib/_wrappers.php');
         require_once('functionality/lib/_fetch_data.php');
 
@@ -250,4 +253,6 @@
 <?php    require_once('functionality/lib/_features.php'); ?>
 
 </body>
+
+<?php include_once('functionality/lib/_features.php'); ?>
 </html>

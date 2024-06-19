@@ -44,6 +44,8 @@ function add_new_noti($data) {
         if( $toID && is_data_present('users_account',['userID'],[$toID])){
             switch($action){
                 case "addUserReq":
+                    if(is_user_blocked($fromID,$toID))
+                        throw new Exception('You are Blocked.',410);
                     if(is_chat_exist($fromID , $toID) == 1)
                         return '409';
                     else if(is_noti($fromID,$toID,"addUserReq") != 0)

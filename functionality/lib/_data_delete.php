@@ -11,6 +11,10 @@
                 echo deleteMsg(base64_decode($data['msgID']));
             else if($data['req'] === 'deleteChat')
                 echo deleteChat();
+            else if($data['req'] === 'blockChat')
+                echo blockChat();
+            else if($data['req'] === 'reportChat')
+                echo reportChat($data['reportReason']);
             
         }
 
@@ -21,7 +25,7 @@
         try{
             if(!isset($_COOKIE['chat']))
                 throw new Error('chat section is not opened',0);
-            if(!isset($_COOKIE['currOpenedChat']))
+            if(!$_COOKIE['currOpenedChat'])
                 throw new Error('Chat is not opened, Please open chat first.',0);
 
             $userID= getDecryptedUserID();
@@ -141,7 +145,7 @@
                 throw new Error('No data found',411);
             if(!isset($_COOKIE['chat']))
                 throw new Error('chat section is not opened',0);
-            if(!isset($_COOKIE['currOpenedChat']))
+            if(!$_COOKIE['currOpenedChat'])
                 throw new Error('Chat is not opened, Please open chat first.',0);
 
             $chatType= strtolower($_COOKIE['chat']);
@@ -214,6 +218,92 @@
             
             return $deleteRes;
             
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function blockChat(){
+        try{
+            if(!isset($_COOKIE['chat']))
+                throw new Exception('chat section is not opened',0);
+            if(!$_COOKIE['currOpenedChat'])
+                throw new Exception('Chat is not opened, Please open chat first.',0);
+                
+            $chatType= strtolower($_COOKIE['chat']);
+            if($chatType != 'personal')
+                throw new Exception('User Chat is not opened, Please open chat first.',0);;
+
+            $userID= getDecryptedUserID();
+            $oppoUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
+
+            if(is_chat_exist($userID,$oppoUserID) == 1){
+                if($userID === $oppoUserID)
+                    throw new Exception("User can't block Itself",410);
+
+                if(!is_user_blocked($userID,$oppoUserID)){
+                    $res= insertData('blocked',['fromID','toID'],[$userID,$oppoUserID],'status');
+
+                    if($res != 1)
+                        throw new Exception("Something went Wrong",400);
+                }
+
+                $res=deleteChat();
+                if($res != 1)
+                    throw new Exception("Something went Wrong",400);
+                else
+                    return 1;
+            }else
+                throw new Exception("No chat Exist.",0);
+            
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function reportChat($reason){
+        try{
+            if(!isset($_COOKIE['chat']))
+                throw new Exception('chat section is not opened',0);
+            if(!$_COOKIE['currOpenedChat'])
+                throw new Exception('Chat is not opened, Please open chat first.',0);
+                
+            $chatType= strtolower($_COOKIE['chat']);
+            if($chatType != 'personal')
+                throw new Exception('User Chat is not opened, Please open chat first.',0);;
+
+            $userID= getDecryptedUserID();
+            $oppoUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
+
+            if(is_chat_exist($userID,$oppoUserID) == 1){
+                if($userID === $oppoUserID)
+                    throw new Exception("User can't report Itself",410);
+
+                if(!is_data_present('reports',['fromID','toID'],[$userID,$oppoUserID],'id','status')){
+                    $res= insertData('reports',['fromID','toID','reason'],[$userID,$oppoUserID,$reason],'status');
+
+                    if($res != 1)
+                        throw new Exception("Something went Wrong",400);
+                }
+
+                $res= blockChat();
+                if($res != 1)
+                    throw new Exception("Something went Wrong",400);
+                else
+                    return 1;
+            }else
+                throw new Exception("No chat Exist.",0);
         }catch(Exception $e){
             $error = [
                 'error'=>true,
