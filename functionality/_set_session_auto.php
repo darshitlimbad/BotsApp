@@ -2,9 +2,9 @@
     $data = json_decode( file_get_contents("php://input") , true );
     if(isset($data)) {
 
-        include_once('db/_conn.php');
-        include_once('lib/_fetch_data.php');
-        include_once('lib/_validation.php');
+        require_once('db/_conn.php');
+        require_once('lib/_fetch_data.php');
+        require_once('lib/_validation.php');
         
     try{
         if(isset($data['keyPass']) && $data['keyPass'] == 'khuljasimsim'){

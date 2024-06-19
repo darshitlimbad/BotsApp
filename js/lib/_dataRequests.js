@@ -303,3 +303,31 @@ const _deleteChat=()=>{
             handler.err_400();
         })
 }
+
+const _reportChat=(reportReason=null)=>{
+    if(!reportReason)
+        return;
+
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"reportChat",
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            console.log(res);
+        })
+}
+
+const _blockChat=()=>{
+
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"blockChat",
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            console.log(res);
+        })
+}

@@ -1,7 +1,7 @@
 <?php
     if($data = json_decode(file_get_contents('php://input'),true)){
-        include_once('../db/_conn.php');
-        include_once('../lib/_validation.php');
+        require_once('../db/_conn.php');
+        require_once('../lib/_validation.php');
 
         switch($data['req']){
             case 'onlineStatusUpdate':
@@ -45,7 +45,7 @@
     function checkStatus(){
         try{
             session_start();
-            include_once('../lib/_fetch_data.php');
+            require_once('../lib/_fetch_data.php');
 
             $userID = getDecryptedUserID();
             
@@ -199,7 +199,7 @@
             if(!$_COOKIE['currOpenedChat']) throw new Exception("Chat is not Opened",0);
 
             session_start();
-            include_once('../lib/_fetch_data.php');
+            require_once('../lib/_fetch_data.php');
 
             $msgIDs= array_map(function($id){
                         return base64_decode($id);

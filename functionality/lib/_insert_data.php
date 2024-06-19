@@ -1,5 +1,5 @@
 <?php
-    include_once('_validation.php');
+    require_once('_validation.php');
 
 // create users param string of columns with ',' seprater , string of column values , img type , img data in binary 
 function createUser($columns , $values , $avatar ) {

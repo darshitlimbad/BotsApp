@@ -1,21 +1,46 @@
 /* pop-up box */
-#confirmation_pop_up ,#upload_img_form , #add_new_chat_form , #upload_doc_form{
+.pop_up{
     display: none;
-    opacity: 0%;
+    opacity: 0;
     height: auto;
     width: auto;
-    min-width: 300px;
+    min-width: 400px;
     max-width: 400px;
     position: fixed;
     z-index: 2;
     top: 25%;
-    background-color:rgb(8 13 71 / 80%);
+    background-color:rgb(42 42 44 / 50%);
+    backdrop-filter: blur(10px);
     box-shadow: 3px 3px 15px black;
     border: 2px outset rgba(0, 0, 0, 0.707);
     border-radius: 20px;
     padding: 5px;
-    transform: translateY(-500px);
-    transition: opacity, transform 1s cubic-bezier(0.13, 0.98, 0.17, 0.99);
+    transition: opacity 1s cubic-bezier(0.13, 0.98, 0.17, 0.99);
+
+    /* transform: translateY(-500px); */
+    animation: fadein .3s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.pop_up .message{
+    font-family: var(--text-font);
+}
+
+@keyframes fadein {
+    0%{
+        transform: translateY(-500px);
+    }
+}
+
+#report_pop_up .input{
+    display: ruby-text;
+}
+
+#report_pop_up input{
+    width: 90%;
+}
+
+#report_pop_up .pop_up_yes_btn{
+    --color: rgb(98 0 0);
+    font-size: 10px;
 }
 
 #add_new_chat_form{
@@ -141,18 +166,19 @@ tbody.center{
 }
 
 /* responsive for mobile styles */
-.mobile #confirmation_pop_up, .mobile #upload_img_form, .mobile #add_new_chat_form, .mobile #upload_doc_form{
+.mobile .pop_up{
     width: 10%;
+    min-width: 300px;
 }
 
-.mobile #confirmation_pop_up .input_field .message{
-    font-size: small;
+.mobile .pop_up .message , .mobile .pop_up .button{
+    font-size: 10px;
 }
 
-.mobile #confirmation_pop_up .title, .mobile #upload_img_form .title, .mobile #add_new_chat_form .title, .mobile #upload_doc_form .title{
+.mobile .pop_up .title{
     font-size: medium;
 }
-.mobile #add_new_chat_form #username{
+.mobile .pop_up input{
     width: 15em;
 }
 

@@ -422,13 +422,20 @@ function openUserProfile(unm){
             flexBox.appendChild(deleteBtn);
 
             let action="remove_chat";
-            deleteBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Remove this user?",action,'red');
+            deleteBtn.onclick=()=>_confirmation_pop_up(unm,"Are You sure you want to Delete this chatter? Your all chats will be deleted also. ",action,'red');
     
         if(unm!=='You'){
             var blockBtn= document.createElement('button');
             blockBtn.classList.add('danger-button','button');
             blockBtn.textContent='Block User' ;
             flexBox.appendChild(blockBtn);
+            
+            var reportBtn= document.createElement('button');
+            reportBtn.classList.add('danger-button','button');
+            reportBtn.textContent='Report User' ;
+            flexBox.appendChild(reportBtn);
+
+            reportBtn.onclick=()=>_report_pop_up('User');
         }        
 
     getProfile()
@@ -595,7 +602,8 @@ async function openGroupProfile(){
             flexBox.appendChild(deleteBtn);
 
             let action="remove_chat";
-            deleteBtn.onclick=()=>_confirmation_pop_up(unm,`Are You sure you want to ${deleteBtn.textContent}?`,action,'red');
+            let message = `Are You sure you want to ${deleteBtn.textContent}? Your all chats with this group will be deleted also.`;
+            deleteBtn.onclick=()=>_confirmation_pop_up(unm,message,action,'red');
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);
@@ -780,6 +788,7 @@ const _trigerSendMsg = async (type) => {
         addNewMsgInCurrChat(msgObj);
         _sendMsg(msgObj)
             .then(res=>{
+                console.log(msgObj);
                 if( (res.status == 'success') && res.responseText.msgSend == 1){
                     msgObj.msgID=res.responseText.msgID;
                     msgObj.msgContainer.setAttribute('data-msgid', msgObj.msgID);
@@ -1005,9 +1014,8 @@ const addNewMsgInCurrChat = (msgObj) => {
             req:"delete_this_msg",
             msgID:msgObj.msgID,
         }
-        deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to do this?",action,'red');
+        deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to delete this Message?",action,'red');
 
-    let report= msgOptionMenu.new_option('report');
     let info= msgOptionMenu.new_option("info");
     //
     optionBtn.addEventListener('click',()=>toggleOptionContainer(optionBtn));

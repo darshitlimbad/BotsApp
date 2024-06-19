@@ -87,7 +87,7 @@ function is_data_present($table , array $point , array $point_val , $column='use
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
 
-    $result = fetch_columns($table , $point , $point_val , array("$column"),$db);
+    $result = fetch_columns($table , $point , $point_val , array($column),$db);
     if($result->num_rows == 1){
         return 1;
     }else{
@@ -158,14 +158,17 @@ function is_chat_exist(string $userID, string $oppoUserID){
     
     $maxEntry = ($userID === $oppoUserID) ? 1 : 2;
     
-    $SQL =" SELECT count(*) FROM inbox 
+    $SQL =" SELECT id FROM inbox 
             WHERE (fromID,toID) IN (('$userID','$oppoUserID'),('$oppoUserID','$userID'));";
     $result=$GLOBALS['conn']->query($SQL);
 
-    if(($result->num_rows == 1) && ($result->fetch_column() == $maxEntry)){
+    $count= $result->num_rows;
+    if($count == $maxEntry){
         return 1;
-    }else{
+    }else if($count == 0){
         return 0;
+    }else{
+        return -1;
     }
 }
 

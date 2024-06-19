@@ -93,3 +93,40 @@ class OptionContainer {
     }
 
 }
+
+
+// class pop_up {
+//     /*
+//     !popUp Names which can be created by this class
+//     - confirmation_pop_up
+//     - upload_img_form
+//     - upload_doc_form
+//     - add_new_chat_form
+//     */
+    
+//     center= document.createElement('div');
+//     pop_up= document.createElement('div');
+//     title= document.createElement('h3');
+
+//     constructor(pop_up_name=null){
+//         this.center.classList.add('center');
+//         this.pop_up.classList.add('pop_up');
+//         this.title.classList.add('title');
+
+//         if(!pop_up_name)
+//             return;
+
+//         this.pop_up.id=pop_up_name;
+//     }  
+
+//     show(){
+//         this.center.appendChild(this.pop_up);
+//         document.appendChild(this.center);
+//     }
+    
+//     title(title= null){
+//         this.title.textContent=title;
+//         this.pop_up.appendChild(this.title);
+//     }
+    
+// }

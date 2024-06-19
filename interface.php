@@ -1,17 +1,15 @@
 <?php
-    include_once('functionality/db/_conn.php');
-    include_once('functionality/_auto_login.php');
-    include_once('functionality/lib/_validation.php');
+    require_once('functionality/db/_conn.php');
+    require_once('functionality/_auto_login.php');
+    require_once('functionality/lib/_validation.php');
 
     if( !isset($_SESSION['userID']) ){
         header('location: /user');
         exit();
     }else{
         session_check();
-
-        include_once('functionality/lib/_wrappers.php');
-        include_once('functionality/lib/_features.php');
-        include_once('functionality/lib/_fetch_data.php');
+        require_once('functionality/lib/_wrappers.php');
+        require_once('functionality/lib/_fetch_data.php');
 
         $userID = getDecryptedUserID();
         $unm = "@"._fetch_unm();
@@ -20,7 +18,6 @@
         
         setcookie("unm" , substr($unm, 1) , time()+(24*60*60*1000), "/");
     }
-
 ?>
 
 <!-- bots app -->
@@ -33,6 +30,7 @@
     
     <!-- Style -->  
     <link rel="stylesheet" href="/css/interface.css" type="text/css">
+    
     <!-- Script -->
     <script type="text/javascript" src="/js/interface.js"></script>
     <script type="text/javascript" src="/js/lib/_chat.js" ></script>
@@ -248,5 +246,8 @@
             </div>
         </div>
     </div>
+
+<?php    require_once('functionality/lib/_features.php'); ?>
+
 </body>
 </html>

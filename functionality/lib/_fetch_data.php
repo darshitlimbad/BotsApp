@@ -1,8 +1,8 @@
 <?php
     if($data = json_decode(file_get_contents("php://input") , true) ){
         if(isset($data['req'])){
-            include_once('../db/_conn.php');
-            include_once('./_validation.php');
+            require_once('../db/_conn.php');
+            require_once('./_validation.php');
 
             if($data['req'] == "get_dp") {
                 if(isset($data['unm']))
@@ -304,7 +304,7 @@
             if($chatType == 'personal'){
                 $reqUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
 
-                if(!$reqUserID || !is_chat_exist($userID,$reqUserID) )
+                if(!$reqUserID || is_chat_exist($userID,$reqUserID) != 1 )
                     throw new Exception("No data found.",411);
                 session_abort();
 

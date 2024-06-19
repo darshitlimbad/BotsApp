@@ -1,7 +1,7 @@
 <?php
-include_once('db/_conn.php');
-include_once('lib/_insert_data.php');
-include_once('lib/_validation.php');
+require_once('db/_conn.php');
+require_once('lib/_insert_data.php');
+require_once('lib/_validation.php');
 try{
     if( (isset($_POST['submit'])) && (isset($_GET['action'])) )
     {

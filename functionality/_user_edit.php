@@ -1,8 +1,8 @@
 <?php
     session_start();
     if(isset($_SESSION['userID']) && isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim")  {
-        include_once('db/_conn.php');
-        include_once('lib/_validation.php');
+        require_once('db/_conn.php');
+        require_once('lib/_validation.php');
         try{
             $data = json_decode(file_get_contents("php://input") , true);
 
@@ -11,7 +11,7 @@
                 $edit_column = $data['edit_column'];
                 // if the profile picture is requested to change
                 if($req == 'updateDP') {
-                    include_once('lib/_insert_data.php');
+                    require_once('lib/_insert_data.php');
                     $imgObj['img_data'] = base64_decode($data['value']['img_data']);
                     $imgObj['size'] = $data['value']['size'];
 

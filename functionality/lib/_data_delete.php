@@ -1,9 +1,9 @@
 <?php
     if($data = json_decode( file_get_contents("php://input") , true)){
         session_start();
-        include_once("_validation.php");
-        include_once("_fetch_data.php");
-        include_once('./_notification.php');
+        require_once("_validation.php");
+        require_once("_fetch_data.php");
+        require_once('./_notification.php');
 
         if(isset($_SESSION['userID'])){
 
@@ -30,7 +30,7 @@
             if($chatType === 'personal'){
                 $oppoUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
 
-                if(is_chat_exist($userID,$oppoUserID)){
+                if(is_chat_exist($userID,$oppoUserID) != 0){
                     // removing chat from Inbox tables
                     $query = "  DELETE FROM `inbox` 
                                 WHERE  (`fromID`,`toID`) IN (( ? , ? ),( ? , ? )) ";

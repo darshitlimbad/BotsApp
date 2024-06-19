@@ -20,6 +20,26 @@
         </div>
     </div>
 
+    <div id="report_pop_up" class="pop_up">
+        <h3 class="title" style="color:red">Report </h3>
+        <hr color="red">
+
+        <!--Input Box -->
+        <div class="input_field">
+            <p class="message">Report spam/bully or any other things.</p>
+            <p class="message">Your chat history will be Deleted.</p>
+
+            <div class="input">
+                <input type="text" name="reportReason" placeholder="Enter Your reason to report" autocomplete="off" style="position:sticky" />
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="pop_up_no_btn button"  onclick="_hide_this_pop_up(document.querySelector('#report_pop_up'))" >No</button>
+            <button class="pop_up_yes_btn button danger-button" >Report And Block</button>
+        </div>
+    </div>
+
     <div id="upload_img_form" class="pop_up">
 
         <h3 class="title"></h3>
@@ -87,8 +107,6 @@
         </div>
     </div>
 
-
 </div>
 </body>
 </html>
-

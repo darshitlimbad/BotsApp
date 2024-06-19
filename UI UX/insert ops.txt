@@ -1,30 +1,15 @@
 main insert ops:
-    //1. when group and user delete function are created add the functionality of deleting empty group at _status.php 
-        line number 334 in this condition : if($memCount == 0)  --- no need to do it now because it is now only used @ backend 
+    
 
 side insert ops:
-    //1. add option menu for messages. --done 50%
-
-    //3. in the confirmation box for addnewuser add the dp also ---nah i don't want to do it now
-
-    //4. status update even if the user made it hide  --- done
-
-    //5. User about section edit glitch at backend side res return 1 but no changer are happening -- solved
-
-    // 6. add DP insertion for groups. --done
+   
     
-    2. sortout new messages function in fitures.js.make it more js friendly.
+    2. sortout new notifications function in fitures.js.make it more js friendly.
 
     7. Enable user Search functionality in inbox of the user by using search function if posible
 
 next session ops:
-    //1. file:_status.php func:updatemsgStatus line number 338
-        the problem is in the updateCol and updateVal              
-        add full screen option in chat section so user can chat in full screen. -- done 
-
-    //2. make it mobile user friendly --done
-        
-    //3. add user unm and their dp in chat  -- done
+    
 
     4. create a indexed DB table for storing dp as hashmap. 
         and flush it in every new session so if the user changes the dp then it can refresh
@@ -33,6 +18,34 @@ next session ops:
         
     6. create a api and table for blocking users.
 
+    7. create operations of msgDeleted and reloadChat for group also.
+
 ///Delete operations note
 
 1. user should not be able to block itself. 
+
+
+
+
+/////completed operations
+
+//1. when group and user delete function are created add the functionality of deleting empty group at _status.php 
+        line number 334 in this condition : if($memCount == 0)  --- no need to do it now because it is now only used @ backend 
+
+//1. add option menu for messages. --done 50%
+
+//3. in the confirmation box for addnewuser add the dp also ---nah i don't want to do it now
+
+//4. status update even if the user made it hide  --- done
+
+//5. User about section edit glitch at backend side res return 1 but no changer are happening -- solved
+
+// 6. add DP insertion for groups. --done
+
+//1. file:_status.php func:updatemsgStatus line number 338
+        the problem is in the updateCol and updateVal              
+        add full screen option in chat section so user can chat in full screen. -- done 
+
+//2. make it mobile user friendly --done
+    
+//3. add user unm and their dp in chat  -- done

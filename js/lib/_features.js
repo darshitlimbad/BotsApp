@@ -266,7 +266,7 @@ const _togle_user_data = (ele) => {
 };
 
 const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
-    var confirmation_pop_up = document.querySelector('#confirmation_pop_up');
+    const confirmation_pop_up = document.querySelector('#confirmation_pop_up');
     
     var title_ele = confirmation_pop_up.querySelector('.title');
     title_ele.textContent=title;
@@ -307,6 +307,33 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
 
 }
 
+const _report_pop_up = (chatterType) => {
+    const report_pop_up = document.querySelector('#report_pop_up');
+    const reportReasonInput= report_pop_up.querySelector('.input_field input');
+    
+    var title_ele = report_pop_up.querySelector('.title');
+    title_ele.textContent='report '+chatterType;
+    
+    var yes_btn = report_pop_up.querySelector('.pop_up_yes_btn');
+    yes_btn.disabled=true;
+    reportReasonInput.onkeyup=()=>{
+        yes_btn.disabled= (!reportReasonInput.value)? true : false;
+        reportReasonInput.style.border= (yes_btn.disabled) ? "1px solid red" : 'none';
+    }
+
+    yes_btn.onclick=()=>{
+        if(!reportReasonInput.value){
+            reportReasonInput.style.border= "1px solid red";
+            yes_btn.disabled=true;
+            return;
+        }
+
+        reportChat(reportReasonInput.value);
+    }
+
+    _show_this_pop_up(report_pop_up);
+
+}
 
 const _upload_doc_form = (title , action , theme = 'blue') => {
     _submit_btn_disable(doc_submit_btn);
@@ -555,8 +582,8 @@ function _show_this_pop_up(pop_up) {
     pop_up.style.display = 'block';
 
     setTimeout(() => {
-        pop_up.style.transform = "translateY(0)";
-        pop_up.style.opacity = '100%';
+        // pop_up.style.transform = "translateY(0)";
+        pop_up.style.opacity = '1';
     } , 20);
 
     if(pop_up.id == "add_new_chat_form"){
@@ -576,10 +603,14 @@ function _show_this_pop_up(pop_up) {
         setTimeout(()=>{
             document.addEventListener('click', hide_upload_doc_form)
         },20);
+    }else if(pop_up.id == "report_pop_up"){
+        setTimeout(()=>{
+            document.addEventListener('click', hide_report_pop_up)
+        },20);
     }
 }
 function _hide_this_pop_up(pop_up) {
-    pop_up.style.transform = "translateY(-500px)";
+    // pop_up.style.transform = "translateY(-500px)";
 
     // set values to default
     if(pop_up.id == "upload_img_form"){
@@ -595,11 +626,14 @@ function _hide_this_pop_up(pop_up) {
         document.removeEventListener('click' , _hide_add_new_form)
     }else if(pop_up.id == "confirmation_pop_up"){
         document.removeEventListener('click',hide_confirmation_pop_up);
+    }else if(pop_up.id == "report_pop_up"){
+        document.removeEventListener('click',hide_report_pop_up);
     }else if(pop_up.id == "upload_doc_form"){
         doc.value = null;
         doc.style.color = 'aliceblue';
         document.removeEventListener('click',hide_upload_doc_form);
     }
+    
     setTimeout(() => {
         pop_up.style.opacity = '0%';
         pop_up.style.display='none';
@@ -614,6 +648,10 @@ const hide_upload_img_form = (e)=>{
 };
 const hide_upload_doc_form = (e)=>{
     if( e!=null && (!e.target.closest('#upload_doc_form'))) _hide_this_pop_up(document.querySelector('div#upload_doc_form'));
+};
+
+const hide_report_pop_up = (e)=>{
+    if( e!=null && (!e.target.closest('#report_pop_up'))) _hide_this_pop_up(document.querySelector('div#report_pop_up'));
 };
 
 const _hide_all_pop_up = () => {

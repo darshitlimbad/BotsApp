@@ -217,6 +217,7 @@ header  {
 }
 
 .title{
+    text-transform: capitalize;
     height: inherit;
     display: flex;
     justify-content: center;
@@ -881,7 +882,6 @@ footer {
     width: auto;
     position: relative;
     text-align: start;
-    color: var(--text-color);
     color: aliceblue;
     margin: 5px;
     padding: 5px;
@@ -907,7 +907,7 @@ footer {
 
 .input_field .input input:focus , .input_field .input input:not(:placeholder-shown), .input_field .input input:hover{
     border-color: var(--text-color) !important;
-    transition: border-color .5s;
+    transition: border-color .5s cubic-bezier(0.165, 0.84, 0.44, 1);
     background-color: #aeaeae49;
     border-radius: 4px;
 }

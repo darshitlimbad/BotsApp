@@ -3,10 +3,10 @@
 if($data = json_decode( file_get_contents("php://input") , true)){
     session_start();
     if(isset($_SESSION['userID'])){
-        include_once('../db/_conn.php');
-        include_once('_validation.php');
-        include_once('_fetch_data.php');
-        include_once('_status.php');
+        require_once('../db/_conn.php');
+        require_once('_validation.php');
+        require_once('_fetch_data.php');
+        require_once('_status.php');
         
         switch($data['req']){
             case "getChatList":
@@ -55,7 +55,8 @@ function getChatList(){
             $i=0;
             while( $toID = $dataFromInbox->fetch_column() ){
                 if( $chatType == 'personal' ){
-                    if(!is_data_present('users_account', ['userID'], [$toID] )){
+                    if(!is_data_present('users_account', ['userID'], [$toID] ) 
+                        || (is_chat_exist($userID, $toID) == -1)){
                         $del = "DELETE FROM `inbox` 
                                 WHERE (`fromID` , `toID`) IN (('$userID', '$toID'), ('$toID', '$userID'));";
                         $GLOBALS['conn']->query($del);
@@ -110,7 +111,7 @@ function getAllMsgs($data){
 
             if(!$oppoUserID)
                 throw new Exception('Something went wrong',400);
-            else if(!is_chat_exist($userID,$oppoUserID))
+            else if(is_chat_exist($userID,$oppoUserID) != 1)
                 throw new Exception("There is no Chat.",0);
 
         }else if( $chatType == "group") {
@@ -210,7 +211,7 @@ function getNewMsgs($data){
 
             if(!$oppoUserID)
                 throw new Exception('Something went wrong',400);
-            else if(!is_chat_exist($userID,$oppoUserID))
+            else if(is_chat_exist($userID,$oppoUserID) != 1)
                 throw new Exception("There is no Chat.",0);
 
         }else if( $chatType == "group") {
@@ -311,7 +312,7 @@ function sendMsg(array $data){
                     throw new Exception('Something went wrong',400);
                 else if(!is_data_present('users_account',['userID'], [$oppoUserID], 'userID'))
                     return 0;
-                else if(!is_chat_exist($fromID,$oppoUserID))
+                else if(is_chat_exist($fromID,$oppoUserID) != 1)
                     throw new Exception("There is no Chat.",0);
                 break;
             case 'group' :

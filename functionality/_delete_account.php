@@ -3,8 +3,8 @@ try{
 if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
     session_start();
 
-    include_once('db/_conn.php');
-    include_once('lib/_validation.php');
+    require_once('db/_conn.php');
+    require_once('lib/_validation.php');
 
     if(isset($_SESSION['userID'])) {
         $userID = getDecryptedUserID();

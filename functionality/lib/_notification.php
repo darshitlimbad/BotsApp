@@ -8,9 +8,9 @@ if($data = json_decode( file_get_contents("php://input") , true)){
     }
     
     if(isset($_SESSION['userID'])){
-        include_once('../db/_conn.php');
-        include_once('_fetch_data.php');
-        include_once('_validation.php');
+        require_once('../db/_conn.php');
+        require_once('_fetch_data.php');
+        require_once('_validation.php');
         
         if($data['req'] == "addNoti"){
                 echo add_new_noti($data);

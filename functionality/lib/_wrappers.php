@@ -1,6 +1,6 @@
 <?php    
     function custom_header() {
-        ?>
+?>
         <div class="title">
             <img src="../img/logo.png" onclick="tohomepage()">
             <h1 onclick="tohomepage()">BotsApp</h1>
