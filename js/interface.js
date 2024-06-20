@@ -72,9 +72,11 @@ const initiateChatBox = (chatType) => {
     document.title = heading.textContent + " -- Botsapp"; 
 
     if(chatType.toLowerCase() === 'personal'){
-        document.querySelector('.page-title .icon')?.setAttribute('data-show','false')
+        document.querySelector('.page-title .createNewGroupBtn')?.setAttribute('data-show','false')
     }else if(chatType.toLowerCase() === 'group'){
-        document.querySelector('.page-title .icon')?.setAttribute('data-show','true')
+        let createNewGroupBtn=document.querySelector('.page-title .createNewGroupBtn');
+        createNewGroupBtn?.setAttribute('data-show','true');
+        createNewGroupBtn.onclick=()=>createNewGroupForm();
     }
     // 
     if(option = document.querySelector(".side-bar .top .options.selected"))

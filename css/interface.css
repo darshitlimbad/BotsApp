@@ -13,12 +13,12 @@
 }
 
 ::-webkit-scrollbar {
-    width: 2px;
-    height: 3px;
+    width: 3px;
 }
 
 ::-webkit-scrollbar-track   {
     background-color:rgb(1, 12, 23);
+
 }
 
 ::-webkit-scrollbar-thumb {
@@ -614,22 +614,23 @@ footer {
     border-bottom: 2px solid rgba(208, 229, 248, 0.149);
 }
 
-.settings-box .settings-container .body .checkbox {
+.checkbox {
     display: flex;
     align-items: center;
 
 }
 
-.settings-box .settings-container .body .checkbox input[type='checkbox']   {
+.checkbox input[type='checkbox']   {
     appearance: none;    
     height: 20px; 
     width: 20px;
     border: 2px solid rgba(183, 221, 255, 0.3);
     margin-right: 10px;
     transition: all 0.5s cubic-bezier(0, 0.81, 0.27, 1.02);
-
+    border-radius: 4px;
+    cursor: pointer;
 }
-.settings-box .settings-container .body .checkbox input[type='checkbox']::after    {
+.checkbox input[type='checkbox']::after    {
     content: "";
     height: 10px;
     width: 5px;
@@ -641,15 +642,15 @@ footer {
     left: 5px;
 }
 
-.settings-box .settings-container .body .checkbox input[type='checkbox']:hover    {
+.checkbox input[type='checkbox']:hover    {
     background-color: rgba(0, 0, 0, 0.649);
 }
 
-.settings-box .settings-container .body .checkbox input[type='checkbox']:checked  {
+.checkbox input[type='checkbox']:checked  {
     background-color: green;
 }
 
-.settings-box .settings-container .body .checkbox input[type='checkbox']:checked::after  {
+.checkbox input[type='checkbox']:checked::after  {
     display: flex;
 }
 
@@ -743,7 +744,7 @@ footer {
 }
 
 .mobile .settings-box .settings-container .body .text ,
-.mobile .settings-box .settings-container .body .checkbox ,
+.mobile .checkbox ,
 .mobile .settings-box .settings-container p ,
 .mobile .link {
     font-size: 10px !important;

@@ -10,7 +10,10 @@ if($data = json_decode( file_get_contents("php://input") , true)){
         
         switch($data['req']){
             case "getChatList":
-                echo getChatList();
+                if(isset($data['chatType']))
+                    echo getChatList($data['chatType']);
+                else
+                    echo getChatList();
                 break;
             case "getAllMsgs":
                 echo getAllMsgs($data);
@@ -42,10 +45,15 @@ if($data = json_decode( file_get_contents("php://input") , true)){
     header('Location: /');
 }
 
-function getChatList(){
+function getChatList(string $chatType=null){
     try{
+
+        if($chatType && ($chatType != 'personal') &&  ($chatType != 'group'))
+            throw new Error('Invalid Chat Type',0);
+
         $userID = getDecryptedUserID();
-        $chatType = strtolower($_COOKIE['chat']);
+        if(!$chatType)
+            $chatType = strtolower($_COOKIE['chat']);
         
         $dataFromInbox = fetch_columns('inbox', ['fromID','chatType'], [$userID,$chatType], array("toID"));
         

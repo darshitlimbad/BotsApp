@@ -541,7 +541,6 @@ const _search_users_by_unm = (unm) => {
 
     postReq(URL_for_search_users , data )
         .then( res => {
-            console.log(res.responseText);
             if(res.status == "success"){
                 if(res.responseText.error)
                     throw res.responseText;
@@ -804,18 +803,40 @@ function fullScreen(node){
         node.requestFullscreen();
 }
 
-    function toggleOptionContainer(optionBtn) {    
-        if(!optionBtn.getAttribute('data-option-show')){ 
-            optionBtn.setAttribute('data-option-show','true');
-            if(document.onclick)
-                document.onclick();
-            setTimeout(()=>document.onclick=()=>hideOptionBtn(optionBtn),200);
+function toggleOptionContainer(optionBtn) {    
+    if(!optionBtn.getAttribute('data-option-show')){ 
+        optionBtn.setAttribute('data-option-show','true');
+        if(document.onclick)
+            document.onclick();
+        setTimeout(()=>document.onclick=()=>hideOptionBtn(optionBtn),200);
+    }else{
+        hideOptionBtn(optionBtn);
+    }
+}
+        
+const hideOptionBtn=(optionBtn)=>{
+    optionBtn.removeAttribute('data-option-show');
+    document.onclick=null;
+}
+
+async function createNewGroupForm(){
+    try{
+        let memberList= await _getChatList('personal');
+        memberList=memberList
+                        .map(member=>member.unm)
+                        .filter(member=>member!='You')
+
+        if(!memberList)
+            throw 411; 
+
+        let formObj= new CreateNewGroupPopUp(memberList);
+        
+        document.querySelector('.pop_up_box').appendChild(formObj.form)
+    }catch(err){
+        if(err === 411){
+            new_Alert("here are currently no members available in your contact list to add to a new group. You can invite them by sending friend requests first.");
         }else{
-            hideOptionBtn(optionBtn);
+            console.error(err);
         }
     }
-            
-    const hideOptionBtn=(optionBtn)=>{
-        optionBtn.removeAttribute('data-option-show');
-        document.onclick=null;
-    }
+}

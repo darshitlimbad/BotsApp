@@ -30,10 +30,21 @@
     }
 }
 
+#create_newGroup_form{
+    display: block;
+    opacity: 1;
+    top: 10%;
+    max-height: 30em;
+    overflow: auto;
+}
+#Create_newGroup_Form .pop_up_yes_btn{
+    --color: aliceblue;
+    --background-image: linear-gradient(to bottom right , rgb(89, 43, 226) ,rgba(33, 16, 84, 0.797) , rgb(89, 43, 226) );
+}
+
 #report_pop_up .input{
     display: ruby-text;
 }
-
 #report_pop_up input{
     width: 90%;
 }
@@ -178,8 +189,8 @@ tbody.center{
 .mobile .pop_up .title{
     font-size: medium;
 }
-.mobile .pop_up input{
+/* .mobile .pop_up input{
     width: 15em;
-}
+} */
 
 /*  */

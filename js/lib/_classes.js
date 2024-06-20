@@ -95,6 +95,122 @@ class OptionContainer {
 }
 
 
+class CreateNewGroupPopUp {
+    constructor(members=[]) {
+        if(!members.length)
+            return 0;
+        this.members = members;
+        this.form = document.createElement("form");
+        this.form.id = "Create_newGroup_Form";
+        this.form.classList.add("pop_up");
+    
+        let title = document.createElement('h3');
+        title.classList.add("title");
+        title.textContent = "Create a New Group";
+        this.form.appendChild(title);
+    
+        this.createGroupNameInput();
+        this.displayMemberList();
+        this.displayButtons();
+    }
+
+    createGroupNameInput() {
+        let inputField = document.createElement('div');
+        inputField.classList.add('input_field');
+        this.form.appendChild(inputField);
+    
+        let inputDiv = document.createElement('div');
+        inputDiv.classList.add('input', 'center');
+        inputField.appendChild(inputDiv);
+    
+        this.groupNameInput = document.createElement('input');
+        this.groupNameInput.type = "text";
+        this.groupNameInput.name = "groupName";
+        this.groupNameInput.placeholder = "Enter Group Name";
+        this.groupNameInput.maxlength = "30";
+        this.groupNameInput.autocomplete = "off";
+        this.groupNameInput.style.position = "sticky";
+        inputDiv.appendChild(this.groupNameInput);
+    }
+
+    async displayMemberList() {
+        let memberList = document.createElement('div');
+        memberList.classList.add('memberList');
+        this.form.appendChild(memberList);
+    
+        this.members.forEach(memberName => {
+            let member = document.createElement('div');
+            member.classList.add('member', 'checkBox', 'flexBox', 'input_field');
+            memberList.appendChild(member);
+    
+            let checkBox = document.createElement('input');
+            checkBox.type = "checkbox";
+            checkBox.name = "member";
+            member.appendChild(checkBox);
+            checkBox.value = memberName;
+    
+            let dp = new Image(30, 30);
+            dp.classList.add('avatar');
+            member.appendChild(dp);
+            dp.src = default_dp_src;
+    
+            let userNameBlock = document.createElement('p');
+            userNameBlock.classList.add('margin-dead');
+            member.appendChild(userNameBlock);
+            userNameBlock.textContent = memberName;
+        });
+    }
+
+    displayButtons(){
+        let buttons= document.createElement('div');
+        buttons.classList.add('buttons');
+        this.form.appendChild(buttons);
+
+        let cancelBtn=document.createElement('button');
+        cancelBtn.classList.add('pop_up_no_btn' ,'button');
+        cancelBtn.onclick=(e)=>{e.preventDefault();this.form.remove()};
+        cancelBtn.textContent="Cancel";
+        buttons.appendChild(cancelBtn);
+
+        let createBtn= document.createElement('input');
+        createBtn.classList.add('pop_up_yes_btn','button');
+        createBtn.type="submit";
+        createBtn.value="Create";
+
+        createBtn.onclick=(e)=>{
+            e.preventDefault();
+            if(this.groupNameInput.value == ''){
+                this.groupNameInput.style.border='1px solid red';
+                return;
+            }else{
+                this.groupNameInput.style.removeProperty('border');
+            }
+
+            let memberElementList= this.form.querySelectorAll(".memberList .member input[name='member']");
+            if(memberElementList.length){
+                var memberAddList= Array.from(memberElementList)
+                                        .filter(member=>member.checked)
+                                        .map(member=>member.value);
+
+                if(memberAddList.length){
+                    console.log(memberAddList);
+                }else{
+                    new_Alert('Please add atleast one member');
+                    return;
+                }
+            }else{
+                cancelBtn.click();
+            }
+
+        }
+        createBtn.textContent="Create";
+        buttons.appendChild(createBtn);
+    }
+
+}
+
+
+
 // class pop_up {
 //     /*
 //     !popUp Names which can be created by this class

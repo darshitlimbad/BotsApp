@@ -83,7 +83,7 @@ function _searchWords(e,val) {
     if((val.length < 3) && (e.keyCode != 13) || val == "") 
         return;
 
-    chatMsgs = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
+    let chatMsgs = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
 
     Object.entries(chatMsgs)
         .filter(msgObj=> new RegExp(val,'i').test(msgObj[1].textContent))

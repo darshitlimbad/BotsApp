@@ -14,28 +14,39 @@ const sendNoti = (req , notiID) => {
                 else
                     throw res.responseText;
             }).catch(err=>{
-                if(handler['err_'+err.code])
+                console.error(err);
+                if(err.code && handler['err_'+err.code])
                     handler['err_'+err.code]();
                 else
                     handler.err_400();
-                console.error(err);
+        
+                return 0;
             })
     })
 }
 
-const _getChatList = async () => {
+const _getChatList = async (chatType=null) => {
     var url = "/functionality/lib/_chat.php";
-    var data = JSON.stringify({
+    var data = {
         req: "getChatList",
-    });
+    };
+    if(chatType)    data.chatType=chatType;
 
     try{
-        const res = await postReq(url,data);
-            if(res.status === "success")
+        const res = await postReq(url,JSON.stringify(data));
+        if(res.status === "success" && !res.responseText.error)
             return res.responseText;
-        else throw new Error("Something went wrong while fetching chat list of chatter");
+        else if(res.status === 'error'){
+            throw res;
+        }else 
+            throw res.responseText;
     }catch(err){
-        console.log(err);
+        console.error(err);
+        if(err.code && handler['err_'+err.code])
+            handler['err_'+err.code]();
+        else
+            handler.err_400();
+
         return 0;
     }
 }
@@ -50,16 +61,17 @@ const _getAllMsgs = async () => {
         const res = await postReq(url , JSON.stringify(data));
         if(res.status == "success" && !res.responseText.error)
             return res.responseText;
-        else{
-            throw new Error(res.responseText.code);
-        }
-    }catch(code){
-        try{
-            handler['err_'+code]();
-        }catch(e){
+        else if(res.status === 'error')
+            throw res;
+        else 
+            throw res.responseText;
+    }catch(err){
+        console.error(err);
+        if(err.code && handler['err_'+err.code])
+            handler['err_'+err.code]();
+        else
             handler.err_400();
-        }
-        console.error(code);
+
         return 0;
     }
 }
@@ -74,17 +86,16 @@ const _getNewMsgs = async () => {
         const res = await postReq(url , JSON.stringify(data));
         if(res.status == "success" && !res.responseText.error)
             return res.responseText;
-        else{
-            throw new Error(res.responseText.code);
-        }
-    }catch(code){
-        try{
-            handler['err_'+code]();
-        }catch(e){
+        else if(res.status === 'error')
+            throw res;
+        else 
+            throw res.responseText;
+    }catch(err){
+        console.error(err);
+        if(err.code && handler['err_'+err.code])
+            handler['err_'+err.code]();
+        else
             handler.err_400();
-        }
-        console.error(code);
-        return 0;
     }
 }
 
@@ -100,12 +111,17 @@ const _getDocBolb = (msgID)=> {
         postReq(url, JSON.stringify(data))
             .then(res=>{
                 if(res.responseText.error)
-                    throw new Error(res.responseText);
+                    throw res.responseText;
+                else if(res.status == "error")
+                    throw res;
 
                 resolve(res);
-            }).catch((err)=>{
-                new_Alert(`[${err.code} : ${err.message}]`);
-                console.warn(`[${err.code} : ${err.message}]`);
+            }).catch(err=>{
+                console.error(err);
+                if(err.code && handler['err_'+err.code])
+                    handler['err_'+err.code]();
+                else
+                    handler.err_400();
             })
     });
 }

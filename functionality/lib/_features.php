@@ -5,7 +5,7 @@
 </head>
 <body>
     <!-- custom-pop-up  -->
-<div class="center" >
+<div class="center pop_up_box" >
     
     <div id="confirmation_pop_up" class="pop_up">
         <h3 class="title"></h3>

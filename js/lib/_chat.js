@@ -25,7 +25,6 @@ const openChatList = async () =>  {
             console.error('Something Went wrong');
             return;
         }
-        
         const chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
 
@@ -543,14 +542,11 @@ async function openGroupProfile(){
 
         flexBox=document.createElement('div');
         flexBox.classList.add('member','flexBox');
-        flexBox.style.justifyContent='flex-start';
         userProfile.appendChild(flexBox);
 
             //Admin DP
             let adminDP = new Image();
             adminDP.classList.add('avatar');
-            adminDP.style.height="20px";
-            adminDP.style.width="20px";
             get_dp(profile.admin).then(res=>adminDP.src=res);
             flexBox.appendChild(adminDP);
 
@@ -576,8 +572,6 @@ async function openGroupProfile(){
                     //members DP
                     let memberDP = new Image();
                     memberDP.classList.add('avatar');
-                    memberDP.style.height="20px";
-                    memberDP.style.width="20px";
                     get_dp(member).then(res=>memberDP.src=res);
                     flexBox.appendChild(memberDP);
 

@@ -82,6 +82,13 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     });
     // 
+    
+    // user 
+    var url = decodeURI(window.location.href)
+    var URL_params = new URLSearchParams(url.substring(url.indexOf('?')));
+    if(URL_params.get('USER')){
+        user.value = URL_params.get('USER');
+    }
 
     //load animation
     document.querySelector('.box').style.opacity='1';

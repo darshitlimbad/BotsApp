@@ -33,7 +33,8 @@
     justify-content: center;
     align-content: center;
     position: fixed;
-    height: 50px;
+    height: auto;
+    min-height: 50px;
     width: auto;
     bottom: 0px;
     right: -100px;
@@ -62,12 +63,4 @@
 
 }
 
-@media screen and ( max-width:768px ){
-    #notification,#alert{
-        height: 30px;
-        margin: 10px;
-        font-size: 10px;
-
-    }
-}
 </style>

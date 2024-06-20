@@ -11,22 +11,12 @@ document.addEventListener('DOMContentLoaded' , function () {
                     new_Alert( "404 : Password is wrong!");
                 }else if(URL_params.get('ERROR') == '404') {
                     new_Alert( URL_params.get('ERROR') + " : User not Found!");
-                }
-                if(URL_params.get('ERROR') == '409') {
+                }else if(URL_params.get('ERROR') == '409') {
                     new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
-                }
-                
-                if(URL_params.get('ERROR') == '1146')    {
+                }else if(URL_params.get('ERROR') == '1146')    {
                     new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
-                }
-                // ERROR
-                if(handler['err_'+URL_params.get('ERROR')])
+                }else if(handler['err_'+URL_params.get('ERROR')])
                     handler['err_'+URL_params.get('ERROR')]();
-
-                // user 
-                if(URL_params.get('USER')){
-                    user.value = URL_params.get('USER');
-                }
 
                 // succes status messages
                 if(URL_params.get('SUCCESS') == '201')    {
