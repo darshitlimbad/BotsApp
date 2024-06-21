@@ -47,14 +47,14 @@
             $unm = $res->fetch_column();
             return $unm;
         }else{
-            return "USER_NOT_FOUND";
+            return 0;
         }
     }
     
     function _fetch_group_nm($groupID=null){
         if($groupID == null) return;
 
-        $res = fetch_columns("groups", ["groupID"], [$groupID], array("groupName"));
+        $res = fetch_columns("groups", ["groupID"], [$groupID], array("name"));
         
         if($res->num_rows == 1){
             $nm = $res->fetch_column();
@@ -340,14 +340,14 @@
                     throw new Exception("No data found.",411);
                 }
 
-                $sqlObj = fetch_columns("groups", ["groupID"], [$reqGroupID], array("groupAdminID,groupName"));
+                $sqlObj = fetch_columns("groups", ["groupID"], [$reqGroupID], array("adminID,name"));
                 if(!$sqlObj)
                     throw new Exception('',400);
 
                 $data=$sqlObj->fetch_assoc();
 
-                $responseData['name']= $data['groupName'];
-                $responseData['admin']= _fetch_unm($data['groupAdminID']);
+                $responseData['name']= $data['name'];
+                $responseData['admin']= _fetch_unm($data['adminID']);
                 
                 //removing admin from member's list
                 $responseData['members']= fetch_all_group_members($reqGroupID);

@@ -47,7 +47,7 @@
             <h1 class="fadeout">Log-in</h1>
         </div>
 
-        <form action="/functionality/_user.php?action=log-in" method="post" id="form" name="log-in" enctype="multipart/form-data">
+        <form action="/functionality/_user.php?passkey=khuljasimsim&action=log-in" method="post" id="form" name="log-in" enctype="multipart/form-data">
 
             <!-- avatar -->
             <div class="input_field validation fadeout toggle_field hide" name="avatar_field">

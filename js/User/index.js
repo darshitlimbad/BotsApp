@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded' , function () {
 
 // set_form_action_path
 function set_form_action_path() {
-    let form_action_path = "/functionality/_user.php?";
+    let form_action_path = "/functionality/_user.php?passkey=khuljasimsim&";
     var form_action = form_action_path.concat((form.attributes.name.value == 'log-in') ? "action=log-in" : "action=sign-in");
     form.setAttribute('action' , form_action);
 }

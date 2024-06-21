@@ -21,6 +21,10 @@ function gen_new_id($preFix)  {
                 $table = "messages";
                 $clm = "msgID";
                 break;
+            case "Group":
+                $table= "groups";
+                $clm= "groupID";
+                break;
             default:
                 throw new Exception("",400);
         }
@@ -84,15 +88,16 @@ function metchEncryptedPasswords($Pass , $userID){
 
 // if there will be data the is_data_present will return 1 
 function is_data_present($table , array $point , array $point_val , $column='userID',$db='conn'){
-    if(!isset($_SESSION['userID']))
-            throw new Exception("",400);
+    if(isset($_SESSION['userID']) || (isset($_GET['passkey']) && $_GET['passkey'] == "khuljasimsim")){
+        $result = fetch_columns($table , $point , $point_val , array($column),$db);
+        if($result->num_rows == 1){
+            return 1;
+        }else{
+            return 0;
+        }
+    }else
+        throw new Exception("",400);
 
-    $result = fetch_columns($table , $point , $point_val , array($column),$db);
-    if($result->num_rows == 1){
-        return 1;
-    }else{
-        return 0;
-    }
 }
 
 // @param groupID
@@ -138,7 +143,7 @@ function fetch_all_group_members(string $groupID){
 // @param userID,groupID
 // @return user is memeber of group or not
 function is_member_of_group(string $userID, string $groupID){
-    if(!isset($_SESSION['userID']))
+    if(!isset($_SESSION['userID']) && !is_data_present('groups',['groupID'],[$groupID],'groupID'))
             throw new Exception("",400);
 
     $result = fetch_columns('inbox',['fromID','toID','chatType'],[$userID,$groupID,'group'],['count(*)']);
@@ -152,6 +157,7 @@ function is_member_of_group(string $userID, string $groupID){
 
 // @param userID,oppoUserID
 // @return does chat exists or not
+// @return 1 if chat is exist 0 if chat doesn't exist and -1 if chat exist one side
 function is_chat_exist(string $userID, string $oppoUserID){
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
@@ -186,7 +192,7 @@ function is_group_admin(string $userID, string $groupID){
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
         
-    $result = fetch_columns('groups',['groupAdminID','groupID'],[$userID,$groupID],['count(*)']);
+    $result = fetch_columns('groups',['adminID','groupID'],[$userID,$groupID],['count(*)']);
 
     if($result->fetch_column() === 1){
         return 1;

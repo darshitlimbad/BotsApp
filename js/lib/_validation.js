@@ -39,20 +39,20 @@
             user_span.style.display='block';
             _submit_btn_disable();
         }else   {
-
             var request = new XMLHttpRequest();
             var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&UNM="+inputed_unm;
     
             request.onreadystatechange = function () {
+                console.log(request.responseText);
                 if(request.readyState === 4 && request.status === 200)  {
-                    // availability == 1 = available ,  availability == 0 = not available
-                    var availability = request.responseText;
+                    // res == 1 = available ,  res == 0 = not available
+                    var res = request.responseText;
 
-                    if(availability == 1)   {
+                    if(res == 1)   {
                         user_span.style.color = '#00ff00';
                         user_span.textContent = 'AVAILABLE';
                         _submit_btn_enable();
-                    }   else if(availability == 0)  {
+                    }   else if(res == 0)  {
                         user_span.textContent = 'NOT AVAILABLE';
                     }
                     user_span.style.display ='block';
@@ -80,7 +80,7 @@
 
         }else if( ( (email.value.indexOf('.')) == -1 || (email.value.indexOf('.') != email.value.lastIndexOf('.')) ) ||
                     ( (email.value.indexOf('@')) == -1 || (email.value.indexOf('@') != email.value.lastIndexOf('@')) ) ||
-                    (email.value.indexOf('.') < email.value.indexOf('@')) ) 
+                    (email.value.indexOf('.') < email.value.indexOf('@')) )  
         {
             email_span.innerHTML = "Email is wrong!!!";
             email_span.style.display = 'block';
@@ -90,14 +90,14 @@
 
             request.onreadystatechange = function () {
                 if(request.readyState === 4 && request.status === 200)  {
-                    // availability == 1 = available ,  availability == 0 = not available
-                    var availability = request.responseText;
+                    // res == 1 = available ,  res == 0 = not available
+                    var res = request.responseText;
 
-                    if(availability == 1)   {
+                    if(res == 1)   {
                         email_span.style.color = '#00ff00';
                         email_span.textContent = 'AVAILABLE';
                         _submit_btn_enable();
-                    }   else if(availability == 0)  {
+                    }   else if(res == 0)  {
                         email_span.textContent = 'NOT AVAILABLE';
                     }
                     user_span.style.display ='block';

@@ -822,19 +822,21 @@ const hideOptionBtn=(optionBtn)=>{
 async function createNewGroupForm(){
     try{
         let memberList= await _getChatList('personal');
+        if(!memberList)
+            throw 411;
+
         memberList=memberList
                         .map(member=>member.unm)
-                        .filter(member=>member!='You')
-
+                        .filter(member=>member!='You');
         if(!memberList)
             throw 411; 
 
         let formObj= new CreateNewGroupPopUp(memberList);
+        formObj.show();
         
-        document.querySelector('.pop_up_box').appendChild(formObj.form)
     }catch(err){
         if(err === 411){
-            new_Alert("here are currently no members available in your contact list to add to a new group. You can invite them by sending friend requests first.");
+            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group. To invite them, you can send chatter requests");
         }else{
             console.error(err);
         }

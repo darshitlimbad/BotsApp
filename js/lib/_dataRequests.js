@@ -14,12 +14,7 @@ const sendNoti = (req , notiID) => {
                 else
                     throw res.responseText;
             }).catch(err=>{
-                console.error(err);
-                if(err.code && handler['err_'+err.code])
-                    handler['err_'+err.code]();
-                else
-                    handler.err_400();
-        
+                customError(err); 
                 return 0;
             })
     })
@@ -41,12 +36,7 @@ const _getChatList = async (chatType=null) => {
         }else 
             throw res.responseText;
     }catch(err){
-        console.error(err);
-        if(err.code && handler['err_'+err.code])
-            handler['err_'+err.code]();
-        else
-            handler.err_400();
-
+        customError(err); 
         return 0;
     }
 }
@@ -66,12 +56,7 @@ const _getAllMsgs = async () => {
         else 
             throw res.responseText;
     }catch(err){
-        console.error(err);
-        if(err.code && handler['err_'+err.code])
-            handler['err_'+err.code]();
-        else
-            handler.err_400();
-
+        customError(err); 
         return 0;
     }
 }
@@ -91,11 +76,7 @@ const _getNewMsgs = async () => {
         else 
             throw res.responseText;
     }catch(err){
-        console.error(err);
-        if(err.code && handler['err_'+err.code])
-            handler['err_'+err.code]();
-        else
-            handler.err_400();
+        customError(err); 
     }
 }
 
@@ -117,11 +98,7 @@ const _getDocBolb = (msgID)=> {
 
                 resolve(res);
             }).catch(err=>{
-                console.error(err);
-                if(err.code && handler['err_'+err.code])
-                    handler['err_'+err.code]();
-                else
-                    handler.err_400();
+                customError(err); 
             })
     });
 }
@@ -226,11 +203,7 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                 throw res;
             }
         }).catch(err=>{
-            console.error(err);
-            if(err.code && handler['err_'+err.code])
-                handler['err_'+err.code]();
-            else
-                handler.err_400();
+            customError(err); 
         })
 }
 
@@ -250,12 +223,7 @@ function getProfile(){
                     throw res.responseText;
                 }
             }).catch(err=>{
-                console.error(err);
-                if(err.code && handler['err_'+err.code])
-                    handler['err_'+err.code]();
-                else
-                    handler.err_400();
-
+                customError(err); 
             })
     });
 }
@@ -306,11 +274,7 @@ const _deleteMsg=(msgID)=>{
                 throw res.responseText;
             }
         }).catch(err=>{
-            console.error(err);
-            if(err.code && handler['err_'+err.code])
-                handler['err_'+err.code]();
-            else
-                handler.err_400();
+            customError(err); 
         })
 }
 
@@ -329,11 +293,7 @@ const _deleteChat=()=>{
                 throw res.responseText;
             }
         }).catch(err=>{
-            console.error(err);
-            if(err.code && handler['err_'+err.code])
-                handler['err_'+err.code]();
-            else
-                handler.err_400();
+            customError(err); 
         })
 }
 
@@ -354,11 +314,7 @@ const _blockChat=()=>{
             }else
                 throw res.responseText;
         }).catch(err=>{
-            console.error(err);
-            if(err.code && handler['err_'+err.code])
-                handler['err_'+err.code]();
-            else
-                handler.err_400();
+            customError(err); 
         })
 }
 
@@ -380,10 +336,25 @@ const _reportChat=(reportReason=null)=>{
             }else
                 throw res.responseText;
         }).catch(err=>{
-            console.error(err);
-            if(err.code && handler['err_'+err.code])
-                handler['err_'+err.code]();
-            else
-                handler.err_400();
+            customError(err); 
+        })
+}
+
+function createNewGroup(name=null,memberList=null){
+    if(!name || !memberList)
+        return 0;
+
+    let url= "/functionality/lib/_insert_data.php";
+    let data={
+        req:'createNewGroup',
+        name,
+        memberList: JSON.stringify(memberList),
+    }
+
+    postReq(url,JSON.stringify(data))
+        .then(res=>{
+            console.log(res.responseText);
+        }).catch(err=>{
+            customError(err); 
         })
 }

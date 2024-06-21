@@ -100,14 +100,10 @@ class CreateNewGroupPopUp {
         if(!members.length)
             return 0;
         this.members = members;
-        this.form = document.createElement("form");
+
+        this.form = document.createElement("div");
         this.form.id = "Create_newGroup_Form";
         this.form.classList.add("pop_up");
-    
-        let title = document.createElement('h3');
-        title.classList.add("title");
-        title.textContent = "Create a New Group";
-        this.form.appendChild(title);
     
         this.createGroupNameInput();
         this.displayMemberList();
@@ -115,9 +111,17 @@ class CreateNewGroupPopUp {
     }
 
     createGroupNameInput() {
+        let header= document.createElement('header');
+        header.classList.add('heading');
+        this.form.appendChild(header);
+
+        let title = document.createElement('h3');
+        title.textContent = "Create a New Group";
+        header.appendChild(title);
+
         let inputField = document.createElement('div');
         inputField.classList.add('input_field');
-        this.form.appendChild(inputField);
+        header.appendChild(inputField);
     
         let inputDiv = document.createElement('div');
         inputDiv.classList.add('input', 'center');
@@ -162,13 +166,13 @@ class CreateNewGroupPopUp {
     }
 
     displayButtons(){
-        let buttons= document.createElement('div');
+        let buttons= document.createElement('footer');
         buttons.classList.add('buttons');
         this.form.appendChild(buttons);
 
         let cancelBtn=document.createElement('button');
         cancelBtn.classList.add('pop_up_no_btn' ,'button');
-        cancelBtn.onclick=(e)=>{e.preventDefault();this.form.remove()};
+        cancelBtn.onclick=()=>this.hide();
         cancelBtn.textContent="Cancel";
         buttons.appendChild(cancelBtn);
 
@@ -176,35 +180,43 @@ class CreateNewGroupPopUp {
         createBtn.classList.add('pop_up_yes_btn','button');
         createBtn.type="submit";
         createBtn.value="Create";
-
-        createBtn.onclick=(e)=>{
-            e.preventDefault();
-            if(this.groupNameInput.value == ''){
-                this.groupNameInput.style.border='1px solid red';
-                return;
-            }else{
-                this.groupNameInput.style.removeProperty('border');
-            }
-
-            let memberElementList= this.form.querySelectorAll(".memberList .member input[name='member']");
-            if(memberElementList.length){
-                var memberAddList= Array.from(memberElementList)
-                                        .filter(member=>member.checked)
-                                        .map(member=>member.value);
-
-                if(memberAddList.length){
-                    console.log(memberAddList);
-                }else{
-                    new_Alert('Please add atleast one member');
-                    return;
-                }
-            }else{
-                cancelBtn.click();
-            }
-
-        }
-        createBtn.textContent="Create";
+        createBtn.onclick=()=>this.submit();
         buttons.appendChild(createBtn);
+
+    }
+
+    show(){
+        document.querySelector('.pop_up_box').appendChild(this.form);
+    }
+
+    hide(){
+        this.form.remove();
+    }
+
+    submit(){
+        if(this.groupNameInput.value == ''){
+            this.groupNameInput.style.border='1px solid red';
+            return;
+        }else{
+            this.groupNameInput.style.removeProperty('border');
+        }
+
+        let memberElementList= this.form.querySelectorAll(".memberList .member input[name='member']");
+        if(memberElementList.length){
+            var memberAddList= Array.from(memberElementList)
+                                    .filter(member=>member.checked)
+                                    .map(member=>member.value);
+
+            if(memberAddList.length){
+                createNewGroup(this.groupNameInput.value,memberAddList);
+            }else{
+                new_Alert('To create a group you must add atleast one member');
+                return;
+            }
+        }else{
+            cancelBtn.click();
+        }
+
     }
 
 }

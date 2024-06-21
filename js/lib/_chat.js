@@ -130,8 +130,20 @@ const _flash_chatList = () => {
 const _chatList_isEmpty = () => {
     _flash_chatList();
 
-    var footer=document.createElement('footer');list.appendChild(footer);
-        var div = document.createElement('div');div.style.margin="50px 0";div.style.fontFamily="auto";div.textContent = "Add chatters to chat with Them :)";footer.appendChild(div);
+    var footer=document.createElement('footer');
+    list.appendChild(footer);
+
+    var div = document.createElement('div');
+    Object.assign(div.style,{
+        margin:"50px 0",
+        fontFamily:"auto",
+        textAlign:'center',
+    });
+
+    div.textContent = (getCookie('chat').toLowerCase() === 'personal') ? 
+                                "Initiate a conversation by adding Chatters to the chat." :
+                                "Initiate a conversation by creating group." ;
+    footer.appendChild(div);
 };
 
 const _chatList_footer = ()=> {
@@ -753,10 +765,10 @@ const _trigerSendMsg = async (type) => {
                 ext : input.name.split('.').pop().toUpperCase(),
             }
 
-            if(msgObj.details.size > 16777200) throw customError("File Size is to Big.",413);
+            if(msgObj.details.size > 16777200) throw [code=413];
             
             msgObj.blob = (await _read_doc(input));
-            if(!msgObj.blob) throw customError('Please try again',400);
+            if(!msgObj.blob) throw [code=400];
             
             msgObj.mime = msgObj.blob.substring(msgObj.blob.indexOf(':')+1,msgObj.blob.indexOf(';'));
 
@@ -815,12 +827,7 @@ const _trigerSendMsg = async (type) => {
                 }
             });
     }catch(err){
-        if(err.code && handler['err_'+err.code])
-            handler['err_'+err.code]();
-        else
-            handler.err_400();
-
-        console.warn(`[${err.code}] : ${err.message}`);
+        customError(err);
     }
 }
 
@@ -994,7 +1001,7 @@ const addNewMsgInCurrChat = (msgObj) => {
             break;
 
         default:
-            customError("Not a valid Type",0);
+            console.error(0,"Not a valid Type");
             return;
     }
 

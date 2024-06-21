@@ -32,16 +32,14 @@ document.addEventListener('DOMContentLoaded' , function () {
             },10);
 });
 
-const customError = (msg, code) => {
-    try{
-        if(msg && code){
-            console.error(`[ ${code} ] : ${msg}`);
-        }else
-            handler['err_'+code]();
-    }catch(e){
-        handler['err_400']();
-    }
+const customError = (err) => {
+    console.error(err);
+    if(err.code && handler['err_'+err.code])
+        handler['err_'+err.code]();
+    else
+        handler.err_400();
 };
+
 
 const handler={};
 

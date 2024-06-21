@@ -76,7 +76,7 @@ function getChatList(string $chatType=null){
 
                 }elseif($chatType == 'group'){
 
-                    if(!is_data_present('groups', ['groupID'], [$toID], 'groupName')){
+                    if(!is_data_present('groups', ['groupID'], [$toID], 'name')){
                         $del = deleteData('inbox',$toID,'toID');
                         continue;
                     }else if(!is_member_of_group($userID,$toID)){
@@ -438,7 +438,7 @@ function editGroupDetails($column,$value){
 
         switch($column){
             case 'name':
-                $column= 'groupName';break;
+                $column= 'name';break;
             case 'dp':
                 $column= 'dp';break;
             default:
