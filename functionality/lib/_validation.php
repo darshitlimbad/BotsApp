@@ -120,7 +120,7 @@ function fetch_total_group_member_count(string $groupID){
 
 // @param groupID
 // @return all group members
-function fetch_all_group_members(string $groupID){
+function fetch_all_group_members(string $groupID , bool $byID=false){
     if(!isset($_SESSION['userID']))
             throw new Exception("",400);
 
@@ -131,9 +131,13 @@ function fetch_all_group_members(string $groupID){
 
     if($result->num_rows != 0){
         $members=[];
-        while($userID= $result->fetch_column()){
-            $members[]=_fetch_unm($userID);
-        }
+        if(!$byID)
+            while($userID= $result->fetch_column())
+                $members[]=_fetch_unm($userID);
+        else
+            while($userID= $result->fetch_column())
+                $members[]=$userID;
+
         return $members;
     }else{
         return 0;

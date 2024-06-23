@@ -5,6 +5,7 @@
         if(isset($_SESSION['userID'])){
             require_once('../db/_conn.php');
             require_once('./_fetch_data.php');
+            require_once('./_notification.php');
 
             if($data['req'] === 'createNewGroup')
                 echo createNewGroup($data);
@@ -145,6 +146,12 @@ function createNewGroup(array $data){
                 $addMemRes= addMemberInGroup(base64_encode($newGroupID), $memberID);
         }
 
+        $data=[
+            'action'=>'reloadChat',
+            'msg'=> ['chat'=>'group'],
+            'toID'=>$userID,
+        ];
+        add_new_noti($data);
         return 1;
         // if(!fetch_total_group_member_count($newGroupID)){
         //     deleteData('groups',$newGroupID,'groupID');
@@ -183,8 +190,21 @@ function addMemberInGroup(string $groupID=null,string $memberID){
             if(!$res)
                 throw new Exception("Something went Wrong",400);
             
-            //! add notification for member to notify he has been added in group by this unm
-            //! add notification to reload chat if the member is on
+            $data=[
+                "action" => "groupMemberAdded",
+                "toID" => $memberID,
+                'msg' => ['gName'=> _fetch_group_nm($groupID)]
+            ];
+            add_new_noti($data);
+
+            if(is_user_on($memberID)){
+                $data=[
+                    'action'=>'reloadChat',
+                    'msg'=> ['chat'=>'group'],
+                    'toID'=>$memberID,
+                ];
+                add_new_noti($data);
+            }
             return 1;
         }else{
             return 0;

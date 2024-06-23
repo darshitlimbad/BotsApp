@@ -49,6 +49,7 @@
                         if(is_user_on($oppoUserID) && $userID != $oppoUserID){
                             $data=[
                                 'action'=>'reloadChat',
+                                'msg'=> ['chat'=>'personal'],
                                 'toID'=>$oppoUserID,
                             ];
                             add_new_noti($data);
@@ -91,9 +92,35 @@
 
             if($is_data_present){
                 if(is_group_admin($userID, $groupID)){
+
+                    $groupMembers= fetch_all_group_members($groupID,true);
+
                     // removing the group from Inbox table
                     if(!deleteData('inbox',$groupID,"toID"))
                         throw new Exception("Something went wrong while deleting user data",400);
+
+                    $gName= _fetch_group_nm($groupID);
+                    foreach($groupMembers as $memberID){
+                        if( $userID === $memberID)
+                            continue;
+
+                        $data=[
+                            "action" => "groupRemovedMember",
+                            "toID" => $memberID,
+                            'msg' => ['gName'=>$gName]
+                        ];
+                        add_new_noti($data);
+                        
+                        if(is_user_on($memberID)){
+                            $data=[
+                                'action'=>'reloadChat',
+                                'msg'=> ['chat'=>'group'],
+                                'toID'=>$memberID,
+                            ];
+                            add_new_noti($data);
+                        }
+                    }
+
                     // removing the group from Groups table
                     if(!deleteData('groups',$groupID,"groupID"))
                         throw new Exception("Something went wrong while deleting user data",400);
@@ -165,7 +192,7 @@
                     if($deleteRes && is_user_on($oppoUserID) && $userID != $oppoUserID){
                         $data=[
                             'action'=>'msgDeleted',
-                            'msg'=>base64_encode($msgID),
+                            'msg'=> ['msgID'=>base64_encode($msgID)],
                             'toID'=>$oppoUserID,
                         ];
                         add_new_noti($data);

@@ -25,9 +25,9 @@ const openChatList = async () =>  {
             console.error('Something Went wrong');
             return;
         }
+        // return;
         const chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
-
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));       
         }else{
@@ -676,6 +676,7 @@ const setChatFooter= (unm) =>{
         msgInput.lang="en";
         msgInput.title="Type a Message";
         msgInput.disabled=true;
+        msgInput.onkeydown=(e)=>msgBoxSizing(e);
         chatStruct.footer.appendChild(msgInput);
 
         let sendMsgBtn = document.createElement("button");
@@ -697,12 +698,12 @@ const setChatFooter= (unm) =>{
         return node;
     }
 
-    chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
+    // chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
 };
 
 
 const closeChat = (e=null) =>{
-    if(e!=null) msgInput.removeEventListener( 'keydown' , msgBoxSizing);
+    // if(e!=null) msgInput.removeEventListener( 'keydown' , msgBoxSizing);
 
     chat.innerHTML=null;
     lastMsg=null;

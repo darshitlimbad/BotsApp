@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded' , function () {
     if(window.innerWidth < 600){
         document.querySelector('body.main').classList.add('mobile');
         device='mobile';
+    }else{
+        document.querySelector('body.main').classList.remove('mobile');
+        device='pc';
     }
 
     //delete account and logout button events

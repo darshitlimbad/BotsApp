@@ -208,7 +208,13 @@ class CreateNewGroupPopUp {
                                     .map(member=>member.value);
 
             if(memberAddList.length){
-                createNewGroup(this.groupNameInput.value,memberAddList);
+                createNewGroup(this.groupNameInput.value,memberAddList)
+                    .then(res=>{
+                        if(res === 1){
+                            new_notification(`The Group '${this.groupNameInput.value}' Has been successfully Created.`);
+                            this.hide();
+                        }
+                    })
             }else{
                 new_Alert('To create a group you must add atleast one member');
                 return;

@@ -20,10 +20,11 @@ document.addEventListener( 'DOMContentLoaded' , () => {
 });
 
 const msgBoxSizing = (e) => {    
+
     const footer = document.querySelector(".chat .footer");
     let msgInput = footer.querySelector(".msgInput");
-    
-    if( (e.keyCode == "13") && (!e.shiftKey)){
+    // new_notification(device+e.shiftKey+e.keyCode);
+    if( (e.keyCode == "13") && (!e.shiftKey) && (device == 'pc')){
         _trigerSendMsg("text");
         e.preventDefault();
     }

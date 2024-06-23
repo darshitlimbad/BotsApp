@@ -30,9 +30,9 @@
     display: flex;
     justify-content: space-around;
     position: absolute;
-    height: 89%;
+    height: 86vh;
     min-height: 450px;
-    width: 80%;
+    width: 80vw;
     min-width: 500px;
     max-width: 2000px;
     margin: 5px;
@@ -44,6 +44,7 @@
 }
 
 .mobile .chat-box{
+    height: 80vh;
     min-width: 200px;
 }
 
@@ -52,13 +53,15 @@
     display: block;
     position: relative;
     height: calc(96% + 5px);
-    width: 15em;
+    width: 16em;
+    /* max-width: 18em; */
+    /* width: 15em; */
     padding: 6px;
     border-radius:10px 0 0 10px;
     outline: 2px solid rgb(1, 12, 23);
 }
 
-@media screen and ( max-width:1000px ){
+/* @media screen and ( max-width:1000px ){
     .chat-box .inbox {
         width:12em;
     }
@@ -68,7 +71,7 @@
     .chat-box .inbox {
         width:25em;
     }
-}
+} */
 
 .mobile .chat-box .inbox{
     width: 85%;
@@ -270,7 +273,8 @@
     flex-direction: column;
     position: relative;
     height: calc(98% + 5px);
-    width: 70%;
+    width: 60vw;
+    /* width: 70%; */
     margin: 0px 10px;
     outline: 2px solid rgb(1, 12, 23);
     border-radius: 0 10px 10px 0;
@@ -554,7 +558,7 @@
     width: auto;
     display: flex;
     flex-direction: column;
-    max-width: 55%;
+    max-width: 70%;
     min-width: 20%;
     padding: 5px;
     background-color:var(--light-grey-color);
@@ -563,7 +567,7 @@
     overflow-wrap: break-word;
 }
 
-@media screen and ( max-width: 900px ) {
+/* @media screen and ( max-width: 900px ) {
     .chat .chatBody .msgContainer .msg{
         max-width: 14rem;
     }
@@ -573,7 +577,7 @@
     .chat .chatBody .msgContainer .msg{
         max-width: 10rem;
     }
-}
+} */
 
 .chat .chatBody .receive .msg{
     border-top-left-radius: 0px;
@@ -841,7 +845,6 @@
     box-shadow: -5px 5px 20px #00000069;
     border-radius: 3px;
     border: none;
-    z-index: 2;
 }
 .mobile .chat .chatBody .msgContainer .optionBtn {
     opacity: 1;
@@ -858,6 +861,10 @@
     opacity: 1 !important;
     display: block !important;
     transition: all .1s cubic-bezier(0.04, 0.37, 0.49, 1.04);
+}
+
+.optionBtn[data-option-show="true"]{
+    z-index: 2;
 }
 
 .chat .chatBody .msgContainer .optionBtn svg{
@@ -940,7 +947,8 @@
     margin: 11px;
     height: 17em;
     width: 17em;
-    border-radius: 5px;
+    border-radius: 10px;
+    outline: 2px solid aliceblue;
     background-color: var(--list-bg);
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.501);
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;

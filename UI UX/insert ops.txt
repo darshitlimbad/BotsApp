@@ -7,18 +7,19 @@ side insert ops:
 
     7. Enable user Search functionality in inbox of the user by using search function if posible
 
+    8. do something about oprion container 
+        - on click optionBtn=()=> optionBtn.appencChild(opt-container)
+        - when device = mobile the option container has to figure where it shold be shown in the midle or in left or right side
 
 next session ops:
 
     4. create a indexed DB table for storing dp as hashmap. 
         and flush it in every new session so if the user changes the dp then it can refresh
 
-    5. make api for adding groups and deleting groups and users.
+    5. make api for adding groups and deleting groups and users.-- done
+        now add removing member by admin functionality
         
     7. create operations of msgDeleted and reloadChat for group also.
-
-    8. create a box with member class to create a form for creating new group new group
-
 
 
 ///Delete operations note
@@ -52,3 +53,5 @@ next session ops:
 //3. add user unm and their dp in chat  -- done
 
 ///6. create a api and table for blocking & report users. --done
+
+///8. create a box with member class to create a form for creating new group --done

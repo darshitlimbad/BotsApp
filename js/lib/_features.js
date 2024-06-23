@@ -100,6 +100,7 @@
                         document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
                         var i=0;
                         data.forEach(row=>{
+                            
                             if(row['action'] == "addUserReq"){
                                 box_data=document.createElement("div");box_data.classList.add("box_data");
                                 box_data.classList.add(`${row['action']}`);
@@ -139,12 +140,34 @@
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
+                            }else if(row['action'] == "groupMemberAdded"){
+                                box_data=document.createElement("div");box_data.classList.add("box_data");
+                                box_data.classList.add(`${row['action']}`);
+                                box.appendChild(box_data);
+                                
+                                box_data.innerHTML = `
+                                    <div class="msg">You have been added to the group '${row.msg.gName}' by @${row.unm}.</div>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
+                            }else if(row['action'] == "groupRemovedMember"){
+                                box_data=document.createElement("div");box_data.classList.add("box_data");
+                                box_data.classList.add(`${row['action']}`);
+                                box.appendChild(box_data);
+
+                                box_data.innerHTML = `
+                                    <div class="msg">You have been Removed from the group '${row.msg.gName}' by @${row.unm}.</div>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
                             }else if(row['action'] === 'reloadChat'){
                                 _deleteThisNoti(row.notiID);
 
-                                if(getCookie('chat').toLowerCase() === 'personal'
-                                    && getCookie('currOpenedChat') === row.unm)
+                                let chat= getCookie('chat').toLowerCase();
+                                if( chat === row.msg.chat &&
+                                    getCookie('currOpenedChat') === row.unm)
                                     closeChat();
+                                    
                                 openChatList();
                             }else if(row['action'] === 'msgDeleted'){
                                 _deleteThisNoti(row.notiID);
@@ -152,7 +175,6 @@
                                 if(getCookie('chat').toLowerCase() === 'personal' 
                                     && getCookie('currOpenedChat') === row.unm)
                                     chat.querySelector(`div[data-msgid='${row.msg}'`)?.remove();
-
                             }
                         })
                     }else{

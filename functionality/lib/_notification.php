@@ -29,6 +29,57 @@ if($data = json_decode( file_get_contents("php://input") , true)){
 }   
 
 function add_new_noti($data) {
+    // all notification Template :
+    /*
+    !sending add user as a chatter request
+    $data=[
+        'action'=>'addUserReq',
+        'toID'=>$fromID, / 'unm'=> unm,
+    ]
+
+    !to accept chatter request
+    note - this only works if the user have pending chatter request 
+    $data=[
+        "action" => "acceptedChatterReq",
+        "toID" => '',
+    ]
+    
+    !to reject chatter request
+    note - this only works if the user have pending chatter request 
+    $data=[
+        "action" => "chatterReqRejected",
+        "toID" => '',
+    ]
+
+    !user added in Group noti
+    $data=[
+        "action" => "groupMemberAdded",
+        "toID" => 'memberID',
+        'msg' => ['gName'=>'Group Name']
+    ]
+
+    !member removed from group by admin
+    note: it can be any reason like - group got deleted, admin removed user
+    $data=[
+        "action" => "groupRemovedMember",
+        "toID" => 'memberID',
+        'msg' => ['gName'=>'Group Name']
+    ]
+
+    !reloading chat section
+    $data=[
+        'action'=>'reloadChat',
+        'msg'=> ['chat'=>'personal'],
+        'toID'=>$fromID,
+    ];
+
+    !removing message from opposite ChatBody when the message get's deleted by sender
+    $data=[
+        'action'=>'msgDeleted',
+        'msg'=>['msgID'=>msgID],
+        'toID'=>$oppoUserID,
+    ];
+    */
     try{
         $newNotiID = gen_new_notification_id();
         $fromID = getDecryptedUserID();
@@ -36,7 +87,7 @@ function add_new_noti($data) {
         $unm= $data['unm']    ?? "";
         $toID= $data['toID']   ?? "";
         $action= $data['action'] ?? "newMessage" ;
-        $msg= $data['msg']   ?? null;
+        $msg= $data['msg'] ?? null;
 
         if(!$toID && $unm)
             $toID = _get_userID_by_UNM($unm);
@@ -57,8 +108,11 @@ function add_new_noti($data) {
 
                 case 'acceptedChatterReq':
                 case 'chatterReqRejected':
+                case 'groupMemberAdded':
+                
                 case "reloadChat":
                 case "msgDeleted":
+                case "groupRemovedMember":
                 break;
 
                 default:
@@ -70,7 +124,7 @@ function add_new_noti($data) {
 
         $res = insertData(
                 "notification" , ["notificationID" , "fromID" , "toID" , "action",'msg'] ,
-                [$newNotiID , $fromID , $toID , $action ,$msg] , "status");
+                [$newNotiID , $fromID , $toID , $action ,serialize($msg)] , "status");
         
         return $res;
 
@@ -141,7 +195,7 @@ function getNewNoti(){
                     $rows[$i]['notiID'] = base64_encode($row['notiID']);
                     $rows[$i]['unm'] = $row['unm'];
                     $rows[$i]['action'] = $row['action'];
-                    $rows[$i]['msg']= $row['msg'];
+                    $rows[$i]['msg']= ($row['msg']) ? unserialize($row['msg']) : '' ;
                     $i++;
                 }else{
                     throw new Exception();
@@ -194,6 +248,7 @@ function acceptChatterReq($data){
                             if(is_user_on($fromID)){
                                 $data=[
                                     'action'=>'reloadChat',
+                                    'msg'=> ['chat'=>'personal'],
                                     'toID'=>$fromID,
                                 ];
                                 add_new_noti($data);

@@ -248,13 +248,7 @@ function editGroupDetails(column,value){
                     // handler['err_'+res.responseText.error.code]();
                 }
             }).catch(err=>{
-                console.error(err);
-                if(err.code && handler['err_'+err.code])
-                    handler['err_'+err.code]();
-                else
-                    handler.err_400();
-
-                resolve(0); 
+                customError(err);
             })
     })
 }
@@ -351,10 +345,20 @@ function createNewGroup(name=null,memberList=null){
         memberList: JSON.stringify(memberList),
     }
 
-    postReq(url,JSON.stringify(data))
-        .then(res=>{
-            console.log(res.responseText);
-        }).catch(err=>{
-            customError(err); 
-        })
+    return new Promise((resolve)=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && res.responseText === 1)
+                    resolve(1);
+                else if(res.status != success)
+                    throw res;
+                else 
+                    throw res.responseText;
+                    
+            }).catch(err=>{
+                resolve(0);
+                customError(err); 
+            })
+    })
+            
 }

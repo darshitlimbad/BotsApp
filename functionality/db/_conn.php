@@ -9,6 +9,7 @@
     $pass = "";
     $db = "botsapp";
 
+    try{
     $GLOBALS['conn'] = new mysqli( $host , $unm , $pass , $db );
     $GLOBALS['status'] = new mysqli( $host , $unm , $pass , "botsapp_statusDB" );
 
@@ -17,6 +18,10 @@
     if($GLOBALS['status'] -> connect_error)
         die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
 
+    }catch(Exception $e){
+        echo "Database is offline.";
+        die();
+    }
     $imgDir = sys_get_temp_dir()."/images/";
     if(!file_exists($imgDir))
         mkdir($imgDir, 0777, true);
