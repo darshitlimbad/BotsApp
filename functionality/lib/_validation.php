@@ -90,7 +90,7 @@ function metchEncryptedPasswords($Pass , $userID){
 function is_data_present($table , array $point , array $point_val , $column='userID',$db='conn'){
     if(isset($_SESSION['userID']) || (isset($_GET['passkey']) && $_GET['passkey'] == "khuljasimsim")){
         $result = fetch_columns($table , $point , $point_val , array($column),$db);
-        if($result->num_rows == 1){
+        if( $result && $result->num_rows == 1){
             return 1;
         }else{
             return 0;

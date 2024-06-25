@@ -11,6 +11,9 @@ side insert ops:
         - on click optionBtn=()=> optionBtn.appencChild(opt-container)
         - when device = mobile the option container has to figure where it shold be shown in the midle or in left or right side
 
+    9 change every div hide and show events 
+        -- use : onmouseenter and onmouseout
+
 next session ops:
 
     4. create a indexed DB table for storing dp as hashmap. 
@@ -20,6 +23,10 @@ next session ops:
         now add removing member by admin functionality
         
     7. create operations of msgDeleted and reloadChat for group also.
+
+```
+    8.  show chatList in order of the last msg and whatever i have to make for it make it also to use in chatter search in chatlist
+```
 
 
 ///Delete operations note

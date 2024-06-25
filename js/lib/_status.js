@@ -190,15 +190,14 @@ class Status {
 
 // msg status functions
 
-    const _getMsgStatus = (msgIDs) => {
+    const _getMsgStatus = (msgIDs=[]) => {
         try{
-            if(!msgIDs) return;
+            if(!msgIDs.length) return;
             
             let data={
                 req:"getMsgStatus",
                 msgIDs,
             };
-                        
             return new Promise( (resolve,reject) => {
                 postReq(userStatus.statusURL,JSON.stringify(data))
                     .then(res=>{
@@ -207,26 +206,27 @@ class Status {
                         if(res.status == 'success' && !res.responseText.error)
                             resolve(res.responseText);
                         else
-                            reject(res.responseText);
+                            throw res.responseText;
                     });
             });
         }catch(err){
-            new_Alert(err);
-            console.error(err);
+            // new_Alert(err);
+            customError(err);
         }
     }
 
     const _placeMsgStatus = (msgStatusImage,msgID)=>{
-        return new Promise((resolve,reject)=>{
-            _getMsgStatus([msgID])
-                .then(res=>{
-                    let msgStatus = ((res != 0) ? res[0].status : "uploading");
-                    msgStatusImage.src = userStatus.msgStatusPath+msgStatus+".svg";
-                    msgStatusImage.setAttribute('data-status',msgStatus);
-                    resolve(msgStatus);
-                }).catch(err=>{
-                    console.error(err);
-                });
+        return new Promise(async (resolve,reject)=>{
+
+                if( msgID ){
+                    var res= await _getMsgStatus([msgID]);
+                    var msgStatus = ((res != 0) ? res[0].status : "uploading");
+                }else{
+                    var msgStatus = "uploading";
+                }
+                msgStatusImage.src = userStatus.msgStatusPath+msgStatus+".svg";
+                msgStatusImage.setAttribute('data-status',msgStatus);
+                resolve(msgStatus);
         })
         
     }

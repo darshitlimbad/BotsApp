@@ -96,45 +96,48 @@ class OptionContainer {
 
 
 class CreateNewGroupPopUp {
-    constructor(members=[]) {
+    constructor(members=[],action="new_group") {
         if(!members.length)
             return 0;
         this.members = members;
+        this.action= action;
 
         this.form = document.createElement("div");
         this.form.id = "Create_newGroup_Form";
         this.form.classList.add("pop_up");
     
-        this.createGroupNameInput();
+        this.heading();
         this.displayMemberList();
         this.displayButtons();
     }
 
-    createGroupNameInput() {
+    heading() {
         let header= document.createElement('header');
         header.classList.add('heading');
         this.form.appendChild(header);
 
         let title = document.createElement('h3');
-        title.textContent = "Create a New Group";
+        title.textContent = (this.action === 'new_group') ? "Create a New Group" : (this.action === 'add_new_members') ? "Add new Members":'' ;
         header.appendChild(title);
 
-        let inputField = document.createElement('div');
-        inputField.classList.add('input_field');
-        header.appendChild(inputField);
-    
-        let inputDiv = document.createElement('div');
-        inputDiv.classList.add('input', 'center');
-        inputField.appendChild(inputDiv);
-    
-        this.groupNameInput = document.createElement('input');
-        this.groupNameInput.type = "text";
-        this.groupNameInput.name = "groupName";
-        this.groupNameInput.placeholder = "Enter Group Name";
-        this.groupNameInput.maxlength = "30";
-        this.groupNameInput.autocomplete = "off";
-        this.groupNameInput.style.position = "sticky";
-        inputDiv.appendChild(this.groupNameInput);
+        if(this.action === 'new_group'){
+            let inputField = document.createElement('div');
+            inputField.classList.add('input_field');
+            header.appendChild(inputField);
+        
+            let inputDiv = document.createElement('div');
+            inputDiv.classList.add('input', 'center');
+            inputField.appendChild(inputDiv);
+        
+            this.groupNameInput = document.createElement('input');
+            this.groupNameInput.type = "text";
+            this.groupNameInput.name = "groupName";
+            this.groupNameInput.placeholder = "Enter Group Name";
+            this.groupNameInput.maxlength = "30";
+            this.groupNameInput.autocomplete = "off";
+            this.groupNameInput.style.position = "sticky";
+            inputDiv.appendChild(this.groupNameInput);
+        }
     }
 
     async displayMemberList() {
@@ -179,7 +182,7 @@ class CreateNewGroupPopUp {
         let createBtn= document.createElement('input');
         createBtn.classList.add('pop_up_yes_btn','button');
         createBtn.type="submit";
-        createBtn.value="Create";
+        createBtn.value=(this.action === 'new_group') ? "Create" : "Add";
         createBtn.onclick=()=>this.submit();
         buttons.appendChild(createBtn);
 
@@ -194,27 +197,38 @@ class CreateNewGroupPopUp {
     }
 
     submit(){
-        if(this.groupNameInput.value == ''){
-            this.groupNameInput.style.border='1px solid red';
-            return;
-        }else{
-            this.groupNameInput.style.removeProperty('border');
+        if(this.action === 'new_group'){
+            if(this.groupNameInput.value == ''){
+                this.groupNameInput.style.border='1px solid red';
+                return;
+            }else{
+                this.groupNameInput.style.removeProperty('border');
+            }
         }
 
         let memberElementList= this.form.querySelectorAll(".memberList .member input[name='member']");
         if(memberElementList.length){
             var memberAddList= Array.from(memberElementList)
                                     .filter(member=>member.checked)
-                                    .map(member=>member.value);
+                                    .map(member=>btoa(member.value));
 
             if(memberAddList.length){
-                createNewGroup(this.groupNameInput.value,memberAddList)
-                    .then(res=>{
-                        if(res === 1){
-                            new_notification(`The Group '${this.groupNameInput.value}' Has been successfully Created.`);
-                            this.hide();
-                        }
-                    })
+                this.hide();
+                if(this.action === 'new_group'){
+                    createNewGroup(this.groupNameInput.value,memberAddList)
+                        .then(res=>{
+                            if(res === 1){
+                                new_notification(`The Group '${this.groupNameInput.value}' Has been successfully Created.`);
+                            }
+                        })
+                }else if(this.action === 'add_new_members'){
+                    _addNewMember(memberAddList)
+                        .then(res=>{
+                            if(res === 1){
+                                new_notification('The members have been succesfully added to the group.');
+                            }
+                        })
+                }
             }else{
                 new_Alert('To create a group you must add atleast one member');
                 return;

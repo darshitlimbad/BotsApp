@@ -9,12 +9,19 @@
 
             if($data['req'] === 'createNewGroup')
                 echo createNewGroup($data);
-            else if(($data['req'] === 'addMemberInGroup') &&
-                    isset($data['member']) && 
-                    isset($data['groupID']))    {
-                $memberID= _get_userID_by_UNM($data['member']);
-                if($memberID)
-                    echo addMemberInGroup($data['groupID'],$memberID);
+            else if(($data['req'] === 'addMemberInGroup') && isset($data['unmList']) ){
+
+                $unmList= json_decode($data['unmList']);
+                if(count($unmList)){
+                    $memberIDs = array_filter(array_map(function ($unm){
+                                    $id= _get_userID_by_UNM(base64_decode($unm));
+                                    if($id)
+                                        return $id;
+                                },$unmList));
+                    
+                    if(count($memberIDs))   
+                        echo addMemberInGroup(null,$memberIDs);
+                }
             }else{
                 return 0;
             }
@@ -138,13 +145,22 @@ function createNewGroup(array $data){
             throw new Exception("Something went Wrong",400);
         }
 
-        foreach($memberList as $member){
-            if($member === $unm)
-                continue;           
-            $memberID=_get_userID_by_UNM($member);
-            if($memberID)
-                $addMemRes= addMemberInGroup(base64_encode($newGroupID), $memberID);
-        }
+        // foreach($memberList as $member){
+        //     if($member === $unm)
+        //         continue;           
+        //     $memberID=_get_userID_by_UNM($member);
+        //     if($memberID)
+        //         $addMemRes= addMemberInGroup(base64_encode($newGroupID), $memberID);
+        // }
+
+        $memberIDs = array_filter(  array_map(function ($unm){
+                                        $id= _get_userID_by_UNM(base64_decode($unm));
+                                        if($id)
+                                            return $id;
+                                    },$memberList));
+
+            if(count($memberIDs))   
+                addMemberInGroup(base64_encode($newGroupID),$memberIDs);
 
         $data=[
             'action'=>'reloadChat',
@@ -172,47 +188,61 @@ function createNewGroup(array $data){
 // @param $groupID --it must be decrypted
 // @param $memberNm --name of the member
 // @return 1 if member added in the group
-function addMemberInGroup(string $groupID=null,string $memberID){
+function addMemberInGroup(string $groupID=null,array $memberIDs=[]){
     try{
         $userID= getDecryptedUserID();
         $groupID= base64_decode($groupID);
 
-        if(!$groupID || !$memberID || !$userID)
+        if(!count($memberIDs) || !$userID)
             throw new Exception("Something went Wrong",400);
 
-        if(!is_member_of_group($userID,$groupID))
-            throw new Exception("Unauthorised Access Denied !!! ",410);
-        else if(is_member_of_group($memberID,$groupID))
-            throw new Exception("Member already exists",412);
-
-        if(is_chat_exist($userID,$memberID) == 1){
-            $res= insertData('inbox',['chatType','fromID','toID'],['group',$memberID,$groupID]);
-            if(!$res)
+        if(!$groupID){
+            $chatType= strtolower($_COOKIE['chat']);
+            if($chatType != 'group' || !$_COOKIE['currOpenedGID'])
                 throw new Exception("Something went Wrong",400);
-            
-            $data=[
-                "action" => "groupMemberAdded",
-                "toID" => $memberID,
-                'msg' => ['gName'=> _fetch_group_nm($groupID)]
-            ];
-            add_new_noti($data);
 
-            if(is_user_on($memberID)){
-                $data=[
-                    'action'=>'reloadChat',
-                    'msg'=> ['chat'=>'group'],
-                    'toID'=>$memberID,
-                ];
-                add_new_noti($data);
-            }
-            return 1;
+            $groupID=base64_decode($_COOKIE['currOpenedGID']);
+            if(!is_data_present('groups', ['groupID'], [$groupID], 'groupID'))
+                throw new Exception(" Unauthorised Access Denied !!!",410);
+        }
+
+        //if the the request sender is not a member 
+        if(!is_member_of_group($userID,$groupID)){
+            throw new Exception("Unauthorised Access Denied !!! ",410);
+        //if the the request receiver is already a member
         }else{
-            return 0;
+            foreach($memberIDs as $memberID){
+                if(is_member_of_group($memberID,$groupID))
+                    throw new Exception("Member already exists",412);
+
+                if(is_chat_exist($userID,$memberID) == 1){
+                    $res= insertData('inbox',['chatType','fromID','toID'],['group',$memberID,$groupID]);
+                    if(!$res)
+                        throw new Exception("Something went Wrong",400);
+                    
+                    $gName= _fetch_group_nm($groupID);
+                    $data=[
+                        "action" => "groupMemberAdded",
+                        "toID" => $memberID,
+                        'msg' => ['gName'=> $gName]
+                    ];
+                    add_new_noti($data);
+
+                    if(is_user_on($memberID)){
+                        $data=[
+                            'action'=>'reloadChat',
+                            'msg'=> ['chat'=>'group','gName'=> $gName],
+                            'toID'=>$memberID,
+                        ];
+                        add_new_noti($data);
+                    }
+                }
+            } 
+            return 1;
         }
 
     }catch(Exception $e){
-        print_r($e);
-
+        // print_r($e);
         $error = [
             'error'=>true,
             'code'=> $e->getCode(),

@@ -49,7 +49,7 @@ function getChatList(string $chatType=null){
     try{
 
         if($chatType && ($chatType != 'personal') &&  ($chatType != 'group'))
-            throw new Error('Invalid Chat Type',0);
+            throw new Exception('Invalid Chat Type',0);
 
         $userID = getDecryptedUserID();
         if(!$chatType)
@@ -89,7 +89,7 @@ function getChatList(string $chatType=null){
                     $chatList[$i]['unm'] = _fetch_group_nm($toID);
                     $chatList[$i]['GID'] = base64_encode($toID);
                 }
-                $chatList[$i]['last_msg']= _fetChLastMsg($userID,$toID);
+                $chatList[$i]['last_msg']= json_encode(_fetChLastMsg($userID,$toID));
 
                 $i++;
             }
@@ -109,10 +109,10 @@ function getChatList(string $chatType=null){
 
 function getAllMsgs($data){
     try{
-        if(!isset($_COOKIE['chat']))
-            throw new Error('chat section is not opened',0);
+        if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
         if(!$_COOKIE['currOpenedChat'])
-            throw new Error('Chat is not opened, Please open chat first.',0);
+            throw new Exception('Chat is not opened, Please open chat first.',0);
 
         $userUNM = _fetch_unm();
         $userID = getDecryptedUserID();        
@@ -209,10 +209,10 @@ function getAllMsgs($data){
 */
 function getNewMsgs($data){
     try{
-        if(!isset($_COOKIE['chat']))
-            throw new Error('chat section is not opened',0);
+        if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
         if(!$_COOKIE['currOpenedChat'])
-            throw new Error('Chat is not opened, Please open chat first.',0);
+            throw new Exception('Chat is not opened, Please open chat first.',0);
 
         $userUNM = _fetch_unm();
         $userID = getDecryptedUserID();
@@ -310,10 +310,10 @@ function getNewMsgs($data){
 
 function sendMsg(array $data){
     try{
-        if(!isset($_COOKIE['chat']))
-            throw new Error('chat section is not opened',0);
+        if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
         if(!$_COOKIE['currOpenedChat'])
-            throw new Error('Chat is not opened, Please open chat first.',0);
+            throw new Exception('Chat is not opened, Please open chat first.',0);
 
         $newMsgID = gen_new_id('Msg');
         $fromID = getDecryptedUserID();
@@ -445,10 +445,10 @@ function editGroupDetails($column,$value){
                 throw new Exception("Invalid Column value",410);
         }
 
-        if(!isset($_COOKIE['chat']))
-            throw new Error('chat section is not opened',0);
-        if(!isset($_COOKIE['currOpenedGID']))
-            throw new Error('Group Chat is not opened, Please open chat first.',0);
+        if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
+        if(!$_COOKIE['currOpenedChat'])
+            throw new Exception('Chat is not opened, Please open chat first.',0);
 
         $userID=    getDecryptedUserID();
         $groupID=   base64_decode($_COOKIE['currOpenedGID']);

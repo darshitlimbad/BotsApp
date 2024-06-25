@@ -204,10 +204,10 @@
 
     function getDocBlob($obj){
         try{
-            if(!isset($_COOKIE['chat']))
-                throw new Error('chat section is not opened',0);
-            if(!isset($_COOKIE['currOpenedChat']))
-                throw new Error('Chat is not opened, Please open chat first.',0);
+            if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
+            if(!$_COOKIE['currOpenedChat'])
+                throw new Exception('Chat is not opened, Please open chat first.',0);
 
             $msgID = base64_decode($obj['msgID']);
 
@@ -216,7 +216,7 @@
             $table = "messages";
             
             //fetching document data from the column doc as data
-            if(isset($_COOKIE['currOpenedGID']) &&$chatType == 'group'){
+            if($_COOKIE['currOpenedGID'] && $chatType == 'group'){
                 $groupID= base64_decode($_COOKIE['currOpenedGID']);
                 if(!is_member_of_group($userID,$groupID))
                     throw new Exception("Unauthorised !!",410);
@@ -269,7 +269,7 @@
     function _fetchLastMsg($userID,$oppoUserID,$chatType='personal'){
         try{
             if($chatType == 'personal'){
-                $sql =" SELECT m.msg
+                $sql =" SELECT m.msg, m.time
                         FROM messages as m
                         RIGHT JOIN `botsapp_statusdb`.`messages` as ms
                         ON m.msgID = ms.msgID
@@ -279,7 +279,7 @@
                         DESC limit 1";
             }else if($chatType == 'group'){
                 //here opposite user id will be a group ID.
-                $sql =" SELECT m.msg
+                $sql =" SELECT m.msg, m.time
                         FROM messages as m
                         RIGHT JOIN `botsapp_statusdb`.`messages` as ms
                         ON m.msgID = ms.msgID
@@ -298,10 +298,14 @@
             $result = $stmt->get_result();
             $stmt->close();
 
-            $last_msg = $result->fetch_column();
-            if(strlen($last_msg) > 40)
-                $last_msg= str_split($last_msg,40)[0]."...";
-            return ($result->num_rows == 1) ? $last_msg : '' ;
+            if($result->num_rows == 1){
+                $last_msg = $result->fetch_assoc();
+                if(strlen((string)$last_msg['msg']) > 40)
+                    $last_msg['msg']= str_split($last_msg['msg'],40)[0]."...";
+                return $last_msg;
+            }else 
+                return '';
+            
         }catch(Exception $e){
             return '';
         }
@@ -309,10 +313,10 @@
 
     function getProfile(){
         try{
-            if(!isset($_COOKIE['chat']))
-                throw new Error('chat section is not opened',0);
-            if(!isset($_COOKIE['currOpenedChat']))
-                throw new Error('Chat is not opened, Please open chat first.',0);
+            if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
+            if(!$_COOKIE['currOpenedChat'])
+                throw new Exception('Chat is not opened, Please open chat first.',0);
 
             $chatType= strtolower($_COOKIE['chat']);
             

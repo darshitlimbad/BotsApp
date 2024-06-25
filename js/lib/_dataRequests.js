@@ -29,12 +29,12 @@ const _getChatList = async (chatType=null) => {
 
     try{
         const res = await postReq(url,JSON.stringify(data));
+        console.log(res.responseText);
         if(res.status === "success" && !res.responseText.error)
             return res.responseText;
-        else if(res.status === 'error'){
-            throw res;
-        }else 
+        else 
             throw res.responseText;
+        
     }catch(err){
         customError(err); 
         return 0;
@@ -291,6 +291,30 @@ const _deleteChat=()=>{
         })
 }
 
+const _removeMember=(unm=null)=>{
+    if(!unm || !getCookie('currOpenedGID') || getCookie('chat').toLowerCase() != 'group')
+        return;
+
+    let url = "/functionality/lib/_data_delete.php";
+    let data={
+        req:"removeMember",
+        unm,
+    }
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && res.responseText === 1){
+                    resolve(1);
+                }else{
+                    throw res.responseText;
+                }
+            }).catch(err=>{
+                customError(err); 
+            })
+    })
+}
+
 const _blockChat=()=>{
     if(!getCookie('currOpenedChat') || getCookie('chat').toLowerCase() != 'personal')
         return;
@@ -360,5 +384,26 @@ function createNewGroup(name=null,memberList=null){
                 customError(err); 
             })
     })
-            
+}
+
+function _addNewMember(unmList=[]){
+    if(!unmList.length || !getCookie('currOpenedGID') || getCookie('chat').toLowerCase() != 'group')
+        return;
+
+    let url= "/functionality/lib/_insert_data.php";
+    let data={
+        req:'addMemberInGroup',
+        unmList: JSON.stringify(unmList),
+    }
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && res.responseText === 1){
+                    resolve(1);
+                }else{
+                    throw res.responseText;
+                }
+            })
+    })
 }

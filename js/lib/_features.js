@@ -136,7 +136,7 @@
                                 box_data.innerHTML = `
                                     <h4 class="unm">@${row['unm']}</h4>
                                     <div class="hr"></div>
-                                    <div class="msg">${row['unm']} has Accepted your chatter request.</div>
+                                    <div class="msg"><span class='highlight'>${row['unm']}</span> has Accepted your chatter request.</div>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -146,7 +146,7 @@
                                 box.appendChild(box_data);
                                 
                                 box_data.innerHTML = `
-                                    <div class="msg">You have been added to the group '${row.msg.gName}' by @${row.unm}.</div>
+                                    <div class="msg">You have been added to the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</div>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -156,16 +156,18 @@
                                 box.appendChild(box_data);
 
                                 box_data.innerHTML = `
-                                    <div class="msg">You have been Removed from the group '${row.msg.gName}' by @${row.unm}.</div>
+                                    <div class="msg">You have been <span class='highlight red'>Removed</span> from the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</div>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
                             }else if(row['action'] === 'reloadChat'){
                                 _deleteThisNoti(row.notiID);
-
                                 let chat= getCookie('chat').toLowerCase();
-                                if( chat === row.msg.chat &&
-                                    getCookie('currOpenedChat') === row.unm)
+                                let currOpenedChat= getCookie('currOpenedChat');
+
+                                if( chat === row.msg.chat && currOpenedChat
+                                    && ( chat === 'personal' && currOpenedChat === row.unm) 
+                                    || ( chat === 'group' && currOpenedChat === row.msg.gName ))
                                     closeChat();
                                     
                                 openChatList();
@@ -542,6 +544,9 @@ const _add_new_chatter_form = () => {
     var add_new_chat_form = document.querySelector('#add_new_chat_form');
     add_new_chat_form.querySelector('hr').style.border='1px solid '.concat(theme);
 
+    let input= add_new_chat_form.querySelector('#username');
+    input.onkeyup=()=>_search_users_by_unm(input.value);
+    
     _show_this_pop_up(add_new_chat_form);
 }
 
@@ -594,15 +599,25 @@ const _addDataInList = (data) => {
                 let td= document.createElement('td');td.style.color="red";td.textContent="No Data Found!!";tr.appendChild(td);
     }else{
         data.forEach( ele => {
-            var unm = ele.unm;
+            let tr= document.createElement('tr');
+            tr.classList.add("node");
+            tr.onclick=()=>toggle_confirmation_pop_up('add_new_chatter',ele.unm);
+            body.appendChild(tr);
+            
+            let tdImg=document.createElement('td');
+            tr.appendChild(tdImg);
+                var dpImg = new Image(); 
+                dpImg.src=default_dp_src; 
+                dpImg.onerror=()=>dpImg.src=default_dp_src;
+                tdImg.appendChild(dpImg);
 
-            let tr= document.createElement('tr');tr.classList.add("node");tr.setAttribute("onclick",`toggle_confirmation_pop_up('add_new_chatter','${unm}')`);body.appendChild(tr);
-                let tdImg=document.createElement('td');tr.appendChild(tdImg);
-                    var dpImg = new Image(); dpImg.src="/img/default_dp.png"; dpImg.setAttribute("onerror","this.src='/img/default_dp.png'");tdImg.appendChild(dpImg);
-                let tdUnm=document.createElement('td');tr.appendChild(tdUnm);
-                    let strongTag = document.createElement("strong");tdUnm.appendChild(strongTag);strongTag.textContent=`@${ele['unm']}`;
+            let tdUnm=document.createElement('td');
+            tr.appendChild(tdUnm);
+                let strongTag = document.createElement("strong");
+                tdUnm.appendChild(strongTag);
+                strongTag.textContent=`@${ele.unm}`;
 
-            get_dp(unm).then(dp=>dpImg.src=dp);
+            get_dp(ele.unm).then(dp=>dpImg.src=dp);
         });
     }
 
@@ -843,19 +858,47 @@ const hideOptionBtn=(optionBtn)=>{
 
 async function createNewGroupForm(){
     try{
-        let memberList= await _getChatList('personal');
-        if(!memberList)
+        let userMemberList= await _getChatList('personal');
+        if(!userMemberList)
             throw 411;
 
-        memberList=memberList
+        userMemberList=userMemberList
                         .map(member=>member.unm)
                         .filter(member=>member!='You');
-        if(!memberList)
+        if(!userMemberList)
             throw 411; 
 
-        let formObj= new CreateNewGroupPopUp(memberList);
+        let formObj= new CreateNewGroupPopUp(userMemberList);
         formObj.show();
         
+    }catch(err){
+        if(err === 411){
+            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group. To invite them, you can send chatter requests");
+        }else{
+            console.error(err);
+        }
+    }
+}
+
+async function addNewMemberForm(){
+    try{
+        let userMemberList= await _getChatList('personal');
+        let groupProfile= await getProfile(); 
+        if(!userMemberList.length || !groupProfile)
+            throw 411; 
+
+        let groupMembers= JSON.parse(groupProfile.members);
+        groupMembers.push(groupProfile.admin);
+
+        userMemberList=userMemberList
+                            .map(member=>member.unm)
+                            .filter(member=>member!='You' && !groupMembers.includes(member));
+
+        if(!userMemberList.length)
+            throw 411;
+        
+        let formObj= new CreateNewGroupPopUp(userMemberList,'add_new_members');
+        formObj.show();
     }catch(err){
         if(err === 411){
             new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group. To invite them, you can send chatter requests");

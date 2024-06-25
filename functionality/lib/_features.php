@@ -95,7 +95,7 @@
         <div class="input_field" name="user_field">
             <h5>@</h5>
             <div class="input">
-                <input type="text" id="username" name="username" placeholder=" " autocomplete="off" onkeyup="_search_users_by_unm(this.value)" />
+                <input type="text" id="username" name="username" placeholder=" " autocomplete="off" />
                 <label for="username">Username</label>
                 <div class="center">
                     <table  id="floatingList" >

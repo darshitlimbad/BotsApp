@@ -211,10 +211,8 @@ const openChat =async (unm,ID=null) => {
     setLoader(chat);
     setChatHeader(unm,ID);
     removeLoader(chat);
-    setLoader(chatStruct.chatBody);
     setChatFooter(unm);
     await setChatBody();
-    removeLoader(chatStruct.chatBody);
     
     //for mobile
     if(device == 'mobile'){
@@ -356,7 +354,7 @@ const setChatHeader = async (unm,ID) =>{
 
 };
 
-function openUserProfile(unm){
+async function openUserProfile(unm){
     if(unm=='You')
         var uName= getCookie('unm');
     else
@@ -364,7 +362,6 @@ function openUserProfile(unm){
 
     let userProfile = document.createElement('div');
     userProfile.classList.add('user-profile');
-    chatStruct.heading.appendChild(userProfile);
 
         // DP
         let dp = new Image();
@@ -452,7 +449,7 @@ function openUserProfile(unm){
             reportBtn.onclick=()=>_report_pop_up('User');
         }        
 
-    getProfile()
+    await getProfile()
         .then(res=>{
             fullName.textContent=res.name;
             email.textContent=res.email;
@@ -460,10 +457,9 @@ function openUserProfile(unm){
             can_see_on_status.textContent= (res.can_see_on_status==0)? 'No' : 'Yes';
         });
         
-    setTimeout(()=>{document.onclick=(e)=>{
-        if(!e?.target.closest('.user-profile'))
-            userProfile.remove();
-    }},100 );
+    chatStruct.heading.appendChild(userProfile);
+    userProfile.onmouseenter=()=>document.onclick=null;
+    userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
 }
 
 //
@@ -473,9 +469,16 @@ async function openGroupProfile(){
     let unm=getCookie('unm');
     var admin= (profile.admin === unm)? 1 : 0;
 
-    let userProfile = document.createElement('div');
+    chatStruct.heading.querySelector('.user-profile')?.remove();
+    var userProfile= document.createElement('div');
     userProfile.classList.add('user-profile');
 
+    
+    let flexBox=document.createElement('div');
+    flexBox.classList.add('flexBox');
+    flexBox.style.justifyContent='space-between';
+    userProfile.appendChild(flexBox);
+    
         // DP
         let dp = new Image();
         dp.classList.add('avatar');
@@ -485,7 +488,7 @@ async function openGroupProfile(){
         });
         dp.src= user.querySelector('.dp img')?.src;
         dp.onerror=()=>dp.src=default_dp_src;
-        userProfile.appendChild(dp);
+        flexBox.appendChild(dp);
 
         let changeDPIcon= new Image();
         changeDPIcon.classList.add('icon');
@@ -494,14 +497,10 @@ async function openGroupProfile(){
             width: '1.4em',
             backgroundColor:'aliceblue',
             borderRadius:'5px',
-            position:'absolute',
-            top:'25%',
-            left:'25%',
         });
-        if(device === 'mobile') changeDPIcon.style.top='10%';
         changeDPIcon.src='/img/icons/settings/profile/edit_img.png';
         changeDPIcon.onclick=()=>_upload_img_form("Upload New Group DP","UPLOAD_GROUP_DP")
-        userProfile.appendChild(changeDPIcon);
+        flexBox.appendChild(changeDPIcon);
 
         // Full Name
         let detailName = document.createElement('d6');
@@ -509,7 +508,7 @@ async function openGroupProfile(){
         detailName.textContent="Name: ";
         userProfile.appendChild(detailName);
 
-        let flexBox=document.createElement('div');
+        flexBox=document.createElement('div');
         flexBox.classList.add('flexBox');
         flexBox.style.justifyContent='space-between';
         userProfile.appendChild(flexBox);
@@ -535,7 +534,7 @@ async function openGroupProfile(){
                     if(fullName.value != oldVal) 
                         editGroupDetails('name',fullName.value).then(res=>{
                                 if(res==0)
-                                    fullName.value=oldVal;
+                                    fullName.value=oldVal || '';
                                 else if(res==1){
                                     let groupHeadings= document.querySelectorAll('.inbox-user.selected .inbox-name, .chat .heading .details .name');
                                     groupHeadings.forEach(heading=>heading.textContent=fullName.value);
@@ -574,21 +573,22 @@ async function openGroupProfile(){
         userProfile.appendChild(detailName);
 
         if(profile.members){
-            JSON.parse(profile.members).forEach(member=>{
+            JSON.parse(profile.members).forEach(memberNm=>{
 
                 flexBox=document.createElement('div');
                 flexBox.classList.add('member','flexBox');
                 flexBox.style.justifyContent='flex-start';
+                flexBox.setAttribute('data-unm',memberNm);
                 userProfile.appendChild(flexBox);
 
                     //members DP
                     let memberDP = new Image();
                     memberDP.classList.add('avatar');
-                    get_dp(member).then(res=>memberDP.src=res);
+                    get_dp(memberNm).then(res=>memberDP.src=res);
                     flexBox.appendChild(memberDP);
 
                     let groupMember= document.createElement('p');
-                    groupMember.textContent= (member == unm) ? 'You' : '@'+member;
+                    groupMember.textContent= (memberNm == unm) ? 'You' : '@'+memberNm;
                     groupMember.classList.add('margin-dead');
                     flexBox.appendChild(groupMember);
 
@@ -596,6 +596,10 @@ async function openGroupProfile(){
                         var removeMemberBtn= new Image();
                         removeMemberBtn.classList.add('icon');
                         removeMemberBtn.src="/img/icons/options/delete.svg";
+                        removeMemberBtn.onclick=()=>{
+                            _removeMember(btoa(memberNm))
+                                .then(res=> (res) && userProfile.querySelector(`.member[data-unm='${memberNm}']`)?.remove() & setChatBody() );
+                        }
                         flexBox.appendChild(removeMemberBtn);
                     }
             })
@@ -613,17 +617,26 @@ async function openGroupProfile(){
             let action="remove_chat";
             let message = `Are You sure you want to ${deleteBtn.textContent}? Your all chats with this group will be deleted also.`;
             deleteBtn.onclick=()=>_confirmation_pop_up(unm,message,action,'red');
+
+            var addMemberBtn= document.createElement('button');
+            addMemberBtn.classList.add('success-button','button');
+            addMemberBtn.textContent= 'Add Member';
+            flexBox.appendChild(addMemberBtn);
+
+            addMemberBtn.onclick=()=>addNewMemberForm();
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);
-        document.onclick=(e)=>{
-        if(!e?.target.closest('.user-profile',''))
-            userProfile.remove();
-    }},200 );
+        userProfile.onmouseenter=()=>document.onclick=null;
+        userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
+    },200 );
 }
 
 const setChatBody = () =>{
     return new Promise((resolve)=>{
+        chatStruct.chatBody.innerHTML="";
+        lastMsg=null;
+        setLoader(chatStruct.chatBody);
         _getAllMsgs()
             .then(msgObjs=>{
                 
@@ -633,8 +646,11 @@ const setChatBody = () =>{
                 msgObjs
                     .forEach(msgObj => addNewMsgInCurrChat(msgObj));
             }
-            resolve();
-        })
+            return;
+            }).then(res=>{
+                removeLoader(chatStruct.chatBody);
+                resolve();
+            })
     });
 }
 
@@ -1049,7 +1065,6 @@ const addNewMsgInCurrChat = (msgObj) => {
             let statusIcon = new Image();
             statusIcon.classList.add('msgStatusIcon');
             msgStatus.appendChild(statusIcon); 
-
             _placeMsgStatus(statusIcon,msgObj.msgID)
                 .then(res=> msgObj.status = res);
     }

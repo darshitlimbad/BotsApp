@@ -69,7 +69,7 @@ function add_new_noti($data) {
     !reloading chat section
     $data=[
         'action'=>'reloadChat',
-        'msg'=> ['chat'=>'personal'],
+        'msg'=> ['chat'=>'personal', ```on chat==group ``` , 'gName'=>'Group Name'],
         'toID'=>$fromID,
     ];
 

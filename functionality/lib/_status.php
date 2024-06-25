@@ -158,7 +158,7 @@
                 $newMsgObj= $newMsgStmt->get_result();
                 $newMsgStmt ->close();
 
-                $chatterList[$i]['last_msg'] = _fetchLastMsg($userID,$toID,$chatType);
+                $chatterList[$i]['last_msg'] = json_encode(_fetchLastMsg($userID,$toID,$chatType));
                 if($chatType === 'personal')
                     $chatterList[$i]['total_new_messages'] = ($newMsgObj->num_rows != 0) ? $newMsgObj->fetch_column() : 0;
                 else {
@@ -195,15 +195,19 @@
 
     function getMsgStatus($data) {
         try{
-            if(!isset($data['msgIDs'])) throw new Exception("No Msg ID has been provided",0);
-            if(!$_COOKIE['currOpenedChat']) throw new Exception("Chat is not Opened",0);
+            if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
+            if(!$_COOKIE['currOpenedChat'])
+                throw new Exception('Chat is not opened, Please open chat first.',0);
 
             session_start();
             require_once('../lib/_fetch_data.php');
 
-            $msgIDs= array_map(function($id){
+            $msgIDs= array_filter(array_map(function($id){
                         return base64_decode($id);
-                    },$data['msgIDs']);
+                    },$data['msgIDs']));
+            if(!count($msgIDs))
+                    throw new Exception("No Data found!! ",411);
 
             $userID = getDecryptedUserID();
 
@@ -282,7 +286,7 @@
     function updateMsgStatus($chatType,$msgID,$fromID,$toID,$seenID) {
         try{
             if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
-                throw new Error('No data found',411);
+                throw new Exception('No data found',411);
 
             $totMem= ($chatType == 'group') ? fetch_total_group_member_count($toID) : 1;
 

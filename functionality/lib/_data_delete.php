@@ -13,8 +13,10 @@
                 echo deleteChat();
             else if($data['req'] === 'blockChat')
                 echo blockChat();
-            else if($data['req'] === 'reportChat')
+            else if($data['req'] === 'reportChat' && isset($data['reportReason']))
                 echo reportChat($data['reportReason']);
+            else if($data['req'] === 'removeMember' && isset($data['unm']))
+                echo removeMember($data['unm']);
             
         }
 
@@ -23,10 +25,10 @@
 
     function deleteChat(){
         try{
-            if(!isset($_COOKIE['chat']))
-                throw new Error('chat section is not opened',0);
+            if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
             if(!$_COOKIE['currOpenedChat'])
-                throw new Error('Chat is not opened, Please open chat first.',0);
+                throw new Exception('Chat is not opened, Please open chat first.',0);
 
             $userID= getDecryptedUserID();
             $chatType= strtolower($_COOKIE['chat']);
@@ -114,7 +116,7 @@
                         if(is_user_on($memberID)){
                             $data=[
                                 'action'=>'reloadChat',
-                                'msg'=> ['chat'=>'group'],
+                                'msg'=> ['chat'=>'group','gName'=>$gName],
                                 'toID'=>$memberID,
                             ];
                             add_new_noti($data);
@@ -169,11 +171,11 @@
     function deleteMsg(string $msgID){
         try{
             if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
-                throw new Error('No data found',411);
-            if(!isset($_COOKIE['chat']))
-                throw new Error('chat section is not opened',0);
+                throw new Exception('No data found',411);
+            if(!$_COOKIE['chat'])
+                throw new Exception('chat section is not opened',0);
             if(!$_COOKIE['currOpenedChat'])
-                throw new Error('Chat is not opened, Please open chat first.',0);
+                throw new Exception('Chat is not opened, Please open chat first.',0);
 
             $chatType= strtolower($_COOKIE['chat']);
             $userID= getDecryptedUserID();
@@ -255,9 +257,66 @@
         }
     }
 
+    function removeMember(string $unm){
+        try{
+            if(!$_COOKIE['chat'] || strtolower($_COOKIE['chat']) != 'group')
+                throw new Exception('group section is not opened',0);
+            if(!$_COOKIE['currOpenedGID'] )
+                throw new Exception('Chat is not opened, Please open chat first.',0);
+
+            $userID= getDecryptedUserID();
+            $groupID = base64_decode($_COOKIE['currOpenedGID']);
+
+            if(!is_group_admin($userID, $groupID))
+                throw new Exception(" Unauthorised Access Denied !!! ",410);
+
+            $memberID= _get_userID_by_UNM(base64_decode($unm));
+            if(!$memberID || !is_member_of_group($memberID,$groupID))
+                throw new Exception(" No DATA FOUND!! ",411);
+
+            // removing the user from group by removing him from Inbox table
+            $query = "DELETE FROM `inbox` WHERE `fromID`= ? AND `toID` = ?";
+            $stmt = $GLOBALS['conn']->prepare($query);
+            $stmt->bind_param('ss' , $memberID,$groupID);
+            $sqlfire = $stmt->execute();
+            $stmt->close();
+
+            if(!$sqlfire)
+                throw new Exception("Something went wrong while Removing user",400);
+            else{
+                $gName=_fetch_group_nm($groupID);
+                $data=[
+                    "action" => "groupRemovedMember",
+                    "toID" => $memberID,
+                    'msg' => ['gName'=> $gName],
+                ];
+                add_new_noti($data);
+
+                if(is_user_on($memberID)){
+                    $data=[
+                        'action'=>'reloadChat',
+                        'msg'=> ['chat'=> 'group', 'gName'=> $gName],
+                        'toID'=>$memberID,
+                    ];
+                    add_new_noti($data);
+                }
+                return 1;
+            }
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+
     function blockChat(){
         try{
-            if(!isset($_COOKIE['chat']))
+            if(!$_COOKIE['chat'])
                 throw new Exception('chat section is not opened',0);
             if(!$_COOKIE['currOpenedChat'])
                 throw new Exception('Chat is not opened, Please open chat first.',0);
@@ -301,7 +360,7 @@
 
     function reportChat($reason){
         try{
-            if(!isset($_COOKIE['chat']))
+            if(!$_COOKIE['chat'])
                 throw new Exception('chat section is not opened',0);
             if(!$_COOKIE['currOpenedChat'])
                 throw new Exception('Chat is not opened, Please open chat first.',0);
