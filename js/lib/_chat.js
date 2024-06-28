@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded' , () => {
     var online = "green";
     var offline = "red";
     var user = null;
-
+    chatOpened= false;
     var lastMsg = null;
 // 
 
@@ -29,7 +29,9 @@ const openChatList = async () =>  {
         const chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
         if(chatList){
-            chatList.forEach(chat => chatListTemplate(chat));       
+            chatList.forEach(chat => chatListTemplate(chat));
+            sortChatByTime();
+            document.querySelector('.chat-box .inbox .search input')?.focus();
         }else{
             _chatList_isEmpty();
         }
@@ -44,7 +46,8 @@ const openChatList = async () =>  {
 
 const chatListTemplate = ( chat ) => {
     let chatType = getCookie('chat').toLowerCase();
-    let {unm , last_msg} = chat;  
+    let {unm , lastMsgData} = chat;  
+    lastMsgData=JSON.parse(lastMsgData);
 
     // ummm just ignore this :) 
         let unmTitle = (unm==="You") ? getCookie("unm") : unm ;
@@ -53,8 +56,14 @@ const chatListTemplate = ( chat ) => {
     inboxUser.classList.add('inbox-user');
     inboxUser.title=unmTitle;
     inboxUser.tabIndex = 0;
+    inboxUser.setAttribute("data-lastMsgTime",lastMsgData.time);
+
     if(chatType == 'group') inboxUser.id = chat.GID;
-    inboxUser.onclick = ()=> (chatType == 'personal') ? openChat(unmTitle) : openChat(unmTitle,chat.GID);
+    inboxUser.onclick = ()=> {
+        if(chatOpened)
+            closeChat();
+        (chatType == 'personal') ? openChat(unmTitle) : openChat(unmTitle,chat.GID)
+    };
 
     list.appendChild(inboxUser);
 
@@ -80,8 +89,8 @@ const chatListTemplate = ( chat ) => {
             
             var lastChatDiv = document.createElement('div');
             lastChatDiv.classList.add("skeleton","skeleton-text","last-chat");
-            lastChatDiv.title=last_msg;
-            lastChatDiv.textContent=last_msg;
+            lastChatDiv.title=lastMsgData.msg;
+            lastChatDiv.textContent=lastMsgData.msg;
             details.appendChild(lastChatDiv);
 
             //fetching dp img
@@ -185,28 +194,30 @@ const openChat =async (unm,ID=null) => {
         || ID && ID == getCookie('currOpenedGID') )
         return;
 
-        chat.innerHTML=""; 
-        lastMsg=null;
+    chatOpened=true;
 
-        chatStruct.heading = document.createElement('div');
-        chatStruct.heading.classList.add("heading","align-center");
-        chat.appendChild(chatStruct.heading);
+    chat.innerHTML=""; 
+    lastMsg=null;
 
-        chatStruct.searchDiv = document.createElement('div');
-        chatStruct.searchDiv.classList.add('search');
-        chatStruct.searchDiv.id="searchTxt";
-        chat.appendChild(chatStruct.searchDiv);
+    chatStruct.heading = document.createElement('div');
+    chatStruct.heading.classList.add("heading","align-center");
+    chat.appendChild(chatStruct.heading);
 
-        chatStruct.chatBody=document.createElement("div");
-        chatStruct.chatBody.classList.add("chatBody");
-        chat.appendChild(chatStruct.chatBody);
+    chatStruct.searchDiv = document.createElement('div');
+    chatStruct.searchDiv.classList.add('search');
+    chatStruct.searchDiv.id="searchTxt";
+    chat.appendChild(chatStruct.searchDiv);
 
-        chatStruct.footer=document.createElement('footer');
-        chatStruct.footer.classList.add("footer","align-center");
-        chat.appendChild(chatStruct.footer);
+    chatStruct.chatBody=document.createElement("div");
+    chatStruct.chatBody.classList.add("chatBody");
+    chat.appendChild(chatStruct.chatBody);
+
+    chatStruct.footer=document.createElement('footer');
+    chatStruct.footer.classList.add("footer","align-center");
+    chat.appendChild(chatStruct.footer);
 
     selectChat(unm,ID);
-    setCookie('currOpenedChat' ,unm);
+    await setCookie('currOpenedChat' ,unm);
     if(getCookie('chat').toLowerCase() =='group')   setCookie('currOpenedGID',user.id);
     setLoader(chat);
     setChatHeader(unm,ID);
@@ -220,17 +231,26 @@ const openChat =async (unm,ID=null) => {
     }
 };
 const setLoader = (loc)=>{
-    let loaderDiv = document.createElement('div');loaderDiv.classList.add('loader');loaderDiv.classList.add('blank-layer-chat');loc.appendChild(loaderDiv);
-        let loaderImg = new Image();loaderImg.src="/img/icons/loader.svg";loaderImg.classList.add('loader-img');loaderDiv.appendChild(loaderImg);
-        let loaderText =  document.createElement('b');loaderText.classList.add('loader-text');loaderText.textContent = "Loading...";loaderDiv.appendChild(loaderText);
+    let loaderDiv = document.createElement('div');
+    loaderDiv.classList.add('loader','blank-layer-chat');
+    loc.appendChild(loaderDiv);
+        let loaderImg = new Image();
+        loaderImg.src="/img/icons/loader.svg";
+        loaderImg.classList.add('loader-img');
+        loaderDiv.appendChild(loaderImg);
+        let loaderText =  document.createElement('b');
+        loaderText.classList.add('loader-text');
+        loaderText.textContent = "Loading...";
+        loaderDiv.appendChild(loaderText);
     
 };
 const removeLoader = (loc)=>{
     let loader=loc.querySelector(".loader");
-    loc.removeChild(loader);
+    if(loader)
+        loc.removeChild(loader);
 
     let disabledEle = chat.querySelectorAll("footer .upDocsBtn , footer .msgInput, footer .sendMsg, .heading .search-btn");
-    disabledEle.forEach(ele => ele.removeAttribute('disabled'));
+    disabledEle?.forEach(ele => ele.removeAttribute('disabled'));
 }
 
 const selectChat = (unm,ID=null) => {
@@ -632,14 +652,13 @@ async function openGroupProfile(){
     },200 );
 }
 
-const setChatBody = () =>{
+const setChatBody = async () =>{
     return new Promise((resolve)=>{
         chatStruct.chatBody.innerHTML="";
         lastMsg=null;
         setLoader(chatStruct.chatBody);
         _getAllMsgs()
             .then(msgObjs=>{
-                
             if(!msgObjs)  {
                 new_notification("Let's start new convertation.");
             }else{
@@ -718,7 +737,7 @@ const setChatFooter= (unm) =>{
 };
 
 
-const closeChat = (e=null) =>{
+const closeChat = () =>{
     // if(e!=null) msgInput.removeEventListener( 'keydown' , msgBoxSizing);
 
     chat.innerHTML=null;
@@ -746,6 +765,7 @@ const closeChat = (e=null) =>{
     if(device == 'mobile'){
         showInbox();
     }
+    chatOpened=false;
 }
 
 const _trigerSendMsg = async (type) => {

@@ -241,8 +241,6 @@ class CreateNewGroupPopUp {
 
 }
 
-
-
 // class pop_up {
 //     /*
 //     !popUp Names which can be created by this class

@@ -89,7 +89,7 @@ function getChatList(string $chatType=null){
                     $chatList[$i]['unm'] = _fetch_group_nm($toID);
                     $chatList[$i]['GID'] = base64_encode($toID);
                 }
-                $chatList[$i]['last_msg']= json_encode(_fetChLastMsg($userID,$toID));
+                $chatList[$i]['lastMsgData']= json_encode(_fetChLastMsg($userID,$toID));
 
                 $i++;
             }

@@ -30,7 +30,7 @@
             
             <!-- search-box -->
             <div class="search">
-                <input type="search" name="seach" placeholder="search" autocomplete="off" accesskey="f">
+                <input type="search" name="chatSearch" placeholder="search" autocomplete="off" accesskey="f">
             </div>
             
             <table class="list" id="chatterList" title="Chatter List"> 

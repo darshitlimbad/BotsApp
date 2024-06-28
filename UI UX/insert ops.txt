@@ -25,7 +25,7 @@ next session ops:
     7. create operations of msgDeleted and reloadChat for group also.
 
 ```
-    8.  show chatList in order of the last msg and whatever i have to make for it make it also to use in chatter search in chatlist
+    9. create class for open and close chat and for open chatlist. 
 ```
 
 
@@ -62,3 +62,5 @@ next session ops:
 ///6. create a api and table for blocking & report users. --done
 
 ///8. create a box with member class to create a form for creating new group --done
+
+///8.  show chatList in order of the last msg and whatever i have to make for it make it also to use in chatter search in chatlist ----done

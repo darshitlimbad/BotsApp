@@ -120,14 +120,15 @@
 
 .chat-box .search input{
     height: 30px;
-    width: 80%;
+    width: 100%;
     font-size: 15px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     padding: 10px;
     margin: 10px;
     border:none;
     outline: none;
-    border-bottom: 2px inset white;
+    border-radius: 5px;
+    border-bottom: 1px inset white;
     background-color:rgb(1, 12, 23);
     color: rgba(255, 255, 255, 0.756);
 }
@@ -163,12 +164,19 @@
     margin: 0 10px;
     border-bottom: var(--thin-wh-border);
     align-content: center;
+    animation: rotate 1s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 
     /* this variables are controlled by JS _status.js */
     --userStatusColor: 'null'; /* any color name or rgb or anytype in string  */
     --totalNewMsg: ''; /* number in string */
     --display: none; /* block/none */
 
+}
+
+@keyframes rotate {
+    0%{
+        transform: rotateY(45deg);
+    }
 }
 
 .list .inbox-user::after {

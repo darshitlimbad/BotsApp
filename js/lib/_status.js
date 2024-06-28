@@ -84,12 +84,19 @@ class Status {
                                         :chatterList.querySelector(`.inbox-user[id='${chatter.GID}']`);
                         
                         if(inboxUser){
+                                
+                            if(chatter.lastMsgData){
                                 let lastChatDiv = inboxUser.querySelector('.last-chat');
-
-                            if((chatter.last_msg && (lastChatDiv.title != chatter.last_msg) ) 
-                                || chatter.last_msg == ''){
-                                lastChatDiv.textContent = lastChatDiv.title = chatter.last_msg;
+                                let lastMsgData= JSON.parse(chatter.lastMsgData);
+                                let chatLastMsgTime= inboxUser.getAttribute("data-lastMsgTime");
+                                
+                                if(chatLastMsgTime != lastMsgData.time){
+                                    lastChatDiv.textContent = lastChatDiv.title = lastMsgData.msg;
+                                    inboxUser.setAttribute("data-lastMsgTime", lastMsgData.time);
+                                    sortChatByTime();
+                                }
                             }
+                            
 
                             //get new messages and aa if condition ne repair kar
                             if(chatType === 'personal'){

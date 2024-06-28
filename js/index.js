@@ -17,6 +17,13 @@ document.addEventListener( 'DOMContentLoaded' , () => {
     initiateChatBox(currCht);
     // 
 
+    // adding event on chat search input
+    let chatSearchInput=document.querySelector('.chat-box .inbox .search input');
+    chatSearchInput.onkeyup=()=>{
+        if(chatSearchInput.value)
+            sortChatBySearch(chatSearchInput.value);
+    }
+
 });
 
 const msgBoxSizing = (e) => {    

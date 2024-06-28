@@ -29,7 +29,6 @@ const _getChatList = async (chatType=null) => {
 
     try{
         const res = await postReq(url,JSON.stringify(data));
-        console.log(res.responseText);
         if(res.status === "success" && !res.responseText.error)
             return res.responseText;
         else 

@@ -158,7 +158,7 @@
                 $newMsgObj= $newMsgStmt->get_result();
                 $newMsgStmt ->close();
 
-                $chatterList[$i]['last_msg'] = json_encode(_fetchLastMsg($userID,$toID,$chatType));
+                $chatterList[$i]['lastMsgData'] = json_encode(_fetchLastMsg($userID,$toID,$chatType));
                 if($chatType === 'personal')
                     $chatterList[$i]['total_new_messages'] = ($newMsgObj->num_rows != 0) ? $newMsgObj->fetch_column() : 0;
                 else {
