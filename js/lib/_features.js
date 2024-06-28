@@ -936,10 +936,8 @@ function sortChatBySearch(unm){
 
     if(allChats.length != 0){
         var searchWord=new RegExp(unm,'i');
-        console.log(searchWord);
         for(let i=0 ; i< allChats.length ; i++){
             for (j=i+1 ; j< allChats.length ; j++){
-                console.log(allChats[j].querySelector(".inbox-name")?.textContent.search(searchWord) != -1);
                 if(allChats[j].title.search(searchWord) != -1 || allChats[j].querySelector(".inbox-name")?.textContent.search(searchWord) != -1){
                     allChats[i].remove();
                     allChats[j].after(allChats[i]);

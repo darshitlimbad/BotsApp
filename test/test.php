@@ -47,7 +47,7 @@ include_once('../functionality/lib/_data_delete.php');
     // $res= $GLOBALS['conn']->query($test);
     // echo $res;
 
-    echo is_data_present('inbox', ['groupID'], ['Group00000010'], 'groupID');
+    echo fetch_total_group_member_count("Group00000010");
 //    echo !(-1    );
     // print_r($result->fetch_all(true));
 // print_r($res->fetch_assoc()) ;

@@ -283,7 +283,7 @@
         }
     }
 
-    function updateMsgStatus($chatType,$msgID,$fromID,$toID,$seenID) {
+    function updateMsgStatus($chatType,$msgID,$fromID,$toID,$seenID = null) {
         try{
             if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
                 throw new Exception('No data found',411);
@@ -309,12 +309,15 @@
             
             if($res->num_rows == 0){
                 if($chatType == 'personal')
-                    $status = 'read';
-                else{
-                    $status = ($totMem > 2) ? 'send' : 'read';
+                    $status = ($seenID) ? 'read' : 'send' ;
+                else if($chatType == 'group'){
+                    $status = ($totMem >= 2) ? 'send' : 'read' ;
+                }else{
+                    return 0;
                 }
 
-                $result = insertData('messages', ['msgID','status','seenByIDs'],[$msgID,$status,serialize([$seenID])],'status');
+                $seenByIDs= ($seenID) ? serialize([$seenID]) : null;
+                $result = insertData('messages', ['msgID','status','seenByIDs'],[$msgID,$status,$seenByIDs],'status');
 
             }else if($res->num_rows == 1){
                 $row = $res->fetch_assoc();

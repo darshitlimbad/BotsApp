@@ -318,7 +318,8 @@ function sendMsg(array $data){
         $newMsgID = gen_new_id('Msg');
         $fromID = getDecryptedUserID();
         
-        switch(strtolower($_COOKIE['chat'])){
+        $chatType=strtolower($_COOKIE['chat']);
+        switch($chatType){
             case 'personal':
                 $oppoUserID = _get_userID_by_UNM($data['toUnm']);
 
@@ -336,7 +337,6 @@ function sendMsg(array $data){
 
                     if(!is_member_of_group($fromID,$oppoUserID)){
                         delete_group_if_empty($oppoUserID);
-
                         throw new Exception("You are not a member of this group.",410);
                     }
                 }else
@@ -405,8 +405,9 @@ function sendMsg(array $data){
                 if($msgRes == 0)    throw new Exception("error on data insertion",400);
             
             // updating status of message
-            $status = ($fromID == $oppoUserID) ? 'read' : 'send' ;
-            insertData("messages",["msgID","status"],[$newMsgID,$status],"status");
+            updateMsgStatus($chatType,$newMsgID,$fromID,$oppoUserID);
+            // $status = ($fromID == $oppoUserID) ? 'read' : 'send' ;
+            // insertData("messages",["msgID","status"],[$newMsgID,$status],"status");
 
             if($msgRes)
                 $response=[

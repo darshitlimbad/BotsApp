@@ -68,22 +68,22 @@ const initiateChatBox = (chatType) => {
         setCookie("chat", chatType);
         window.location.assign('/');
     }
-    chatType= chatType.toLowerCase();
 
     // Title Names
     let heading =  document.querySelector('#cname');
     heading.textContent = chatType + " Chat";
     document.title = heading.textContent + " -- Botsapp"; 
 
-    if(chatType === 'personal'){
+    if(chatType.toLowerCase() === 'personal'){
         document.querySelector('.page-title .createNewGroupBtn')?.setAttribute('data-show','false')
-    }else if(chatType === 'group'){
+    }else if(chatType.toLowerCase() === 'group'){
         let createNewGroupBtn=document.querySelector('.page-title .createNewGroupBtn');
         createNewGroupBtn?.setAttribute('data-show','true');
         createNewGroupBtn.onclick=()=>createNewGroupForm();
     }
 
     document.querySelector('.chat-box .inbox .search input').value=null;
+    
     // 
     if(option = document.querySelector(".side-bar .top .options.selected"))
         option.classList.remove("selected");
