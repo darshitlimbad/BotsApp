@@ -46,7 +46,7 @@ try{
             $rememberMe = (isset($_POST['rememberMe'])) ? $_POST['rememberMe'] : null ;
             $is_user_username = (str_contains($user, '@') && str_contains($user , '.')) ? '1' : '0';
             
-            $result = fetch_columns( "users" , (($is_user_username == 0) ? ["unm"] : ["email"]) , [$user] , array('userID' , 'pass' , 'pass_key'));
+            $result = fetch_columns( "users" , (($is_user_username == 0) ? ["unm"] : ["email"]) , [$user] , array('userID' ,'unm', 'pass' , 'pass_key'));
 
             if($result->num_rows == 0){
                 throw new Exception( "User not Found", 404);
@@ -57,13 +57,16 @@ try{
                     session_start();
                     
                     $userID = $row['userID'];
+                    $unm= $row['unm'];
                     $user_key  = random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES);
-                    $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);                            
+                    $user_nonce = random_bytes(SODIUM_CRYPTO_SECRETBOX_NONCEBYTES);      
+
                     $encryptedUserID = sodium_crypto_secretbox($userID , $user_nonce , $user_key);
+                    $encryptedUNM = sodium_crypto_secretbox($unm , $user_nonce , $user_key);
                         
-                    $_SESSION['userID'] =   base64_encode($encryptedUserID);
-                    $_SESSION['key'] =      base64_encode($user_key);
-                    $_SESSION['nonce'] =    base64_encode($user_nonce);
+                    $_SESSION['userID']= base64_encode($encryptedUserID);
+                    $_SESSION['key']= base64_encode($user_key);
+                    $_SESSION['nonce']= base64_encode($user_nonce);
 
                     if($rememberMe == 'on' ) {
 
@@ -101,7 +104,7 @@ try{
                                         objectStore.clear();
                                     }
 
-                                    objectStore.add({id: "1" , userID : "<?= $_SESSION['userID'];?>" , 
+                                    objectStore.add({id: "1" , unm : "<?= base64_encode($encryptedUNM);?>" , 
                                             user_key : "<?= $_SESSION['key'];?>" , user_nonce : "<?= $_SESSION['nonce'];?>" , 
                                             pass : "<?= base64_encode($encryptedPass)?>" , pass_nonce: "<?= base64_encode($pass_nonce)?>" });
 
@@ -131,8 +134,8 @@ try{
         header('location: /');
     }
 } catch (Exception $error) {
-    // print_r($error);
-    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
+    print_r($error);
+    // header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
 ?>

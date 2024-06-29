@@ -8,20 +8,20 @@
         
     try{
         if(isset($data['keyPass']) && $data['keyPass'] == 'khuljasimsim'){
-            $encryptedUserID = base64_decode($data['userID']);
+            $encryptedUNM = base64_decode($data['unm']);
             $user_nonce = base64_decode($data['user_nonce']);
             $user_key = base64_decode($data['user_key']);
-            $userID = sodium_crypto_secretbox_open($encryptedUserID , $user_nonce , $user_key);
+            $unm = sodium_crypto_secretbox_open($encryptedUNM , $user_nonce , $user_key);
             
             $encryptedPass = base64_decode($data['pass']);
             $pass_nonce = base64_decode($data['pass_nonce']);
-            $pass_key = base64_decode(getPassKey($userID));
+            $pass_key = base64_decode(getPassKey($unm));
             $Pass = sodium_crypto_secretbox_open($encryptedPass , $pass_nonce , $pass_key);
-        
-            $res = metchEncryptedPasswords($Pass , $userID);
-            if($res === 1) {
+            $res = metchEncryptedPasswords($Pass , $unm);
+            if($res['status'] === 'success') {
                 session_start();
-                $_SESSION['userID'] = $data['userID'];
+                $encryptedUserID= sodium_crypto_secretbox($res['userID'],$user_nonce,$user_key);
+                $_SESSION['userID'] = base64_encode($encryptedUserID);
                 $_SESSION['nonce'] = $data['user_nonce'];
                 $_SESSION['key'] = $data['user_key'];
 

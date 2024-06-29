@@ -1,12 +1,12 @@
 <?php
-session_start();
+// session_start();
 
-include_once('../functionality/db/_conn.php');
-include_once('../functionality/lib/_notification.php');
-include_once('../functionality/lib/_validation.php');
-include_once('../functionality/lib/_insert_data.php');
-include_once('../functionality/lib/_fetch_data.php');
-include_once('../functionality/lib/_data_delete.php');
+// include_once('../functionality/db/_conn.php');
+// include_once('../functionality/lib/_notification.php');
+// include_once('../functionality/lib/_validation.php');
+// include_once('../functionality/lib/_insert_data.php');
+// include_once('../functionality/lib/_fetch_data.php');
+// include_once('../functionality/lib/_data_delete.php');
 
     // $result=search_columns("users_account" , "unm" , "dar" , "unm");
     // $res;
@@ -47,7 +47,10 @@ include_once('../functionality/lib/_data_delete.php');
     // $res= $GLOBALS['conn']->query($test);
     // echo $res;
 
-    echo fetch_total_group_member_count("Group00000010");
+    // echo fetch_total_group_member_count("Group00000010");
+
+    // echo PHP_EXTENSION_DIR;
+    // PHP
 //    echo !(-1    );
     // print_r($result->fetch_all(true));
 // print_r($res->fetch_assoc()) ;

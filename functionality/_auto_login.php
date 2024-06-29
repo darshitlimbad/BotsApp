@@ -5,7 +5,6 @@ if(!isset($_SESSION['userID'])) {
 
     <script>
     var request = indexedDB.open("Botsapp", 1);
-    var is_data = 1;
 
     request.onerror = (event) => {
         console.warn('[404] :' , "No Saved data found");
@@ -14,24 +13,20 @@ if(!isset($_SESSION['userID'])) {
     request.onupgradeneeded = (event) => {
         var db = event.target.result;
 
-        if(db.objectStoreNames.length == 0) {
+        if(!db.objectStoreNames.contains('session')) {
             db.close();
             indexedDB.deleteDatabase('Botsapp');
         }
-
-        is_data = 0;
     };
 
     request.onsuccess = ((event) => {
         var db = event.target.result;
-
-        if(is_data == 1){
+        if(db.objectStoreNames.contains('session')){
 
             var transaction = db.transaction("session" , "readonly");
             var objectStore = transaction.objectStore("session");
             var count = objectStore.count();
 
-            
             transaction.oncomplete = (() => {
                 count = count.result;
                 transaction = db.transaction("session" , "readonly");
@@ -43,24 +38,29 @@ if(!isset($_SESSION['userID'])) {
 
                     getRequest.onsuccess = ((event) => {
                         var data = JSON.stringify({...event.target.result,keyPass:'khuljasimsim'});
-
                         var URL_of_setSession = '/functionality/_set_session_auto.php';
-
                         const xml = new XMLHttpRequest();
                         xml.onload = (response) => {
-                            console.log(response.target.response);
-                            if((xml.readyState == 4) && (xml.status == 200)) {
-                                let res = JSON.parse(response.target.response);
+                            try{
+                                console.log(response.target.response);
+                                if((xml.readyState == 4) && (xml.status == 200)) {
+                                    let res = JSON.parse(response.target.response);
 
-                                if(res.status === 'success'){
-                                    window.location.reload();
+                                    if(res.status === 'success'){
+                                        window.location.reload();
+                                    }else{
+                                        throw res;
+                                    }
                                 }else{
-                                    console.warn(`[${res.code}] :` , `${res.message}`);
-                                    db.close();
-                                    indexedDB.deleteDatabase('Botsapp');
+                                    throw ("[400] :"+" Bad Request");
                                 }
-                            }   else    {
-                                console.error("[400] :"," Bad Request , some error ocured during auto session loading , please try again");
+                            }catch(err){
+                                if(err?.code)
+                                    console.warn(`[${err.code}] :` , `${err.message}`);
+                                else
+                                    console.warn(err);
+                                db.close();
+                                // indexedDB.deleteDatabase('Botsapp');
                             }
                             
                         };

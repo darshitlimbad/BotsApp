@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded' , () => {
-    chat = document.querySelector(".chat");
 });
 
 // global var
@@ -31,7 +30,8 @@ const openChatList = async () =>  {
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));
             sortChatByTime();
-            document.querySelector('.chat-box .inbox .search input')?.focus();
+            if(device == 'pc')
+                document.querySelector('.chat-box .inbox .search input')?.focus();
         }else{
             _chatList_isEmpty();
         }
@@ -739,7 +739,6 @@ const setChatFooter= (unm) =>{
 
 const closeChat = () =>{
     // if(e!=null) msgInput.removeEventListener( 'keydown' , msgBoxSizing);
-
     chat.innerHTML=null;
     lastMsg=null;
     
@@ -758,8 +757,10 @@ const closeChat = () =>{
     setCookie('currOpenedGID' ,0);
     
 
-    if(user)
-        user.classList.remove('selected');
+    if(user){
+        user.classList.remove('selected'); 
+        user=null;
+    }
 
     //for mobile
     if(device == 'mobile'){

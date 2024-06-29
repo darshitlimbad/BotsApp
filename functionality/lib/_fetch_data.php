@@ -187,8 +187,8 @@
         }
     }
 
-    function getPassKey($userID) {
-        $result = fetch_columns( "users" ,['userID'] , [$userID] , array('pass_key'));
+    function getPassKey($unm) {
+        $result = fetch_columns( "users" ,['unm'] , [$unm] , array('pass_key'));
         if($result != '400') {
             if($result && $result->num_rows == 1){
                 return $result->fetch_assoc()['pass_key'];

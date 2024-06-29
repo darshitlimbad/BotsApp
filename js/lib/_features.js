@@ -164,10 +164,9 @@
                                 _deleteThisNoti(row.notiID);
                                 let chat= getCookie('chat').toLowerCase();
                                 let currOpenedChat= getCookie('currOpenedChat');
-
                                 if( chat === row.msg.chat && currOpenedChat
-                                    && ( chat === 'personal' && currOpenedChat === row.unm) 
-                                    || ( chat === 'group' && currOpenedChat === row.msg.gName ))
+                                    && (( chat === 'personal' && currOpenedChat === row.unm) 
+                                    || ( chat === 'group' && currOpenedChat === row.msg.gName )))
                                     closeChat();
                                     
                                 openChatList();
@@ -176,7 +175,7 @@
 
                                 if(getCookie('chat').toLowerCase() === 'personal' 
                                     && getCookie('currOpenedChat') === row.unm)
-                                    chat.querySelector(`div[data-msgid='${row.msg}'`)?.remove();
+                                    chat.querySelector(`div[data-msgid='${row.msg.msgID}'`).remove();
                             }
                         })
                     }else{

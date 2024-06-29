@@ -53,7 +53,7 @@
     display: block;
     position: relative;
     height: calc(96% + 5px);
-    width: 16em;
+    width: 20vw;
     /* max-width: 18em; */
     /* width: 15em; */
     padding: 6px;
@@ -281,7 +281,7 @@
     flex-direction: column;
     position: relative;
     height: calc(98% + 5px);
-    width: 60vw;
+    width: 56vw;
     /* width: 70%; */
     margin: 0px 10px;
     outline: 2px solid rgb(1, 12, 23);
@@ -297,13 +297,14 @@
     .chat {
         --chat-font-small : 15px;
         --chat-font-medium : 17px;            
+        width: 60vw;
     }
 }
 
 @media screen and ( max-width:798px ){
     .chat {
         --chat-font-small : 8px;
-        --chat-font-medium : 10px;            
+        --chat-font-medium : 10px;      
     }
 }
 

@@ -69,15 +69,14 @@ function getDecryptedUserID(){
 }
 
 // this function matches the Encrypted passwords with password_hash bcrypt
-function metchEncryptedPasswords($Pass , $userID){
-    $result = fetch_columns(  "users" , ['userID'] , [$userID] , array('pass'));
+function metchEncryptedPasswords($Pass , $unm){
+    $result = fetch_columns(  "users" , ['unm'] , [$unm] , array('userID','pass'));
     if($result->num_rows == 1) {
-        $pwd = $result->fetch_column();
+        $res = $result->fetch_assoc();
         
-        if($pwd === $Pass){
-            
-            return 1;
-            
+        if($res['pass'] === $Pass){
+            $response=['status'=>'success','userID'=>$res['userID']];
+            return $response;
         }else {
             throw new Exception("saved Password is wrong try log-in again." , 404);
         }

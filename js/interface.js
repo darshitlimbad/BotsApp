@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded' , function () {
     // global var
     settings_box =  document.querySelector(".settings-box");
     noti_box = document.querySelector(".noti-box");
+    chat = document.querySelector(".chat");
     // 
 
     //settings-box setting option toggle
@@ -41,14 +42,7 @@ document.addEventListener('DOMContentLoaded' , function () {
         })
     });
 
-    // responsive for mobile changes
-    if(window.innerWidth < 600){
-        document.querySelector('body.main').classList.add('mobile');
-        device='mobile';
-    }else{
-        document.querySelector('body.main').classList.remove('mobile');
-        device='pc';
-    }
+    
 
     //delete account and logout button events
         const logOutbtn= document.querySelector("button[name='log-out']");
@@ -60,6 +54,8 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();  
+    handleResize();
+    window.onresize=()=>handleResize();
 });  
 
 // 
@@ -94,6 +90,19 @@ const initiateChatBox = (chatType) => {
     _cht_sk_loading();
     closeChat();
     openChatList();
+}
+
+// responsive for mobile changes
+function handleResize(){
+    if(window.innerWidth < 600){
+        document.querySelector('body.main').classList.add('mobile');
+        device='mobile';
+        (!chatOpened)? showInbox() : hideInbox();
+    }else{
+        document.querySelector('body.main').classList.remove('mobile');
+        showChatBox();
+        device='pc';
+    }
 }
 
 // toggle add new Chatter
@@ -370,4 +379,11 @@ function hideInbox(){
 
     chat.style.display='flex';
     inbox.style.display='none';
+}
+
+function showChatBox(){
+    const inbox=document.querySelector('.chat-box .inbox');
+
+    chat.style.display='flex';
+    inbox.style.display='block';
 }
