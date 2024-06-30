@@ -147,7 +147,7 @@ function fetch_all_group_members(string $groupID , bool $byID=false){
 // @return user is memeber of group or not
 function is_member_of_group(string $userID, string $groupID){
     if(!isset($_SESSION['userID']) && !is_data_present('groups',['groupID'],[$groupID],'groupID'))
-            throw new Exception("",400);
+            throw new Exception("No data Found!!!",400);
 
     $result = fetch_columns('inbox',['fromID','toID','chatType'],[$userID,$groupID,'group'],['count(*)']);
 
@@ -166,10 +166,6 @@ function is_chat_exist(string $userID, string $oppoUserID){
             throw new Exception("",400);
     
     $maxEntry = ($userID === $oppoUserID) ? 1 : 2;
-    
-    // $SQL =" SELECT id FROM inbox 
-    //         WHERE (fromID,toID) IN (('$userID','$oppoUserID'),('$oppoUserID','$userID'));";
-    // $result=$GLOBALS['conn']->query($SQL);
 
     $SQL =" SELECT id FROM inbox 
             WHERE (fromID,toID) IN ((?,?),(?,?));";

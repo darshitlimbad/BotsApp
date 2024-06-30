@@ -49,9 +49,9 @@
     border-color: red;
 }
 .green{
-    color: green;
-    --color: green;
-    border-color: green;
+    color: lime;
+    --color: lime;
+    border-color: lime;
 }
 .orange{
     color: orange;
@@ -308,7 +308,7 @@ footer {
     justify-content: center;
     align-items: center;
     margin: 4px;
-    padding: 8px;
+    padding: 10px;
     border-radius: 3px;
 }
 
@@ -342,8 +342,8 @@ footer {
 }
 
 .side-bar .options .img img {
-    height: 2vh;
-    width: 2vh;
+    height: 15px;
+    width: 15px;
     mix-blend-mode: lighten;
 }
 

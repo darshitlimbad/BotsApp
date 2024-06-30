@@ -12,31 +12,39 @@
     // get dp function // note : this function returns Promise obj
     const get_dp =(unm,GID=null) => {
             var url_for_get_dp = '/functionality/lib/_fetch_data.php';
-            let data = {
+            var dataToSend = {
                 req : "get_dp",
             };
 
-            (GID) ? data.GID=GID : data.unm=unm ;
+            (GID) ? dataToSend.GID=GID : dataToSend.unm=unm ;
 
-            return new Promise((resolve,reject) =>{
-                postReq(url_for_get_dp , JSON.stringify(data))
-                    .then(res=>{
-                        if(res.status == "success" && res.responseText != 0 ){
-                            const { data , mime } = res.responseText;
-                            let base64 = `data:${mime};base64,${data}`;
-                            
-                            _getDataURL(base64)
-                                .then(res=>{
-                                    if(res.status == 'success')
-                                        resolve(res.url);
-                                })
-                                .catch(err=>{
-                                    console.warn(err);
-                                })
-                        }else{
-                            resolve("/img/default_dp.png");
-                        }  
-                    });
+            return new Promise(async (resolve,reject) =>{
+                try{
+                    var key= 'cache-dp-'+ ((GID) ? GID : unm);
+                    var base64= localStorage.getItem(key);
+
+                    if(!base64){
+                        let res= await postReq(url_for_get_dp , JSON.stringify(dataToSend));
+                        if(res.status != "success" || res.responseText == 0 )
+                            throw res.responseText;
+                        
+                        const { data , mime } = res.responseText;
+                        base64 = `data:${mime};base64,${data}`;
+                        localStorage.setItem(key, base64);
+                    }
+
+                    resolve(base64)
+                    // _getDataURL(base64)
+                    //     .then(res=>{
+                    //         if(res.status == 'success')
+                    //             resolve(res.url);
+                    //     })
+                    //     .catch(err=>{
+                    //         console.warn(err);
+                    //     })
+                }catch(err){
+                    resolve("/img/default_dp.png");
+                }
             })
     }
 
@@ -175,7 +183,18 @@
 
                                 if(getCookie('chat').toLowerCase() === 'personal' 
                                     && getCookie('currOpenedChat') === row.unm)
-                                    chat.querySelector(`div[data-msgid='${row.msg.msgID}'`).remove();
+                                        chat.querySelector(`div[data-msgid='${row.msg.msgID}'`).remove();
+                                    
+                                // if(getCookie('chat').toLowerCase() === 'personal'){
+                                //     var cacheData= JSON.parse(decodeURIComponent(atob(localStorage.getItem('cache-msgData-'+row.unm))));
+                                //     if(cacheData){
+                                //         cacheData=cacheData.filter(data=>data.msgID != msgID);
+                                //         localStorage.setItem('cache-msgData-'+openedChat, btoa(encodeURIComponent(JSON.stringify(cacheData))));
+                                //         localStorage.removeItem('cache-msgData-'+row.unm);
+                                //     }
+                                    
+                                // }
+                                
                             }
                         })
                     }else{
@@ -441,6 +460,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                                     let selectedGroupImgNodes=document.querySelectorAll( '.inbox-user.selected .dp img, .chat .dp img');
                                     selectedGroupImgNodes.forEach(node=>node.src=imgURL);
                                     _hide_this_pop_up(upload_img_form);
+                                    localStorage.clear('cache-dp-'+getCookie('currOpenedGID'));
                                 }
                             })
                         
@@ -947,3 +967,91 @@ function sortChatBySearch(unm){
 
     // sortChatByTime();
 }
+
+// var db= indexedDB.open('Botsapp',1);
+    
+    // db.onupgradeneeded=()=>{
+    //     console.log(de);
+    // }
+
+    // var cache= window.caches;
+    // console.log(cache);
+// async function getCacheData(
+//             cacheName=null,
+//             request=null,
+//             ){
+//     var cache= await caches.open(cacheName);
+
+//     if((await cache.keys()).length == 0){
+//         caches.delete(cacheName);
+//         return 0;
+//     }
+
+//     var result= await cache.match(request);
+//     return result;
+// }
+
+// async function setCacheData(
+//                 cacheName=null,
+//                 request=null,
+//                 resposone=null,
+//                 ){
+//     var cache= await caches.open(cacheName);
+//     var result= cache.put(request,resposone);
+
+//     return result;
+// }
+
+// async function deleteCacheData(
+//                 cacheName=null,
+//                 request=null,
+//                 ){
+//     var cache= await caches.open(cacheName);
+
+//     if((await cache.keys()).length == 0){
+//         caches.delete(cacheName);
+//         return 0;
+//     }
+
+//     var result= cache.delete(request);
+//     return result;
+// }
+
+// function setDpCache(
+//                 key=null,
+//                 value=null,
+//                 ){
+//     if(!key || !value)
+//         return 0;
+
+//     key= '-dp-cache-'.concat(key);
+//     localStorage.setItem(key,value);
+//     return 1;
+// }
+
+// function getDpCache(
+//                 key=null,
+//                 ){
+//     if(!key)
+//         return 0;
+
+//     key= '-dp-cache-'.concat('key');
+//     return localStorage.getItem(key);
+// }
+
+// function deleteDpCache(
+//                     key=null,
+//                     ){
+//     if(!key)
+//         return 0;
+
+    
+
+// }
+
+// function setLocalData(
+//                 key=null,
+//                 value,
+//                 ){
+    
+// }

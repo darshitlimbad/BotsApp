@@ -292,7 +292,8 @@ function getNewMsgs($data){
             $msgObjs[$i]['time']= $row['time'];
             $i++;
 
-            updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
+            if($row['status'] !== 'read' && $row['fromID'] !== $userID)
+                updateMsgStatus($chatType,$row['msgID'],$row['fromID'],$row['toID'],$userID);
 
         }
 

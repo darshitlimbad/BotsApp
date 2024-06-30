@@ -13,6 +13,9 @@
             case 'getMsgStatus':
                 echo getMsgStatus($data);
                 break;
+            case 'getMsgSeenData':
+                echo getMsgSeenData(base64_decode($data['msgID']));
+                break;
         }
     }
 
@@ -309,7 +312,7 @@
             
             if($res->num_rows == 0){
                 if($chatType == 'personal')
-                    $status = ($seenID) ? 'read' : 'send' ;
+                    $status = ($seenID || $fromID == $toID) ? 'read' : 'send' ;
                 else if($chatType == 'group'){
                     $status = ($totMem >= 2) ? 'send' : 'read' ;
                 }else{
@@ -359,6 +362,52 @@
                 throw new Exception("More then one records for same msg status",0);
 
             return json_encode($result);
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function getMsgSeenData($msgID=null){
+        try{
+            if(!$_COOKIE['chat'] || strtolower($_COOKIE['chat']) != 'group')
+                throw new Exception('Group section is not opened',0);
+            if(!$_COOKIE['currOpenedGID'])
+                throw new Exception('Group is not opened',0);
+
+            session_start();
+            require_once('./_fetch_data.php');
+            $userID= getDecryptedUserID();
+            $groupID= base64_decode($_COOKIE['currOpenedGID']);
+
+            if(!is_data_present('messages',['msgID'],[$msgID],'msgID'))
+                throw new Exception('No data found',411);
+            else if(!is_member_of_group($userID,$groupID))
+                throw new Exception("You are not a member of this group.",410); 
+
+            $result= fetch_columns('messages',['msgID'],[$msgID],['status','seenByIDs'],'status');
+            session_abort();
+            
+            if(!$result)
+                throw new Exception("Something went wrong",400);
+            else if(!$result->num_rows)
+                throw new Exception("No Data Found!!!",400);
+
+            $fetchedData= $result->fetch_assoc();
+
+            $seenByData= [
+                'status'=>$fetchedData['status'],
+                'seenBy'=> (!$fetchedData['seenByIDs']) ? '' : 
+                            array_map(function($id){
+                                        return _fetch_unm($id);
+                                        },unserialize($fetchedData['seenByIDs'])),
+            ];
+
+            return json_encode($seenByData);
         }catch(Exception $e){
             $error = [
                 'error'=>true,

@@ -19,6 +19,7 @@
                     file_put_contents($imgObj['tmp_name'] , $imgObj['img_data']);
                     $imgObj['img_data']=null;
                     echo uploadImg(getDecryptedUserID() , $imgObj);
+                    
                     exit();
                 }else if($req == 'user-name'){
                     $full_name = explode(" " , ucwords(trim($data['value'])));

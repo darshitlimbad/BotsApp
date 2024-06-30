@@ -25,7 +25,7 @@ const openChatList = async () =>  {
             return;
         }
         // return;
-        const chatList = await _getChatList();  _flash_chatList();
+        var chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));
@@ -62,7 +62,7 @@ const chatListTemplate = ( chat ) => {
     inboxUser.onclick = ()=> {
         if(chatOpened)
             closeChat();
-        (chatType == 'personal') ? openChat(unmTitle) : openChat(unmTitle,chat.GID)
+        (chatType == 'personal') ? new openChatClass(unmTitle) : new openChatClass(unmTitle,chat.GID)
     };
 
     list.appendChild(inboxUser);
@@ -182,54 +182,53 @@ const _st_chLi_skltn = () => {
         })
     });
 };
-
-                                        // chat open functions //
-const openChat =async (unm,ID=null) => {
-    if(userStatus.isOnline == false){
-        handler.err_401();
-        return;
-    }
+                                        // chat open functions moved to chatOpenClass class//
+// const openChat =(unm,ID=null) => {
+//     if(userStatus.isOnline == false){
+//         handler.err_401();
+//         return;
+//     }
+//     console.log(getCookie('currOpenedChat'));
     
-    if( (getCookie('chat').toLowerCase() === 'personal') && (getCookie('currOpenedChat') == unm) 
-        || ID && ID == getCookie('currOpenedGID') )
-        return;
+//     if( ((getCookie('chat').toLowerCase() === 'personal') && (getCookie('currOpenedChat') == unm))
+//         || ID && ID == getCookie('currOpenedGID') )
+//         return;
 
-    chatOpened=true;
+//     chatOpened=true;
+//     chat.innerHTML=""; 
+//     lastMsg=null;
+//     //for mobile
+//     if(device == 'mobile'){
+//         hideInbox();
+//     }
 
-    chat.innerHTML=""; 
-    lastMsg=null;
+//     chatStruct.heading = document.createElement('div');
+//     chatStruct.heading.classList.add("heading","align-center");
+//     chat.appendChild(chatStruct.heading);
 
-    chatStruct.heading = document.createElement('div');
-    chatStruct.heading.classList.add("heading","align-center");
-    chat.appendChild(chatStruct.heading);
+//     chatStruct.searchDiv = document.createElement('div');
+//     chatStruct.searchDiv.classList.add('search');
+//     chatStruct.searchDiv.id="searchTxt";
+//     chat.appendChild(chatStruct.searchDiv);
 
-    chatStruct.searchDiv = document.createElement('div');
-    chatStruct.searchDiv.classList.add('search');
-    chatStruct.searchDiv.id="searchTxt";
-    chat.appendChild(chatStruct.searchDiv);
+//     chatStruct.chatBody=document.createElement("div");
+//     chatStruct.chatBody.classList.add("chatBody");
+//     chat.appendChild(chatStruct.chatBody);
 
-    chatStruct.chatBody=document.createElement("div");
-    chatStruct.chatBody.classList.add("chatBody");
-    chat.appendChild(chatStruct.chatBody);
+//     chatStruct.footer=document.createElement('footer');
+//     chatStruct.footer.classList.add("footer","align-center");
+//     chat.appendChild(chatStruct.footer);
 
-    chatStruct.footer=document.createElement('footer');
-    chatStruct.footer.classList.add("footer","align-center");
-    chat.appendChild(chatStruct.footer);
+//     selectChat(unm,ID);
+//     setCookie('currOpenedChat' ,unm);
+//     if(getCookie('chat').toLowerCase() =='group')   setCookie('currOpenedGID',user.id);
+//     setLoader(chat);
+//     setChatHeader(unm,ID);
+//     removeLoader(chat);
+//     setChatFooter(unm);
+//     setChatBody();
+// };
 
-    selectChat(unm,ID);
-    await setCookie('currOpenedChat' ,unm);
-    if(getCookie('chat').toLowerCase() =='group')   setCookie('currOpenedGID',user.id);
-    setLoader(chat);
-    setChatHeader(unm,ID);
-    removeLoader(chat);
-    setChatFooter(unm);
-    await setChatBody();
-    
-    //for mobile
-    if(device == 'mobile'){
-        hideInbox();
-    }
-};
 const setLoader = (loc)=>{
     let loaderDiv = document.createElement('div');
     loaderDiv.classList.add('loader','blank-layer-chat');
@@ -244,6 +243,7 @@ const setLoader = (loc)=>{
         loaderDiv.appendChild(loaderText);
     
 };
+
 const removeLoader = (loc)=>{
     let loader=loc.querySelector(".loader");
     if(loader)
@@ -265,114 +265,114 @@ const selectChat = (unm,ID=null) => {
     }
 };
 
-const setChatHeader = async (unm,ID) =>{
+// const setChatHeader = async (unm,ID) =>{
 
-        let closeIconDiv = document.createElement('div');
-        closeIconDiv.classList.add("icon","center","align-center");
-        closeIconDiv.title="Close";
-        closeIconDiv.name="closeChat";
-        closeIconDiv.onclick=()=>closeChat();
-        closeIconDiv.tabIndex=0;
-        chatStruct.heading.appendChild(closeIconDiv);
-            let closeIconImg = new Image();
-            closeIconImg.src="img/icons/close.png";
-            closeIconImg.alt="Close";
-            closeIconDiv.appendChild(closeIconImg);
+//         let closeIconDiv = document.createElement('div');
+//         closeIconDiv.classList.add("icon","center","align-center");
+//         closeIconDiv.title="Close";
+//         closeIconDiv.name="closeChat";
+//         closeIconDiv.onclick=()=>closeChat();
+//         closeIconDiv.tabIndex=0;
+//         chatStruct.heading.appendChild(closeIconDiv);
+//             let closeIconImg = new Image();
+//             closeIconImg.src="img/icons/close.png";
+//             closeIconImg.alt="Close";
+//             closeIconDiv.appendChild(closeIconImg);
 
-        let dpDiv = document.createElement('div');
-        dpDiv.classList.add("dp","align-center");
-        chatStruct.heading.appendChild(dpDiv);
-            let dpImg = new Image();
-            dpImg.src=user.querySelector('.dp img')?.src;
-            dpImg.onerror=()=>dpImg.src=default_dp_src;
-            dpDiv.appendChild(dpImg);
+//         let dpDiv = document.createElement('div');
+//         dpDiv.classList.add("dp","align-center");
+//         chatStruct.heading.appendChild(dpDiv);
+//             let dpImg = new Image();
+//             dpImg.src=user.querySelector('.dp img')?.src;
+//             dpImg.onerror=()=>dpImg.src=default_dp_src;
+//             dpDiv.appendChild(dpImg);
 
-        if(unm == getCookie('unm'))
-            unm="You";
+//         if(unm == getCookie('unm'))
+//             unm="You";
 
-        let detailsDiv = document.createElement('div');
-        detailsDiv.classList.add('details','no-select');
-        chatStruct.heading.appendChild(detailsDiv);
+//         let detailsDiv = document.createElement('div');
+//         detailsDiv.classList.add('details','no-select');
+//         chatStruct.heading.appendChild(detailsDiv);
 
-            let name = document.createElement('div');
-            name.classList.add('name');
-            name.textContent=unm;
-            detailsDiv.appendChild(name);
+//             let name = document.createElement('div');
+//             name.classList.add('name');
+//             name.textContent=unm;
+//             detailsDiv.appendChild(name);
 
-            let status = document.createElement('b');
-            status.id="currentChatterStatus";
-            status.classList.add("status","offline");
-            detailsDiv.appendChild(status);
+//             let status = document.createElement('b');
+//             status.id="currentChatterStatus";
+//             status.classList.add("status","offline");
+//             detailsDiv.appendChild(status);
         
 
-        let flexBox = document.createElement('div');
-        flexBox.classList.add('flexBox','right-3');
-        chatStruct.heading.appendChild(flexBox);
+//         let flexBox = document.createElement('div');
+//         flexBox.classList.add('flexBox','right-3');
+//         chatStruct.heading.appendChild(flexBox);
 
-            let fullScreenIcon = document.createElement('button');
-            fullScreenIcon.classList.add('fullScreenIcon');
-            fullScreenIcon.title = "Full Screen View";
-            fullScreenIcon.onclick=()=>fullScreen(document.querySelector('body'));
-            flexBox.appendChild(fullScreenIcon);
+//             let fullScreenIcon = document.createElement('button');
+//             fullScreenIcon.classList.add('fullScreenIcon');
+//             fullScreenIcon.title = "Full Screen View";
+//             fullScreenIcon.onclick=()=>fullScreen(document.querySelector('body'));
+//             flexBox.appendChild(fullScreenIcon);
 
-                let fullScreenIconImg = document.createElement('div');
-                fullScreenIconImg.classList.add('icon');
-                fullScreenIcon.appendChild(fullScreenIconImg);
+//                 let fullScreenIconImg = document.createElement('div');
+//                 fullScreenIconImg.classList.add('icon');
+//                 fullScreenIcon.appendChild(fullScreenIconImg);
 
-            let searchBtnDiv = document.createElement('button');
-            searchBtnDiv.classList.add("search-btn","icon");
-            searchBtnDiv.onclick= ()=> toggleSearchTxt();
-            searchBtnDiv.disabled=true;
-            flexBox.appendChild(searchBtnDiv);
+//             let searchBtnDiv = document.createElement('button');
+//             searchBtnDiv.classList.add("search-btn","icon");
+//             searchBtnDiv.onclick= ()=> toggleSearchTxt();
+//             searchBtnDiv.disabled=true;
+//             flexBox.appendChild(searchBtnDiv);
 
-                let searchBtnImg = new Image();
-                searchBtnImg.src="img/icons/search.png";
-                searchBtnImg.alt="Search";
-                searchBtnDiv.appendChild(searchBtnImg);
+//                 let searchBtnImg = new Image();
+//                 searchBtnImg.src="img/icons/search.png";
+//                 searchBtnImg.alt="Search";
+//                 searchBtnDiv.appendChild(searchBtnImg);
     
-        let searchTxtInput = document.createElement('input');
-        searchTxtInput.type="search";
-        searchTxtInput.name="searchTxtInput";
-        searchTxtInput.placeholder="search";
-        searchTxtInput.autocomplete="off";
-        searchTxtInput.onkeyup=(e)=>_searchWords(e,searchTxtInput.value);
-        chatStruct.searchDiv.appendChild(searchTxtInput);
+//         let searchTxtInput = document.createElement('input');
+//         searchTxtInput.type="search";
+//         searchTxtInput.name="searchTxtInput";
+//         searchTxtInput.placeholder="search";
+//         searchTxtInput.autocomplete="off";
+//         searchTxtInput.onkeyup=(e)=>_searchWords(e,searchTxtInput.value);
+//         chatStruct.searchDiv.appendChild(searchTxtInput);
 
-        let search_found_span = document.createElement('span');
-        search_found_span.classList.add('search_found_span');
-        chatStruct.searchDiv.appendChild(search_found_span);
-            let span= [document.createElement('span'),document.createElement('span')];
-            span.forEach(s=>{s.textContent='0'});
-            search_found_span.appendChild(span[0]);
-            search_found_span.append('/');
-            search_found_span.appendChild(span[1]);
+//         let search_found_span = document.createElement('span');
+//         search_found_span.classList.add('search_found_span');
+//         chatStruct.searchDiv.appendChild(search_found_span);
+//             let span= [document.createElement('span'),document.createElement('span')];
+//             span.forEach(s=>{s.textContent='0'});
+//             search_found_span.appendChild(span[0]);
+//             search_found_span.append('/');
+//             search_found_span.appendChild(span[1]);
 
-        let moveBtnsDiv = document.createElement('div');
-        moveBtnsDiv.classList.add('move');
-        chatStruct.searchDiv.appendChild(moveBtnsDiv);
+//         let moveBtnsDiv = document.createElement('div');
+//         moveBtnsDiv.classList.add('move');
+//         chatStruct.searchDiv.appendChild(moveBtnsDiv);
 
-            let upBtn = document.createElement('button');
-            upBtn.classList.add('up');
-            upBtn.title="up";
-            upBtn.textContent="<";
-            upBtn.onclick=()=>moveSearch('up');
-            upBtn.tabIndex=0;
-            moveBtnsDiv.appendChild(upBtn);
+//             let upBtn = document.createElement('button');
+//             upBtn.classList.add('up');
+//             upBtn.title="up";
+//             upBtn.textContent="<";
+//             upBtn.onclick=()=>moveSearch('up');
+//             upBtn.tabIndex=0;
+//             moveBtnsDiv.appendChild(upBtn);
 
-            let downBtn = document.createElement('button');
-            downBtn.classList.add('down');
-            downBtn.title="down";
-            downBtn.textContent=">";
-            downBtn.onclick=()=>moveSearch('down');
-            downBtn.tabIndex=0;
-            moveBtnsDiv.appendChild(downBtn);
+//             let downBtn = document.createElement('button');
+//             downBtn.classList.add('down');
+//             downBtn.title="down";
+//             downBtn.textContent=">";
+//             downBtn.onclick=()=>moveSearch('down');
+//             downBtn.tabIndex=0;
+//             moveBtnsDiv.appendChild(downBtn);
 
-        if(getCookie('chat').toLowerCase() == 'personal')
-            detailsDiv.onclick=()=>openUserProfile(unm);
-        else
-            detailsDiv.onclick=()=>openGroupProfile();
+//         if(getCookie('chat').toLowerCase() == 'personal')
+//             detailsDiv.onclick=()=>openUserProfile(unm);
+//         else
+//             detailsDiv.onclick=()=>openGroupProfile();
 
-};
+// };
 
 async function openUserProfile(unm){
     if(unm=='You')
@@ -478,6 +478,7 @@ async function openUserProfile(unm){
         });
         
     chatStruct.heading.appendChild(userProfile);
+    document.onclick=()=>userProfile.remove();
     userProfile.onmouseenter=()=>document.onclick=null;
     userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
 }
@@ -647,94 +648,95 @@ async function openGroupProfile(){
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);
+        document.onclick=()=>userProfile.remove();
         userProfile.onmouseenter=()=>document.onclick=null;
         userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
     },200 );
 }
 
-const setChatBody = async () =>{
-    return new Promise((resolve)=>{
-        chatStruct.chatBody.innerHTML="";
-        lastMsg=null;
-        setLoader(chatStruct.chatBody);
-        _getAllMsgs()
-            .then(msgObjs=>{
-            if(!msgObjs)  {
-                new_notification("Let's start new convertation.");
-            }else{
-                msgObjs
-                    .forEach(msgObj => addNewMsgInCurrChat(msgObj));
-            }
-            return;
-            }).then(res=>{
-                removeLoader(chatStruct.chatBody);
-                resolve();
-            })
-    });
-}
+// const setChatBody = async () =>{
+//     return new Promise((resolve)=>{
+//         chatStruct.chatBody.innerHTML="";
+//         lastMsg=null;
+//         setLoader(chatStruct.chatBody);
+//         _getAllMsgs()
+//             .then(msgObjs=>{
+//             if(!msgObjs)  {
+//                 new_notification("Let's start new convertation.");
+//             }else{
+//                 msgObjs
+//                     .forEach(msgObj => addNewMsgInCurrChat(msgObj));
+//             }
+//             return;
+//             }).then(res=>{
+//                 removeLoader(chatStruct.chatBody);
+//                 resolve();
+//             })
+//     });
+// }
 
-const setChatFooter= (unm) =>{
+// const setChatFooter= (unm) =>{
 
-        let upDocsBtn= document.createElement("button");
-        upDocsBtn.classList.add("upDocsBtn","ele","icon");
-        upDocsBtn.title="Send Documents";
-        upDocsBtn.onclick=()=>toggleDocsContainer();
-        upDocsBtn.textContent="+";
-        upDocsBtn.tabIndex=0;
-        upDocsBtn.disabled=true;
-        chatStruct.footer.appendChild(upDocsBtn);
+//         let upDocsBtn= document.createElement("button");
+//         upDocsBtn.classList.add("upDocsBtn","ele","icon");
+//         upDocsBtn.title="Send Documents";
+//         upDocsBtn.onclick=()=>toggleDocsContainer();
+//         upDocsBtn.textContent="+";
+//         upDocsBtn.tabIndex=0;
+//         upDocsBtn.disabled=true;
+//         chatStruct.footer.appendChild(upDocsBtn);
 
-        var upDocsContainer= document.createElement("div");
-        upDocsContainer.classList.add("upDocsContainer");
-        chatStruct.footer.appendChild(upDocsContainer);
-            let nodeImg=newNode();
-            nodeImg.name="sendImgBtn";
-            nodeImg.title="Send Image";
-            nodeImg.onclick = ()=> _upload_img_form('Choose a Img to send','USER_SEND_IMG');
-                nodeImg.innerHTML=`
-                    <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 455 455" xml:space="preserve" ><path d="M0,0v455h455V0H0z M259.405,80c17.949,0,32.5,14.551,32.5,32.5s-14.551,32.5-32.5,32.5s-32.5-14.551-32.5-32.5S241.456,80,259.405,80z M375,375H80v-65.556l83.142-87.725l96.263,68.792l69.233-40.271L375,299.158V375z"/></svg>
-                `;
+//         var upDocsContainer= document.createElement("div");
+//         upDocsContainer.classList.add("upDocsContainer");
+//         chatStruct.footer.appendChild(upDocsContainer);
+//             let nodeImg=newNode();
+//             nodeImg.name="sendImgBtn";
+//             nodeImg.title="Send Image";
+//             nodeImg.onclick = ()=> _upload_img_form('Choose a Img to send','USER_SEND_IMG');
+//                 nodeImg.innerHTML=`
+//                     <svg height="20px" width="20px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 455 455" xml:space="preserve" ><path d="M0,0v455h455V0H0z M259.405,80c17.949,0,32.5,14.551,32.5,32.5s-14.551,32.5-32.5,32.5s-32.5-14.551-32.5-32.5S241.456,80,259.405,80z M375,375H80v-65.556l83.142-87.725l96.263,68.792l69.233-40.271L375,299.158V375z"/></svg>
+//                 `;
 
-            let nodeDoc=newNode();
-            nodeDoc.name="sendFilesBtn";
-            nodeDoc.title="Send Files";
-            nodeDoc.onclick = ()=>_upload_doc_form("Choose File to Send","USER_SEND_DOC");
-                nodeDoc.innerHTML=`
-                    <svg width="20px" height="20px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="rgba(255, 255, 255, 0.349)" fill="none"><path d="M49.78,31.63,32,49.39c-2.09,2.09-10.24,6-16.75-.45-4.84-4.84-5.64-11.75-.95-16.58,5-5.17,15.24-15.24,20.7-20.7,2.89-2.89,7.81-4.28,12.17.07s2.41,9.44,0,11.82L27.81,43a4.61,4.61,0,0,1-6.89-.06c-2.19-2.19-1.05-5.24.36-6.66l18-17.89"/></svg>
-                `;
+//             let nodeDoc=newNode();
+//             nodeDoc.name="sendFilesBtn";
+//             nodeDoc.title="Send Files";
+//             nodeDoc.onclick = ()=>_upload_doc_form("Choose File to Send","USER_SEND_DOC");
+//                 nodeDoc.innerHTML=`
+//                     <svg width="20px" height="20px" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" stroke-width="3" stroke="rgba(255, 255, 255, 0.349)" fill="none"><path d="M49.78,31.63,32,49.39c-2.09,2.09-10.24,6-16.75-.45-4.84-4.84-5.64-11.75-.95-16.58,5-5.17,15.24-15.24,20.7-20.7,2.89-2.89,7.81-4.28,12.17.07s2.41,9.44,0,11.82L27.81,43a4.61,4.61,0,0,1-6.89-.06c-2.19-2.19-1.05-5.24.36-6.66l18-17.89"/></svg>
+//                 `;
 
-        let msgInput=document.createElement("textarea");
-        msgInput.classList.add("msgInput","ele");
-        msgInput.placeholder="Type a Message";
-        msgInput.autocomplete="off";
-        msgInput.accessKey="/";
-        msgInput.lang="en";
-        msgInput.title="Type a Message";
-        msgInput.disabled=true;
-        msgInput.onkeydown=(e)=>msgBoxSizing(e);
-        chatStruct.footer.appendChild(msgInput);
+//         let msgInput=document.createElement("textarea");
+//         msgInput.classList.add("msgInput","ele");
+//         msgInput.placeholder="Type a Message";
+//         msgInput.autocomplete="off";
+//         msgInput.accessKey="/";
+//         msgInput.lang="en";
+//         msgInput.title="Type a Message";
+//         msgInput.disabled=true;
+//         msgInput.onkeydown=(e)=>msgBoxSizing(e);
+//         chatStruct.footer.appendChild(msgInput);
 
-        let sendMsgBtn = document.createElement("button");
-        sendMsgBtn.classList.add("sendMsg","icon");
-        sendMsgBtn.tabIndex=0;
-        sendMsgBtn.disabled=true;
-        chatStruct.footer.appendChild(sendMsgBtn);
-            let sendMsgImg= new Image();
-            sendMsgImg.src="img/icons/send.png";
-            sendMsgImg.alt="Send Message";
-            sendMsgImg.onclick = ()=>_trigerSendMsg('text');
-            sendMsgBtn.appendChild(sendMsgImg);
+//         let sendMsgBtn = document.createElement("button");
+//         sendMsgBtn.classList.add("sendMsg","icon");
+//         sendMsgBtn.tabIndex=0;
+//         sendMsgBtn.disabled=true;
+//         chatStruct.footer.appendChild(sendMsgBtn);
+//             let sendMsgImg= new Image();
+//             sendMsgImg.src="img/icons/send.png";
+//             sendMsgImg.alt="Send Message";
+//             sendMsgImg.onclick = ()=>_trigerSendMsg('text');
+//             sendMsgBtn.appendChild(sendMsgImg);
     
-    function newNode(){
-        let node= document.createElement("button");
-        node.classList.add("node","ele");
-        upDocsContainer.appendChild(node);
-        node.tabIndex=0;
-        return node;
-    }
+//     function newNode(){
+//         let node= document.createElement("button");
+//         node.classList.add("node","ele");
+//         upDocsContainer.appendChild(node);
+//         node.tabIndex=0;
+//         return node;
+//     }
 
-    // chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
-};
+//     // chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
+// };
 
 
 const closeChat = () =>{
@@ -838,7 +840,6 @@ const _trigerSendMsg = async (type) => {
                 if( (res.status == 'success') && res.responseText.msgSend == 1){
                     msgObj.msgID=res.responseText.msgID;
                     msgObj.msgContainer.setAttribute('data-msgid', msgObj.msgID);
-                    
                     _placeMsgStatus(msgObj.msgContainer.querySelector("img.msgStatusIcon"),msgObj.msgID)
                         .then(res=>msgObj.status = res);
                     
@@ -1055,21 +1056,66 @@ const addNewMsgInCurrChat = (msgObj) => {
     let msgOptionMenu = new OptionContainer();
     optionBtn.appendChild(msgOptionMenu.optionContainer);
 
-    //options
+    //!options
+    //delete option
     let deleteOption = msgOptionMenu.new_option("delete");
 
-        if(whichTransmit == 'receive')
-            deleteOption.children[1].textContent= "Delete For Me";
-            
-        if(msgObj.msgID){
-            let action={
-                req:"delete_this_msg",
-                msgID:msgObj.msgID,
-            }
-            deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to delete this message?",action,'red');
+    if(whichTransmit == 'receive')
+        deleteOption.children[1].textContent= "Delete For Me";
+        
+    if(msgObj.msgID){
+        let action={
+            req:"delete_this_msg",
+            msgID:msgObj.msgID,
         }
+        deleteOption.onclick=()=>_confirmation_pop_up(deleteOption.textContent,"Are You sure you want to delete this message?",action,'red');
+    }
 
-    let info= msgOptionMenu.new_option("info");
+    //download option
+    if(msgObj.type === 'img'){
+        let downloadBtn= msgOptionMenu.new_option('Download Image','download');
+        downloadBtn.onclick=()=>{
+            let imgSrc= chatStruct.chatBody.querySelector(`.msgContainer[data-msgID='${msgObj.msgID}'] .msgImg`)?.src;
+
+            if(imgSrc){
+                let a= document.createElement('a');
+                a.download= msgObj.fileName;
+                a.href= imgSrc;
+                a.click();
+            }else{
+                console.error(400,'File Not Found')
+                new_Alert('Something Went Wrong');
+            }
+            
+        }
+        
+    }
+
+    //info option
+    if(getCookie('chat').toLowerCase() === 'group' && msgObj.msgID){
+        let seenBy= msgOptionMenu.new_option('Seen By','seenBy');
+        seenBy.onclick=()=>{
+            _getMsgSeenData(msgObj.msgID)
+                .then(res=>{
+                    let msg= `Status: <img src='/img/icons/chat/msg_status/${res.status}.svg' height="20px" width="20px"> | Seen By: `;
+                    if(res.seenBy){
+                        res.seenBy.forEach(unm=>{
+                            msg+=`<span class='green'> ${unm} </span>,`;
+                        });
+                    }else{
+                        msg+= "No One";
+                    }
+                    new_notification(msg);
+                });
+        }
+    }
+
+    if(msgObj.type != 'text'){
+        let info= msgOptionMenu.new_option("info");
+        info.onclick=()=>{
+            new_notification(`FileName: <span class="green"> ${msgObj.fileName} </span>  | Size: <span class="green">${convert_bytes(msgObj.details.size)}</span> | FileType: <span class="green"> ${msgObj.details.ext} </span>`);
+        }
+    }
     //
     optionBtn.addEventListener('click',()=>toggleOptionContainer(optionBtn));
     msg.addEventListener('contextmenu',()=>toggleOptionContainer(optionBtn));

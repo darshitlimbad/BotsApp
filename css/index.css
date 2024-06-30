@@ -52,9 +52,11 @@
     background-color: var(--main-bg-color);
     display: block;
     position: relative;
-    height: calc(96% + 5px);
+    /* height: 98%; */
+    height: calc(98% - 5px);
     width: 20vw;
-    /* max-width: 18em; */
+    min-width: 12em;
+    max-width: 400px;
     /* width: 15em; */
     padding: 6px;
     border-radius:10px 0 0 10px;
@@ -213,7 +215,9 @@
 
 .list .img::before {
     content: "";
-    position: absolute;
+    /* position: absolute; */
+    position: relative;
+    display: block;
     height: 5px;
     width: 5px;
     border-radius: 50%;
@@ -280,8 +284,9 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    /* height: 98%; */
     height: calc(98% + 5px);
-    width: 56vw;
+    width: 55vw;
     /* width: 70%; */
     margin: 0px 10px;
     outline: 2px solid rgb(1, 12, 23);
@@ -293,18 +298,19 @@
     --chat-font-medium : 12px;
 }
 
-@media screen and ( min-width:1650px ){
+@media screen and ( min-width:1450px ){
     .chat {
         --chat-font-small : 15px;
         --chat-font-medium : 17px;            
-        width: 60vw;
+        width: 78%;
     }
 }
 
 @media screen and ( max-width:798px ){
     .chat {
         --chat-font-small : 8px;
-        --chat-font-medium : 10px;      
+        --chat-font-medium : 10px;    
+        width: 44vw;  
     }
 }
 
@@ -704,7 +710,7 @@
     background-image: url('/img/icons/loader.svg');
 }
 .chat .chatBody .msgContainer .msg .download{
-    background-image: url('/img/icons/download.svg');
+    background-image: url('/img/icons/options/download.svg');
     background-size: 50px;
     border: 2px solid;
     border-radius: 10px;

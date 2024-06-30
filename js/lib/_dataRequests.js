@@ -39,21 +39,29 @@ const _getChatList = async (chatType=null) => {
         return 0;
     }
 }
-
 const _getAllMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
     var data = {
         req: "getAllMsgs",
     };
-    
+
+    // var chat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+
     try{
-        const res = await postReq(url , JSON.stringify(data));
-        if(res.status == "success" && !res.responseText.error)
-            return res.responseText;
-        else if(res.status === 'error')
-            throw res;
-        else 
-            throw res.responseText;
+        // var cache_msgData= localStorage.getItem('cache-msgData-'+chat);
+        // if(cache_msgData)
+        //     return JSON.parse(decodeURIComponent(atob(cache_msgData)));
+        // else{
+            const res = await postReq(url , JSON.stringify(data));
+        
+            if(res.status == "success" && !res.responseText.error){
+                // localStorage.setItem('cache-msgData-'+chat, btoa(encodeURIComponent(JSON.stringify(res.responseText))) );
+                return res.responseText;
+
+            }else 
+                throw res.responseText;
+        // }
+        
     }catch(err){
         customError(err); 
         return 0;
@@ -260,8 +268,13 @@ const _deleteMsg=(msgID)=>{
     }
 
     postReq(url,JSON.stringify(data))
-        .then(res=>{
+        .then(async res=>{
             if(res.status === 'success' && res.responseText === 1){
+                var openedChat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+
+                // let cacheData= await _getAllMsgs();
+                // cacheData=cacheData.filter(data=>data.msgID != msgID);
+                // localStorage.setItem('cache-msgData-'+openedChat, btoa(encodeURIComponent(JSON.stringify(cacheData))));
                 chat.querySelector(`div[data-msgid='${msgID}'`)?.remove();
             }else{
                 throw res.responseText;
@@ -280,6 +293,8 @@ const _deleteChat=()=>{
     postReq(url,JSON.stringify(data))
         .then(res=>{
             if(res.status === 'success' && res.responseText === 1){
+                // var openedChat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+                // localStorage.removeItem('cache-msgData-'+openedChat);
                 closeChat();
                 openChatList();
             }else{
@@ -326,6 +341,8 @@ const _blockChat=()=>{
     postReq(url,JSON.stringify(data))
         .then(res=>{
             if( res.status === "success" && res.responseText === 1){
+                // var openedChat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+                // localStorage.removeItem('cache-msgData-'+openedChat);
                 closeChat();
                 openChatList();
             }else
@@ -348,6 +365,8 @@ const _reportChat=(reportReason=null)=>{
     postReq(url,JSON.stringify(data))
         .then(res=>{
             if( res.status === "success" && res.responseText === 1){
+                // var openedChat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+                // localStorage.removeItem('cache-msgData-'+openedChat);
                 closeChat();
                 openChatList();
             }else

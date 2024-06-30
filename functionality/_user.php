@@ -68,6 +68,7 @@ try{
                     $_SESSION['key']= base64_encode($user_key);
                     $_SESSION['nonce']= base64_encode($user_nonce);
 
+                    ?><script>localStorage.clear();</script><?php
                     if($rememberMe == 'on' ) {
 
                         $pass = $row['pass'];

@@ -21,14 +21,14 @@ function _onclick_notification_hide(event)   {
 
 // show is class which shows a notifiacation
 function _add_notification_show(str){
-    notification.textContent = str;
+    notification.innerHTML = str;
     notification.classList.add('show');
 }
 
 function _remove_notification_show(){
     notification.classList.remove('show');
     setTimeout(() => {
-        notification.textContent = "";
+        notification.innerHTML = "";
     }, 70);
 }
 

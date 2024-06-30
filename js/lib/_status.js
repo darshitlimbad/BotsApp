@@ -163,9 +163,9 @@ class Status {
                                 inboxUser.style.setProperty('--totalNewMsg',`'${chatter.total_new_messages}'`);
                                 inboxUser.style.setProperty('--display','block');
 
-                                if((chatType === 'personal' && getCookie('currOpenedChat') == chatter.unm) 
+                                if((chatType === 'personal' && getCookie('currOpenedChat') == chatter.unm && chatter.unm != getCookie('unm')) 
                                     || chatType === 'group' && user && user.id == chatter.GID){
-
+                                        console.log(chatter);
                                         _getNewMsgs()
                                         .then(msgObjs=>{
                                             if( msgObjs ){
@@ -208,8 +208,6 @@ class Status {
             return new Promise( (resolve,reject) => {
                 postReq(userStatus.statusURL,JSON.stringify(data))
                     .then(res=>{
-
-
                         if(res.status == 'success' && !res.responseText.error)
                             resolve(res.responseText);
                         else
@@ -224,7 +222,6 @@ class Status {
 
     const _placeMsgStatus = (msgStatusImage,msgID)=>{
         return new Promise(async (resolve,reject)=>{
-
                 if( msgID ){
                     var res= await _getMsgStatus([msgID]);
                     var msgStatus = ((res != 0) ? res[0].status : "uploading");
@@ -235,6 +232,27 @@ class Status {
                 msgStatusImage.setAttribute('data-status',msgStatus);
                 resolve(msgStatus);
         })
-        
+    }
+
+    const _getMsgSeenData=(msgID=null)=>{
+        if(!msgID)
+            return;
+
+        let data={
+            req:"getMsgSeenData",
+            msgID,
+        };
+
+        return new Promise( (resolve,reject) => {
+            postReq(userStatus.statusURL,JSON.stringify(data))
+                .then(res=>{
+                    if(res.status == 'success' && !res.responseText.error)
+                        resolve(res.responseText);
+                    else
+                        throw res.responseText;
+                }).catch(err=>{
+                    customError(err);
+                })
+        });
     }
 //

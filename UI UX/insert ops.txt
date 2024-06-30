@@ -5,22 +5,13 @@ side insert ops:
    
     2. sortout new notifications function in fitures.js.make it more js friendly.
 
-    8. do something about oprion container 
+    8. do something about opration container 
         - on click optionBtn=()=> optionBtn.appencChild(opt-container)
         - when device = mobile the option container has to figure where it shold be shown in the midle or in left or right side
 
 
 next session ops:
-
-    4. create a indexed DB table for storing dp as hashmap. or gether information about window.chache
-        and flush it in every new session so if the user changes the dp then it can refresh
-
-        
     7. create operations of msgDeleted and reloadChat for group also.
-
-```
-    9. convert in a 'class' for open and close chat and for open chatlist. 
-```
 
 
 ///Delete operations note
@@ -62,10 +53,13 @@ next session ops:
 /////5. make api for adding groups and deleting groups and users.-- done
         now add removing member by admin functionality            --done
 
+ ///////4. create a indexed DB table for storing dp as hashmap. or gether information about window.chache
+        and flush it in every new session so if the user changes the dp then it can refresh ---- did it using localStorage
 
+/// 9. convert in a 'class' for open and close chat and for open chatlist.  -- done - but not much effect
 
 
 ///////dropped ideas
 
     //9 change every div hide and show events 
-     //   -- use : onmouseenter and onmouseout --dropped
+     //   -- use : onmouseenter and onmouseout --dropped coz it becomes toxic for mobiles

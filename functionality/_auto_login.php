@@ -4,6 +4,7 @@ if(!isset($_SESSION['userID'])) {
 ?>
 
     <script>
+    localStorage.clear();
     var request = indexedDB.open("Botsapp", 1);
 
     request.onerror = (event) => {
@@ -42,7 +43,7 @@ if(!isset($_SESSION['userID'])) {
                         const xml = new XMLHttpRequest();
                         xml.onload = (response) => {
                             try{
-                                console.log(response.target.response);
+                                // console.log(response.target.response);
                                 if((xml.readyState == 4) && (xml.status == 200)) {
                                     let res = JSON.parse(response.target.response);
 
