@@ -94,7 +94,7 @@ const initiateChatBox = (chatType) => {
 
 // responsive for mobile changes
 function handleResize(){
-    if(window.innerWidth < 600){
+    if(window.innerWidth < 700){
         document.querySelector('body.main').classList.add('mobile');
         device='mobile';
         (!chatOpened)? showInbox() : hideInbox();

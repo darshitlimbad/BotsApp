@@ -135,8 +135,8 @@ try{
         header('location: /');
     }
 } catch (Exception $error) {
-    print_r($error);
-    // header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
+    // print_r($error);
+    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
     die();
 }
 ?>

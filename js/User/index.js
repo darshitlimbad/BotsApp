@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded' , function () {
             // buttons
             buttons[0].value = form_name.replace('-' , ' ');
             buttons[1].value = (form_name == 'sign-in') ? 'log in' : 'Register';
-
     });
     // 
     
@@ -100,6 +99,8 @@ document.addEventListener('DOMContentLoaded' , function () {
     buttons[1].removeAttribute('disabled');
     // 
 
+    handleResize();
+    window.onresize=()=>handleResize();
 });
 
 // set_form_action_path
@@ -184,6 +185,17 @@ function fade_out(ele){
         
         return true;
     }
+
+// responsive 
+function handleResize(){
+    if(window.innerWidth < 600){
+        document.querySelector('body.user').classList.add('mobile');
+        device='mobile';
+    }else{
+        document.querySelector('body.user').classList.remove('mobile');
+        device='pc';
+    }
+}
 
 // 
 

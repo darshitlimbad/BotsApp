@@ -54,13 +54,17 @@
     position: relative;
     /* height: 98%; */
     height: calc(98% - 5px);
-    width: 20vw;
-    min-width: 12em;
+    width: 18em;
+    min-width: 16em;
     max-width: 400px;
     /* width: 15em; */
     padding: 6px;
     border-radius:10px 0 0 10px;
     outline: 2px solid rgb(1, 12, 23);
+}
+
+.mobile .chat-box .inbox{
+    min-width: 12em;
 }
 
 /* @media screen and ( max-width:1000px ){
@@ -298,7 +302,7 @@
     --chat-font-medium : 12px;
 }
 
-@media screen and ( min-width:1450px ){
+@media screen and ( min-width:1650px ){
     .chat {
         --chat-font-small : 15px;
         --chat-font-medium : 17px;            
@@ -306,7 +310,7 @@
     }
 }
 
-@media screen and ( max-width:798px ){
+@media screen and ( max-width:900px ){
     .chat {
         --chat-font-small : 8px;
         --chat-font-medium : 10px;    

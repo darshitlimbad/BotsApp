@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../js/lib/_validation.js"></script>
 </head>
 <body onload="document.forms['form']['user'].focus()" class="User">
-    <!-- create a div and size it acording to the display (desktop,mobile) -->
+
     <header style="background-color: rgb(2, 2, 55) ;">
         <?php custom_header();?>
     </header>
@@ -91,9 +91,7 @@
             <!-- password -->
             <div class="input_field validation fadeout" name="pass_field">  
                 <div class="input">
-                    <div style="height:0px">
-                        <img src="/img/icons/form/eye.png" name="eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
-                    </div>
+                    <img src="/img/icons/form/eye.png" name="eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
                     <input type="password" id="pass" name="pass" placeholder=" " autocomplete="off"/>
                     <label for="pass">Password</label>
                 </div>
@@ -110,9 +108,7 @@
             <!-- con_pass -->
             <div class="input_field validation fadeout toggle_field hide" name="con_pass_field">  
                 <div class="input">
-                    <div style="height:0px">
-                        <img src="/img/icons/form/eye.png" name="eye" class="con_eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
-                    </div>
+                    <img src="/img/icons/form/eye.png" name="eye" class="con_eye" height="20px" width="20px" style="cursor:pointer" onclick="toggle_pass_box(this)"> 
                     <input type="password" id="con_pass" name="con_pass" placeholder=" " autocomplete="off"/>
                     <label for="con_pass">Confirm Password</label>
                 </div>

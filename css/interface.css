@@ -925,7 +925,6 @@ footer {
 }
 
 .input_field label  {
-    width: 50%;
     display: block;
     position: relative;
     z-index: 1;
@@ -942,7 +941,11 @@ footer {
 
 .name_field{
     display: flex;
-    position: relative;
+    /* position: relative; */
+}
+
+.mobile .name_field{
+    flex-direction: column;
 }
 
 .name_field input {
@@ -958,15 +961,20 @@ footer {
 .input_field img[name="eye"] {
     display: block;
     position: relative;
-    top: 27px;
-    left:300px;
+    top: 47px;
+    /* left:300px; */
+    transform: translateX(300px);
     z-index: 1;
+}
+
+.mobile .input_field img[name="eye"]{
+    transform: translateX(55vw);
 }
 
 .input_field span   {
     display: none;
     text-align: end;
-    font-weight: 100;
+    font-weight: 500;
     color: rgb(240, 31, 31);
     font-size: .8rem;
 }
