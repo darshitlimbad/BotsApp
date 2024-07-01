@@ -27,6 +27,8 @@
             
             }else if($data['req'] == "getProfile")   
                 echo getProfile();
+            else if($data['req'] == "getBlockedMemberList")
+                echo getBlockedMemberList();
         }
         if($fleg)
             session_abort();
@@ -75,6 +77,20 @@
             return $email;
         }else{
             return "EMAIL_NOT_FOUND";
+        }
+    }
+
+    function _fetch_gender($userID= null){
+        if($userID== null)
+            $userID= getDecryptedUserID();
+        
+        $res = fetch_columns("users_details", ["userID"], [$userID], array("gender"));
+    
+        if($res->num_rows == 1){
+            $gender = $res->fetch_column();
+            return $gender;
+        }else{
+            return 0;
         }
     }
 
@@ -328,7 +344,7 @@
                 if(!$reqUserID || is_chat_exist($userID,$reqUserID) != 1 )
                     throw new Exception("No data found.",411);
 
-                $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about",'can_see_online_status'));
+                $sqlObj = fetch_columns("users_details", ["userID"], [$reqUserID], array("about","gender",'can_see_online_status'));
                 if(!$sqlObj)
                     throw new Exception('',400);
             
@@ -367,6 +383,29 @@
 
             return json_encode($responseData);
 
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function getBlockedMemberList(){
+        try{
+            $userID= getDecryptedUserID();
+
+            $fetchedDataObj= fetch_columns('blocked',['fromID'],[$userID],array('toID'),'status');
+            if(!$fetchedDataObj)
+                throw new Exception("Something went wrong",400);
+
+            $blockedChatterList= array_map(function (array $memberID){
+                return _fetch_unm($memberID[0]);
+            },$fetchedDataObj->fetch_all());
+
+            return json_encode($blockedChatterList);
         }catch(Exception $e){
             $error = [
                 'error'=>true,

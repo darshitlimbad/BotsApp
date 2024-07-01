@@ -54,9 +54,9 @@
     position: relative;
     /* height: 98%; */
     height: calc(98% - 5px);
-    width: 18em;
-    min-width: 16em;
-    max-width: 400px;
+    width: 20vw;
+    min-width: 14em;
+    max-width: 300px;
     /* width: 15em; */
     padding: 6px;
     border-radius:10px 0 0 10px;
@@ -217,7 +217,7 @@
     border-radius: 50%;
 }
 
-.list .img::before {
+.list .img::after {
     content: "";
     /* position: absolute; */
     position: relative;
@@ -1048,6 +1048,7 @@
 .user-profile input:hover:not([readonly]) , .member:hover{
     box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5);
     transition: box-shadow .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+    animation: skeleton 1s linear infinite alternate;
 }
 
 .member{

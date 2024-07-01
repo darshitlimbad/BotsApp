@@ -148,6 +148,7 @@ class CreateNewGroupPopUp {
         this.members.forEach(memberName => {
             let member = document.createElement('div');
             member.classList.add('member', 'checkBox', 'flexBox', 'input_field');
+            member.style.cursor="pointer";
             memberList.appendChild(member);
     
             let checkBox = document.createElement('input');
@@ -155,16 +156,20 @@ class CreateNewGroupPopUp {
             checkBox.name = "member";
             member.appendChild(checkBox);
             checkBox.value = memberName;
-    
+            
             let dp = new Image(30, 30);
-            dp.classList.add('avatar');
+            dp.classList.add('avatar','skeleton');
             member.appendChild(dp);
-            dp.src = default_dp_src;
     
             let userNameBlock = document.createElement('p');
             userNameBlock.classList.add('margin-dead');
             member.appendChild(userNameBlock);
             userNameBlock.textContent = memberName;
+
+            member.onclick=(e)=>{if(e.target != checkBox) checkBox.checked= (checkBox.checked) ? false : true ;}
+            setTimeout(() => {
+                get_dp(memberName).then(dpurl=>dp.src=dpurl);                
+            }, 100);
         });
     }
 
@@ -288,7 +293,7 @@ class openChatClass{
         this.setChatHeader(unm,ID);
         removeLoader(chat);
         this.setChatFooter();
-        await this.setChatBody();
+        await setChatBody();
     };
 
 
@@ -402,30 +407,30 @@ class openChatClass{
     };
 
     // chatLoading=null;
-    setChatBody = async () =>{
-        return new Promise(async (resolve)=>{
-            chatStruct.chatBody.innerHTML="";
-            lastMsg=null;
+    // setChatBody = async () =>{
+    //     return new Promise(async (resolve)=>{
+    //         chatStruct.chatBody.innerHTML="";
+    //         lastMsg=null;
 
-            setLoader(chatStruct.chatBody);
-            try{
-                let msgObjs= await _getAllMsgs();
-                if(!msgObjs)  {
-                    new_notification("Let's start new convertation.");
-                }else{
-                    msgObjs
-                        .forEach(msgObj => addNewMsgInCurrChat(msgObj));
-                }
+    //         setLoader(chatStruct.chatBody);
+    //         try{
+    //             let msgObjs= await _getAllMsgs();
+    //             if(!msgObjs)  {
+    //                 new_notification("Let's start new convertation.");
+    //             }else{
+    //                 msgObjs
+    //                     .forEach(msgObj => addNewMsgInCurrChat(msgObj));
+    //             }
 
-            }catch(err){
-                customError(err);
-            }finally{
-                removeLoader(chatStruct.chatBody);
-                resolve();
-            }
+    //         }catch(err){
+    //             customError(err);
+    //         }finally{
+    //             removeLoader(chatStruct.chatBody);
+    //             resolve();
+    //         }
         
-        });
-    }
+    //     });
+    // }
     
     setChatFooter= () =>{
 
@@ -490,6 +495,126 @@ class openChatClass{
         // chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
     };
 }
+
+class blockedChatterListBox{
+    constructor(){
+            this.form = document.createElement("div");
+            this.form.classList.add('pop_up');
+            this.form.id = "blocked_chatter_list";
+
+            this.memberList=null;
+
+            this.heading();
+            this.displayMemberList();
+    }
+
+    heading() {
+        let header= document.createElement('header');
+        header.classList.add('heading');
+        this.form.appendChild(header);
+
+        let title = document.createElement('h3');
+        title.textContent = "Blocked List";
+        header.appendChild(title);
+
+        let closeIconDiv = document.createElement('button');
+        closeIconDiv.classList.add("icon",'ele','skeleton');
+        closeIconDiv.style.border='none';
+        closeIconDiv.title="Close";
+        Object.assign(closeIconDiv.style,{
+            background:'transparent',
+            height:'2em',
+            width:'2em',
+            borderRadius:'50%',
+            position:'absolute',
+            top:'22%',
+            right:'5%',
+        });
+        closeIconDiv.onclick=()=>this.hide();
+        header.appendChild(closeIconDiv);
+            let closeIconImg = new Image();
+            closeIconImg.style.height="1em";
+            closeIconImg.src="img/icons/close.png";
+            closeIconImg.alt="Close";
+            closeIconDiv.appendChild(closeIconImg);
+
+        let hr= document.createElement('hr');
+        hr.classList.add('hr','red');
+        header.appendChild(hr);
+    }
+
+    async displayMemberList() {
+        try{
+            let members= await _getBlockedMemberList();
+            if(!members.length)
+                throw 411; 
+
+            if(this.memberList)
+                this.memberList.remove();
+            
+            this.memberList = document.createElement('div');
+            this.memberList.classList.add('memberList');
+            this.form.appendChild(this.memberList);
+        
+            members.forEach(memberName => {
+                let member = document.createElement('div');
+                member.classList.add('member', 'flexBox', 'input_field');
+                this.memberList.appendChild(member);
+        
+                let dp = new Image(30, 30);
+                dp.classList.add('avatar','skeleton');
+                member.appendChild(dp);
+        
+                let userNameBlock = document.createElement('p');
+                userNameBlock.classList.add('margin-dead');
+                userNameBlock.textContent = memberName;
+                member.appendChild(userNameBlock);
+
+                let removeFromListBtn= document.createElement('p');
+                removeFromListBtn.classList.add('red','ele','margin-dead');
+                Object.assign(removeFromListBtn.style,{
+                    border:'none',
+                    padding:'5px',
+                    position:'absolute',
+                    right:'5%',
+                    fontSize:'12px',
+                });
+                removeFromListBtn.textContent="Unblock";
+                removeFromListBtn.onclick=()=>{
+                    _unblockMember(btoa(memberName))
+                    .then(res=>{
+                        if(res)
+                            this.displayMemberList();
+                    })
+                };
+                member.appendChild(removeFromListBtn);
+
+                setTimeout(() => {
+                    get_dp(memberName).then(dpurl=>dp.src=dpurl);                
+                }, 100); 
+            });
+
+            this.show();
+        }catch(err){
+            this.hide();
+            if(err === 411){
+                new_Alert("You have no Blocked User.");
+            }else{
+                customError(err);
+            }
+        }
+    }
+
+    show(){
+        if(!document.querySelector('.pop_up_box').contains(this.form))
+            document.querySelector('.pop_up_box').appendChild(this.form);
+    }
+
+    hide(){
+        this.form.remove();
+    }
+}
+
 
 // class msgInfo{
 //     constructor(){

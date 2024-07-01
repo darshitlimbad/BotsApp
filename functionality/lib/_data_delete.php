@@ -17,6 +17,8 @@
                 echo reportChat($data['reportReason']);
             else if($data['req'] === 'removeMember' && isset($data['unm']))
                 echo removeMember($data['unm']);
+            else if($data['req'] === 'unBlockChatter' && isset($data['unm']))
+                echo unBlockChatter(base64_decode($data['unm']));
             
         }
 
@@ -323,7 +325,7 @@
                 
             $chatType= strtolower($_COOKIE['chat']);
             if($chatType != 'personal')
-                throw new Exception('User Chat is not opened, Please open chat first.',0);;
+                throw new Exception('User Chat is not opened, Please open chat first.',0);
 
             $userID= getDecryptedUserID();
             $oppoUserID= _get_userID_by_UNM($_COOKIE['currOpenedChat']);
@@ -390,6 +392,37 @@
                     return 1;
             }else
                 throw new Exception("No chat Exist.",0);
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function unBlockChatter($unm){
+        try{
+            $userID= getDecryptedUserID();
+            $userToUnblockID= _get_userID_by_UNM($unm);
+            if(!$userToUnblockID)
+                throw new Exception("something went wrong",411);
+
+            if(is_user_blocked($userID,$userToUnblockID)){
+                // $res= insertData('blocked',['fromID','toID'],[$userID,$userToUnblockID],'status');
+                $sql= "DELETE FROM `blocked` WHERE `fromID` = ? AND `toID` = ? ";
+                $STMT= $GLOBALS['status']->prepare($sql);
+                $STMT->bind_param('ss',$userID,$userToUnblockID);
+                $sqlfire = $STMT->execute();
+                $STMT->close();
+
+                if(!$sqlfire)
+                    throw new Exception("Something went wrong",400);
+                
+                return $sqlfire;
+            }else
+                throw new Exception("No Data Found.",411);
         }catch(Exception $e){
             $error = [
                 'error'=>true,

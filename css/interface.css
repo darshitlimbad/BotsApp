@@ -998,9 +998,9 @@ footer {
 /*  */
 
 @media screen and ( max-width:768px ) {
-    header{
+    /* header{
         display: grid !important;
-    }
+    } */
     header .title{
         height: auto !important;
     }

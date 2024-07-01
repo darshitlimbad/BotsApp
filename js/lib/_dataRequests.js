@@ -422,6 +422,49 @@ function _addNewMember(unmList=[]){
                 }else{
                     throw res.responseText;
                 }
+            }).catch(err=>{
+                resolve(0);
+                customError(err); 
             })
     })
+}
+
+function _getBlockedMemberList(){
+    let url= "/functionality/lib/_fetch_data.php";
+    let data={ req:'getBlockedMemberList' };
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && !res.responseText.error){
+                    resolve(res.responseText);
+                }else{
+                    throw res.responseText;
+                }
+            }).catch(err=>{
+                resolve(0);
+                customError(err); 
+            })
+    })
+}
+
+function _unblockMember(unm=null){
+    if(!unm) return;
+
+    let url= "/functionality/lib/_data_delete.php";
+    let data={ req:'unBlockChatter',unm };
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === 'success' && res.responseText == 1){
+                    resolve(res.responseText);
+                }else{
+                    throw res.responseText;
+                }
+            }).catch(err=>{
+                resolve(0);
+                customError(err); 
+            })
+    });
 }

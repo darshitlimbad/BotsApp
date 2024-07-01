@@ -17,6 +17,7 @@
         $userID = getDecryptedUserID();
         $unm = "@"._fetch_unm();
         $nm  = get_user_full_name(substr($unm , 1)); 
+        $gender= _fetch_gender();
         $email = _fetch_email();
         
         setcookie("unm" , substr($unm, 1) , time()+(24*60*60*1000), "/");
@@ -147,13 +148,18 @@
         <div class="settings-container">
 
             <div class="body" name="general-body"  style="display: none;">
-                <div class="headding">General</div>
+                <div class="heading">General</div>
+                <!-- log-out -->
+                <h4 class="danger   ">Blocked Accounts</h4>
                 
-                
+                <p>The accounts you Blocked can be seen here.</p>
+                <p style="font-size:12px;"> <span class="red"> Note: </span> Please do remember that chatters block by you or them will not be able to direct contect you or message you but if you are in a group with him/her/them than they can message you from the same groups, so leave the groups immediately.</p>
+
+                <button class="danger-button button" name="blocked-list-open-btn" style="font-size:10px;">Check Blocked List</button>
             </div>
         
             <div class="body" name="account-body" style="display: none;">
-                <div class="headding">Account</div>
+                <div class="heading">Account</div>
                 <h4>Privacy</h4>
                 <div class="checkbox" name="edit-can_see_online_status">
                     <input type="checkbox" name="can_see_online_status" id="can_see_online_status" onclick="_togle_user_data(this);" <?php if(fetch_data_from_users_details($userID , 'can_see_online_status') == '1') { echo 'checked';} ?>>
@@ -173,7 +179,7 @@
 
             <!-- Chat-body -->
             <div class="body" name="chat-body" style="display: none;">
-                <div class="headding">Chat</div>
+                <div class="heading">Chat</div>
 
                 <h4>Theme</h4>
                 
@@ -200,14 +206,14 @@
             <!-- Help-body -->
             <div class="body" name="help-body" style="display: none;">
 
-                <div class="headding">New Chatter ?</div>
+                <div class="heading">New Chatter ?</div>
                 <p>Are you new user? Don't know what do ?</p>
                 <p>Don't worry just visit our information page  </p>
                 <a href="/help/info.php" class="link">More Info</a>
             
                 <br><br>
 
-                <div class="headding">Feedback</div>
+                <div class="heading">Feedback</div>
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
                 <p>share your thoughts...</p>  
@@ -215,7 +221,7 @@
             
                 <br><br>
 
-                <div class="headding">Found any bugs?</div>
+                <div class="heading">Found any bugs?</div>
                 <p>If you recently noticed any bug or mistacks by me please share it here,</p>
                 <p>It will be very helpfull for me</p>
                 <a href="/help/ux.php?form=bugs" class="link">Bugs Report</a>
@@ -223,7 +229,7 @@
 
             <!-- Profile Body -->
             <div class="body" name="profile-body" style="display: none;">
-                <div class="headding">Profile</div>
+                <div class="heading">Profile</div>
                 <div class="profile-dp">
                     <img src="/img/dp-moon.png" onerror="defaultDp(this);" title="<?= $nm?>" class="avatar">
                 </div>
@@ -242,6 +248,12 @@
                 <div class="grid edit_box" name="edit-about" style="margin:30px 0">
                     <textarea name="about" class="text" maxlength="100" onkeydown="_submit_data(event)" placeholder="Enter About Yourself" data-oldValue='<?= fetch_data_from_users_details($userID , 'about');?>' readonly><?= fetch_data_from_users_details($userID , 'about');?></textarea>
                     <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit" /> 
+                </div>
+
+                <p class="margin-dead">Gender:</p>
+                <div class="grid edit_box" name="edit-gender">
+                <input type="text" name="gender" class="text" style="font-size: 15px;text-transofrm:capitalize;" placeholder="Enter Your Gender" maxlength="30" onkeydown="_submit_data(event)" value="<?= $gender; ?>" readonly /> 
+                    <img name="edit-icon" class="edit-icon ele" src="/img/icons/settings/profile/edit.png" title="edit"/>  
                 </div>
 
                 <p class="margin-dead">E-mail:</p>

@@ -30,7 +30,7 @@
     }
 }
 
-#create_newGroup_form{
+#create_newGroup_form , #blocked_chatter_list{
     display: flex;
     flex-direction: column;
     opacity: 1;
@@ -39,12 +39,12 @@
     max-height: 80vh;
 
 }
-#create_newGroup_form .heading{
+#create_newGroup_form .heading , #blocked_chatter_list .heading{
     display: block;
     height: auto;
     width: auto;
 }
-#create_newGroup_form .memberList{
+#create_newGroup_form .memberList , #blocked_chatter_list .memberList{
     overflow: auto;
     height: 100%;
 }
@@ -188,7 +188,7 @@ tbody.center{
 
 /* responsive for mobile styles */
 .mobile .pop_up{
-    width: 10%;
+    width: 60vw;
     min-width: 300px;
 }
 

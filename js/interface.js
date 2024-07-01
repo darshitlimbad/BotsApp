@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded' , function () {
         deleteAccount.onclick=()=>toggle_confirmation_pop_up('DeleteAccount');
     // 
 
+    // blocked list open buttons event
+        const blockedListOpenBtn= document.querySelector("button[name='blocked-list-open-btn']");
+        blockedListOpenBtn.onclick=()=>toggleBlockedChatterList();
+    //
+
     //functions to be called
     set_profile_dp();  
     handleResize();

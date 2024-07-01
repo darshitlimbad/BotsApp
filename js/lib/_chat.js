@@ -409,6 +409,16 @@ async function openUserProfile(unm){
         fullName.classList.add('margin-dead');
         userProfile.appendChild(fullName);
         
+        // gender
+        detailName = document.createElement('d6');
+        detailName.classList.add('margin-dead','detailName');
+        detailName.textContent="Gender: ";
+        userProfile.appendChild(detailName);
+
+        let gender = document.createElement('p');
+        gender.classList.add('margin-dead');
+        userProfile.appendChild(gender);
+        
         // About / bio
         detailName = document.createElement('d6');
         detailName.classList.add('margin-dead','detailName');
@@ -472,6 +482,7 @@ async function openUserProfile(unm){
     await getProfile()
         .then(res=>{
             fullName.textContent=res.name;
+            gender.textContent=res.gender;
             email.textContent=res.email;
             about.textContent=res.about;
             can_see_on_status.textContent= (res.can_see_on_status==0)? 'No' : 'Yes';
@@ -490,7 +501,7 @@ async function openGroupProfile(){
     let unm=getCookie('unm');
     var admin= (profile.admin === unm)? 1 : 0;
 
-    chatStruct.heading.querySelector('.user-profile')?.remove();
+    // chatStruct.heading.querySelector('.user-profile')?.remove();
     var userProfile= document.createElement('div');
     userProfile.classList.add('user-profile');
 
@@ -538,10 +549,11 @@ async function openGroupProfile(){
             fullName.value=profile.name;
             fullName.maxLength=30;
             fullName.readOnly=true;
+            fullName.onkeyup=(e)=>_submit_data(e);
             flexBox.appendChild(fullName);
 
             let SaveNameIcon= new Image();
-            SaveNameIcon.classList.add('icon');
+            SaveNameIcon.classList.add('icon', 'edit-icon');
             SaveNameIcon.src='/img/icons/settings/profile/edit.png';
             flexBox.appendChild(SaveNameIcon);
 
@@ -654,26 +666,30 @@ async function openGroupProfile(){
     },200 );
 }
 
-// const setChatBody = async () =>{
-//     return new Promise((resolve)=>{
-//         chatStruct.chatBody.innerHTML="";
-//         lastMsg=null;
-//         setLoader(chatStruct.chatBody);
-//         _getAllMsgs()
-//             .then(msgObjs=>{
-//             if(!msgObjs)  {
-//                 new_notification("Let's start new convertation.");
-//             }else{
-//                 msgObjs
-//                     .forEach(msgObj => addNewMsgInCurrChat(msgObj));
-//             }
-//             return;
-//             }).then(res=>{
-//                 removeLoader(chatStruct.chatBody);
-//                 resolve();
-//             })
-//     });
-// }
+const setChatBody = async () =>{
+    return new Promise(async (resolve)=>{
+        chatStruct.chatBody.innerHTML="";
+        lastMsg=null;
+
+        setLoader(chatStruct.chatBody);
+        try{
+            let msgObjs= await _getAllMsgs();
+            if(!msgObjs)  {
+                new_notification("Let's start new convertation.");
+            }else{
+                msgObjs
+                    .forEach(msgObj => addNewMsgInCurrChat(msgObj));
+            }
+
+        }catch(err){
+            customError(err);
+        }finally{
+            removeLoader(chatStruct.chatBody);
+            resolve();
+        }
+    
+    });
+}
 
 // const setChatFooter= (unm) =>{
 
@@ -910,7 +926,7 @@ const addNewMsgInCurrChat = (msgObj) => {
     if(msgObj.msgID === null)
         msgObj.msgContainer=msgContainer;   
 
-    msg=document.createElement("div");
+    var msg=document.createElement("div");
     msg.classList.add('msg');
     msg.setAttribute('data-type',msgObj.type);
 
@@ -967,7 +983,9 @@ const addNewMsgInCurrChat = (msgObj) => {
 
             break;
         
-        case 'img':                
+        case 'img':   
+            msg.style.maxWidth="50%";
+
             let msgImg = new Image();
             msgImg.classList.add("msgImg","no-select");
             msgImg.alt="Image Error";

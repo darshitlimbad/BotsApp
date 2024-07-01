@@ -927,6 +927,16 @@ async function addNewMemberForm(){
     }
 }
 
+//blocked list display function
+function toggleBlockedChatterList(){
+    let pop_up;
+    if(pop_up=document.querySelector('.pop_up_box #blocked_chatter_list')){
+        pop_up.remove();
+        return;
+    }
+    let blockedChatterListObj= new blockedChatterListBox();
+}
+
 //action can me be by lastMsgTime and by user searched input name
 function sortChatByTime(){
     var allChats= document.querySelectorAll(".chat-box .inbox .inbox-user");
@@ -954,6 +964,7 @@ function sortChatBySearch(unm){
         return 
 
     if(allChats.length != 0){
+        unm=unm.replace(/\\/g,'\\\\');
         var searchWord=new RegExp(unm,'i');
         for(let i=0 ; i< allChats.length ; i++){
             for (j=i+1 ; j< allChats.length ; j++){
