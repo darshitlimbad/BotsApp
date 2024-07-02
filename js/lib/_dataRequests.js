@@ -392,8 +392,6 @@ function createNewGroup(name=null,memberList=null){
             .then(res=>{
                 if(res.status === 'success' && res.responseText === 1)
                     resolve(1);
-                else if(res.status != success)
-                    throw res;
                 else 
                     throw res.responseText;
                     
