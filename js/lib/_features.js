@@ -947,7 +947,10 @@ function sortChatByTime(){
             for (j=i+1 ; j< allChats.length ; j++){
                 let lastMsgTimeChat2= allChats[j].getAttribute('data-lastMsgTime');
 
-                if(lastMsgTimeChat1 < lastMsgTimeChat2){
+                if(lastMsgTimeChat1 != "undefined" && lastMsgTimeChat2 == "undefined")
+                    continue;
+
+                if(lastMsgTimeChat1 < lastMsgTimeChat2 || (lastMsgTimeChat1 == "undefined" && lastMsgTimeChat2 !="undefined")){
                     allChats[i].remove();
                     allChats[j].after(allChats[i]);
                 }
