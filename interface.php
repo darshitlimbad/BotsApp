@@ -9,7 +9,6 @@
     }else{
         session_check();
         $isAdmin= is_admin();
-        echo "<script>var isAdmin=$isAdmin</script>";
         require_once('functionality/lib/_wrappers.php');
         require_once('functionality/lib/_fetch_data.php');
         require_once('functionality/lib/_wrappers.php');
@@ -31,7 +30,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=900, initial-scale=1">
     
     <!-- Style -->  
     <link rel="stylesheet" href="/css/interface.css" type="text/css">
@@ -55,8 +54,7 @@
     <div class="side-bar">
         <div class="top">
             <!-- Personal -->
-                    <!-- Yup, I know i should have name it .icon rather then .img  -->
-            <div class="options" title="Personal" onclick="initiateChatBox(this.title)" >
+            <div class="options" title="Personal" data-action="personal" onclick="initiateChatBox(this.title)" >
                 <div class="img ">
                     <img src="/img/icons/options/chat-30.png" alt="Personal-Chat-Img" >
                 </div>
@@ -64,40 +62,53 @@
             </div>
             
             <!-- group -->
-            <div class="options" title="Group" onclick="initiateChatBox(this.title)"> 
+            <div class="options" title="Group" data-action="group" onclick="initiateChatBox(this.title)"> 
                 <div class="img">
                     <img src="/img/icons/options/group_chat-48.png" alt="Group-Chat-Img">
                 </div>
             </div>
+
+            <?php
+            if($isAdmin){
+            ?>
+                <!-- group -->
+                <div class="options" title="Admin Panel" data-action="admin-panel"> 
+                    <div class="img">
+                        <img src="/img/icons/options/admin-icon.svg" alt="admin-panel-Img">
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
         </div>
         
         <div class="bottom">
 
             <!-- Add New Chat -->
-            <div class="options" title="addNewChat" onclick="toggleAddNewChatter()" accesskey="a">
+            <div class="options" title="addNewChat" data-action="add-new-chat" onclick="toggleAddNewChatter()" accesskey="a">
                 <div class="img">
                     <div style="font-size: 20px;"><b>+</b></div> 
                 </div>
             </div>
 
             <!-- Notifications -->
-            <div class="options" title="Noti" onclick="toggle_noti_box()" accesskey="n">
+            <div class="options" title="Noti" data-action="noti" onclick="toggle_noti_box()" accesskey="n">
                 <div class="img">
                     <img src="/img/icons/options/noti.png" alt="New-notification-img"> 
                 </div>
             </div>
 
             <!-- settings -->
-            <div class="options" title="Settings" onclick="toggle_settings_box()" accesskey="s">
+            <div class="options" title="Settings" data-action="settings" onclick="toggle_settings_box()" accesskey="s">
                 <div class="img">
                     <img src="/img/icons/options/setting-24.png" alt="settings-img"> 
                 </div>
             </div>
 
             <!-- profile -->
-            <div class="options profile"  title="Profile" onclick="toggle_settings_box()" accesskey="p">
+            <div class="options profile"  title="Profile" data-action="settings" onclick="toggle_settings_box()" accesskey="p">
                 <div class="img">
-                    <img src="/img/dp-moon.png"  onerror="defaultDp(this);"  class="avatar" title="<?= $unm?>" />
+                    <img src="/img/dp-moon.png" class="avatar" title="<?= $unm?>" />
                 </div>
             </div>
 
@@ -176,25 +187,6 @@
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
                 <button class="danger-button button" name="Delete-Account">Delete Account</button>
-
-                <?php
-                if($isAdmin){
-                ?>
-                <!-- Create New Admin -->
-                <!-- <br><br><br><br>
-                <h4 class="danger heading">Create New Admin</h4>
-                        <p>Hey there Admin, <br>To create a new admin first he/she/it should be a user of Botsapp if not then create a user.</p>
-                        <p>Paste here the username of the user you want to promote to Admin.</p>
-                        <p style="font-size:12px"><span class="red">Warning:</span> You can't undo this operation so make sure the person you are promoting as a admin is the right one double check the Usernames and DP.</p>
-
-                <div class="edit_box flexBox" name="edit-gender">
-                @<input type="text" class="text edit newAdminUnmInput" style="font-size: 15px;width:60%" placeholder="Enter Username to Promote as a admin" maxlength="30" /> 
-                <img class="icon ele newAdminUnmInputBtn" style="border:none" height="20px" width="20px" src="/img/icons/send.png"/>  
-                </div> -->
-
-                <?php
-                }
-                ?>
             </div>
 
             <!-- Chat-body -->

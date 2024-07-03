@@ -57,21 +57,17 @@ document.addEventListener('DOMContentLoaded' , function () {
         blockedListOpenBtn.onclick=()=>toggleBlockedChatterList();
     //
 
-    //admin user events
-        // if(isAdmin){
-        //     let newAdminUnmInputBtn= document.querySelector('.newAdminUnmInputBtn');
-        //     let newAdminUnmInput= document.querySelector('.newAdminUnmInput');
+    //option btns actions
+    const optionActionList= {
+        'personal':"initiateChatBox('Personal')"
+    }
+        document.querySelectorAll(".options").forEach(option=>{
 
-        //     if(newAdminUnmInput && newAdminUnmInputBtn){
-        //         newAdminUnmInputBtn.onclick=()=> _confirmation_pop_up(newAdminUnmInput.value , "By clicking to 'Yes' the user will be Promoted to admin,<spna class='red'> Make sure to double check,You cannot go back</span>." , "__PROMOT_TO_ADMIN__");
-        //     }
-        // }
+        });
     //
 
     //functions to be called
     set_profile_dp();  
-    handleResize();
-    window.onresize=()=>handleResize();
 });  
 
 // 
@@ -106,19 +102,6 @@ const initiateChatBox = (chatType) => {
     _cht_sk_loading();
     closeChat();
     openChatList();
-}
-
-// responsive for mobile changes
-function handleResize(){
-    if(window.innerWidth < 700){
-        document.querySelector('body.main').classList.add('mobile');
-        device='mobile';
-        (!chatOpened)? showInbox() : hideInbox();
-    }else{
-        document.querySelector('body.main').classList.remove('mobile');
-        showChatBox();
-        device='pc';
-    }
 }
 
 // toggle add new Chatter
@@ -382,25 +365,4 @@ const getCookie = (name) => {
     };
 
 // 
-
-function showInbox(){
-    const inbox=document.querySelector('.chat-box .inbox');
-
-    chat.style.display='none';
-    inbox.style.display='block';
-}
-
-function hideInbox(){
-    const inbox=document.querySelector('.chat-box .inbox');
-
-    chat.style.display='flex';
-    inbox.style.display='none';
-}
-
-function showChatBox(){
-    const inbox=document.querySelector('.chat-box .inbox');
-
-    chat.style.display='flex';
-    inbox.style.display='block';
-}
 

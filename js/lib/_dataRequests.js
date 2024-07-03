@@ -467,25 +467,3 @@ function _unblockMember(unm=null){
             })
     });
 }
-
-// function __PROMOT_TO_ADMIN__(unm=null){
-//     if(!unm && !isAdmin) return;
-
-//     let url= "/functionality/admin.php";
-//     let data={ req:'__PROMOT_TO_ADMIN__',unm };
-
-//     return new Promise(resolve=>{
-//         postReq(url,JSON.stringify(data))
-//             .then(res=>{
-//                 if(res.status === 'success' && res.responseText == 1){
-//                     new_notification("User Successfully Promoted to Admin.");
-//                     resolve(res.responseText);
-//                 }else{
-//                     throw res.responseText;
-//                 }
-//             }).catch(err=>{
-//                 resolve(0);
-//                 customError(err); 
-//             })
-//     });
-// }
