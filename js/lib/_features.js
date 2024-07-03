@@ -315,12 +315,15 @@ const _togle_user_data = (ele) => {
 const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
     const confirmation_pop_up = document.querySelector('#confirmation_pop_up');
     
+    let imgEle=confirmation_pop_up.querySelector('img');
+    imgEle.style.display="none";
+
     var title_ele = confirmation_pop_up.querySelector('.title');
     title_ele.textContent=title;
     confirmation_pop_up.querySelector('hr').style.border='1px solid '.concat(theme);
 
     var message_ele = confirmation_pop_up.querySelector('.message');
-    message_ele.textContent = message;
+    message_ele.innerHTML = message;
 
     var yes_btn = confirmation_pop_up.querySelector('.pop_up_yes_btn');
 
@@ -329,6 +332,9 @@ const _confirmation_pop_up = (title , message , action , theme = 'blue') => {
     }else if(action === "LogOut"){
         yes_btn.onclick=()=> window.location.assign('/functionality/_log_out.php?key_pass=khulJaSimSim');
     }else if(action === "addUserReqConfirm"){
+        let imgEle=confirmation_pop_up.querySelector('img');
+        imgEle.style.display="block";
+        get_dp(title).then(url=>imgEle.src=url);
         yes_btn.onclick=()=> _sendAddInChatReq(`${title}`);
     }else if(action === "remove_chat"){
         yes_btn.onclick=()=>{
@@ -368,6 +374,8 @@ const _report_pop_up = (chatterType) => {
     
     var yes_btn = report_pop_up.querySelector('.pop_up_yes_btn');
     yes_btn.disabled=true;
+
+    reportReasonInput.value="";
     reportReasonInput.onkeyup=()=>{
         yes_btn.disabled= (!reportReasonInput.value)? true : false;
         reportReasonInput.style.border= (yes_btn.disabled) ? "1px solid red" : 'none';
@@ -878,13 +886,13 @@ const hideOptionBtn=(optionBtn)=>{
 async function createNewGroupForm(){
     try{
         let userMemberList= await _getChatList('personal');
-        if(!userMemberList)
+        if(!userMemberList.length)
             throw 411;
 
         userMemberList=userMemberList
                         .map(member=>member.unm)
                         .filter(member=>member!='You');
-        if(!userMemberList)
+        if(!userMemberList.length)
             throw 411; 
 
         let formObj= new CreateNewGroupPopUp(userMemberList);
@@ -892,7 +900,7 @@ async function createNewGroupForm(){
         
     }catch(err){
         if(err === 411){
-            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group. To invite them, you can send chatter requests");
+            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group.");
         }else{
             console.error(err);
         }
@@ -920,7 +928,7 @@ async function addNewMemberForm(){
         formObj.show();
     }catch(err){
         if(err === 411){
-            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group. To invite them, you can send chatter requests");
+            new_Alert("Your contact list currently doesn't contain any members who can be directly added to a new group.");
         }else{
             console.error(err);
         }

@@ -30,9 +30,9 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //profile edit toggle
     document.querySelectorAll('.edit-icon').forEach( function (edit_icon) {
-        edit_icon.addEventListener('click' , function (){
-            profile_edit_box_toggle(edit_icon);
-        })
+        if(edit_icon.classList.contains('newAdminUnmInputBtn'))
+            return;
+        edit_icon.onclick=()=>profile_edit_box_toggle(edit_icon);
     });
 
     document.querySelectorAll('.edit_box').forEach( function (box) {
@@ -55,6 +55,17 @@ document.addEventListener('DOMContentLoaded' , function () {
     // blocked list open buttons event
         const blockedListOpenBtn= document.querySelector("button[name='blocked-list-open-btn']");
         blockedListOpenBtn.onclick=()=>toggleBlockedChatterList();
+    //
+
+    //admin user events
+        // if(isAdmin){
+        //     let newAdminUnmInputBtn= document.querySelector('.newAdminUnmInputBtn');
+        //     let newAdminUnmInput= document.querySelector('.newAdminUnmInput');
+
+        //     if(newAdminUnmInput && newAdminUnmInputBtn){
+        //         newAdminUnmInputBtn.onclick=()=> _confirmation_pop_up(newAdminUnmInput.value , "By clicking to 'Yes' the user will be Promoted to admin,<spna class='red'> Make sure to double check,You cannot go back</span>." , "__PROMOT_TO_ADMIN__");
+        //     }
+        // }
     //
 
     //functions to be called
@@ -392,3 +403,4 @@ function showChatBox(){
     chat.style.display='flex';
     inbox.style.display='block';
 }
+

@@ -2,6 +2,7 @@
 session_start();
 
 include_once('../functionality/db/_conn.php');
+include_once('../functionality/admin.php');
 include_once('../functionality/lib/_notification.php');
 include_once('../functionality/lib/_validation.php');
 include_once('../functionality/lib/_insert_data.php');
@@ -56,14 +57,16 @@ include_once('../functionality/lib/_data_delete.php');
 // print_r($res->fetch_assoc()) ;
 
 // echo _fetch_gender();
-$userID=getDecryptedUserID();
-$fetchedDataObj= fetch_columns('blocked',['fromID'],[$userID],array('toID'),'status');
+// $userID=getDecryptedUserID();
+// $fetchedDataObj= fetch_columns('blocked',['fromID'],[$userID],array('toID'),'status');
 
-// print_r( array $fetchedDataObj->fetch_all());
+// // print_r( array $fetchedDataObj->fetch_all());
 
-$blockedChatterList= array_map(function (array $memberID){
-                                    return _fetch_unm($memberID[0]);
-                                },$fetchedDataObj->fetch_all());
+// $blockedChatterList= array_map(function (array $memberID){
+//                                     return _fetch_unm($memberID[0]);
+//                                 },$fetchedDataObj->fetch_all());
 
-print_r($blockedChatterList);
+// print_r($blockedChatterList);
+echo is_admin();
+// echo create_admin("scott@123");
 ?>

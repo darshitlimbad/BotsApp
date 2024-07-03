@@ -958,7 +958,7 @@ const addNewMsgInCurrChat = (msgObj) => {
 
             let msgUserDP = new Image();
             msgUserDP.src = default_dp_src;
-            msgUserDP.classList.add('msgUserDP');
+            msgUserDP.classList.add('msgUserDP','skeleton');
             msgUserDiv.appendChild(msgUserDP);
 
             let msgUserUnm= document.createElement('b');

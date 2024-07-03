@@ -8,9 +8,10 @@
         exit();
     }else{
         session_check();
-
-        include_once('functionality/lib/_wrappers.php');
-        include_once('functionality/lib/_fetch_data.php');
+        $isAdmin= is_admin();
+        echo "<script>var isAdmin=$isAdmin</script>";
+        require_once('functionality/lib/_wrappers.php');
+        require_once('functionality/lib/_fetch_data.php');
         require_once('functionality/lib/_wrappers.php');
         require_once('functionality/lib/_fetch_data.php');
 
@@ -46,7 +47,7 @@
 </head>
 <body class="main">
     <header>
-            <?php custom_header();?>
+            <?php custom_header($isAdmin);?>
         <span class="status red">
             <span class="status-icon"></span>
         </span>
@@ -175,6 +176,25 @@
                 <h4 class="danger">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
                 <button class="danger-button button" name="Delete-Account">Delete Account</button>
+
+                <?php
+                if($isAdmin){
+                ?>
+                <!-- Create New Admin -->
+                <!-- <br><br><br><br>
+                <h4 class="danger heading">Create New Admin</h4>
+                        <p>Hey there Admin, <br>To create a new admin first he/she/it should be a user of Botsapp if not then create a user.</p>
+                        <p>Paste here the username of the user you want to promote to Admin.</p>
+                        <p style="font-size:12px"><span class="red">Warning:</span> You can't undo this operation so make sure the person you are promoting as a admin is the right one double check the Usernames and DP.</p>
+
+                <div class="edit_box flexBox" name="edit-gender">
+                @<input type="text" class="text edit newAdminUnmInput" style="font-size: 15px;width:60%" placeholder="Enter Username to Promote as a admin" maxlength="30" /> 
+                <img class="icon ele newAdminUnmInputBtn" style="border:none" height="20px" width="20px" src="/img/icons/send.png"/>  
+                </div> -->
+
+                <?php
+                }
+                ?>
             </div>
 
             <!-- Chat-body -->
@@ -266,5 +286,5 @@
 
 </body>
 
-<?php include_once('functionality/lib/_features.php'); ?>
+<?php require_once('functionality/lib/_features.php'); ?>
 </html>

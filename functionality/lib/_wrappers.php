@@ -1,9 +1,10 @@
 <?php    
-    function custom_header() {
+    function custom_header(string $isAdmin=null) {
+        $title = ($isAdmin == 1) ? "BotsApp Admin" : "BotsApp" ;
 ?>
         <div class="title">
             <img src="../img/logo.png" onclick="tohomepage()">
-            <h1 onclick="tohomepage()">BotsApp</h1>
+            <h1 onclick="tohomepage()"><?= $title?></h1>
         </div>
         <p>-A Better place for chat.</p>
         

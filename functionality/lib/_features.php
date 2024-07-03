@@ -8,7 +8,10 @@
 <div class="center pop_up_box" >
     
     <div id="confirmation_pop_up" class="pop_up">
-        <h3 class="title"></h3>
+        <div class="flexBox">
+            <img src class="skeleton icon" style="display:none;border-radius:50%;border:1px solid aliceblue;" height="50px" width="50px">
+            <h3 class="title"></h3>
+        </div>
         <hr>
         <div class="input_field">
             <p class="message"></p>

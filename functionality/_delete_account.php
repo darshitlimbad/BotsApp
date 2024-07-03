@@ -4,7 +4,10 @@ if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
     session_start();
 
     require_once('db/_conn.php');
+    require_once('lib/_data_delete.php');
     require_once('lib/_validation.php');
+    require_once("lib/_fetch_data.php");
+    require_once('lib/_notification.php');
 
     if(isset($_SESSION['userID'])) {
         $userID = getDecryptedUserID();

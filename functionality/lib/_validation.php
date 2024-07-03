@@ -17,6 +17,10 @@ function gen_new_id($preFix)  {
                 $table = "users";
                 $clm = "userID";
                 break;
+            case "Admin":
+                $table = "admins";
+                $clm = "adminID";
+                break;
             case "Msg":
                 $table = "messages";
                 $clm = "msgID";
@@ -240,6 +244,31 @@ function is_user_blocked(string $fromID, string $toID){
     }else{
         return 1;
     }
+}
+
+// @param adminID
+// @return user id admin or not by boolean value 1 or 0
+// @return if no adminID then userID itself will be considered us a adminID adn return 1 or 0
+function is_admin(string $adminID=null){
+    $userID= getDecryptedUserID();
+
+    if(!$userID || substr($userID,0,5) != "Admin")
+        return 0;
+
+    $mySqlObj= fetch_columns('admins',['adminID'],[$userID],['count(id)']);
+    if(!$mySqlObj || !$mySqlObj->fetch_column())
+        throw new Exception("Unauthorised Access Denied !!!",410);
+
+    if(!$adminID)
+        return 1;
+    else if(substr($adminID,0,5) != "Admin")
+        return 0;
+
+    $mySqlObj= fetch_columns('admins',['adminID'],[$adminID],['count(id)']);
+    if(!$mySqlObj)
+        return 0;
+    
+    return $mySqlObj->fetch_column();
 }
 
 function compressImg($imgObj , $quality = 50) {

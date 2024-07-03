@@ -57,7 +57,7 @@ function _onclick_Alert_hide(event)   {
 }
 
 function _add_Alert_show(str){
-    Alert.textContent = str;
+    Alert.innerHTML = str;
     Alert.classList.add('show');
 }
 
@@ -65,6 +65,6 @@ function _remove_Alert_show(){
     document.removeEventListener('click' , _onclick_Alert_hide);
     Alert.classList.remove('show');
     setTimeout(() => {
-        Alert.textContent = "";
+        Alert.innerHTML = "";
     }, 70); 
 }
