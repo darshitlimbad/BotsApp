@@ -570,16 +570,9 @@ class blockedChatterListBox{
                 userNameBlock.textContent = memberName;
                 member.appendChild(userNameBlock);
 
-                let removeFromListBtn= document.createElement('p');
-                removeFromListBtn.classList.add('red','ele','margin-dead');
-                Object.assign(removeFromListBtn.style,{
-                    border:'none',
-                    padding:'5px',
-                    position:'absolute',
-                    right:'5%',
-                    fontSize:'12px',
-                });
-                removeFromListBtn.textContent="Unblock";
+                let removeFromListBtn= document.createElement('button');
+                removeFromListBtn.classList.add('red','margin-dead','btn','red');
+                removeFromListBtn.textContent="UNBLOCK";
                 removeFromListBtn.onclick=()=>{
                     _unblockMember(btoa(memberName))
                     .then(res=>{

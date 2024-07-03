@@ -59,10 +59,18 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //option btns actions
     const optionActionList= {
-        'personal':"initiateChatBox('Personal')"
-    }
-        document.querySelectorAll(".options").forEach(option=>{
+        'personal':"initiateChatBox('Personal')",
+        'group':"initiateChatBox('Group')",
+        'admin-panel':"window.location.assign('/_admin.php')",
+        'add-new-chat':"toggleAddNewChatter()",
+        'noti':"toggle_noti_box()",
+        'settings':"toggle_settings_box()",
+    };
 
+        document.querySelectorAll(".options").forEach(option=>{
+            const optionAction= option.getAttribute('data-action');
+            if(optionActionList.hasOwnProperty(optionAction))
+                option.onclick=()=>eval(optionActionList[optionAction]);
         });
     //
 
@@ -106,15 +114,13 @@ const initiateChatBox = (chatType) => {
 
 // toggle add new Chatter
 function toggleAddNewChatter(){
+    if(window.location.pathname != "/")
+        window.location.assign('/');
+    
     let newChatterForm=document.querySelector("div#add_new_chat_form");
     if(newChatterForm.style.display=="none" || newChatterForm.style.display=="" ) {
         _add_new_chatter_form(); 
         document.querySelector('input#username').focus();
-
-        // document.addEventListener('keypress',(e)=>{
-        //     // if(e.keyCode )
-        //     console.log(e.key);
-        // });
     }else{
         _hide_this_pop_up(newChatterForm);
     }

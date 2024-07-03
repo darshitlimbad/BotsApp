@@ -2,7 +2,6 @@
 session_start();
 
 include_once('../functionality/db/_conn.php');
-include_once('../functionality/admin.php');
 include_once('../functionality/lib/_notification.php');
 include_once('../functionality/lib/_validation.php');
 include_once('../functionality/lib/_insert_data.php');
@@ -67,6 +66,6 @@ include_once('../functionality/lib/_data_delete.php');
 //                                 },$fetchedDataObj->fetch_all());
 
 // print_r($blockedChatterList);
-echo is_admin();
+// echo is_admin();
 // echo create_admin("scott@123");
 ?>

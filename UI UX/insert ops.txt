@@ -63,3 +63,43 @@ next session ops:
 
     //9 change every div hide and show events 
      //   -- use : onmouseenter and onmouseout --dropped coz it becomes toxic for mobiles
+
+
+
+
+
+
+
+!!!! ADMIN PANEL
+
+-> options of admin panel:
+1. users:
+        : get list of all the users as a list 
+                options: delete user.
+
+2. reports review: 
+        : get list of all the reports as a list 
+                report should have the name of the reporter and the the reported person and the reason of the report
+                options: delete | warn the reported person | Delete reported Person account;
+
+3. emojis review:
+        : The users can uplaoad emojis globaly | privately so when they want to upload a emoji globaly the admin must review first that's why we will need to review the emoji first 
+                options: accept | rename and accept | reject
+
+
+
+
+
+
+
+emoji table structure :
+
+columns:                      Defaults:
+1. id           int           not null        primary         AI
+2. emojiID      varchar(30)   not null        Unique          
+3. uploaderID   varchar(20)   not null        Unique                    Foreign key: emoji-uploaderID-key(to botsapp.users_acoount)
+4. scope        varchar(10)   not null                                  values_allowed: PUBLIC | PRIVATE | GROUP
+5. groupID      varchar(20)   null            Unique                    Foreign key: emoji-groupID-key(to botsapp.groups)
+6. name         varchar(20)   not null        Unique
+7. mime         varchar(50)   not null        none             
+8. blob         midBlob       not null        none

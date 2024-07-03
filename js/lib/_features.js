@@ -68,7 +68,7 @@
                         case 409:
                             if(getCookie('chat').toLowerCase() != 'personal' )
                                 initiateChatBox('Personal');
-                            setTimeout(()=>openChat(unm),500);
+                            setTimeout(()=> new openChatClass(unm),500);
                             new_notification(`'@${unm}' is already in Your Chatter List`);
                             break;
                         case 403:

@@ -54,7 +54,7 @@
     <div class="side-bar">
         <div class="top">
             <!-- Personal -->
-            <div class="options" title="Personal" data-action="personal" onclick="initiateChatBox(this.title)" >
+            <div class="options" title="Personal" data-action="personal">
                 <div class="img ">
                     <img src="/img/icons/options/chat-30.png" alt="Personal-Chat-Img" >
                 </div>
@@ -62,7 +62,7 @@
             </div>
             
             <!-- group -->
-            <div class="options" title="Group" data-action="group" onclick="initiateChatBox(this.title)"> 
+            <div class="options" title="Group" data-action="group"> 
                 <div class="img">
                     <img src="/img/icons/options/group_chat-48.png" alt="Group-Chat-Img">
                 </div>
@@ -85,28 +85,28 @@
         <div class="bottom">
 
             <!-- Add New Chat -->
-            <div class="options" title="addNewChat" data-action="add-new-chat" onclick="toggleAddNewChatter()" accesskey="a">
+            <div class="options" title="addNewChat" data-action="add-new-chat" accesskey="a">
                 <div class="img">
                     <div style="font-size: 20px;"><b>+</b></div> 
                 </div>
             </div>
 
             <!-- Notifications -->
-            <div class="options" title="Noti" data-action="noti" onclick="toggle_noti_box()" accesskey="n">
+            <div class="options" title="Noti" data-action="noti" accesskey="n">
                 <div class="img">
                     <img src="/img/icons/options/noti.png" alt="New-notification-img"> 
                 </div>
             </div>
 
             <!-- settings -->
-            <div class="options" title="Settings" data-action="settings" onclick="toggle_settings_box()" accesskey="s">
+            <div class="options" title="Settings" data-action="settings" accesskey="s">
                 <div class="img">
                     <img src="/img/icons/options/setting-24.png" alt="settings-img"> 
                 </div>
             </div>
 
             <!-- profile -->
-            <div class="options profile"  title="Profile" data-action="settings" onclick="toggle_settings_box()" accesskey="p">
+            <div class="options profile"  title="Profile" data-action="settings" accesskey="p">
                 <div class="img">
                     <img src="/img/dp-moon.png" class="avatar" title="<?= $unm?>" />
                 </div>

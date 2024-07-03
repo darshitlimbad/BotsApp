@@ -536,6 +536,7 @@ footer {
 
 .settings-box ul li:hover   {
     opacity: 80%;
+    cursor: pointer;
 }
 
 .settings-box ul li:hover , .settings-box .selected {
