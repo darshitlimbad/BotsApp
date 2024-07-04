@@ -73,20 +73,76 @@ next session ops:
 !!!! ADMIN PANEL
 
 -> options of admin panel:
-1. users:
-        : get list of all the users as a list 
-                options: delete user.
+Section-1 : accounts and groups settings:
 
-2. reports review: 
-        : get list of all the reports as a list 
-                report should have the name of the reporter and the the reported person and the reason of the report
-                options: delete | warn the reported person | Delete reported Person account;
+        1. users:
+                : get list of all the users as a list 
+                columns
+                        i.      id
+                        ii.     DP
+                        iii.    Username
 
-3. emojis review:
+                 options: 
+                        i.      delete user.
+
+        2.groups:
+                :get list of all the groups 
+                columns: 
+                        i.      id
+                        ii.     Group DP
+                        iii.    Group ID
+                        iv.     name
+                        v.      Owner name
+                
+                options:
+                        i.      delete
+
+        3. reports review: 
+                : get list of all the reports as a list 
+                        columns:
+                                + ID
+                                i.      reported person DP
+                                ii.     reportd to unm   (event: onclick(new_Alert( reported By usernames )))
+                                iii.    reason to report   ( full reason in title AND event: onclick (new_Alert(reason)) )
+
+                        options:
+                                i.      delete account
+                                ii.     warn the reported person and reject all the reports
+                                iii.    reject all reports
+
+section-2: emoji
+
+1. Emoji List:
+        : list out all the emojis uploaded by admin and users
+        
+                columns:
+                        i.      id
+                        +       uploader DP
+                        ii.     uoloader Username
+                        iii.    scope 
+                        iv.     groupID (if available else No Group)
+                        v.      name    (emoji name ex. :duar: )
+                        vi.     emoji
+                        vii.    status
+                options:
+                        i. delete
+
+2. Pending Emojis:
         : The users can uplaoad emojis globaly | privately so when they want to upload a emoji globaly the admin must review first that's why we will need to review the emoji first 
                 options: accept | rename and accept | reject
 
+                columns
+                        i.      ID
+                        ii.     uploader DP
+                        iii.    uplaoader UNM
+                        iv.     Scope
+                        v.      name
+                        vi.     emoji 
 
+                options:
+                        i.      accept
+                        ii.     change scope | name & accept
+                        iii.    reject
 
 
 
@@ -103,3 +159,4 @@ columns:                      Defaults:
 6. name         varchar(20)   not null        Unique
 7. mime         varchar(50)   not null        none             
 8. blob         midBlob       not null        none
+9. status       varchar(10)   not null                                  values_allowed: PENDING | ACCEPTED | REJECTED ( the code should auto matic delete the emojis which are rejected so there will be no values with rejected options )

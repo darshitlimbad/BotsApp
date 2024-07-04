@@ -16,35 +16,35 @@
 
     <div class="center">
     <!-- chat-box -->
-    <div class="chat-box bg-img">
-        <!-- chat-list -->
-        <div class="inbox">
+        <section class="chat-box bg-img">
+            <!-- chat-list -->
+            <div class="inbox">
 
-            <div class="page-title">
-                <h2 id="cname">Personal Chat</h2>
+                <div class="page-title">
+                    <h2 id="cname">Personal Chat</h2>
+                    
+                    <img class="icon ele createNewGroupBtn" data-show="false" src="/img/icons/options/plus.png" title="Create New Group">
+                </div>
                 
-                <img class="icon ele createNewGroupBtn" data-show="false" src="/img/icons/options/plus.png" title="Create New Group">
+                <div class="hr"></div>
+                
+                <!-- search-box -->
+                <div class="search">
+                    <input type="search" name="chatSearch" placeholder="search" autocomplete="off" accesskey="f">
+                </div>
+                
+                <table class="list" id="chatterList" title="Chatter List"> 
+                    <tbody class="listBody">
+
+                    </tbody>
+                </table>
             </div>
-            
-            <div class="hr"></div>
-            
-            <!-- search-box -->
-            <div class="search">
-                <input type="search" name="chatSearch" placeholder="search" autocomplete="off" accesskey="f">
+
+            <!-- opened-chat -->
+            <div class="chat">
             </div>
-            
-            <table class="list" id="chatterList" title="Chatter List"> 
-                <tbody class="listBody">
 
-                </tbody>
-            </table>
-        </div>
-
-        <!-- opened-chat -->
-        <div class="chat">
-        </div>
-
-    </div>
+        </section>
     </div>
 </body>
 </html>

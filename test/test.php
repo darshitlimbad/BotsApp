@@ -1,14 +1,14 @@
 <?php
-session_start();
+// session_start();
 
-include_once('../functionality/db/_conn.php');
-include_once('../functionality/lib/_notification.php');
-include_once('../functionality/lib/_validation.php');
-include_once('../functionality/lib/_insert_data.php');
-include_once('../functionality/lib/_fetch_data.php');
-include_once('../functionality/lib/_data_delete.php');
+// include_once('../functionality/db/_conn.php');
+// include_once('../functionality/lib/_notification.php');
+// include_once('../functionality/lib/_validation.php');
+// include_once('../functionality/lib/_insert_data.php');
+// include_once('../functionality/lib/_fetch_data.php');
+// include_once('../functionality/lib/_data_delete.php');
 
-    // $result=search_columns("users_account" , "unm" , "dar" , "unm");
+//     // $result=search_columns("users_account" , "unm" , "dar" , "unm");
     // $res;
     // $i=10;
     
@@ -69,3 +69,17 @@ include_once('../functionality/lib/_data_delete.php');
 // echo is_admin();
 // echo create_admin("scott@123");
 ?>
+
+
+<script>
+    function at(){
+        return (`
+            <nav>
+                <div>hello world</div>
+            </nav>`
+        );
+    }
+
+    // adocument.appendchild(at());
+    at();
+</script>

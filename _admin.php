@@ -11,19 +11,29 @@
 <head>
     <meta charset="UTF-8">
     <title>ADMIN -- BOTSAPP</title>
-    <link rel="stylesheet" type="text/css" href="css/index.css">
 
-    <script>
-        document.querySelector(`div.options[data-action="admin-panel"]`)?.classList.add("selected")
-    </script>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <link rel="stylesheet" type="text/css" href="css/_admin.css">
+
+    <script src="js/_admin.js" type="text/javascript"></script>
 </head>
 <body>
 
     <div class="center">
-        <!-- chat-box -->
-        <div class="chat-box">
-            
-        </div>
+        <!-- admin-panel -->
+        <main class="chat-box" name="admin-panel">
+            <section class="category" name="account-section">
+                <h1 class="category-title">Accounts Section :</h1>
+                
+                <div class="card-body">
+                    <div class="card">
+                        <img src="/img/icons/settings/account-64.png" alt="" class="icon">
+                        <h3 class="card-title">Users Management</h3>
+                    </div>
+                </div>
+                
+            </section>
+        </main>
     </div>  
 </body>
 </html>
