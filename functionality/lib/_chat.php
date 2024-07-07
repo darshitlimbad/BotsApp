@@ -38,6 +38,7 @@ if($data = json_decode( file_get_contents("php://input") , true)){
         }
         
     }else{
+        session_abort();
         header('Location: /');
     }
     session_abort();

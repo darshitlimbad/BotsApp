@@ -108,7 +108,7 @@
     function search_columns( $table , $point , $point_value , ...$columns){
         try{
             $point_value = '%'.$point_value.'%';
-            $query = "SELECT ". implode(' , ' , $columns) ." from `$table` WHERE `$point` LIKE ?";
+            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE `$point` LIKE ?";
             $stmt  = $GLOBALS['conn'] -> prepare($query);
             $stmt->bind_param('s' , $point_value );
             $sqlfire = $stmt->execute();

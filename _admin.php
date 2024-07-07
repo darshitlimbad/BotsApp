@@ -8,6 +8,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>ADMIN -- BOTSAPP</title>
@@ -15,26 +16,20 @@
     <link rel="stylesheet" type="text/css" href="css/index.css">
     <link rel="stylesheet" type="text/css" href="css/_admin.css">
 
-    <script src="js/_admin.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/admin/_admin.js" ></script>
+    <script type="text/javascript" src="js/admin/classes.js" ></script>
+    <script type="text/javascript" src="js/admin/_dataRequest.js" ></script>
+    <script type="text/javascript" src="js/lib/_classes.js" ></script>
 </head>
-<body>
+
+<body id="admin-page-body">
 
     <div class="center">
         <!-- admin-panel -->
         <main class="chat-box" name="admin-panel">
-            <section class="category" name="account-section">
-                <h1 class="category-title">Accounts Section :</h1>
-                
-                <div class="card-body">
-                    <div class="card">
-                        <img src="/img/icons/settings/account-64.png" alt="" class="icon">
-                        <h3 class="card-title">Users Management</h3>
-                    </div>
-                </div>
-                
-            </section>
         </main>
     </div>  
+
 </body>
 </html>
 

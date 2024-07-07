@@ -5,9 +5,11 @@ document.addEventListener('DOMContentLoaded' , () => {
 });
 
 //notification
-function new_notification(str) {
+function new_notification(msg=null) {
+    if(!msg)
+        return
     setTimeout(() => {
-        _add_notification_show(str);
+        _add_notification_show(msg);
         document.addEventListener('click' , _onclick_notification_hide);
     }, 100);
 }
@@ -20,8 +22,8 @@ function _onclick_notification_hide(event)   {
 }
 
 // show is class which shows a notifiacation
-function _add_notification_show(str){
-    notification.innerHTML = str;
+function _add_notification_show(msg){
+    notification.innerHTML = msg;
     notification.classList.add('show');
 }
 
@@ -35,12 +37,13 @@ function _remove_notification_show(){
 // 
 
 //Alert
-function new_Alert(str , time = null) {
-    setTimeout(() => {
+function new_Alert(msg=null , time = null) {
+    if(!msg)
+        return
 
-        _add_Alert_show(str);
+    setTimeout(() => {
+        _add_Alert_show(msg);
         document.addEventListener('click' , _onclick_Alert_hide);
-        
     } , 100);
 
     if(time != null) {
@@ -56,8 +59,8 @@ function _onclick_Alert_hide(event)   {
     }
 }
 
-function _add_Alert_show(str){
-    Alert.innerHTML = str;
+function _add_Alert_show(msg){
+    Alert.innerHTML = msg;
     Alert.classList.add('show');
 }
 

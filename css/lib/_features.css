@@ -11,6 +11,7 @@
     top: 25%;
     background-color:rgb(42 42 44 / 50%);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 3px 3px 15px black;
     border: 2px outset rgba(0, 0, 0, 0.707);
     border-radius: 20px;
@@ -30,20 +31,29 @@
     }
 }
 
-#create_newGroup_form , #blocked_chatter_list{
+
+#create_newGroup_form , #blocked_chatter_list , .form{
     display: flex;
     flex-direction: column;
     opacity: 1;
     top: 10%;
     overflow: hidden;
     max-height: 80vh;
+}
+
+.form{
+    max-width: 100%;
+}
+
+.form .memberList td{
 
 }
-#create_newGroup_form .heading , #blocked_chatter_list .heading{
+#create_newGroup_form .heading , #blocked_chatter_list .heading , .form .heading{
     display: block;
     height: auto;
     width: auto;
 }
+
 
 .memberList{
     overflow: auto;
@@ -215,6 +225,16 @@
 
 tbody.center{
     align-items: center;
+}
+
+.closeIcon{
+    background-color: transparent;
+    height: 2em;
+    width: 2em;
+    border-radius: 50%;
+    position: absolute;
+    top: 22%;
+    right: 5%;
 }
 
 /* responsive for mobile styles */

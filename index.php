@@ -16,9 +16,9 @@
 
     <div class="center">
     <!-- chat-box -->
-        <section class="chat-box bg-img">
+        <main class="chat-box bg-img">
             <!-- chat-list -->
-            <div class="inbox">
+            <section class="inbox">
 
                 <div class="page-title">
                     <h2 id="cname">Personal Chat</h2>
@@ -38,13 +38,13 @@
 
                     </tbody>
                 </table>
-            </div>
+            </section>
 
             <!-- opened-chat -->
-            <div class="chat">
-            </div>
+            <section class="chat">
+            </section>
 
-        </section>
+        </main>
     </div>
 </body>
 </html>

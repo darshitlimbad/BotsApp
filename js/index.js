@@ -266,7 +266,7 @@ const toggleDocsContainer = () => {
 
 // responsive for mobile changes
 function handleResize(){
-    if(window.innerWidth < 700){
+    if(window.outerWidth < 700){
         document.querySelector('body.main').classList.add('mobile');
         device='mobile';
         (!chatOpened)? showInbox() : hideInbox();

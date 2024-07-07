@@ -64,7 +64,7 @@
             <!-- group -->
             <div class="options" title="Group" data-action="group"> 
                 <div class="img">
-                    <img src="/img/icons/options/group_chat-48.png" alt="Group-Chat-Img">
+                    <img src="/img/icons/options/group_chat.svg" alt="Group-Chat-Img">
                 </div>
             </div>
 
@@ -151,7 +151,7 @@
             </li>
             <li class="" name="profile">
                 <div>
-                    <img src="/img/icons/settings/profile-64.png" height="20px" width="20px" alt="settings-profile-icon" >
+                    <img src="/img/icons/settings/profile.svg" height="20px" width="20px" alt="settings-profile-icon" >
                 </div>    
                 <p>Profile</p>
             </li>
@@ -273,8 +273,6 @@
             </div>
         </div>
     </div>
-
-<?php    require_once('functionality/lib/_features.php'); ?>
 
 </body>
 

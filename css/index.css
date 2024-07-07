@@ -44,7 +44,8 @@
 }
 
 .mobile .chat-box{
-    height: 80vh;
+    height: 95%;
+    width: 50%;
     min-width: 200px;
 }
 
@@ -80,7 +81,8 @@
 } */
 
 .mobile .chat-box .inbox{
-    width: 85%;
+    width: 50%;
+    max-width: 90%;
 }
 
 .chat-box .inbox .page-title{

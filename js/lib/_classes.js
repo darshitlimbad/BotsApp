@@ -97,6 +97,8 @@ class OptionContainer {
 
 class CreateNewGroupPopUp {
     constructor(members=[],action="new_group") {
+        document.querySelector('.pop_up_box #Create_newGroup_Form')?.remove();
+
         if(!members.length)
             return 0;
         this.members = members;
@@ -194,8 +196,15 @@ class CreateNewGroupPopUp {
     }
 
     show(){
+        if(document.querySelector('.pop_up_box').contains(this.form))
+            return;
+
         document.querySelector('.pop_up_box').appendChild(this.form);
+        setTimeout(()=>{document.onclick=()=>this.hide()},100);
+        this.form.onmouseenter=()=>document.onclick=null;
+        this.form.onmouseleave=()=>document.onclick=()=>this.hide();
     }
+
 
     hide(){
         this.form.remove();
@@ -244,7 +253,6 @@ class CreateNewGroupPopUp {
 
     }
 }
-
 
 class openChatClass{
     constructor(unm,ID=null){
@@ -498,14 +506,16 @@ class openChatClass{
 
 class blockedChatterListBox{
     constructor(){
-            this.form = document.createElement("div");
-            this.form.classList.add('pop_up');
-            this.form.id = "blocked_chatter_list";
+        document.querySelector('.pop_up_box #blocked_chatter_list')?.remove();
 
-            this.memberList=null;
+        this.form = document.createElement("div");
+        this.form.classList.add('pop_up');
+        this.form.id = "blocked_chatter_list";
 
-            this.heading();
-            this.displayMemberList();
+        this.memberList=null;
+
+        this.heading();
+        this.displayMemberList();
     }
 
     heading() {
@@ -518,18 +528,9 @@ class blockedChatterListBox{
         header.appendChild(title);
 
         let closeIconDiv = document.createElement('button');
-        closeIconDiv.classList.add("icon",'ele','skeleton');
+        closeIconDiv.classList.add("icon",'ele','skeleton','closeIcon');
         closeIconDiv.style.border='none';
         closeIconDiv.title="Close";
-        Object.assign(closeIconDiv.style,{
-            background:'transparent',
-            height:'2em',
-            width:'2em',
-            borderRadius:'50%',
-            position:'absolute',
-            top:'22%',
-            right:'5%',
-        });
         closeIconDiv.onclick=()=>this.hide();
         header.appendChild(closeIconDiv);
             let closeIconImg = new Image();
@@ -599,9 +600,15 @@ class blockedChatterListBox{
     }
 
     show(){
-        if(!document.querySelector('.pop_up_box').contains(this.form))
-            document.querySelector('.pop_up_box').appendChild(this.form);
+        if(document.querySelector('.pop_up_box').contains(this.form))
+            return;
+
+        document.querySelector('.pop_up_box').appendChild(this.form);
+        setTimeout(()=>{document.onclick=()=>this.hide()},100);
+        this.form.onmouseenter=()=>document.onclick=null;
+        this.form.onmouseleave=()=>document.onclick=()=>this.hide();
     }
+
 
     hide(){
         this.form.remove();
