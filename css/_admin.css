@@ -42,7 +42,7 @@ body.main{
 .category .card-body{
     display: grid;
     grid-auto-flow: column;
-    grid: auto-flow / auto auto auto ;
+    grid: auto-flow / .5fr .5fr .5fr ;
     height: auto;
     width: auto;
     padding: 2%;
@@ -53,7 +53,7 @@ body.main{
 
 @media screen and ( max-width:850px ){
     .category .card-body{
-        grid: auto-flow / auto auto ;
+        grid: auto-flow / .3fr .3fr ;
     }
 }
 
@@ -72,10 +72,10 @@ body.main{
     font-family: 'Times New Roman', Times, serif;
 }
 
-/* .mobile .category .card{
-    height: 12em;
-    width: 15em;
-} */
+.mobile .category .card{
+    height: 9em;
+    width: 8em;
+}
 
 .category .card:hover{
     cursor: pointer;
@@ -87,6 +87,10 @@ body.main{
 .category .card .icon{
     height: 40px;
     width: 40px;
+}
+.mobile .category .card .icon{
+    height: 30px;
+    width: 30px;
 }
 
 .category .card .card-title{

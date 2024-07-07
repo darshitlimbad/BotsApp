@@ -44,8 +44,7 @@
 }
 
 .mobile .chat-box{
-    height: 95%;
-    width: 50%;
+    height: 90vh;
     min-width: 200px;
 }
 
@@ -81,8 +80,7 @@
 } */
 
 .mobile .chat-box .inbox{
-    width: 50%;
-    max-width: 90%;
+    width: 85%;
 }
 
 .chat-box .inbox .page-title{
@@ -298,7 +296,8 @@
     outline: 2px solid rgb(1, 12, 23);
     border-radius: 0 10px 10px 0;
     background-color: var(--main-bg-color);
-    font-family: 'Arial Narrow', Arial, sans-serif;
+    /* font-family: 'Arial Narrow', Arial, sans-serif; */
+font-family: cursive , 'Times New Roman', Times, serif;
     justify-content: center;
     --chat-font-small : 10px;
     --chat-font-medium : 12px;
@@ -656,6 +655,7 @@
     padding: 2px;
     margin: 0;
     user-select: text;
+    -webkit-user-select: text;
     white-space: pre-wrap;
 }
 
@@ -686,7 +686,7 @@
     position: relative;
     white-space: nowrap;
     font-size: small;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -788,6 +788,7 @@
     background-color: rgba(107, 107, 107, 0.202);
     border-radius: var(--border-radius);
     backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     transition: all .5s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
@@ -863,6 +864,7 @@
     /* align-self: end; */
     position: relative;
     backdrop-filter: brightness(0.3);
+    -webkit-backdrop-filter: brightness(0.3);
     box-shadow: -5px 5px 20px #00000069;
     border-radius: 3px;
     border: none;
@@ -896,6 +898,7 @@
 
 .chat .chatBody .msgContainer .optionBtn:hover{
     backdrop-filter: brightness(0.1);
+    -webkit-backdrop-filter: brightness(0.1);
 }
 .chat .chatBody .msgContainer .optionBtn:hover > svg{
     fill: rgb(83, 83, 83);
@@ -924,6 +927,7 @@
     padding: 15px;
     font-size: 12px;
     user-select: none;
+    -webkit-user-select: none;
 }
 .mobile .msgContainer.send .option-container{
     left:-8em;
@@ -1015,12 +1019,14 @@
     width: 100%;
     margin: 3px 0;
     user-select: text;
+    -webkit-user-select: text;
     color: var(--heading-color);
 
 }
 
 .flexBox p{
     user-select: text;
+    -webkit-user-select: text;
     /* font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; */
     font-family: 'Times New Roman', Times, serif;
 }

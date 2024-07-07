@@ -31,6 +31,7 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .icon[data-show="false"]{
@@ -100,6 +101,7 @@ span{
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
     height: 90%;
     width: 90%;
     padding: 10px;
@@ -182,6 +184,7 @@ body.main{
     background-color:rgb(1, 12, 23);
     color: aliceblue;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .skeleton   {
@@ -291,6 +294,7 @@ footer {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .side-bar .bottom   {
@@ -503,6 +507,7 @@ footer {
     border-radius: var(--border-radius);
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.4) , -5px -5px 10px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
     padding: 7px;
     margin: 7px;
     list-style-type: none;
@@ -762,6 +767,7 @@ footer {
     border: none;
     color: white;
     user-select: text;
+    -webkit-user-select: text;
     grid-column: 1;
 }
 
@@ -878,6 +884,7 @@ footer {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    -webkit-user-select: none;
 }
 
 .button:hover {
@@ -1010,7 +1017,7 @@ footer {
         margin : 0px;
     }
     header p {
-        display: none;
+        display: none !important;
     }
 
 }
