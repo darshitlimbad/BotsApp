@@ -1062,6 +1062,7 @@ font-family: cursive , 'Times New Roman', Times, serif;
 .member{
     border-bottom:  var(--thin-wh-border);
     justify-content: flex-start;
+    flex-wrap: wrap;
 }
 
 

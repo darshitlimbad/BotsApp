@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 function init_adminPanel(){
+    //the list of catagories available in admin panel
     var category_list = ['account','emojis'];
     
     category_list.forEach(category=>{
@@ -30,4 +31,8 @@ function handleResize(){
 //users Management list form function
 function openUsersManagementList(){
     var obj=new UsersManagementForm();
+}
+
+function openGroupsManagementList(){
+    var obj=new GroupsManagementForm();
 }

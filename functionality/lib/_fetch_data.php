@@ -7,7 +7,7 @@
         }
         if(isset($data['req']) && isset($_SESSION['userID'])){
             require_once('../db/_conn.php');
-            require_once('./_validation.php');
+            require_once('../lib/_validation.php');
 
             if($data['req'] == "get_dp") {
                 if(isset($data['unm']))

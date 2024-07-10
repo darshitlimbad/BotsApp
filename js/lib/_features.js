@@ -25,14 +25,15 @@
 
                     if(!base64){
                         let res= await postReq(url_for_get_dp , JSON.stringify(dataToSend));
-                        if(res.status != "success" || res.responseText == 0 )
+                        console.log(res.responseText.data);
+                        if(res.status != "success" || res.responseText == 0 || !res.responseText.data )
                             throw res.responseText;
                         
                         const { data , mime } = res.responseText;
                         base64 = `data:${mime};base64,${data}`;
                         localStorage.setItem(key, base64);
                     }
-
+                    console.log(base64);
                     resolve(base64)
                     // _getDataURL(base64)
                     //     .then(res=>{

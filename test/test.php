@@ -68,19 +68,21 @@ include_once('../functionality/db/_conn.php');
 // print_r($blockedChatterList);
 // echo is_admin();
 // echo create_admin("scott@123");
-$startID=34;
-$SQL= "SELECT id,CONCAT(surname,' ',name) AS full_name,unm,email FROM `users` WHERE id > ? ORDER BY id ASC LIMIT 25";
-$STMT= $GLOBALS['conn']->prepare($SQL); 
-$STMT->bind_param("s",$startID);
-$sqlFire=$STMT->execute();
+// $startID=34;
+// $SQL= "SELECT id,CONCAT(surname,' ',name) AS full_name,unm,email FROM `users` WHERE id > ? ORDER BY id ASC LIMIT 25";
+// $STMT= $GLOBALS['conn']->prepare($SQL); 
+// $STMT->bind_param("s",$startID);
+// $sqlFire=$STMT->execute();
 
-if(!$sqlFire)
-    throw new Exception("Something Went wrong",400);
+// if(!$sqlFire)
+//     throw new Exception("Something Went wrong",400);
 
-$result=$STMT->get_result();
-$STMT->close();
+// $result=$STMT->get_result();
+// $STMT->close();
 
-return json_encode($result->fetch_all());
+// return json_encode($result->fetch_all());
+
+// echo "sdsds" && echo "hello";
 ?>
 
 <!-- 

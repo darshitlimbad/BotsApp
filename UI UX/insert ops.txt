@@ -90,8 +90,8 @@ Section-1 : accounts and groups settings:
                 columns: 
                         i.      id
                         ii.     Group DP
-                        iii.    Group ID
-                        iv.     name
+                        iii.    name
+                        iv.     Group ID
                         v.      Owner name
                 
                 options:

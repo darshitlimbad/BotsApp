@@ -200,7 +200,6 @@ class CreateNewGroupPopUp {
             return;
 
         document.querySelector('.pop_up_box').appendChild(this.form);
-        setTimeout(()=>{document.onclick=()=>this.hide()},100);
         this.form.onmouseenter=()=>document.onclick=null;
         this.form.onmouseleave=()=>document.onclick=()=>this.hide();
     }
@@ -604,7 +603,6 @@ class blockedChatterListBox{
             return;
 
         document.querySelector('.pop_up_box').appendChild(this.form);
-        setTimeout(()=>{document.onclick=()=>this.hide()},100);
         this.form.onmouseenter=()=>document.onclick=null;
         this.form.onmouseleave=()=>document.onclick=()=>this.hide();
     }

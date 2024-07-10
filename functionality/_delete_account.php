@@ -17,9 +17,8 @@ if(isset($_GET['key_pass']) && $_GET['key_pass'] === "khulJaSimSim") {
         $GLOBALS['conn']->query($deleteInbox);
 
         if($fetchJoinedGroups->num_rows !== 0){
-            while($GID = $fetchJoinedGroups->fetch_column()){
+            while($GID = $fetchJoinedGroups->fetch_column())
                 delete_group($GID);
-            }
         }
 
         $delete = deleteData('users',$userID);

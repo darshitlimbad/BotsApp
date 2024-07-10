@@ -489,7 +489,6 @@ async function openUserProfile(unm){
         });
         
     chatStruct.heading.appendChild(userProfile);
-    document.onclick=()=>userProfile.remove();
     userProfile.onmouseenter=()=>document.onclick=null;
     userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
 }
@@ -660,7 +659,6 @@ async function openGroupProfile(){
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);
-        document.onclick=()=>userProfile.remove();
         userProfile.onmouseenter=()=>document.onclick=null;
         userProfile.onmouseleave=()=>document.onclick=()=>userProfile.remove();
     },200 );

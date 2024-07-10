@@ -21,6 +21,11 @@
     /* transform: translateY(-500px); */
     animation: fadein .3s 1 cubic-bezier(0.075, 0.82, 0.165, 1);
 }
+.mobile .pop_up{
+    width: 60vw;
+    min-width: 300px;
+}
+
 .pop_up .message{
     font-family: var(--text-font);
 }
@@ -43,53 +48,70 @@
 
 .form{
     max-width: 100%;
+    width: 60%;
 }
 
-.form .memberList td{
-
+.form .body {
+    min-height: 25vh;
+    overflow: auto;
+    overflow-x: hidden;
 }
+
+.form table{
+    width: 100%;
+}
+
+.form table td{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 30%;
+}
+
+/* ? dp node */
+.form table td:nth-child(1){
+    width: auto;
+}
+/* ? unm node */
+.form table td:nth-child(2){
+    width: 30%;
+}
+.mobile .form table td:nth-child(2){
+    width: 60%;
+}
+/* ? btn node */
+.form table td:last-child{
+    width: auto;
+}
+
+
+.mobile .form table td{
+    display: none;
+}
+
+/* ? dp & unm & btn node */
+.mobile .form table td:nth-child(1), .mobile .form table td:nth-child(2), .mobile .form table td:last-child{
+    display: block;
+}
+
+.form .body .msg{
+    /* height: 5vh; */
+    height: 22vh;
+    display: flex;
+    align-items:center;
+    justify-content: center;
+}
+
 #create_newGroup_form .heading , #blocked_chatter_list .heading , .form .heading{
     display: block;
     height: auto;
     width: auto;
 }
 
-
 .memberList{
     overflow: auto;
     height: 100%;
 }
-/* 
-    for creating a member list 'Button' this variables are needed to fill colors and design
-    1. --bg-color:(background color)
-    3. --color : (text color)
-
-*/
-.memberList .btn{
-    padding: 5px;
-    position: absolute;
-    right: 5%;
-    font-size: 10px;
-    border-radius: 5px;
-    border:none;
-    background-color: var(--bg-color);
-    color: var(--color);
-}
-.memberList .btn:hover{
-    cursor: pointer;
-    transition: all .5s cubic-bezier(0.04, 0.37, 0.49, 1.04);
-    filter: brightness(50%);    
-}
-
-.memberList .btn.red{
-    --bg-color:darkred;
-    --color:whitesmoke;
-}
-.memberList .btn.green{
-    --bg-color:darkgreen;
-    --color:whitesmoke;
-}
-
 
 #Create_newGroup_Form .pop_up_yes_btn{
     --color: aliceblue;
@@ -237,12 +259,6 @@ tbody.center{
     right: 5%;
 }
 
-/* responsive for mobile styles */
-.mobile .pop_up{
-    width: 60vw;
-    min-width: 300px;
-}
-
 .mobile .pop_up .message , .mobile .pop_up .button{
     font-size: 10px;
 }
@@ -250,8 +266,53 @@ tbody.center{
 .mobile .pop_up .title{
     font-size: medium;
 }
-/* .mobile .pop_up input{
-    width: 15em;
-} */
 
-/*  */
+
+/* 
+    for creating a member list 'Button' this variables are needed to fill colors and design
+    1. --bg-color:(background color)
+    3. --color : (text color)
+
+*/
+.flexBox .btn{
+    padding: 5px;
+    font-size: 10px;
+    border-radius: 5px;
+    border:none;
+    background-color: var(--bg-color);
+    color: var(--color);
+    border: 1px solid var(--color);
+}
+
+/* ? btn hover styles for flexbox btns and global style for disabled .btn  */
+.flexBox .btn:hover , .btn[disabled]{
+    cursor: pointer;
+    transition: all .5s cubic-bezier(0.04, 0.37, 0.49, 1.04);
+    filter: brightness(50%);    
+}
+
+.flexBox .btn.red{
+    --bg-color:darkred;
+    --color:darkgrey;
+}
+.flexBox .btn.green{
+    --bg-color:darkgreen;
+    --color:darkgrey;
+}
+
+.memberList .btn{
+    position: absolute;
+    right: 5%;
+}
+.mobile .memberList .btn{
+    position: relative;
+    right: 5%;
+}
+
+.form footer button{
+    padding: 10px;
+    margin: auto 10px;
+    font-family: cursive;
+}
+
+

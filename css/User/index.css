@@ -23,7 +23,7 @@ body.user{
 header{
     height: 4rem !important;
     outline: 3px solid aliceblue;
-    border-radius: 10px;
+    border-radius: 50px;
 }
 header img{
     height: 3rem !important;
