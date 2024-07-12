@@ -83,6 +83,8 @@ include_once('../functionality/db/_conn.php');
 // return json_encode($result->fetch_all());
 
 // echo "sdsds" && echo "hello";
+
+echo 0 ?? "hhi";
 ?>
 
 <!-- 

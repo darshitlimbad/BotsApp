@@ -40,11 +40,12 @@
             _submit_btn_disable();
         }else   {
             var request = new XMLHttpRequest();
-            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&UNM="+inputed_unm;
-    
+            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&UNM="+btoa(inputed_unm);
+
             request.onreadystatechange = function () {
-                console.log(request.responseText);
                 if(request.readyState === 4 && request.status === 200)  {
+                console.log(request.responseText);
+
                     // res == 1 = available ,  res == 0 = not available
                     var res = request.responseText;
 
@@ -86,7 +87,7 @@
             email_span.style.display = 'block';
         }else {
             var request = new XMLHttpRequest();
-            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&EMAIL="+email.value;
+            var URL = location.origin + "/functionality/lib/_chk_available.php?passkey=khuljasimsim&EMAIL="+btoa(email.value);
 
             request.onreadystatechange = function () {
                 if(request.readyState === 4 && request.status === 200)  {

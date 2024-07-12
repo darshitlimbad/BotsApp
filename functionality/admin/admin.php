@@ -1,4 +1,7 @@
 <?php
+
+use Random\RandomException;
+
     if($data = json_decode( file_get_contents("php://input") , true)){
         session_start();
         if(isset($_SESSION['userID'])){
@@ -11,8 +14,16 @@
                     echo getUsersList();
                 else if($data['req'] === "getGroupsList")
                     echo getGroupsList();
+                else if($data['req'] === "getReportsList")
+                    echo getReportsList();
                 else if($data['req'] === "deleteUser")
                     echo deleteUser( _get_userID_by_UNM( base64_decode($data['unm']) ) );
+                else if($data['req'] === "warnUser")
+                    echo warnUser( _get_userID_by_UNM( base64_decode($data['unm']) ));
+                else if($data['req'] === "rejectReport")
+                    echo rejectReport( _get_userID_by_UNM( base64_decode($data['unm']) ));
+                else if($data['req'] === "deleteGroup")
+                    echo deleteGroup( base64_decode($data['GID']) );
             }
         }else{
             session_abort();
@@ -26,7 +37,7 @@
     function getUsersList(){
         try{
             $SQL= " SELECT id,CONCAT(surname,' ',name) AS full_name,unm,email 
-                    FROM `users` WHERE userID != (SELECT adminID FROM admins) ORDER BY id ASC";
+                    FROM `users` WHERE userID not in (SELECT adminID FROM admins) ORDER BY id ASC";
 
             $STMT= $GLOBALS['conn']->prepare($SQL); 
             $sqlFire=$STMT->execute();
@@ -40,12 +51,13 @@
             $usersList=[];
             
             for($i=0; $i < $result->num_rows ; $i++)
-                    $usersList[$i]=$result->fetch_assoc();
+                $usersList[$i]=$result->fetch_assoc();
 
             // while($usersList[]=$result->fetch_assoc());
 
             return json_encode($usersList);
         }catch(Exception $e){
+            print_r($e);
             $error = [
                 'error'=>true,
                 'code'=> $e->getCode(),
@@ -91,7 +103,39 @@
         }
     }
 
-    function deleteUser($userID){
+    function getReportsList(){
+        try{
+            $SQL= " SELECT *
+                    FROM `reports` ORDER BY id ASC";
+
+            $result= $GLOBALS['status']->query($SQL) ?? null; 
+
+            if(!$result)
+                throw new Exception("Something Went wrong",400);
+
+            $usersList=[];
+            $num_rows= $result->num_rows;
+            for($i=0; $i < $num_rows ; $i++){
+                $row=$result->fetch_assoc();
+
+                $usersList[$i]['id']=$row['id'];
+                $usersList[$i]['reportedBy']= _fetch_unm($row['fromID']);
+                $usersList[$i]['reportedTo']= _fetch_unm($row['toID']);
+                $usersList[$i]['reason']= $row['reason'];
+            }
+
+            return json_encode($usersList);
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function deleteUser($userID=null){
         try{
             if(!$userID)
                 throw new Exception("User Not Found",411);
@@ -118,6 +162,74 @@
             ];
             return json_encode($error);
         }
+    }
+    
+    function warnUser($userID=null){
+        try{
+            if(!$userID)
+                throw new Exception("User Not Found",411);
 
+            require_once("../lib/_notification.php");
+
+            
+            
+            if(deleteData('reports',$userID,'toID','status')){
+                $data=[
+                    'action'=>'warning',
+                    'toID'=>$userID,
+                ];
+                add_new_noti($data);
+
+                return 1;
+            }else
+                throw new Exception("Something went wrong",400);
+            
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+    
+    function rejectReport($userID=null){
+        try{
+            if(!$userID)
+                throw new Exception("User Not Found",411);
+
+            return deleteData('reports',$userID,'toID','status');            
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function deleteGroup($GID=null){
+        try{
+            if(!$GID || !is_data_present("groups",["groupID"],[$GID],"id"))
+                throw new Exception("Group Not Found",411);
+            $res=0;
+            $res= deleteData("groups",$GID,"groupID");
+            if($res)
+                $res= deleteData('inbox',$GID,"toID");
+
+            return $res;            
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
     }
 ?>

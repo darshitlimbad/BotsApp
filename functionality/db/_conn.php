@@ -1,5 +1,6 @@
 <?php
     // php.ini changes
+        define("SYSTEM", "ADMIN00000001");
         define("MAX_DOC_SIZE" , 16777200);
         define("REQUEST_TIME",2);
     // 

@@ -31,7 +31,7 @@ if($data = json_decode( file_get_contents("php://input") , true)){
 function add_new_noti($data) {
     // all notification Template :
     /*
-    !sending add user as a chatter request
+    !sending add user chatter request
     $data=[
         'action'=>'addUserReq',
         'toID'=>$fromID, / 'unm'=> unm,
@@ -79,6 +79,13 @@ function add_new_noti($data) {
         'msg'=>['msgID'=>msgID],
         'toID'=>$oppoUserID,
     ];
+
+    !send warning from system 
+    $data=[
+        'action'=>'warning',
+        'msg'=>['msg'=> ```default: "You have been Warned by the Botsapp Team."```],
+        'toID'=>$oppoUserID,
+    ]
     */
     try{
         $newNotiID = gen_new_notification_id();
@@ -109,11 +116,17 @@ function add_new_noti($data) {
                 case 'acceptedChatterReq':
                 case 'chatterReqRejected':
                 case 'groupMemberAdded':
-                
                 case "reloadChat":
                 case "msgDeleted":
                 case "groupRemovedMember":
                 break;
+
+                case 'warning':
+                    $fromID= SYSTEM ;
+                    if(!$msg)
+                        $msg=['msg'=>"You have been Warned by the Botsapp Team."];
+
+                    break;
 
                 default:
                     return 0;

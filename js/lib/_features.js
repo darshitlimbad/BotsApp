@@ -25,7 +25,6 @@
 
                     if(!base64){
                         let res= await postReq(url_for_get_dp , JSON.stringify(dataToSend));
-                        console.log(res.responseText.data);
                         if(res.status != "success" || res.responseText == 0 || !res.responseText.data )
                             throw res.responseText;
                         
@@ -33,7 +32,7 @@
                         base64 = `data:${mime};base64,${data}`;
                         localStorage.setItem(key, base64);
                     }
-                    console.log(base64);
+
                     resolve(base64)
                     // _getDataURL(base64)
                     //     .then(res=>{
@@ -196,6 +195,20 @@
                                     
                                 // }
                                 
+                            }else if(row['action'] === "warning"){
+                                console.log(row);
+
+                                box_data=document.createElement("div");
+                                box_data.classList.add("box_data",`${row['action']}`);
+                                box.appendChild(box_data);
+
+                                box_data.innerHTML = `
+                                    <h4 class="unm"  style="color:red">@${row['unm']}</h4>
+                                    <div class="hr" style="background-color:red"></div>
+                                    <div class="msg">${row.msg.msg}</div>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
                             }
                         })
                     }else{

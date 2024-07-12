@@ -78,7 +78,6 @@ Section-1 : accounts and groups settings:
         1. users:
                 : get list of all the users as a list 
                 columns
-                        i.      id
                         ii.     DP
                         iii.    Username
 
@@ -88,7 +87,6 @@ Section-1 : accounts and groups settings:
         2.groups:
                 :get list of all the groups 
                 columns: 
-                        i.      id
                         ii.     Group DP
                         iii.    name
                         iv.     Group ID
@@ -100,15 +98,14 @@ Section-1 : accounts and groups settings:
         3. reports review: 
                 : get list of all the reports as a list 
                         columns:
-                                + ID
-                                i.      reported person DP
-                                ii.     reportd to unm   (event: onclick(new_Alert( reported By usernames )))
-                                iii.    reason to report   ( full reason in title AND event: onclick (new_Alert(reason)) )
+                                i.    reported By unm  
+                                ii.   reported to UNM
+                                iii.  reason to report   ( full reason in title AND event: onclick (new_Alert(reason)) )
 
                         options:
                                 i.      delete account
-                                ii.     warn the reported person and reject all the reports
-                                iii.    reject all reports
+                                ii.     warn the reported person and reject the report
+                                iii.    reject reports
 
 section-2: emoji
 

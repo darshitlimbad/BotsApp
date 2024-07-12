@@ -70,7 +70,7 @@
 
 /* ? dp node */
 .form table td:nth-child(1){
-    width: auto;
+    width: 3em;
 }
 /* ? unm node */
 .form table td:nth-child(2){
@@ -298,6 +298,10 @@ tbody.center{
 .flexBox .btn.green{
     --bg-color:darkgreen;
     --color:darkgrey;
+}
+.flexBox .btn.white{
+    --bg-color:whitesmoke;
+    --color:black;
 }
 
 .memberList .btn{

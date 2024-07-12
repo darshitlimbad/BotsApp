@@ -36,3 +36,7 @@ function openUsersManagementList(){
 function openGroupsManagementList(){
     var obj=new GroupsManagementForm();
 }
+
+function openReportsList(){
+    var obj=new reportsReviewForm();
+}
