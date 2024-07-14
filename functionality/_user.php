@@ -12,7 +12,7 @@ try{
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
-            $email = $_POST['e-mail'];
+            $email = filter_var( $_POST['e-mail'] , FILTER_VALIDATE_EMAIL ) ?? 0;
             $hashed_pass = password_hash($_POST['pass'] , PASSWORD_BCRYPT);
             $pass_key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
 
@@ -21,10 +21,10 @@ try{
             // validation
             if(!$surname || !$name || !$unm || !$email || !$hashed_pass || !$pass_key )
                 throw new Exception('',400);
-            if(strpos($unm,'@'))
+            else if(strpos($unm,'@'))
                 throw new Exception("Username is Invalid!!",414);
-            if(is_data_present("users" , ["unm"] , [$unm] , 'unm') || 
-                is_data_present("users" , ["email"] , [$email] , 'email') )
+            else if(is_data_present("users" , ["unm"] , [$unm] , 'unm') || 
+                    is_data_present("users" , ["email"] , [$email] , 'email') )
                 throw new Exception("Username or Email is already exsits",412);
         
             $user = createUser(["surname" , "name" , "unm" , "email" , "pass" , "pass_key"] ,

@@ -86,6 +86,13 @@ function add_new_noti($data) {
         'msg'=>['msg'=> ```default: "You have been Warned by the Botsapp Team."```],
         'toID'=>$oppoUserID,
     ]
+    
+    ?send info from system 
+    $data=[
+        'action'=>'info',
+        'msg'=>['msg'=> ],
+        'toID'=>$oppoUserID,
+    ]
     */
     try{
         $newNotiID = gen_new_notification_id();
@@ -125,8 +132,13 @@ function add_new_noti($data) {
                     $fromID= SYSTEM ;
                     if(!$msg)
                         $msg=['msg'=>"You have been Warned by the Botsapp Team."];
-
                     break;
+                case 'info':
+                    $fromID= SYSTEM ;
+                    if(!$msg)
+                        return;
+                    break;
+
 
                 default:
                     return 0;

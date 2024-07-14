@@ -53,6 +53,9 @@ handler.err_401 = () => {
 handler.err_405 = () => {
     new_Alert( "Name can't be Empty");
 }
+handler.err_409 = () => {
+    new_Alert( " Invalid Scope!!! ");
+}
 handler.err_410 = () => {
     new_Alert( " Unauthorised Access Denied !!! ");
 }

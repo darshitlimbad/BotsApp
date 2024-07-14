@@ -2,11 +2,35 @@
 session_start();
 
 include_once('../functionality/db/_conn.php');
-// include_once('../functionality/lib/_notification.php');
-// include_once('../functionality/lib/_validation.php');
-// include_once('../functionality/lib/_insert_data.php');
-// include_once('../functionality/lib/_fetch_data.php');
-// include_once('../functionality/lib/_data_delete.php');
+include_once('../functionality/lib/_notification.php');
+include_once('../functionality/lib/_validation.php');
+include_once('../functionality/lib/_insert_data.php');
+include_once('../functionality/lib/_fetch_data.php');
+include_once('../functionality/lib/_data_delete.php');
+
+// if(isset($_POST['sub'])){
+//     $imgObj= $_FILES['input'];
+
+//     $tmp_name=$_COOKIE['imgDir'].$imgObj['name'];
+//     move_uploaded_file($imgObj['tmp_name'],$tmp_name);
+//     $imgObj['tmp_name']=$tmp_name;
+
+//     $updatedImgObj= compressImg($imgObj,$quality=100,['width'=>150,'height'=>150]);
+//     // echo $updatedImgObj['tmp_name'];   
+//     print_r($updatedImgObj);
+// }
+
+$name='343_dsds4';
+
+
+echo preg_match("/\W+/",$name);
+// $userID= getDecryptedUserID();
+// $data=[
+//     'action'=>'info',
+//     'msg'=>['msg'=> "Your emoji has been uploaded for public use and is currently pending approval. An admin will review it, and we will notify you once a decision is made."],
+//     'toID'=>$userID,
+// ];
+// add_new_noti($data);
 
 //     // $result=search_columns("users_account" , "unm" , "dar" , "unm");
     // $res;
@@ -84,7 +108,7 @@ include_once('../functionality/db/_conn.php');
 
 // echo "sdsds" && echo "hello";
 
-echo 0 ?? "hhi";
+// echo 0 ?? "hhi";
 ?>
 
 <!-- 

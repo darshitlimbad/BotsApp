@@ -435,6 +435,7 @@ footer {
     font-size: small;
     padding: 5px;
     font-family: var(--text-font);
+    list-style-type: disc;
 }
 
 .noti-box .conteiner .box_data .reject_btn , .noti-box .conteiner .box_data .accept_btn {
@@ -832,10 +833,6 @@ footer {
 
 .link:hover{
     color: rgb(0, 153, 0);
-}
-
-.danger{
-    color: red;
 }
 
 .success-button{

@@ -118,7 +118,7 @@
                                     <h4 class="unm">@${row['unm']}</h4>
                                     <div class="hr"></div>
                 
-                                    <div class="msg">${row['unm']} wants to add you in the Personal chat list,</div>
+                                    <li class="msg">${row['unm']} wants to add you in the Personal chat list,</li>
                 
                                     <div class="buttons">
                                         <button name="reject_btn" id="reject_btn" class="danger-button reject_btn button" onclick="_rejectChatterReq('${row['notiID']}')">Reject</button>
@@ -132,7 +132,7 @@
                                 box_data.innerHTML = `
                                     <h4 class="unm"  style="color:red">@${row['unm']}</h4>
                                     <div class="hr" style="background-color:red"></div>
-                                    <div class="msg">${row['unm']} has rejected your chatter request.</div>
+                                    <li class="msg">${row['unm']} has rejected your chatter request.</li>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -144,7 +144,7 @@
                                 box_data.innerHTML = `
                                     <h4 class="unm">@${row['unm']}</h4>
                                     <div class="hr"></div>
-                                    <div class="msg"><span class='highlight'>${row['unm']}</span> has Accepted your chatter request.</div>
+                                    <li class="msg"><span class='highlight'>${row['unm']}</span> has Accepted your chatter request.</li>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -154,7 +154,7 @@
                                 box.appendChild(box_data);
                                 
                                 box_data.innerHTML = `
-                                    <div class="msg">You have been added to the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</div>
+                                    <li class="msg">You have been added to the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</li>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -164,7 +164,7 @@
                                 box.appendChild(box_data);
 
                                 box_data.innerHTML = `
-                                    <div class="msg">You have been <span class='highlight red'>Removed</span> from the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</div>
+                                    <li class="msg">You have been <span class='highlight red'>Removed</span> from the group <span class='highlight'>'${row.msg.gName}'</span> by @${row.unm}.</li>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -196,8 +196,6 @@
                                 // }
                                 
                             }else if(row['action'] === "warning"){
-                                console.log(row);
-
                                 box_data=document.createElement("div");
                                 box_data.classList.add("box_data",`${row['action']}`);
                                 box.appendChild(box_data);
@@ -205,7 +203,21 @@
                                 box_data.innerHTML = `
                                     <h4 class="unm"  style="color:red">@${row['unm']}</h4>
                                     <div class="hr" style="background-color:red"></div>
-                                    <div class="msg">${row.msg.msg}</div>
+                                    <li class="msg">${row.msg.msg}</li>
+                                    <div class="buttons">
+                                        <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
+                                    </div>` ;
+                            }else if(row['action'] === "info"){
+                                console.log(row);
+
+                                box_data=document.createElement("div");
+                                box_data.classList.add("box_data",`${row['action']}`);
+                                box.appendChild(box_data);
+
+                                box_data.innerHTML = `
+                                    <h4 class="unm"  style="color:green">@${row['unm']}</h4>
+                                    <div class="hr" style="background-color:green"></div>
+                                    <li class="msg">${row.msg.msg}</li>
                                     <div class="buttons">
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
@@ -447,7 +459,9 @@ const _upload_img_form = (title , action , theme = 'blue') => {
     _submit_btn_disable(img_submit_btn);
 
     var upload_img_form = document.querySelector('#upload_img_form');
-    upload_img_form.querySelector("#avatar").onchange=()=>avatar_validation();
+
+    let avatar_input=upload_img_form.querySelector("#avatar");
+    avatar_input.onchange=()=>avatar_validation();
     
     var title_ele = upload_img_form.querySelector('.title');
     title_ele.style.color = 'aliceblue';
@@ -489,6 +503,59 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                 }
                 }
             }
+        }else if(action === "UPLOAD_EMOJI"){
+            var input_field= upload_img_form.querySelector(".input_field");
+            let input= input_field.querySelector(".input input[name='emoji Name']");
+            
+            if(!input){
+
+                let input_field_text= document.createElement("div");
+                input_field_text.classList.add("input_field");
+                input_field_text.name="input_field";
+                upload_img_form.insertBefore(input_field_text,input_field);
+
+                let inputDiv= document.createElement("div");
+                inputDiv.classList.add("input");
+                input_field_text.appendChild(inputDiv);
+    
+                input=  document.createElement("input");
+                input.type="text";
+                input.name="emoji Name";
+                input.placeholder="Enter Emoji name";
+                input.autocomplete='off';
+                inputDiv.appendChild(input);
+
+                input_field.style.padding="25px";
+                input_field_text.style.padding="25px";
+
+                let rules= document.createElement("span");
+                Object.assign(rules.style,{
+                    display:'block',
+                    textAlign:"start",
+                    transform:'translateY(20px)'
+                })
+                rules.innerHTML=`
+                    1. Name length should be between 1 to 15. <br>
+                    2. Name can have only Words and _ ( ex.: a,z,0,9,_);
+                `;
+                input_field_text.appendChild(rules);
+            }
+
+            yes_btn.onclick = ()=> {
+                if(!disabled_pop_up_btn.upload_img_form && input.value){
+                    
+                    let emojiName=input.value;
+
+                    if(emojiName.length > 15 || /\W+/.test(emojiName)){
+                        input.style.border="1px solid red";
+                        return;
+                    }else{
+                        //?now just create a function in js to send this data and that's it
+                        _submit_btn_disable(img_submit_btn);
+                    }
+                    
+                }
+            };
         }
 
 
@@ -522,23 +589,19 @@ const _uploadDP = () => {
                     if(res.status == "success"){
                         if(res.responseText == 1){
                             _hide_this_pop_up(upload_img_form);
-                            document.querySelectorAll('.avatar').forEach(img => {
-                                img.src = result;
+                            localStorage.setItem("cache-dp-"+getCookie("unm") , result);
+                            document.querySelectorAll('.avatar').forEach(imgEle => {
+                                imgEle.src = result;
                             })
                             
                             handler.suc_dataChanged();
                         }else{
-                            try{
-                                handler["err_"+res]();
-                            }catch(err){
-                                handler["err_400"]();
-                            }
+                            throw res.responseText;
                         }
                     }
                 })
                 .catch(err => {
-                    console.error(err);
-                    handler.err_400();
+                    customError(err);
                 });
 
         })

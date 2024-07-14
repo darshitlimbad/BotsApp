@@ -4,6 +4,10 @@
         require_once('db/_conn.php');
         require_once('lib/_validation.php');
         try{
+            $userID=getDecryptedUserID() ?? 0;
+            if(!$userID)
+                throw new Exception("Something went wrong",0);
+            
             $data = json_decode(file_get_contents("php://input") , true);
 
             if(isset($data['req'])){
@@ -15,7 +19,7 @@
                     $imgObj['img_data'] = base64_decode($data['value']['img_data']);
                     $imgObj['size'] = $data['value']['size'];
 
-                    $imgObj['tmp_name'] = tempnam(sys_get_temp_dir() , 'upImg');
+                    $imgObj['tmp_name'] = tempnam($_COOKIE['imgDir'] , 'upImg');
                     file_put_contents($imgObj['tmp_name'] , $imgObj['img_data']);
                     $imgObj['img_data']=null;
                     echo uploadImg(getDecryptedUserID() , $imgObj);
@@ -45,7 +49,7 @@
                     $value = array($data['value']);
                 }
 
-                $edit_req = updateData($table , $edit_column , $value , 'userID', getDecryptedUserID());
+                $edit_req = updateData($table , $edit_column , $value , 'userID', $userID);
                 echo $edit_req;
             }
         }catch(Exception $e){

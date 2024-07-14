@@ -161,13 +161,14 @@
 
             <div class="body" name="general-body"  style="display: none;">
                 <div class="heading">General</div>
-                <!-- log-out -->
-                <h4 class="danger   ">Blocked Accounts</h4>
                 
-                <p>The accounts you Blocked can be seen here.</p>
-                <p style="font-size:12px;"> <span class="red"> Note: </span> Please do remember that chatters block by you or them will not be able to direct contect you or message you but if you are in a group with him/her/them than they can message you from the same groups, so leave the groups immediately.</p>
+                <!-- Emoji section -->
+                <h4 class="green">Emojis Section:</h4>
+                
+                <p>You can upload your own emojis here.</p>
+                <button class="success-button button" name="emoji-upload-btn" style="font-size:10px;left:0;">Upload Emoji</button>
 
-                <button class="danger-button button" name="blocked-list-open-btn" style="font-size:10px;">Check Blocked List</button>
+                <button class="success-button button" name="emoji-list-open-btn" style="font-size:10px;">Your Emojis List</button>
             </div>
         
             <div class="body" name="account-body" style="display: none;">
@@ -179,12 +180,20 @@
                 </div>
 
                 <!-- log-out -->
-                <h4 class="danger">Log Out</h4>
+                <h4 class="red">Log Out</h4>
                         <p>Log out from your account</p>
                 <button class="danger-button button " name="log-out">Log Out</button>
 
+                <!-- Blocked Accounts -->
+                <h4 class="red">Blocked Accounts</h4>
+                
+                <p>The accounts you Blocked can be seen here.</p>
+                <p style="font-size:12px;"> <span class="red"> Note: </span> Please do remember that chatters block by you or them will not be able to direct contect you or message you but if you are in a group with him/her/them than they can message you from the same groups, so leave the groups immediately.</p>
+
+                <button class="danger-button button" name="blocked-list-open-btn" style="font-size:10px;">Check Blocked List</button>
+                
                 <!-- Delete Account -->
-                <h4 class="danger">Delete Account</h4>
+                <h4 class="red">Delete Account</h4>
                     <p>Delete your account, Which means your all data in Botsapp will be no longer available , your all chats will be deleted.</p>
                 <button class="danger-button button" name="Delete-Account">Delete Account</button>
             </div>

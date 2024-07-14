@@ -56,6 +56,11 @@ document.addEventListener('DOMContentLoaded' , function () {
         const blockedListOpenBtn= document.querySelector("button[name='blocked-list-open-btn']");
         blockedListOpenBtn.onclick=()=>toggleBlockedChatterList();
     //
+    
+    // Upload Emojis open buttons event
+        const emojiUploadBtn= document.querySelector("button[name='emoji-upload-btn']");
+        emojiUploadBtn.onclick=()=>_upload_img_form("Upload Your Emoji","UPLOAD_EMOJI");
+    //
 
     //option btns actions
     const optionActionList= {
@@ -76,6 +81,9 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();  
+
+    //?clearing localstorage on load localstorage
+    localStorage.clear();
 });  
 
 // 

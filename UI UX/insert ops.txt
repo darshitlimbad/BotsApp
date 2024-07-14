@@ -149,11 +149,10 @@ emoji table structure :
 
 columns:                      Defaults:
 1. id           int           not null        primary         AI
-2. emojiID      varchar(30)   not null        Unique          
 3. uploaderID   varchar(20)   not null        Unique                    Foreign key: emoji-uploaderID-key(to botsapp.users_acoount)
 4. scope        varchar(10)   not null                                  values_allowed: PUBLIC | PRIVATE | GROUP
 5. groupID      varchar(20)   null            Unique                    Foreign key: emoji-groupID-key(to botsapp.groups)
 6. name         varchar(20)   not null        Unique
 7. mime         varchar(50)   not null        none             
 8. blob         midBlob       not null        none
-9. status       varchar(10)   not null                                  values_allowed: PENDING | ACCEPTED | REJECTED ( the code should auto matic delete the emojis which are rejected so there will be no values with rejected options )
+9. status       varchar(10)   not null                                  values_allowed: PENDING | UPLOADED | ACCEPTED | REJECTED ( the code should auto matic delete the emojis which are rejected so there will be no values with rejected options )

@@ -4,7 +4,6 @@ if(!isset($_SESSION['userID'])) {
 ?>
 
     <script>
-    localStorage.clear();
     var request = indexedDB.open("Botsapp", 1);
 
     request.onerror = (event) => {

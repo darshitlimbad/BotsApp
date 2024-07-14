@@ -257,9 +257,9 @@ function is_admin(){
     return $mySqlObj->fetch_column();
 }
 
-function compressImg($imgObj , $quality = 50) {
+function compressImg($imgObj , $quality = 50,$imgDimensions=[]) {
     try{
-        $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
+        $imgObj['type']= getimagesize($imgObj['tmp_name'])['mime'];
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
         if (!in_array($imgObj['type'], $allowedTypes))
@@ -284,6 +284,17 @@ function compressImg($imgObj , $quality = 50) {
                 throw new Exception("Unexpected image type: ", 415);
         }
 
+        if(count($imgDimensions) == 2){
+            list( $width, $height)= getimagesize($imgObj['tmp_name']);
+    
+            // Create a new image
+            $source=$image;
+            $image= imagecreatetruecolor($imgDimensions['width'], $imgDimensions['height']);
+    
+            // Resize
+            imagecopyresized($image,$source, 0, 0, 0, 0, $imgDimensions['width'], $imgDimensions['height'], $width, $height);
+        }
+
         unlink($imgObj['tmp_name']);
         $success = imagewebp($image, $imgObj['tmp_name'], $quality);
         imagedestroy($image);
@@ -292,7 +303,6 @@ function compressImg($imgObj , $quality = 50) {
             throw new Exception("Failed to compress image",400);
         
         $imgObj['type'] = getimagesize($imgObj['tmp_name'])['mime'];
-
         return $imgObj;
     }catch(Exception $e) {
         return $e->getCode();
