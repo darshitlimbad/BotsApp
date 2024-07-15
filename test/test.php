@@ -1,3 +1,7 @@
+<div>
+    <input type="radio" value="PRIVATE" name="scope">cs
+    <input type="radio" value="PUBLIC" name="scope">
+</div>
 <?php
 session_start();
 
@@ -20,10 +24,10 @@ include_once('../functionality/lib/_data_delete.php');
 //     print_r($updatedImgObj);
 // }
 
-$name='343_dsds4';
+// $name='343_dsds4';
 
 
-echo preg_match("/\W+/",$name);
+// echo preg_match("/\W+/",$name);
 // $userID= getDecryptedUserID();
 // $data=[
 //     'action'=>'info',

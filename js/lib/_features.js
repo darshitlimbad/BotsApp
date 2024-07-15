@@ -460,6 +460,9 @@ const _upload_img_form = (title , action , theme = 'blue') => {
 
     var upload_img_form = document.querySelector('#upload_img_form');
 
+    upload_img_form.querySelector("div.input_field[name='textInputField'")?.remove();
+    upload_img_form.querySelector(".radio_field")?.remove();
+
     let avatar_input=upload_img_form.querySelector("#avatar");
     avatar_input.onchange=()=>avatar_validation();
     
@@ -505,53 +508,109 @@ const _upload_img_form = (title , action , theme = 'blue') => {
             }
         }else if(action === "UPLOAD_EMOJI"){
             var input_field= upload_img_form.querySelector(".input_field");
-            let input= input_field.querySelector(".input input[name='emoji Name']");
             
-            if(!input){
+            //input_field_text
+            let input_field_text= document.createElement("div");
+            input_field_text.classList.add("input_field",);
+            input_field_text.setAttribute("name","textInputField");
+            upload_img_form.insertBefore(input_field_text,input_field);
 
-                let input_field_text= document.createElement("div");
-                input_field_text.classList.add("input_field");
-                input_field_text.name="input_field";
-                upload_img_form.insertBefore(input_field_text,input_field);
+            //input_field_div
+            let inputDiv= document.createElement("div");
+            inputDiv.classList.add("input");
+            inputDiv.style.transform="translateY(-28px)"
+            input_field_text.appendChild(inputDiv);
 
-                let inputDiv= document.createElement("div");
-                inputDiv.classList.add("input");
-                input_field_text.appendChild(inputDiv);
-    
-                input=  document.createElement("input");
-                input.type="text";
-                input.name="emoji Name";
-                input.placeholder="Enter Emoji name";
-                input.autocomplete='off';
-                inputDiv.appendChild(input);
+            //input type=text
+            let input=  document.createElement("input");
+            input.type="text";
+            input.name="emoji Name";
+            input.placeholder="Enter Emoji name";
+            input.autocomplete='off';
+            inputDiv.appendChild(input);
 
-                input_field.style.padding="25px";
-                input_field_text.style.padding="25px";
+            input_field.style.padding="25px";
+            input_field_text.style.padding="25px";
 
-                let rules= document.createElement("span");
-                Object.assign(rules.style,{
-                    display:'block',
-                    textAlign:"start",
-                    transform:'translateY(20px)'
-                })
-                rules.innerHTML=`
-                    1. Name length should be between 1 to 15. <br>
-                    2. Name can have only Words and _ ( ex.: a,z,0,9,_);
-                `;
-                input_field_text.appendChild(rules);
+            //name rules
+            let rules= document.createElement("span");
+            Object.assign(rules.style,{
+                display:'block',
+                textAlign:"start",
+            })
+            rules.innerHTML=`
+                1. Name length should be between 1 to 15. <br>
+                2. Name can have only Words and _ ( ex.: a,z,0,9,_);
+            `;
+            input_field_text.appendChild(rules);
+
+            //scope radio button field
+            let radioField=document.createElement('div');
+            radioField.classList.add('radio_field');
+            upload_img_form.insertBefore(radioField,input_field);
+
+            //scope field title
+            let title= label("Choose Emoji Scope:");
+            Object.assign(title.style,{
+                'fontFamily':"sans-serif"
+            })
+            radioField.appendChild(title);
+
+            //radio button div
+            let radioDiv= document.createElement('div');
+            radioDiv.classList.add("checkBox");
+            radioDiv.style.justifyContent="space-evenly";
+            radioField.appendChild(radioDiv);
+
+            //scope = private
+            let container=document.createElement("div");
+            radioDiv.appendChild(container);
+                let radioPrivate= document.createElement("input");
+                radioPrivate.type="radio";
+                radioPrivate.value="PRIVATE";
+                radioPrivate.name="scope";
+                radioPrivate.style.borderRadius="20px";
+                radioPrivate.checked=true;
+                container.appendChild(radioPrivate);
+                container.appendChild(label("PRIVATE"));
+            
+            //scope = public
+            container=document.createElement("div");
+            radioDiv.appendChild(container);
+                let radioPublic= document.createElement("input");
+                radioPublic.type="radio";
+                radioPublic.value="PUBLIC";
+                radioPublic.name="scope";
+                radioPublic.style.borderRadius="20px";
+                container.appendChild(radioPublic);
+                container.appendChild(label("PUBLIC"));
+
+            function label(name){
+                let label= document.createElement("label");
+                label.textContent=name;
+                return label;
             }
 
-            yes_btn.onclick = ()=> {
-                if(!disabled_pop_up_btn.upload_img_form && input.value){
+            yes_btn.onclick = async ()=> {
+                if(!disabled_pop_up_btn.upload_img_form){
                     
                     let emojiName=input.value;
+                    let avatar= input_field.querySelector("#avatar");
 
-                    if(emojiName.length > 15 || /\W+/.test(emojiName)){
+                    if(emojiName.length > 15 || /\W+/.test(emojiName) || !input.value){
                         input.style.border="1px solid red";
                         return;
                     }else{
-                        //?now just create a function in js to send this data and that's it
                         _submit_btn_disable(img_submit_btn);
+
+                        let data={
+                            scope:(radioPrivate.checked)? "PRIVATE": "PUBLIC",
+                            name:emojiName,
+                            blob:(await _read_doc(avatar.files[0])),
+                        };
+                        _uploadEmoji(data);
+
+                        setTimeout(()=>_hide_this_pop_up(upload_img_form),500);
                     }
                     
                 }

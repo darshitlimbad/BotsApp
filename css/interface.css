@@ -628,7 +628,7 @@ footer {
 
 }
 
-.checkbox input[type='checkbox']   {
+.checkbox input   {
     appearance: none;    
     height: 20px; 
     width: 20px;
@@ -638,7 +638,7 @@ footer {
     border-radius: 4px;
     cursor: pointer;
 }
-.checkbox input[type='checkbox']::after    {
+.checkbox input::after    {
     content: "";
     height: 10px;
     width: 5px;
@@ -650,15 +650,15 @@ footer {
     left: 5px;
 }
 
-.checkbox input[type='checkbox']:hover    {
+.checkbox input:hover    {
     background-color: rgba(0, 0, 0, 0.649);
 }
 
-.checkbox input[type='checkbox']:checked  {
+.checkbox input:checked  {
     background-color: green;
 }
 
-.checkbox input[type='checkbox']:checked::after  {
+.checkbox input:checked::after  {
     display: flex;
 }
 
@@ -673,7 +673,7 @@ footer {
     font-size: 10px;
 }
 
-.settings-box .settings-container .body .swipe-btn input[type='checkbox']   {
+.settings-box .settings-container .body .swipe-btn input   {
     appearance: none;    
     height: 31px;
     width: 60px;
@@ -689,7 +689,7 @@ footer {
 
 }
 
-.settings-box .settings-container .body .swipe-btn input[type='checkbox']::after  {
+.settings-box .settings-container .body .swipe-btn input::after  {
     content: "";
     height: 20px;
     width: 20px;
@@ -699,11 +699,11 @@ footer {
     background-color:rgb(255, 252, 252);
 }
 
-.settings-box .settings-container .body .swipe-btn input[type='checkbox']:checked   {
+.settings-box .settings-container .body .swipe-btn input:checked   {
     background-color: rgb(255, 253, 253);
 }
 
-.settings-box .settings-container .body .swipe-btn input[type='checkbox']:checked::after  {
+.settings-box .settings-container .body .swipe-btn input:checked::after  {
     left:29px;
     background-color: rgba(0, 0, 0, 0.9);
     animation: swipe .5s cubic-bezier(0, 0.27, 0.85, 1.17) ;
@@ -924,7 +924,7 @@ footer {
 }
 
 .input_field .input input:focus , .input_field .input input:not(:placeholder-shown), .input_field .input input:hover{
-    border-color: var(--text-color) !important;
+    border-color: var(--text-color) ;
     transition: border-color .5s cubic-bezier(0.165, 0.84, 0.44, 1);
     background-color: #aeaeae49;
     border-radius: 4px;

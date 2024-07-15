@@ -267,7 +267,7 @@ function add_emoji(array $emojiObj=[]){
         $userID= getDecryptedUserID();
         $groupID=null;
 
-        if(!$emojiObj)
+        if(!count($emojiObj))
             throw new Exception("No data found.",400);  
         
         //? scope validation
@@ -290,36 +290,45 @@ function add_emoji(array $emojiObj=[]){
             throw new Exception("Invalid name: only word allowed.",403);
         else if(strlen($emojiObj['name']) > 15)
             throw new Exception("Name size more thaen 15 is not allowed",404);
-        $name= ":"+$emojiObj['name']+":";
+        $name= ":".$emojiObj['name'].":";
+
+        //? checking name exists or not
+        if(is_data_present('emojis',['uploaderID','name','scope'],[$userID,$name,$scope],'id'))
+            throw new Exception("Emoji name already exists.",405);
 
         //? blob varification
         if($emojiObj['blob'])
         $blob = explode(',',$emojiObj['blob']);
 
         if( (explode('/',$blob[0]))[0] != "data:image" )
-            throw new Exception("Not an image",405);
+            throw new Exception("Not an image",406);
 
         $blob= $blob[1];
         
         $imgObj['tmp_name'] = $_COOKIE['imgDir'].time();
         if(file_put_contents($imgObj['tmp_name'] , base64_decode($blob)) == false)
-            throw new Exception("File uploading error",406);
+            throw new Exception("File uploading error",407);
             
         $imgObj=compressImg($imgObj,100,['width'=>150,'height'=>150]);
         if(gettype($imgObj) == "integer")//error code return by compress image
-            throw new Exception("something went wrong in compression",407); 
+            throw new Exception("something went wrong in compression",408); 
         
         $mime = $imgObj['type'];
         $blob = base64_encode(file_get_contents($imgObj['tmp_name']));
 
         $status= ($scope == "PUBLIC") ? "PENDING" : "UPLOADED";
-
-            $result= insertData("emojis",['uploaderId','scope','groupID','name','blob_data','mime','status'],[$userID,$scope,$groupID,$name,$blob,$mime,$status]);
+            $columns=['uploaderId','scope','name','mime','blob_data','status'];
+            $columns_values=[$userID,$scope,$name,$mime,$blob,$status];
+            if($groupID){
+                $columns[]='groupID';
+                $columns_values[]=$groupID;
+            }
+            $result= insertData("emojis",$columns,$columns_values);
 
             if($result && $status === "PENDING"){
                 $data=[
                     'action'=>'info',
-                    'msg'=>['msg'=> "Your emoji has been uploaded for public use and is currently pending approval. An admin will review it, and we will notify you once a decision is made."],
+                    'msg'=>['msg'=> "Your emoji $name has been uploaded for public use and is currently pending approval. An admin will review it, and we will notify you once a decision is made."],
                     'toID'=>$userID,
                 ];
                 add_new_noti($data);
@@ -330,7 +339,7 @@ function add_emoji(array $emojiObj=[]){
             return $result;
         
     }catch(Exception $e){
-        print_r($e);
+        // print_r($e);
         $error = [
             'error'=>true,
             'code'=> $e->getCode(),

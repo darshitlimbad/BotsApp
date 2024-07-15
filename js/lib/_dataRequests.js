@@ -467,3 +467,21 @@ function _unblockMember(unm=null){
             })
     });
 }
+
+function _uploadEmoji(data=null){
+    if(!data) return;
+
+    let url= "/functionality/lib/_insert_data.php";
+    data.req="add_emoji";
+
+    postReq(url,JSON.stringify(data)).then(res=>{
+        if(res.responseText == 1){
+            new_notification("Your emoji uploaded succesfully.");
+        }else{
+            throw res.responseText;
+        }
+    }).catch(err=>{
+        console.error(err);
+        new_Alert(err.message);
+    })
+}
