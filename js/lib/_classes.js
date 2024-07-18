@@ -613,6 +613,239 @@ class blockedChatterListBox{
     }
 }
 
+class ShowEmojisList{
+    constructor(from,GID){
+        document.querySelector('.pop_up_box #emojis_list_form')?.remove();
+
+        this.from=from;
+        this.GID=GID;
+
+        this.form = document.createElement("div");
+        this.form.classList.add('pop_up');
+        this.form.id = "emojis_list_form";
+
+        this.emojisListContainer=null;
+
+        this.heading(); 
+        this.setBody()
+        this.footer();
+        this.show();
+
+        this.displayList();
+    }
+
+    heading() {
+        let header= document.createElement('header');
+        header.classList.add('heading');
+        this.form.appendChild(header);
+
+        let title = document.createElement('h3');
+        title.textContent = ((this.from=="SELF")  ? "Your ":"") + "Emojis List";
+        header.appendChild(title);
+
+        let closeIconDiv = document.createElement('button');
+        closeIconDiv.classList.add("icon",'ele','skeleton','closeIcon');
+        closeIconDiv.style.border='none';
+        closeIconDiv.title="Close";
+        closeIconDiv.onclick=()=>this.hide();
+        header.appendChild(closeIconDiv);
+
+            let closeIconImg = new Image();
+            closeIconImg.style.height="1em";
+            closeIconImg.src="img/icons/close.png";
+            closeIconImg.alt="Close";
+            closeIconDiv.appendChild(closeIconImg);
+
+        let hr= document.createElement('hr');
+        hr.classList.add('hr','green');
+        header.appendChild(hr);
+
+    }
+
+    setBody(){
+        this.body= document.createElement('div');
+        this.body.classList.add('body');
+        this.form.appendChild(this.body);
+
+        setLoader(this.body);
+
+        Object.assign(this.body.querySelector('.loader').style,{
+            position:'relative',
+            minHeight:'300px',
+        })
+    }
+
+    async displayList() {
+        try{
+            var btnStyles={
+                'position':'relative',
+                'margin':'0 5px',
+                'right':'0',
+            }
+            var rowStyles={
+                display: 'grid',
+                grid: 'auto-flow / 3em 5em 5em 4em 6em 7em',
+                overflow:'hidden',
+                overflowWrap:'anywhere',
+            }
+
+            if(this.emojisListContainer)
+                this.emojisListContainer.remove();
+
+            this.emojisListContainer = document.createElement('table');
+            this.emojisListContainer.classList.add('memberList');
+            this.body.appendChild(this.emojisListContainer);
+
+            let data={from:this.from,GID:this.GID};
+            var emojisList= await _getEmojiList(data);
+            this.body.querySelector('.loader')?.remove();
+            if(!emojisList.length)
+                throw 411; 
+
+            // ? Form Header
+            let emojiBox = document.createElement('tr');
+            Object.assign(emojiBox.style,rowStyles);
+            emojiBox.classList.add('emojiBox', 'flexBox', 'input_field' );
+            Object.assign(emojiBox.style,{
+                borderBottom: "var(--thin-wh-border)",
+                flexWrap: 'nowrap',
+            })
+            this.emojisListContainer.appendChild(emojiBox);
+            
+            clmHeading("No.");
+            clmHeading("Scope");
+            clmHeading("Name");
+            clmHeading("Emoji");
+            clmHeading("Status");
+
+            let actionCLM=clmHeading("Action");
+            actionCLM.classList.add('btn');
+            Object.assign(actionCLM.style,btnStyles);
+            actionCLM.style.removeProperty('width');
+
+            function clmHeading(title){
+                let nodeEle= document.createElement("td");
+                nodeEle.textContent=title+":";
+                nodeEle.style.color="lime";
+                emojiBox.appendChild(nodeEle);
+                return nodeEle;
+            }
+            // ?
+
+            var count=0;
+            emojisList.forEach(emojisDetails => {
+                let emojiBox = document.createElement('tr');
+                Object.assign(emojiBox.style,rowStyles);
+                emojiBox.classList.add('emojiBox', 'flexBox', 'input_field','member');
+                this.emojisListContainer.appendChild(emojiBox);
+                
+                var node=nodeEle();
+                let index = document.createElement('p');
+                index.classList.add('margin-dead');
+                index.textContent = ++count + ".";
+                node.appendChild(index);
+
+                node=nodeEle();
+                let scope = document.createElement('p');
+                scope.classList.add('margin-dead');
+                scope.textContent = emojisDetails.scope +( (emojisDetails.scope == "GROUP") ? "-"+emojisDetails.GNM : "" );
+                node.appendChild(scope);
+                
+                node=nodeEle();
+                    let name = document.createElement('p');
+                name.classList.add('margin-dead');
+                name.style.color="skyblue";
+                name.textContent = emojisDetails.name;
+                node.appendChild(name);
+                
+                node=nodeEle();
+                node.classList.add('mid-img')
+                let emoji = new Image();
+                emoji.classList.add('img');
+                emoji.src=`data:${emojisDetails.mime};base64,${emojisDetails.blob}`;
+                node.appendChild(emoji);
+
+                node=nodeEle();
+                node.style.overflow="hidden";
+                let status = document.createElement('p');
+                status.classList.add('margin-dead');
+                status.textContent = emojisDetails.status;
+                status.style.color= (emojisDetails.status == "PENDING") ? "red" : 'blue';
+                node.appendChild(status);
+                
+                node=nodeEle();
+                node.style.removeProperty('width');
+                    let deleteBtn= document.createElement('button');
+                    deleteBtn.classList.add('red','btn');
+                    Object.assign(deleteBtn.style,btnStyles);
+                    deleteBtn.textContent="DELETE";
+                    deleteBtn.onclick=()=>{
+                        _deleteUploadedEmoji(emojisDetails.id).then(res=>{
+                            if(res){
+                                setLoader(this.body);
+                                this.displayList();
+                            }
+                        });
+                    };
+                    node.appendChild(deleteBtn);
+
+                function nodeEle(){
+                    let nodeEle= document.createElement("td");
+                    emojiBox.appendChild(nodeEle);
+                    return nodeEle;
+                }
+            });
+        }catch(err){
+            if(err === 411){
+                this.#showMsg("No Emojis Found.");
+                new_Alert("No Emojis Found.");
+            }else{
+                this.hide();
+                customError(err);
+            }
+        }
+    }
+
+    footer(){
+        let footer= document.createElement('footer');
+        this.form.appendChild(footer);
+
+        var btns= document.createElement('div');
+        btns.classList.add('flexBox');  
+        footer.appendChild(btns);
+        
+        let uploadBtn= document.createElement('button');
+        uploadBtn.classList.add('green','margin-dead','btn');
+        uploadBtn.textContent="Upload More Emojis";
+        uploadBtn.onclick=()=>{this.hide();openUploadEmojiForm();};
+        btns.appendChild(uploadBtn);
+    }
+
+    show(){
+        if(document.querySelector('.pop_up_box').contains(this.form))
+            return;
+
+        document.querySelector('.pop_up_box').appendChild(this.form);
+        this.form.onmouseenter=()=>document.onclick=null;
+        this.form.onmouseleave=()=>document.onclick=()=>this.hide();
+    }
+
+    hide(){
+        this.form.remove();
+    }
+
+    #showMsg(msg,color="red"){
+        this.usersListBlock?.remove();
+
+        let h1= document.createElement("h1");
+        Object.assign( h1.style,{
+            color:color,
+        })
+        h1.classList.add('msg');
+        h1.textContent=msg;
+        this.body.appendChild(h1);
+    }
+}
 
 // class msgInfo{
 //     constructor(){

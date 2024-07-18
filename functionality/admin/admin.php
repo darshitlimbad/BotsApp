@@ -24,6 +24,16 @@ use Random\RandomException;
                     echo rejectReport( _get_userID_by_UNM( base64_decode($data['unm']) ));
                 else if($data['req'] === "deleteGroup")
                     echo deleteGroup( base64_decode($data['GID']) );
+                else if($data['req'] === "getServerEmojis")
+                    echo getServerEmojis();
+                else if($data['req'] === "getPendingEmojisList")
+                    echo getPendingEmojisList();
+                else if($data['req'] === "deleteEmoji")
+                    echo deleteEmoji(base64_decode($data['emojiID']));
+                else if($data['req'] === "acceptEmojiAsPublic")
+                    echo acceptEmojiAsPublic(base64_decode($data['emojiID']));
+
+                
             }
         }else{
             session_abort();
@@ -223,6 +233,138 @@ use Random\RandomException;
 
             return $res;            
 
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+
+    function getServerEmojis(){
+        try{            
+            $list=[];
+            $i=0;
+            
+            $SQL= " SELECT *
+                    FROM `emojis` ORDER BY id ASC";
+
+            $result= $GLOBALS['conn']->query($SQL) ?? null; 
+
+            if(!$result || !$result->num_rows)
+                throw new Exception("",400);
+            
+            while($row= $result->fetch_assoc()){
+                $list[$i++]=[
+                    'id'=> base64_encode($row['id']),
+                    'uploaderUNM'=>_fetch_unm($row['uploaderID']),
+                    'scope'=>$row['scope'],
+                    'name'=>$row['name'],
+                    'mime'=>$row['mime'],
+                    'blob'=>$row['blob_data'],
+                    'status'=>$row['status'],
+                ];
+            }
+
+            array_multisort( $list, SORT_ASC);
+            return json_encode($list);
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+
+            return json_encode($error);
+        }
+    }
+
+    function getPendingEmojisList(){
+        try{            
+            $list=[];
+            $i=0;
+            
+            $SQL= " SELECT *
+                    FROM `emojis`
+                    WHERE status='PENDING' 
+                    ORDER BY id ASC
+                    ";
+
+            $result= $GLOBALS['conn']->query($SQL) ?? null; 
+
+            if(!$result || !$result->num_rows)
+                throw new Exception("",400);
+            
+            while($row= $result->fetch_assoc()){
+                $list[$i++]=[
+                    'id'=> base64_encode($row['id']),
+                    'uploaderUNM'=>_fetch_unm($row['uploaderID']),
+                    'scope'=>$row['scope'],
+                    'name'=>$row['name'],
+                    'mime'=>$row['mime'],
+                    'blob'=>$row['blob_data'],
+                    'status'=>$row['status'],
+                ];
+            }
+
+            array_multisort( $list, SORT_ASC);
+            return json_encode($list);
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+
+            return json_encode($error);
+        }
+    }
+
+    function deleteEmoji(string $emojiID=null){
+        try{            
+            if(!$emojiID || !is_data_present('emojis',['id'],[$emojiID],"id"))
+                throw new Exception("No data found",404);
+
+            return deleteData('emojis',$emojiID,"id");
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function acceptEmojiAsPublic(string $emojiID=null){
+        try{            
+            if(!$emojiID || !is_data_present('emojis',['id'],[$emojiID],"id"))
+                throw new Exception("No data found",404);
+            else if(is_data_present('emojis',['id','scope','status'],[$emojiID,'PUBLIC','UPLOADED'],"id"))
+                throw new Exception("Emoji Scope is already Public",400);
+
+            $result= updateData("emojis",['scope','status'],['PUBLIC','UPLOADED'],"id",$emojiID);
+            $fetchedData=fetch_columns('emojis',['id'],[$emojiID],['uploaderID','name']);
+            
+                if($result && $fetchedData){
+                    list($uploaderID,$name)= $fetchedData->fetch_row();
+
+                    require_once("../lib/_notification.php");    
+                    $data=[
+                        'action'=>'info',
+                        'msg'=>['msg'=>"Your emoji '$name' has been Accepted for Public use."],
+                        'toID'=>$uploaderID,
+                    ];
+                    add_new_noti($data);
+                }
+
+            return $result;
         }catch(Exception $e){
             $error = [
                 'error'=>true,

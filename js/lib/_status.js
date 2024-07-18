@@ -165,7 +165,6 @@ class Status {
 
                                 if((chatType === 'personal' && getCookie('currOpenedChat') == chatter.unm && chatter.unm != getCookie('unm')) 
                                     || chatType === 'group' && user && user.id == chatter.GID){
-                                        console.log(chatter);
                                         _getNewMsgs()
                                         .then(msgObjs=>{
                                             if( msgObjs ){

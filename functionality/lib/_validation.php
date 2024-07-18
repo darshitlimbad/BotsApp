@@ -265,7 +265,6 @@ function compressImg($imgObj , $quality = 50,$imgDimensions=[]) {
         if (!in_array($imgObj['type'], $allowedTypes))
             throw new Exception("Unsupported image type: " , 415);
 
-        $success = false;
         switch ($imgObj['type']) {
             case 'image/jpeg':
             case 'image/jpg':
@@ -290,13 +289,25 @@ function compressImg($imgObj , $quality = 50,$imgDimensions=[]) {
             // Create a new image
             $source=$image;
             $image= imagecreatetruecolor($imgDimensions['width'], $imgDimensions['height']);
+
+            //Enable alpha blending and save the alpha channel information
+            imagealphablending($image,false);
+            imagesavealpha($image,true);
+
+            //transperent image
+            $transparentColor= imagecolorallocatealpha($image,0,0,0,127);
+            imagefill($image,0,0,$transparentColor);
     
             // Resize
             imagecopyresized($image,$source, 0, 0, 0, 0, $imgDimensions['width'], $imgDimensions['height'], $width, $height);
+
+            imagedestroy($source);
         }
 
         unlink($imgObj['tmp_name']);
+        $success=false;
         $success = imagewebp($image, $imgObj['tmp_name'], $quality);
+
         imagedestroy($image);
         
         if (!$success)

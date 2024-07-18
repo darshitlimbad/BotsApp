@@ -125,3 +125,83 @@ function _deleteGroup(GID){
             })
     })
 }
+
+
+function _getServerEmojis(){
+    let url= "/functionality/admin/admin.php";
+    data= {req:"getServerEmojis"};
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data)).then(res=>{
+            if(!res.responseText.error){
+                resolve(res.responseText);
+            }else{
+                throw res.responseText;
+            }
+        }).catch(err=>{
+            resolve(0);
+            customError(err);
+        })
+    })
+    
+}
+
+function _getPendingEmojis(){
+    let url= "/functionality/admin/admin.php";
+    data= {req:"getPendingEmojisList"};
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data)).then(res=>{
+            if(!res.responseText.error){
+                resolve(res.responseText);
+            }else{
+                throw res.responseText;
+            }
+        }).catch(err=>{
+            resolve(0);
+            customError(err);
+        })
+    })
+    
+}
+
+function _deleteUploadedEmoji(emojiID=null){
+    if(!emojiID) return;
+
+    let URL= "/functionality/admin/admin.php";
+    let data= {req:'deleteEmoji',emojiID};
+
+    return new Promise((resolve,reject)=>{
+        postReq(URL,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === "success" && res.responseText === 1)
+                    resolve(1);
+                else
+                    throw res.responseText;
+            }).catch(err=>{
+                customError(err); 
+                resolve(0);
+            })
+    })
+}
+
+function _acceptEmojiAsPublic(emojiID=null){
+    if(!emojiID) return;
+
+    let URL= "/functionality/admin/admin.php";
+    let data= {req:'acceptEmojiAsPublic',emojiID};
+
+    return new Promise((resolve,reject)=>{
+        postReq(URL,JSON.stringify(data))
+            .then(res=>{
+                console.log(res.responseText);
+                if(res.status === "success" && res.responseText === 1)
+                    resolve(1);
+                else
+                    throw res.responseText;
+            }).catch(err=>{
+                customError(err); 
+                resolve(0);
+            })
+    })
+}

@@ -1,7 +1,7 @@
-<div>
+<!-- <div>
     <input type="radio" value="PRIVATE" name="scope">cs
     <input type="radio" value="PUBLIC" name="scope">
-</div>
+</div> -->
 <?php
 session_start();
 
@@ -113,6 +113,20 @@ include_once('../functionality/lib/_data_delete.php');
 // echo "sdsds" && echo "hello";
 
 // echo 0 ?? "hhi";
+
+// function hehhh(){
+//     return 'hello';
+// }
+// $list=[
+//     (1==0) ?: ['msg'=>hehhh()],
+// ];
+
+// echo $list['msg'];
+// print_r($list);
+
+$userID="Admin";
+$emojiID="10";
+echo is_data_present('emojis',['id','uploaderID'],[$emojiID,$userID],"id");
 ?>
 
 <!-- 

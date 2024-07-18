@@ -4,28 +4,26 @@ if($data = json_decode( file_get_contents("php://input") , true)){
     $fleg=0;
     if(!session_id()){
         session_start();
-        $fleg=1;
-    }
     
-    if(isset($_SESSION['userID'])){
-        require_once('../db/_conn.php');
-        require_once('_fetch_data.php');
-        require_once('_validation.php');
-        
-        if($data['req'] == "addNoti"){
-                echo add_new_noti($data);
-        }else if($data['req'] == "getNewNoti"){
-            echo getNewNoti();
-        }else if($data['req'] == "acceptChatterReq"){
-            echo acceptChatterReq($data);
-        }else if($data['req'] == "rejectedChatterReq"){
-            echo rejectedChatterReq($data);
-        }else if($data['req'] == "deleteThisNoti"){
-            echo deleteThisNoti(base64_decode($data['notiID']));
+        if(isset($_SESSION['userID'])){
+            require_once('../db/_conn.php');
+            require_once('_fetch_data.php');
+            require_once('_validation.php');
+            
+            if($data['req'] == "addNoti"){
+                    echo add_new_noti($data);
+            }else if($data['req'] == "getNewNoti"){
+                echo getNewNoti();
+            }else if($data['req'] == "acceptChatterReq"){
+                echo acceptChatterReq($data);
+            }else if($data['req'] == "rejectedChatterReq"){
+                echo rejectedChatterReq($data);
+            }else if($data['req'] == "deleteThisNoti"){
+                echo deleteThisNoti(base64_decode($data['notiID']));
+            }
         }
-    }
-    if($fleg==1)
         session_abort();
+    }
 }   
 
 function add_new_noti($data) {

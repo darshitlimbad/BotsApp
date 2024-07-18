@@ -11,12 +11,17 @@ side insert ops:
 
 
 next session ops:
-    7. create operations of msgDeleted and reloadChat for group also.
+        7. create operations of msgDeleted and reloadChat for group also.
+        8. create upload emoji and emoji list for group
+        9. pending emojis for admin in admin panel. 
+
+
 
 
 ///Delete operations note
 
 1. user should not be able to block itself. 
+
 
 
 

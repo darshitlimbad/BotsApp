@@ -57,9 +57,14 @@ document.addEventListener('DOMContentLoaded' , function () {
         blockedListOpenBtn.onclick=()=>toggleBlockedChatterList();
     //
     
-    // Upload Emojis open buttons event
+    // Upload Emojis open button event
         const emojiUploadBtn= document.querySelector("button[name='emoji-upload-btn']");
-        emojiUploadBtn.onclick=()=>_upload_img_form("Upload Your Emoji","UPLOAD_EMOJI");
+        emojiUploadBtn.onclick=()=>openUploadEmojiForm();
+    //
+    
+    // Emojis list open button event
+        const emojisListOpenBtn= document.querySelector("button[name='emoji-list-open-btn']");
+        emojisListOpenBtn.onclick=()=>showEmojisList();
     //
 
     //option btns actions
@@ -210,15 +215,18 @@ function remove_selected_li(){
 } 
 
 // add Pop_up for show and hide
-function closesettingsbox(event) {  
-    if((!settings_box.contains(event.target)) &&
+function closesettingsbox(event=null) {  
+    if(
+        !event || ( event && (!settings_box.contains(event.target)) &&
         (settings_box != event.target) && 
         (!event.target.closest("div[title='Settings']"))&&
         (!event.target.closest("div[title='Profile']")) &&
         (!event.target.closest("div[id='confirmation_pop_up']")) &&
-        (!event.target.closest("div[id='upload_img_form']"))  ) {
+        (!event.target.closest("div[id='upload_img_form']")))
+    ) {
         
-        event.preventDefault();
+        if(event)
+            event.preventDefault();
         toggle_settings_box();
         // all settings options to noramal
         settings_options_to_default();
@@ -280,7 +288,7 @@ const settings_options_to_default = () => {
         }
 
     // pop_up
-        _hide_all_pop_up();
+        // _hide_all_pop_up();
 }
 
 const set_profile_dp = (() => {

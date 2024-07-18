@@ -88,7 +88,6 @@
             }
 
             $bind_param = str_repeat("s" , count($point_values));
-
             $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE $point_str ";
             $stmt  = $GLOBALS[$db] -> prepare($query);
             $stmt->bind_param($bind_param , ...$point_values);

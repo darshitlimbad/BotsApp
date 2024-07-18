@@ -159,12 +159,16 @@ span{
     border-radius: 1em;
 }
 
-/* for chat meme sharing */
-#preview.small-img .img {
+/* meme images height width */
+.small-img .img {
     height: 1em;
     width: 1em;
 }
-#preview.big-img .img {
+.mid-img .img {
+    height: 2.5em;
+    width: 2.5em;
+}
+.big-img .img {
     height: 5em;
     width: 5em;
 }
@@ -982,7 +986,7 @@ footer {
     text-align: end;
     font-weight: 500;
     color: rgb(240, 31, 31);
-    font-size: .8rem;
+    font-size: .6rem;
 }
 
 .input_field #pass_rules {

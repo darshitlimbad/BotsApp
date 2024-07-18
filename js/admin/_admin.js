@@ -40,3 +40,11 @@ function openGroupsManagementList(){
 function openReportsList(){
     var obj=new reportsReviewForm();
 }
+
+function openDisplayServerEmojis(){
+    var obj=new displayServerEmojis();
+}
+
+function openPendingEmojisList(){
+    var obj=new displayPendingEmojis();
+}

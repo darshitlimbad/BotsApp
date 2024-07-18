@@ -485,3 +485,44 @@ function _uploadEmoji(data=null){
         new_Alert(err.message);
     })
 }
+
+function _getEmojiList(data=null){
+    if(!data) return;
+
+    let url= "/functionality/lib/_fetch_data.php";
+    data.req="getEmojisDetails";
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data)).then(res=>{
+            if(!res.responseText.error){
+                resolve(res.responseText);
+            }else{
+                throw res.responseText;
+            }
+        }).catch(err=>{
+            resolve(0);
+            customError(err);
+        })
+    })
+    
+}
+
+function _deleteUploadedEmoji(emojiID=null){
+    if(!emojiID) return;
+
+    let URL= "/functionality/lib/_data_delete.php";
+    let data= {req:'deleteEmoji',emojiID};
+
+    return new Promise((resolve,reject)=>{
+        postReq(URL,JSON.stringify(data))
+            .then(res=>{
+                if(res.status === "success" && res.responseText === 1)
+                    resolve(1);
+                else
+                    throw res.responseText;
+            }).catch(err=>{
+                customError(err); 
+                resolve(0);
+            })
+    })
+}

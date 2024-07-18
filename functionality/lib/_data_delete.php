@@ -1,6 +1,7 @@
 <?php
     if($data = json_decode( file_get_contents("php://input") , true)){
         session_start();
+        require_once("../db/_conn.php");
         require_once("_validation.php");
         require_once("_fetch_data.php");
         require_once('./_notification.php');
@@ -19,6 +20,8 @@
                 echo removeMember($data['unm']);
             else if($data['req'] === 'unBlockChatter' && isset($data['unm']))
                 echo unBlockChatter(base64_decode($data['unm']));
+            else if($data['req'] === 'deleteEmoji')
+                echo deleteEmoji(base64_decode($data['emojiID']));
             
         }
 
@@ -167,7 +170,6 @@
             }else{
                 return 0;
             }
-
     }
 
     function deleteMsg(string $msgID){
@@ -423,6 +425,25 @@
                 return $sqlfire;
             }else
                 throw new Exception("No Data Found.",411);
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+            return json_encode($error);
+        }
+    }
+
+    function deleteEmoji(string $emojiID=null){
+        try{
+            $userID= getDecryptedUserID();
+            
+            if(!$emojiID || !is_data_present('emojis',['id','uploaderID'],[$emojiID,$userID],"id"))
+                throw new Exception("No data found",404);
+
+            return deleteData('emojis',$emojiID,"id");
+
         }catch(Exception $e){
             $error = [
                 'error'=>true,

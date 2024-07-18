@@ -241,7 +241,6 @@ const setLoader = (loc)=>{
         loaderText.classList.add('loader-text');
         loaderText.textContent = "Loading...";
         loaderDiv.appendChild(loaderText);
-    
 };
 
 const removeLoader = (loc)=>{

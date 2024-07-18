@@ -108,7 +108,11 @@
                         document.querySelector("div[title='Noti'] .img").classList.add("new_noti");
                         var i=0;
                         data.forEach(row=>{
-                            
+                            // adding green color font span to to emojis related messages (if there is any)
+                            if(row.msg?.msg)
+                                row.msg.msg.replace(new RegExp(/:\w+:/,'gi'),match=>`<span class='green'>${match}</span>`);
+
+
                             if(row['action'] == "addUserReq"){
                                 box_data=document.createElement("div");box_data.classList.add("box_data");
                                 box_data.classList.add(`${row['action']}`);
@@ -208,8 +212,6 @@
                                         <button name="delete_btn" id="delete_btn" class="danger-button delete_btn button" onclick="_deleteThisNoti('${row['notiID']}')">Delete</button>
                                     </div>` ;
                             }else if(row['action'] === "info"){
-                                console.log(row);
-
                                 box_data=document.createElement("div");
                                 box_data.classList.add("box_data",`${row['action']}`);
                                 box.appendChild(box_data);
@@ -569,6 +571,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                 radioPrivate.type="radio";
                 radioPrivate.value="PRIVATE";
                 radioPrivate.name="scope";
+                radioPrivate.id="PRIVATE";
                 radioPrivate.style.borderRadius="20px";
                 radioPrivate.checked=true;
                 container.appendChild(radioPrivate);
@@ -580,6 +583,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                 let radioPublic= document.createElement("input");
                 radioPublic.type="radio";
                 radioPublic.value="PUBLIC";
+                radioPublic.id="PUBLIC";
                 radioPublic.name="scope";
                 radioPublic.style.borderRadius="20px";
                 container.appendChild(radioPublic);
@@ -588,12 +592,12 @@ const _upload_img_form = (title , action , theme = 'blue') => {
             function label(name){
                 let label= document.createElement("label");
                 label.textContent=name;
+                label.setAttribute('for',name);
                 return label;
             }
 
             yes_btn.onclick = async ()=> {
                 if(!disabled_pop_up_btn.upload_img_form){
-                    
                     let emojiName=input.value;
                     let avatar= input_field.querySelector("#avatar");
 
@@ -1081,6 +1085,17 @@ function toggleBlockedChatterList(){
     let blockedChatterListObj= new blockedChatterListBox();
 }
 
+//open upload emoji form function
+function openUploadEmojiForm(){
+    closesettingsbox();
+    _upload_img_form("Upload Your Emoji","UPLOAD_EMOJI");
+}
+//emojis list display function
+function showEmojisList(from="SELF",GID=null){
+    closesettingsbox();
+    let showEmojisListObj= new ShowEmojisList(from,GID);
+}
+
 //action can me be by lastMsgTime and by user searched input name
 function sortChatByTime(){
     var allChats= document.querySelectorAll(".chat-box .inbox .inbox-user");
@@ -1101,8 +1116,6 @@ function sortChatByTime(){
             }
         }
     }    
-
-
 }
 
 function sortChatBySearch(unm){

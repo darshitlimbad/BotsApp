@@ -37,7 +37,7 @@
 }
 
 
-#create_newGroup_form , #blocked_chatter_list , .form{
+#create_newGroup_form , #blocked_chatter_list ,#emojis_list_form, .form{
     display: flex;
     flex-direction: column;
     opacity: 1;
@@ -51,50 +51,17 @@
     width: 60%;
 }
 
-.form .body {
+.form .body ,#emojis_list_form .body{
     min-height: 25vh;
     overflow: auto;
     overflow-x: hidden;
 }
 
-.form table{
+.form table, #emojis_list_form table{
     width: 100%;
 }
 
-.form table td{
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    width: 30%;
-}
-
-/* ? dp node */
-.form table td:nth-child(1){
-    width: 3em;
-}
-/* ? unm node */
-.form table td:nth-child(2){
-    width: 30%;
-}
-.mobile .form table td:nth-child(2){
-    width: 60%;
-}
-/* ? btn node */
-.form table td:last-child{
-    width: auto;
-}
-
-
-.mobile .form table td{
-    display: none;
-}
-
-/* ? dp & unm & btn node */
-.mobile .form table td:nth-child(1), .mobile .form table td:nth-child(2), .mobile .form table td:last-child{
-    display: block;
-}
-
-.form .body .msg{
+.form .body .msg ,#emojis_list_form .body .msg{
     /* height: 5vh; */
     height: 22vh;
     display: flex;
@@ -102,7 +69,7 @@
     justify-content: center;
 }
 
-#create_newGroup_form .heading , #blocked_chatter_list .heading , .form .heading{
+#create_newGroup_form .heading , #blocked_chatter_list .heading ,#emojis_list_form .heading, .form .heading{
     display: block;
     height: auto;
     width: auto;
@@ -295,6 +262,10 @@ tbody.center{
     --bg-color:darkred;
     --color:darkgrey;
 }
+.flexBox .btn.blue{
+    --bg-color:blue;
+    --color:darkgrey;
+}
 .flexBox .btn.green{
     --bg-color:darkgreen;
     --color:darkgrey;
@@ -319,3 +290,31 @@ tbody.center{
     font-family: cursive;
 }
 
+.form table tr td{
+    overflow: hidden;
+}
+
+#emojis_list_form{
+    width: auto;
+    max-width: 100%;
+}
+
+.mobile #emojis_list_form .memberList{
+    font-size: 10px;
+}
+
+/* Emojis_list_styles
+
+
+#emojis_list_form .memberList .emojiBox{
+    justify-content: space-between;
+}
+
+#emojis_list_form .memberList tr td {
+    overflow: hidden;
+    width: 17%;
+}
+
+#emojis_list_form .memberList tr td:nth-child(1){
+    width: 8%;
+} */

@@ -1,37 +1,37 @@
 <?php
     if($data = json_decode(file_get_contents("php://input") , true) ){
-        $fleg=0;
         if(!session_id()){
             session_start();
-            $fleg=1;
-        }
-        if(isset($data['req']) && isset($_SESSION['userID'])){
-            require_once('../db/_conn.php');
-            require_once('../lib/_validation.php');
+            if(isset($data['req']) && isset($_SESSION['userID'])){
+                require_once('../db/_conn.php');
+                require_once('../lib/_validation.php');
 
-            if($data['req'] == "get_dp") {
-                if(isset($data['unm']))
-                    echo get_dp( null,$data['unm']);    
-                else if(isset($data['GID'])){
-                    echo get_dp( null,null,$data['GID']);
+                if($data['req'] == "get_dp") {
+                    if(isset($data['unm']))
+                        echo get_dp( null,$data['unm']);    
+                    else if(isset($data['GID'])){
+                        echo get_dp( null,null,$data['GID']);
+                    }
+                }else if($data['req'] == "get_unm"){
+                        echo search_user($data['from'] , $data['value']);
+                
+                }else if($data['req'] == "getDocBlob") { 
+                        $res = getDocBlob($data);
+                        $size = strlen($res);
+                        header('Content-Type: application/json');
+                        header('Content-Length:'.$size);
+                        echo $res;
+                
+                }else if($data['req'] == "getProfile"){
+                    echo getProfile();
+                }else if($data['req'] == "getBlockedMemberList"){
+                    echo getBlockedMemberList();
+                }else if($data['req'] == "getEmojisDetails"){
+                    echo getEmojisDetails($data);
                 }
-            }else if($data['req'] == "get_unm"){
-                    echo search_user($data['from'] , $data['value']);
-            
-            }else if($data['req'] == "getDocBlob") { 
-                    $res = getDocBlob($data);
-                    $size = strlen($res);
-                    header('Content-Type: application/json');
-                    header('Content-Length:'.$size);
-                    echo $res;
-            
-            }else if($data['req'] == "getProfile")   
-                echo getProfile();
-            else if($data['req'] == "getBlockedMemberList")
-                echo getBlockedMemberList();
-        }
-        if($fleg)
+            }
             session_abort();
+        }
     }
 
     function _get_userID_by_UNM(string $unm){
@@ -412,6 +412,89 @@
                 'code'=> $e->getCode(),
                 'message'=> $e->getMessage(),
             ];
+            return json_encode($error);
+        }
+    }
+
+    // @param $data a array with node from which can have two values 'SELF' OR 'GROUP'
+    // @param if the from == 'GROUP' then the $data should have 'GID' node with value converted in binary
+    function getEmojisDetails(array $data=[]){
+        try{
+            if(!$data)
+                throw new Exception("No data found!!",411);
+
+            $allowed_from_value=['SELF','GROUP'];
+            if(!isset($data['from']) || !in_array($data['from'],$allowed_from_value))
+                throw new Exception("",400);
+
+            $userID=getDecryptedUserID();
+            
+            $list=[];
+            $i=0;
+
+            if($data['from'] == "SELF"){
+                $points= ['uploaderID'];
+                $points_value=[$userID];
+                $columns=['id','scope','groupID','name','mime','blob_data','status'];
+
+                $result= fetch_columns("emojis",$points,$points_value,$columns);
+                if(!$result || !$result->num_rows)
+                    throw new Exception("",400);
+                
+                while($row= $result->fetch_assoc()){
+                    $list[$i]=[
+                        'id'=> base64_encode($row['id']),
+                        'scope'=>$row['scope'],
+                        'name'=>$row['name'],
+                        'mime'=>$row['mime'],
+                        'blob'=>$row['blob_data'],
+                        'status'=>$row['status'],
+                    ];
+                    if($row['scope'] === "GROUP")
+                        $list[$i]['GNM']= _fetch_group_nm($row['groupID']);
+                    $i++;
+                }
+
+                
+            }else{
+                if(!isset($data['GID']))
+                    throw new Exception("",400);
+
+                $groupID= base64_decode($data['GID']);
+                if(!is_member_of_group($userID,$groupID))
+                    throw new Exception("User is not a member of group",410);
+
+                $points= ['scope','groupID'];
+                $points_value= ['GROUP',$groupID];
+                $columns= ['id','uploaderID','scope','name','mime','blob_data','status'];
+
+                $result= fetch_columns("emojis",$points,$points_value,$columns);
+                if(!$result || !$result->num_rows)
+                    throw new Exception("",400);
+                
+                while($row= $result->fetch_assoc()){
+                    $list[$i++]=[
+                        'id'=> base64_encode($row['id']),
+                        'uploaderUNM'=>_fetch_unm($row['uploaderID']),
+                        'scope'=>$row['scope'],
+                        'name'=>$row['name'],
+                        'mime'=>$row['mime'],
+                        'blob'=>$row['blob_data'],
+                        'status'=>$row['status'],
+                    ];
+                }
+            }
+
+            array_multisort( $list, SORT_ASC);
+            return json_encode($list);
+
+        }catch(Exception $e){
+            $error = [
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+
             return json_encode($error);
         }
     }
