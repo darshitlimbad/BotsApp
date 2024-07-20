@@ -44,7 +44,6 @@
 
             request.onreadystatechange = function () {
                 if(request.readyState === 4 && request.status === 200)  {
-                console.log(request.responseText);
 
                     // res == 1 = available ,  res == 0 = not available
                     var res = request.responseText;

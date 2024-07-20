@@ -30,12 +30,8 @@
 
     function insertData(string $table, array $columns , array $values , $db = "conn")   {
         try{
-            foreach($columns as $key => $val){
-                $columns[$key] = trim($val);
-            }
-            foreach($values as $key => $val){
-                $values[$key] = trim($val);
-            }
+            $columns = array_map('trim', $columns);
+            $values = array_map('trim', $values);
 
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);
@@ -62,37 +58,48 @@
     }
 
     // fetch data by table name , column for where point , point value , parameter of columns you want to fetch
-    function fetch_columns( $table , array $points , array $point_values , array $columns, $db="conn"){
+    // @param $flags can have values like orderby .. and it's value should contain value+ ASC or DESC
+    // starting flags are also can be accepted as part of where clouse
+    function fetch_columns( $table , array $points , array $point_values , array $columns, $db="conn",array $flags=[]){
         try{
-            foreach($columns as $key => $val){
-                $columns[$key] = trim($val);
-            }
-            foreach($points as $key => $val){
-                $points[$key] = trim($val);
-            }
-            foreach($point_values as $key => $val){
-                $point_values[$key] = trim($val);
-            }
+             // Trim columns, points, and point_values
+            $columns = array_map('trim', $columns);
+            $points = array_map('trim', $points);
+            $point_values = array_map('trim', $point_values);
             
             if(sizeof($points) != sizeof($point_values))
                 throw new Exception( "Point size is not equal to Point Value size", 400);
 
+            // Construct the WHERE clause
             $point_str = "";
             $i=0;
-            foreach($points as $point){
-
-                $point_str .="`" . $point . "` = ". ' ? ';
-                ++$i;
-                if(sizeof($points) != $i)
-                    $point_str .= ' AND ';
+            if(count($points) == 1 && $points[0] == 1){
+                $point_str .= "1 = ?";
+            }else{
+                foreach($points as $point){
+                    $point_str .="`" . $point . "` = ". ' ? ';
+                    ++$i;
+                    if(sizeof($points) != $i)
+                        $point_str .= ' AND ';
+                }    
+            }
+            
+            // Construct the flags part of the query
+            $flags_str="";
+            if(count($flags) > 0){
+                foreach($flags as $flag)
+                    $flags_str .= trim($flag) . " ";                 
             }
 
             $bind_param = str_repeat("s" , count($point_values));
-            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE $point_str ";
+            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE $point_str $flags_str";
             $stmt  = $GLOBALS[$db] -> prepare($query);
             $stmt->bind_param($bind_param , ...$point_values);
             $sqlfire = $stmt->execute();
 
+            // echo $query, $flags_str;
+            // print_r($point_values);
+            // print_r($flags_values);
             if($sqlfire){
                 $result = $stmt->get_result();
                 $stmt->close();
@@ -101,15 +108,26 @@
                 return 400;
             }
         }catch(Exception $e){
+            print_r($e);
             return 0;
         }
     }
 
-    function search_columns( $table , $point , $point_value , ...$columns){
+    // starting flags are also can be accepted as part of where clouse
+    function search_columns( $table , $point , $point_value , array $columns,string $db="conn", array $flags=[]){
         try{
+            // Constructing the point value part
             $point_value = '%'.$point_value.'%';
-            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE `$point` LIKE ?";
-            $stmt  = $GLOBALS['conn'] -> prepare($query);
+
+            // Constructing the flags part of the query
+            $flags_str="";
+            if(count($flags) > 0){
+                foreach($flags as $flag)
+                    $flags_str .= trim($flag) . " ";                 
+            }
+
+            $query = "SELECT ". implode(' , ' , $columns) ." FROM `$table` WHERE `$point` LIKE ? $flags_str";
+            $stmt  = $GLOBALS[$db] -> prepare($query);
             $stmt->bind_param('s' , $point_value );
             $sqlfire = $stmt->execute();
 
@@ -130,12 +148,8 @@
 
     function updateData($table,array $columns ,array $values , $point, $point_value , $db="conn" )   {
         try{
-            foreach($columns as $key => $val){
-                $columns[$key] = trim($val);
-            }
-            foreach($values as $key => $val){
-                $values[$key] = trim($val);
-            }
+            $columns = array_map('trim', $columns);
+            $values = array_map('trim', $values);
 
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);

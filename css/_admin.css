@@ -102,39 +102,7 @@ body.main{
     font-size: 10px;
 }
 
-/* features css */
-.form table td{
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    width: 30%;
-}
 
-/* ? dp node */
-.form table td:nth-child(1){
-    width: 3em;
-}
-/* ? unm node */
-.form table td:nth-child(2){
-    width: 30%;
-}
-.mobile .form table td:nth-child(2){
-    width: 60%;
-}
-/* ? btn node */
-.form table td:last-child{
-    width: auto;
-}
-
-
-.mobile .form table td{
-    display: none;
-}
-
-/* ? dp & unm & btn node */
-.mobile .form table td:nth-child(1), .mobile .form table td:nth-child(2), .mobile .form table td:last-child{
-    display: block;
-}
 
 /* #emojis_list_form .memberList tr td {
     width: 14%;

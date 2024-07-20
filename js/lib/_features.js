@@ -508,7 +508,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                 }
                 }
             }
-        }else if(action === "UPLOAD_EMOJI"){
+        }else if(action.action == "UPLOAD_EMOJI" ){
             var input_field= upload_img_form.querySelector(".input_field");
             
             //input_field_text
@@ -517,13 +517,13 @@ const _upload_img_form = (title , action , theme = 'blue') => {
             input_field_text.setAttribute("name","textInputField");
             upload_img_form.insertBefore(input_field_text,input_field);
 
-            //input_field_div
+            //input_field_div for label
             let inputDiv= document.createElement("div");
             inputDiv.classList.add("input");
             inputDiv.style.transform="translateY(-28px)"
             input_field_text.appendChild(inputDiv);
 
-            //input type=text
+            //emoji name input
             let input=  document.createElement("input");
             input.type="text";
             input.name="emoji Name";
@@ -534,7 +534,7 @@ const _upload_img_form = (title , action , theme = 'blue') => {
             input_field.style.padding="25px";
             input_field_text.style.padding="25px";
 
-            //name rules
+            //emoji name rules field
             let rules= document.createElement("span");
             Object.assign(rules.style,{
                 display:'block',
@@ -546,48 +546,50 @@ const _upload_img_form = (title , action , theme = 'blue') => {
             `;
             input_field_text.appendChild(rules);
 
-            //scope radio button field
-            let radioField=document.createElement('div');
-            radioField.classList.add('radio_field');
-            upload_img_form.insertBefore(radioField,input_field);
+            if(action.from == "SELF"){
+                //scope radio button field
+                let radioField=document.createElement('div');
+                radioField.classList.add('radio_field');
+                upload_img_form.insertBefore(radioField,input_field);
 
-            //scope field title
-            let title= label("Choose Emoji Scope:");
-            Object.assign(title.style,{
-                'fontFamily':"sans-serif"
-            })
-            radioField.appendChild(title);
+                //scope field title
+                let title= label("Choose Emoji Scope:");
+                Object.assign(title.style,{
+                    'fontFamily':"sans-serif"
+                })
+                radioField.appendChild(title);
 
-            //radio button div
-            let radioDiv= document.createElement('div');
-            radioDiv.classList.add("checkBox");
-            radioDiv.style.justifyContent="space-evenly";
-            radioField.appendChild(radioDiv);
+                //radio button div
+                let radioDiv= document.createElement('div');
+                radioDiv.classList.add("checkBox");
+                radioDiv.style.justifyContent="space-evenly";
+                radioField.appendChild(radioDiv);
 
-            //scope = private
-            let container=document.createElement("div");
-            radioDiv.appendChild(container);
-                let radioPrivate= document.createElement("input");
-                radioPrivate.type="radio";
-                radioPrivate.value="PRIVATE";
-                radioPrivate.name="scope";
-                radioPrivate.id="PRIVATE";
-                radioPrivate.style.borderRadius="20px";
-                radioPrivate.checked=true;
-                container.appendChild(radioPrivate);
-                container.appendChild(label("PRIVATE"));
-            
-            //scope = public
-            container=document.createElement("div");
-            radioDiv.appendChild(container);
-                let radioPublic= document.createElement("input");
-                radioPublic.type="radio";
-                radioPublic.value="PUBLIC";
-                radioPublic.id="PUBLIC";
-                radioPublic.name="scope";
-                radioPublic.style.borderRadius="20px";
-                container.appendChild(radioPublic);
-                container.appendChild(label("PUBLIC"));
+                //scope = private
+                let container=document.createElement("div");
+                radioDiv.appendChild(container);
+                    var radioPrivate= document.createElement("input");
+                    radioPrivate.type="radio";
+                    radioPrivate.value="PRIVATE";
+                    radioPrivate.name="scope";
+                    radioPrivate.id="PRIVATE";
+                    radioPrivate.style.borderRadius="20px";
+                    radioPrivate.checked=true;
+                    container.appendChild(radioPrivate);
+                    container.appendChild(label("PRIVATE"));
+                
+                //scope = public
+                container=document.createElement("div");
+                radioDiv.appendChild(container);
+                    var radioPublic= document.createElement("input");
+                    radioPublic.type="radio";
+                    radioPublic.value="PUBLIC";
+                    radioPublic.id="PUBLIC";
+                    radioPublic.name="scope";
+                    radioPublic.style.borderRadius="20px";
+                    container.appendChild(radioPublic);
+                    container.appendChild(label("PUBLIC"));
+            }
 
             function label(name){
                 let label= document.createElement("label");
@@ -608,7 +610,8 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                         _submit_btn_disable(img_submit_btn);
 
                         let data={
-                            scope:(radioPrivate.checked)? "PRIVATE": "PUBLIC",
+                            scope:(action.from == "SELF")? ((radioPrivate.checked)? "PRIVATE": "PUBLIC") : "GROUP",
+                            GID:action.GID,
                             name:emojiName,
                             blob:(await _read_doc(avatar.files[0])),
                         };
@@ -1086,9 +1089,10 @@ function toggleBlockedChatterList(){
 }
 
 //open upload emoji form function
-function openUploadEmojiForm(){
+function openUploadEmojiForm(from="SELF",GID=null){
     closesettingsbox();
-    _upload_img_form("Upload Your Emoji","UPLOAD_EMOJI");
+    let action= {action:"UPLOAD_EMOJI",from,GID};
+    _upload_img_form("Upload Your Emoji",action);
 }
 //emojis list display function
 function showEmojisList(from="SELF",GID=null){

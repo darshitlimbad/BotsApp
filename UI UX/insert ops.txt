@@ -12,10 +12,11 @@ side insert ops:
 
 next session ops:
         7. create operations of msgDeleted and reloadChat for group also.
-        8. create upload emoji and emoji list for group
-        9. pending emojis for admin in admin panel. 
+        8. create a list at msgInput box for displaying searched emojis by using _searchEmojis();
+        9. create a fetch_emoji() function at both side to fetch an emoji from exact name
 
 
+        
 
 
 ///Delete operations note
@@ -55,14 +56,16 @@ next session ops:
 
 ///8.  show chatList in order of the last msg and whatever i have to make for it make it also to use in chatter search in chatlist ----done
 
-/////5. make api for adding groups and deleting groups and users.-- done
+///5. make api for adding groups and deleting groups and users.-- done
         now add removing member by admin functionality            --done
 
- ///////4. create a indexed DB table for storing dp as hashmap. or gether information about window.chache
+///4. create a indexed DB table for storing dp as hashmap. or gether information about window.chache
         and flush it in every new session so if the user changes the dp then it can refresh ---- did it using localStorage
 
 /// 9. convert in a 'class' for open and close chat and for open chatlist.  -- done - but not much effect
 
+///8. create upload emoji and emoji list for group
+///9. pending emojis for admin in admin panel. 
 
 ///////dropped ideas
 

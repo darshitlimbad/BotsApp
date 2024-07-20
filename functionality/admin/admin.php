@@ -249,16 +249,17 @@ use Random\RandomException;
             $list=[];
             $i=0;
             
-            $SQL= " SELECT *
-                    FROM `emojis` ORDER BY id ASC";
+            // $SQL= " SELECT *
+            //         FROM `emojis` ORDER BY id ASC";
 
-            $result= $GLOBALS['conn']->query($SQL) ?? null; 
+            // $result= $GLOBALS['conn']->query($SQL) ?? null; 
 
+            $result= fetch_columns("emojis",[1],[1],['*'],"conn",["ORDER BY name ASC"]);
             if(!$result || !$result->num_rows)
                 throw new Exception("",400);
             
             while($row= $result->fetch_assoc()){
-                $list[$i++]=[
+                $list[$i]=[
                     'id'=> base64_encode($row['id']),
                     'uploaderUNM'=>_fetch_unm($row['uploaderID']),
                     'scope'=>$row['scope'],
@@ -267,9 +268,13 @@ use Random\RandomException;
                     'blob'=>$row['blob_data'],
                     'status'=>$row['status'],
                 ];
+
+                if($row['scope']== "GROUP" )
+                    $list[$i]['GNM']=_fetch_group_nm($row['groupID']);
+                
+                $i++;
             }
 
-            array_multisort( $list, SORT_ASC);
             return json_encode($list);
 
         }catch(Exception $e){
@@ -287,17 +292,12 @@ use Random\RandomException;
         try{            
             $list=[];
             $i=0;
-            
-            $SQL= " SELECT *
-                    FROM `emojis`
-                    WHERE status='PENDING' 
-                    ORDER BY id ASC
-                    ";
 
-            $result= $GLOBALS['conn']->query($SQL) ?? null; 
-
-            if(!$result || !$result->num_rows)
+            $result= fetch_columns("emojis",['status'],["PENDING"],["*"],"conn",["ORDER BY name ASC"]);
+            if(!$result)
                 throw new Exception("",400);
+            else if(!$result->num_rows)
+                return 411;
             
             while($row= $result->fetch_assoc()){
                 $list[$i++]=[
@@ -311,7 +311,6 @@ use Random\RandomException;
                 ];
             }
 
-            array_multisort( $list, SORT_ASC);
             return json_encode($list);
 
         }catch(Exception $e){

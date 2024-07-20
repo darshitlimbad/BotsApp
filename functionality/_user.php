@@ -12,7 +12,7 @@ try{
             $surname = $_POST['surname'];
             $name = $_POST['name'];
             $unm = $_POST['user'];
-            $email = filter_var( $_POST['e-mail'] , FILTER_VALIDATE_EMAIL ) ?? 0;
+            $email = $_POST['e-mail'];
             $hashed_pass = password_hash($_POST['pass'] , PASSWORD_BCRYPT);
             $pass_key = base64_encode(random_bytes(SODIUM_CRYPTO_SECRETBOX_KEYBYTES));
 
@@ -20,7 +20,9 @@ try{
 
             // validation
             if(!$surname || !$name || !$unm || !$email || !$hashed_pass || !$pass_key )
-                throw new Exception('',400);
+                throw new Exception('Something went wrong',400);
+            else if(!filter_var( $email , FILTER_VALIDATE_EMAIL ))
+                throw new Exception("Email is wrong please fill valid email",412);
             else if(strpos($unm,'@'))
                 throw new Exception("Username is Invalid!!",414);
             else if(is_data_present("users" , ["unm"] , [$unm] , 'unm') || 
@@ -136,7 +138,7 @@ try{
     }
 } catch (Exception $error) {
     // print_r($error);
-    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : ""));
+    header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : "&msg=".$error->getMessage()));
     die();
 }
 ?>

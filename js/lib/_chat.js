@@ -636,10 +636,12 @@ async function openGroupProfile(){
             })
         }
 
+        // add or delte actions
         flexBox=document.createElement('div');
         flexBox.classList.add('flexBox');
         userProfile.appendChild(flexBox);
 
+            //? delete chat btn
             var deleteBtn= document.createElement('button');
             deleteBtn.classList.add('danger-button','button');
             deleteBtn.textContent= (admin) ? 'Delete Group' : 'Leave Group' ;
@@ -649,12 +651,30 @@ async function openGroupProfile(){
             let message = `Are You sure you want to ${deleteBtn.textContent}? Your all chats with this group will be deleted also.`;
             deleteBtn.onclick=()=>_confirmation_pop_up(unm,message,action,'red');
 
+            //? add member btn
             var addMemberBtn= document.createElement('button');
             addMemberBtn.classList.add('success-button','button');
             addMemberBtn.textContent= 'Add Member';
+            addMemberBtn.onclick=()=>{userProfile.remove();addNewMemberForm()};
             flexBox.appendChild(addMemberBtn);
 
-            addMemberBtn.onclick=()=>addNewMemberForm();
+        // emojis actions
+        flexBox=document.createElement('div');
+        flexBox.classList.add('flexBox');
+        userProfile.appendChild(flexBox);
+
+            // ?list out all group emojis
+            var listEmojisBtn= document.createElement('button');
+            listEmojisBtn.classList.add('success-button','button');
+            listEmojisBtn.textContent= "Group Emojis" ;
+            listEmojisBtn.onclick=()=>showEmojisList("GROUP",getCookie('currOpenedGID'));
+            flexBox.appendChild(listEmojisBtn);
+
+            var addEmojiBtn= document.createElement('button');
+            addEmojiBtn.classList.add('success-button','button','green');
+            addEmojiBtn.textContent= 'Add Emoji';
+            addEmojiBtn.onclick=()=>openUploadEmojiForm("GROUP",getCookie('currOpenedGID'));
+            flexBox.appendChild(addEmojiBtn);
         
     setTimeout(()=>{
         chatStruct.heading.appendChild(userProfile);

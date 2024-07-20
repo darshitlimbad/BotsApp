@@ -159,7 +159,23 @@ class UsersManagementForm{
 
     async displayList() {
         try{
-            
+            var rowStyles={
+                display: 'grid',
+                grid: 'none / 3em 16em 7em',
+                overflow:'hidden',
+                overflowWrap:'anywhere',
+            }
+            var btnCellStyles={
+                display:'flex',
+                justifyContent:'center',
+            }
+            var btnStyles={
+                'position':'relative',
+                'margin':'0 5px',
+                'right':'0',
+                overflowWrap:'normal',
+            }
+
             if(this.usersListBlock)
                 this.usersListBlock.remove();
 
@@ -172,68 +188,67 @@ class UsersManagementForm{
             if(!userList.length)
                 throw 411; 
 
-            let user = document.createElement('tr');
-            user.classList.add('user', 'flexBox', 'input_field' );
-            Object.assign(user.style,{
+            let userHeader = document.createElement('tr');
+            userHeader.classList.add('userHeader', 'flexBox', 'input_field' );
+            Object.assign(userHeader.style, rowStyles, {
                 borderBottom: "var(--thin-wh-border)",
                 justifyContent: "flex-start",
                 flexWrap: 'wrap',
-            })
-            this.usersListBlock.appendChild(user);
+                zIndex:'1',
+            });
 
-            clmHeading("DP");
-            clmHeading("UserName");
-            clmHeading("Full Name");
-            clmHeading("Email");
+            this.usersListBlock.appendChild(userHeader);
 
-
-            let actionEle=clmHeading("Action");
-            actionEle.classList.add('btn');
+            clmHeading("No.");
+            clmHeading("User");
+            clmHeading("Action").classList.add('btn');
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                user.appendChild(nodeEle);
+                userHeader.appendChild(nodeEle);
                 return nodeEle;
             }
 
-            
+            var count=0;
             userList.forEach(userDetails => {
 
+                //row
                 let user = document.createElement('tr');
                 user.classList.add('user', 'flexBox', 'input_field' , 'member');
+                Object.assign(user.style,rowStyles);
                 user.onclick=()=>new_notification(`<span class="green">Username : </span> @${userDetails.unm} | <br> <span class="green">Full Name : </span> ${userDetails.full_name} | <br>  <span class="green">Email : </span> ${userDetails.email} | <br> `);
                 this.usersListBlock.appendChild(user);
         
-                let node= nodeEle();
-                let dp = new Image(30, 30);
-                dp.classList.add('avatar','skeleton');
-                node.appendChild(dp);
-        
-                node=nodeEle();
-                let userNameBlock = document.createElement('p');
-                userNameBlock.classList.add('margin-dead');
-                userNameBlock.textContent = userDetails.unm;
-                node.appendChild(userNameBlock);
-                
-                node=nodeEle();
-                let fullNameBlock = document.createElement('p');
-                fullNameBlock.classList.add('margin-dead');
-                fullNameBlock.textContent = userDetails.full_name;
-                node.appendChild(fullNameBlock);
-                
-                node=nodeEle();
-                let emailBlock = document.createElement('p');
-                emailBlock.classList.add('margin-dead');
-                emailBlock.textContent = userDetails.email;
-                node.appendChild(emailBlock);
+                var node=nodeEle();
+                let index = document.createElement('p');
+                index.classList.add('margin-dead');
+                index.textContent = ++count + ".";
+                node.appendChild(index);
 
+                //row-user
+                node= nodeEle();
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+                    let dp = new Image(30, 30);
+                    dp.classList.add('avatar','skeleton');
+                    node.appendChild(dp);
+            
+                    let userNameBlock = document.createElement('p');
+                    userNameBlock.classList.add('margin-dead');
+                    userNameBlock.textContent = userDetails.unm;
+                    node.appendChild(userNameBlock);
+
+                //row-action
                 node=nodeEle();
-                let deleteUserBtn= document.createElement('button');
-                deleteUserBtn.classList.add('red','margin-dead','btn');
-                deleteUserBtn.textContent="DELETE";
-                deleteUserBtn.onclick=()=>{
+                Object.assign(node.style,btnCellStyles);
+
+                let deleteBtn= document.createElement('button');
+                deleteBtn.classList.add('red','margin-dead','btn');
+                Object.assign(deleteBtn.style,btnStyles);
+                deleteBtn.textContent="DELETE";
+                deleteBtn.onclick=()=>{
                     _deleteUser(btoa(userDetails.unm))
                     .then(res=>{
                         if(res){
@@ -242,7 +257,7 @@ class UsersManagementForm{
                         }
                     })
                 };
-                node.appendChild(deleteUserBtn);
+                node.appendChild(deleteBtn);
 
                     setTimeout(() => {
                     get_dp(userDetails.unm).then(dpurl=>dp.src=dpurl);                
@@ -255,6 +270,21 @@ class UsersManagementForm{
                     return nodeEle;
                 }
             });
+
+            // on scroll changing userHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(userHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(userHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
             if(err === 411){
                 // this.#disable_PaginationBtns();
@@ -391,7 +421,23 @@ class GroupsManagementForm{
 
     async displayList() {
         try{
-            
+            var rowStyles={
+                display: 'grid',
+                grid: 'none / 3em 10em 9em 7em',
+                overflow:'hidden',
+                overflowWrap:'anywhere',
+            }
+            var btnCellStyles={
+                display:'flex',
+                justifyContent:'center',
+            }
+            var btnStyles={
+                'position':'relative',
+                'margin':'0 5px',
+                'right':'0',
+                overflowWrap:'normal',
+            }
+
             if(this.groupsListBox)
                 this.groupsListBox.remove();
 
@@ -404,58 +450,86 @@ class GroupsManagementForm{
             if(!groupsList.length)
                 throw 411; 
 
-            let group = document.createElement('tr');
-            group.classList.add('group', 'flexBox', 'input_field' );
-            Object.assign(group.style,{
+            let groupHeader = document.createElement('tr');
+            groupHeader.classList.add('groupHeader', 'flexBox', 'input_field' );
+            Object.assign(groupHeader.style, rowStyles, {
                 borderBottom: "var(--thin-wh-border)",
                 justifyContent: "flex-start",
                 flexWrap: 'wrap',
-            })
-            this.groupsListBox.appendChild(group);
+                zIndex:'1',
+            });
+            this.groupsListBox.appendChild(groupHeader);
 
-            clmHeading("DP");
-            clmHeading("Group Name");
-            clmHeading("Admin");
-            let actionEle=clmHeading("Action");
-            actionEle.classList.add('btn');
+            //columns headings
+            clmHeading("No ");
+            clmHeading("Group ");
+            clmHeading("Admin ");
+            clmHeading("Action").classList.add('btn');
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                group.appendChild(nodeEle);
+                groupHeader.appendChild(nodeEle);
                 return nodeEle;
             }
 
+            var count=0;
             groupsList.forEach(groupDetails => {
-
+                
+                //row
                 let group = document.createElement('tr');
                 group.classList.add('group', 'flexBox', 'input_field' , 'member');
+                Object.assign(group.style,rowStyles);
                 group.onclick=()=>new_notification(`<span class="green">Group Name : </span> @${groupDetails.name} | <br> <span class="green">GID : </span> ${groupDetails.GID} | <br>  <span class="green">Admin UNM : </span> ${groupDetails.adminUNM} <br> `);
                 this.groupsListBox.appendChild(group);
         
-                let node= nodeEle();
-                let dp = new Image(30, 30);
-                dp.classList.add('avatar','skeleton');
-                node.appendChild(dp);
-        
-                node=nodeEle();
-                let nameBlock = document.createElement('p');
-                nameBlock.classList.add('margin-dead');
-                nameBlock.textContent = groupDetails.name;
-                node.appendChild(nameBlock);
-                
-                node=nodeEle();
-                let AdminBlock = document.createElement('p');
-                AdminBlock.classList.add('margin-dead');
-                AdminBlock.textContent = groupDetails.adminUNM;
-                node.appendChild(AdminBlock);
+                //row-index
+                var node=nodeEle();
+                let index = document.createElement('p');
+                index.classList.add('margin-dead');
+                index.textContent = ++count + ".";
+                node.appendChild(index);
 
+                //row-group
+                node= nodeEle();
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+
+                    //group dp
+                    let gdp = new Image(30, 30);
+                    gdp.classList.add('avatar','skeleton');
+                    node.appendChild(gdp);
+            
+                    let nameBlock = document.createElement('p');
+                    nameBlock.classList.add('margin-dead');
+                    nameBlock.textContent = groupDetails.name;
+                    node.appendChild(nameBlock);
+                
+                //row-adminUNM  
                 node=nodeEle();
-                let deleteUserBtn= document.createElement('button');
-                deleteUserBtn.classList.add('red','margin-dead','btn');
-                deleteUserBtn.textContent="DELETE";
-                deleteUserBtn.onclick=()=>{
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+
+                    //admin dp
+                    let adp = new Image(30, 30);
+                    adp.classList.add('avatar','skeleton');
+                    node.appendChild(adp);
+
+                    let AdminBlock = document.createElement('p');
+                    AdminBlock.classList.add('margin-dead');
+                    AdminBlock.textContent = groupDetails.adminUNM;
+                    node.appendChild(AdminBlock);
+
+                //row-action
+                node=nodeEle();
+                Object.assign(node.style,btnCellStyles);
+
+                let deleteBtn= document.createElement('button');
+                deleteBtn.classList.add('red','margin-dead','btn');
+                deleteBtn.textContent="DELETE";
+                Object.assign(deleteBtn.style,btnStyles);
+                deleteBtn.onclick=()=>{
                     _deleteGroup(groupDetails.GID)
                         .then(res=>{
                             if(res){
@@ -464,10 +538,11 @@ class GroupsManagementForm{
                             }
                         })
                 };
-                node.appendChild(deleteUserBtn);
+                node.appendChild(deleteBtn);
 
                 setTimeout(() => {
-                    get_dp(null,groupDetails.GID).then(dpurl=>dp.src=dpurl);                
+                    get_dp(null,groupDetails.GID).then(dpurl=>gdp.src=dpurl);                
+                    get_dp(groupDetails.adminUNM).then(dpurl=>adp.src=dpurl);                
                 }, 100); 
 
                 function nodeEle(){
@@ -477,6 +552,20 @@ class GroupsManagementForm{
                 }
             });
 
+            // on scroll changing groupHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(groupHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(groupHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
             if(err === 411){
                 // this.#disable_PaginationBtns();
@@ -616,12 +705,25 @@ class reportsReviewForm{
 
     async displayList() {
         try{
+            var rowStyles={
+                display: 'grid',
+                grid:"none / 3em 9em 9em 12em",
+                overflow:'hidden',
+                overflowWrap:'anywhere',
+            }
+            var btnCellStyles={
+                display:'flex',
+                justifyContent:'center',
+            }
             var btnStyles={
                 'position':'relative',
                 'margin':'0 5px',
                 'right':'0',
+                overflowWrap:'normal',
             }
-
+            if(device=="mobile"){
+                btnStyles.fontSize="8px";
+            }
             if(this.reportsListBox)
                 this.reportsListBox.remove();
 
@@ -635,58 +737,88 @@ class reportsReviewForm{
                 throw 411; 
 
             // ? Form Header
-            let report = document.createElement('tr');
-            report.classList.add('report', 'flexBox', 'input_field' );
-            Object.assign(report.style,{
+            let reportHeader = document.createElement('tr');
+            reportHeader.classList.add('flexBox', 'input_field' );
+            Object.assign(reportHeader.style,rowStyles,{
                 borderBottom: "var(--thin-wh-border)",
                 justifyContent: "flex-start",
                 flexWrap: 'wrap',
-            })
-            this.reportsListBox.appendChild(report);
+                zIndex:'1',
+            });
+            this.reportsListBox.appendChild(reportHeader);
             
-            let reportedPersonCLM= clmHeading("Reported Person");
-            reportedPersonCLM.style.color="red";
+            //heading columns
+            clmHeading("No ");
+            clmHeading("Reported Person").style.color="red";
             clmHeading("Reported By");
-            let actionCLM=clmHeading("Action");
-            actionCLM.classList.add('btn');
-            Object.assign(actionCLM.style,btnStyles);
-            actionCLM.style.removeProperty('width');
+            clmHeading("Action").classList.add('btn');
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");
-                nodeEle.style.width="30%";
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                report.appendChild(nodeEle);
+                reportHeader.appendChild(nodeEle);
                 return nodeEle;
             }
             // ?
 
+            var count=0;
             reportsList.forEach(reportDetails => {
-                let group = document.createElement('tr');
-                group.classList.add('group', 'flexBox', 'input_field' , 'member');
-                group.onclick=()=>new_notification(`<span class='red'>Report Reason:</span> ${reportDetails.reason}`)
-                this.reportsListBox.appendChild(group);
-                
-                var node=nodeEle();
-                let reportedPerson = document.createElement('p');
-                reportedPerson.classList.add('margin-dead');
-                reportedPerson.textContent = reportDetails.reportedTo;
-                node.appendChild(reportedPerson);
 
-                node=nodeEle();
-                let reportedBy = document.createElement('p');
-                reportedBy.classList.add('margin-dead');
-                reportedBy.textContent = reportDetails.reportedBy;
-                node.appendChild(reportedBy);
+                //row
+                let report = document.createElement('tr');
+                report.classList.add('report', 'flexBox', 'input_field' , 'member');
+                Object.assign(report.style,rowStyles);
+                report.onclick=()=>new_notification(`<span class='red'>Report Reason:</span> ${reportDetails.reason}`)
+                this.reportsListBox.appendChild(report);
                 
+                //row-index
+                var node=nodeEle();
+                let index = document.createElement('p');
+                index.classList.add('margin-dead');
+                index.textContent = ++count;
+                node.appendChild(index);
+
+                //row-reported person
                 node=nodeEle();
-                node.style.removeProperty('width');
-                    let deleteUserBtn= document.createElement('button');
-                    deleteUserBtn.classList.add('red','btn');
-                    Object.assign(deleteUserBtn.style,btnStyles);
-                    deleteUserBtn.textContent="DELETE ACCOUNT";
-                    deleteUserBtn.onclick=()=>{
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+
+                    //rpdp -reported person dp
+                    let rpdp = new Image(30, 30);
+                    rpdp.classList.add('avatar','skeleton');
+                    node.appendChild(rpdp);
+
+                    let reportedPerson = document.createElement('p');
+                    reportedPerson.classList.add('margin-dead');
+                    reportedPerson.textContent = reportDetails.reportedTo;
+                    node.appendChild(reportedPerson);
+
+                //row-reported by
+                node=nodeEle();
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+
+                    //rbdp -reported by dp
+                    let rbdp = new Image(30, 30);
+                    rbdp.classList.add('avatar','skeleton');
+                    node.appendChild(rbdp);
+
+                    let reportedBy = document.createElement('p');
+                    reportedBy.classList.add('margin-dead');
+                    reportedBy.textContent = reportDetails.reportedBy;
+                    node.appendChild(reportedBy);
+                
+                //row-action
+                node=nodeEle();
+                Object.assign(node.style,btnCellStyles);
+
+                    //delete btn
+                    let deleteBtn= document.createElement('button');
+                    deleteBtn.classList.add('red','btn');
+                    Object.assign(deleteBtn.style,btnStyles);
+                    deleteBtn.textContent="DELETE ACCOUNT";
+                    deleteBtn.onclick=()=>{
                         _deleteUser(btoa(reportDetails.reportedTo))
                             .then(res=>{
                                 if(res){
@@ -695,8 +827,9 @@ class reportsReviewForm{
                                 }
                             })
                     };
-                    node.appendChild(deleteUserBtn);
-                    
+                    node.appendChild(deleteBtn);
+
+                    //warn btn
                     let warnBtn= document.createElement('button');
                     warnBtn.classList.add('green','btn');
                     Object.assign(warnBtn.style,btnStyles);
@@ -711,7 +844,8 @@ class reportsReviewForm{
                             })
                     };
                     node.appendChild(warnBtn);
-                    
+
+                    //reject btn
                     let reject= document.createElement('button');
                     reject.classList.add('white','btn');
                     Object.assign(reject.style,btnStyles);
@@ -728,19 +862,32 @@ class reportsReviewForm{
                     node.appendChild(reject);
 
                 setTimeout(() => {
-                    get_dp(null,reportDetails.GID).then(dpurl=>dp.src=dpurl);                
+                    get_dp(reportDetails.reportedTo).then(dpurl=>rpdp.src=dpurl);     
+                    get_dp(reportDetails.reportedBy).then(dpurl=>rbdp.src=dpurl);     
                 }, 100); 
 
                 function nodeEle(){
                     let nodeEle= document.createElement("td");
-                    nodeEle.style.width="30%";
-                    group.appendChild(nodeEle);
+                    report.appendChild(nodeEle);
                     return nodeEle;
                 }
             });
 
+            // on scroll changing reportHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(reportHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(reportHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
-            console.log(err);
             if(err === 411){
                 // this.#disable_PaginationBtns();
                 this.#showMsg("No Reports Found.");
@@ -821,7 +968,7 @@ class displayServerEmojis{
         document.querySelector('.pop_up_box #emojis_list_form')?.remove();
 
         this.form = document.createElement("div");
-        this.form.classList.add('pop_up');
+        this.form.classList.add('pop_up','form');
         this.form.id = "emojis_list_form";
 
         this.emojisListContainer=null;
@@ -876,16 +1023,21 @@ class displayServerEmojis{
 
     async displayList() {
         try{
-            var btnStyles={
-                'position':'relative',
-                'margin':'0 5px',
-                'right':'0',
-            }
             var rowStyles={
                 display: 'grid',
                 grid: 'auto-flow / 3em 7em 5em 7em 4em 6em 7em',
                 overflow:'hidden',
                 overflowWrap:'anywhere',
+            }
+            var btnStyles={
+                'position':'relative',
+                'margin':'0 5px',
+                'right':'0',
+                overflowWrap:'normal',
+            }
+
+            if(device=="mobile"){
+                rowStyles.grid='auto-flow / 3em 7em 7em 4em 7em';
             }
 
             if(this.emojisListContainer)
@@ -902,61 +1054,72 @@ class displayServerEmojis{
                 throw 411; 
 
             // ? Form Header
-            let emojiBox = document.createElement('tr');
-            Object.assign(emojiBox.style,rowStyles);
-            emojiBox.classList.add('emojiBox', 'flexBox', 'input_field' );
-            Object.assign(emojiBox.style,{
+            let emojiBoxHeader = document.createElement('tr');
+            Object.assign(emojiBoxHeader.style,rowStyles);
+            emojiBoxHeader.classList.add('emojiBoxHeader', 'flexBox', 'input_field' );
+            Object.assign(emojiBoxHeader.style,{
                 borderBottom: "var(--thin-wh-border)",
                 flexWrap: 'nowrap',
+                zIndex:'1',
             })
-            this.emojisListContainer.appendChild(emojiBox);
+            this.emojisListContainer.appendChild(emojiBoxHeader);
             
+            //columns heading
             clmHeading("No.");
             clmHeading("Uploader");
-            clmHeading("Scope");
+            if(device!="mobile")    clmHeading("Scope");
             clmHeading("Name");
             clmHeading("Emoji");
-            clmHeading("Status");
-
-            let actionCLM=clmHeading("Action");
-            actionCLM.classList.add('btn');
-            Object.assign(actionCLM.style,btnStyles);
-            actionCLM.style.removeProperty('width');
+            if(device!="mobile")    clmHeading("Status");
+            clmHeading("Action").classList.add('btn');
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                emojiBox.appendChild(nodeEle);
+                emojiBoxHeader.appendChild(nodeEle);
                 return nodeEle;
             }
             // ?
 
             var count=0;
             emojisList.forEach(emojisDetails => {
+
+                //row
                 let emojiBox = document.createElement('tr');
-                Object.assign(emojiBox.style,rowStyles);
                 emojiBox.classList.add('emojiBox', 'flexBox', 'input_field','member');
+                Object.assign(emojiBox.style,rowStyles);
                 this.emojisListContainer.appendChild(emojiBox);
                 
+                //adding onclick info event for mobile 
+                if(device=="mobile"){
+                    emojiBox.onclick=()=>new_notification(`<span class="green">Scope : </span> ${(emojisDetails.scope == "GROUP") ? `G- '${emojisDetails.GNM}'` : emojisDetails.scope} | <br> <span class="green">Status : </span> ${emojisDetails.status}`);
+                }
+
+                //row-index
                 var node=nodeEle();
                 let index = document.createElement('p');
                 index.classList.add('margin-dead');
                 index.textContent = ++count + ".";
                 node.appendChild(index);
 
+                //row-uploader
                 node=nodeEle();
                     let uploader = document.createElement('p');
                     uploader.classList.add('margin-dead');
                     uploader.textContent = emojisDetails.uploaderUNM ;
                     node.appendChild(uploader);
 
-                node=nodeEle();
-                let scope = document.createElement('p');
-                scope.classList.add('margin-dead');
-                scope.textContent = emojisDetails.scope +( (emojisDetails.scope == "GROUP") ? "-"+emojisDetails.GNM : "" );
-                node.appendChild(scope);
+                if(device!="mobile"){
+                    //row-scope
+                    node=nodeEle();
+                    let scope = document.createElement('p');
+                    scope.classList.add('margin-dead');
+                    scope.textContent = (emojisDetails.scope == "GROUP") ? `G- '${emojisDetails.GNM}'` : emojisDetails.scope;
+                    node.appendChild(scope);
+                }
                 
+                //row-emoji name
                 node=nodeEle();
                 let name = document.createElement('p');
                 name.classList.add('margin-dead');
@@ -964,6 +1127,7 @@ class displayServerEmojis{
                 name.textContent = emojisDetails.name;
                 node.appendChild(name);
                 
+                //row-emoji
                 node=nodeEle();
                 node.classList.add('mid-img')
                 let emoji = new Image();
@@ -971,16 +1135,22 @@ class displayServerEmojis{
                 emoji.src=`data:${emojisDetails.mime};base64,${emojisDetails.blob}`;
                 node.appendChild(emoji);
 
-                node=nodeEle();
-                node.style.overflow="hidden";
-                let status = document.createElement('p');
-                status.classList.add('margin-dead');
-                status.textContent = emojisDetails.status;
-                status.style.color= (emojisDetails.status == "PENDING") ? "red" : 'blue';
-                node.appendChild(status);
+                if(device!="mobile"){
+                    //row-status
+                    node=nodeEle();
+                    node.style.overflow="hidden";
+                    let status = document.createElement('p');
+                    status.classList.add('margin-dead');
+                    status.textContent = emojisDetails.status;
+                    status.style.color= (emojisDetails.status == "PENDING") ? "red" : 'blue';
+                    node.appendChild(status);
+                }
                 
+                //row-action
                 node=nodeEle();
                 node.style.removeProperty('width');
+
+                    //deletebtn
                     let deleteBtn= document.createElement('button');
                     deleteBtn.classList.add('red','btn');
                     Object.assign(deleteBtn.style,btnStyles);
@@ -1001,6 +1171,21 @@ class displayServerEmojis{
                     return nodeEle;
                 }
             });
+
+            // on scroll changing emojiBoxHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
             if(err === 411){
                 this.#showMsg("No Emojis Found.");
@@ -1043,7 +1228,7 @@ class displayPendingEmojis{
         document.querySelector('.pop_up_box #emojis_list_form')?.remove();
 
         this.form = document.createElement("div");
-        this.form.classList.add('pop_up');
+        this.form.classList.add('pop_up','form');
         this.form.id = "emojis_list_form";
 
         this.emojisListContainer=null;
@@ -1061,7 +1246,7 @@ class displayPendingEmojis{
         this.form.appendChild(header);
 
         let title = document.createElement('h3');
-        title.textContent = "Pending Emojis List";
+        title.textContent = "Pending Public Emojis List";
         header.appendChild(title);
 
         let closeIconDiv = document.createElement('button');
@@ -1104,14 +1289,22 @@ class displayPendingEmojis{
                 padding:'5px',
                 width:'3rem',
                 'right':'0',
+                overflowWrap:'normal',
             }
             var rowStyles={
                 display: 'grid',
-                grid: 'auto-flow / 3em 7em 5em 7em 4em 6em 8em',
+                grid: 'none / 3em 10em 6em 3em 8em',
                 overflow:'hidden',
                 overflowWrap:'anywhere',
             }
+            var textOverflowStyles={
+                overflow:'hidden',
+                textOverflow:'ellipsis'
+            }
 
+            if(device=="mobile"){
+                rowStyles.fontSize="10px";
+            }
             if(this.emojisListContainer)
                 this.emojisListContainer.remove();
 
@@ -1126,61 +1319,66 @@ class displayPendingEmojis{
                 throw 411; 
 
             // ? Form Header
-            let emojiBox = document.createElement('tr');
-            Object.assign(emojiBox.style,rowStyles);
-            emojiBox.classList.add('emojiBox', 'flexBox', 'input_field' );
-            Object.assign(emojiBox.style,{
+            let emojiBoxHeader = document.createElement('tr');
+            Object.assign(emojiBoxHeader.style,rowStyles);
+            emojiBoxHeader.classList.add('emojiBoxHeader', 'flexBox', 'input_field' );
+            Object.assign(emojiBoxHeader.style,{
                 borderBottom: "var(--thin-wh-border)",
                 flexWrap: 'nowrap',
+                zIndex:'1',
             })
-            this.emojisListContainer.appendChild(emojiBox);
+            this.emojisListContainer.appendChild(emojiBoxHeader);
             
+            //column headings
             clmHeading("No.");
             clmHeading("Uploader");
-            clmHeading("Scope");
             clmHeading("Name");
             clmHeading("Emoji");
-            clmHeading("Status");
-
-            let actionCLM=clmHeading("Action");
-            actionCLM.classList.add('btn');
-            Object.assign(actionCLM.style,btnStyles);
-            actionCLM.style.removeProperty('width');
+            clmHeading("Action").classList.add('btn');
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                emojiBox.appendChild(nodeEle);
+                nodeEle.style.fontSize="10px";
+                emojiBoxHeader.appendChild(nodeEle);
                 return nodeEle;
             }
             // ?
 
             var count=0;
             emojisList.forEach(emojisDetails => {
+
+                //row
                 let emojiBox = document.createElement('tr');
                 Object.assign(emojiBox.style,rowStyles);
                 emojiBox.classList.add('emojiBox', 'flexBox', 'input_field','member');
                 this.emojisListContainer.appendChild(emojiBox);
                 
+                //row-index
                 var node=nodeEle();
                 let index = document.createElement('p');
                 index.classList.add('margin-dead');
                 index.textContent = ++count + ".";
                 node.appendChild(index);
 
-                node=nodeEle();
+                //row-uploader
+                node= nodeEle();
+                node.classList.add('flexbox');
+                node.style.justifyContent="start";
+
+                    //uploader dp
+                    let udp = new Image(30, 30);
+                    udp.classList.add('avatar','skeleton');
+                    node.appendChild(udp);
+
                     let uploader = document.createElement('p');
                     uploader.classList.add('margin-dead');
+                    Object.assign(uploader.style,textOverflowStyles);
                     uploader.textContent = emojisDetails.uploaderUNM ;
                     node.appendChild(uploader);
-
-                node=nodeEle();
-                let scope = document.createElement('p');
-                scope.classList.add('margin-dead');
-                scope.textContent = emojisDetails.scope +( (emojisDetails.scope == "GROUP") ? "-"+emojisDetails.GNM : "" );
-                node.appendChild(scope);
                 
+                // row- emoji name
                 node=nodeEle();
                 let name = document.createElement('p');
                 name.classList.add('margin-dead');
@@ -1188,24 +1386,20 @@ class displayPendingEmojis{
                 name.textContent = emojisDetails.name;
                 node.appendChild(name);
                 
+                //row- emoji
                 node=nodeEle();
                 node.classList.add('mid-img')
-                let emoji = new Image();
-                emoji.classList.add('img');
-                emoji.src=`data:${emojisDetails.mime};base64,${emojisDetails.blob}`;
-                node.appendChild(emoji);
-
-                node=nodeEle();
-                node.style.overflow="hidden";
-                let status = document.createElement('p');
-                status.classList.add('margin-dead');
-                status.textContent = emojisDetails.status;
-                status.style.color= (emojisDetails.status == "PENDING") ? "red" : 'blue';
-                node.appendChild(status);
                 
+                    let emoji = new Image();
+                    emoji.classList.add('img');
+                    emoji.src=`data:${emojisDetails.mime};base64,${emojisDetails.blob}`;
+                    node.appendChild(emoji);
+                
+                //row- action
                 node=nodeEle();
                 node.style.removeProperty('width');
 
+                    //action Btn
                     let acceptBtn= document.createElement('button');
                     acceptBtn.classList.add('blue','btn');
                     Object.assign(acceptBtn.style,btnStyles);
@@ -1234,14 +1428,33 @@ class displayPendingEmojis{
                     };
                     node.appendChild(rejectBtn);
 
+                setTimeout(() => {
+                    get_dp(emojisDetails.uploaderUNM).then(dpurl=>udp.src=dpurl);                
+                }, 100); 
+                
                 function nodeEle(){
                     let nodeEle= document.createElement("td");
                     emojiBox.appendChild(nodeEle);
                     return nodeEle;
                 }
             });
+
+            // on scroll changing emojiBoxHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
-            if(err === 411){
+            if(err == 411){
                 this.#showMsg("No Emojis Found.");
                 new_Alert("No Emojis Found.");
             }else{

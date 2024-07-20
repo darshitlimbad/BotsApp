@@ -42,7 +42,7 @@
     border: 1px solid black;
     padding: 5px 30px;
     margin: 20px;
-    z-index: 2;
+    z-index: 10;
     transition:all .5s cubic-bezier(0.4, 0.6, 0, 1.17);
     border-radius: 5px;
     font-family: var(--text-font);

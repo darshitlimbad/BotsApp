@@ -621,7 +621,7 @@ class ShowEmojisList{
         this.GID=GID;
 
         this.form = document.createElement("div");
-        this.form.classList.add('pop_up');
+        this.form.classList.add('pop_up','form');
         this.form.id = "emojis_list_form";
 
         this.emojisListContainer=null;
@@ -688,6 +688,8 @@ class ShowEmojisList{
                 overflow:'hidden',
                 overflowWrap:'anywhere',
             }
+            if(this.from=="GROUP")
+                rowStyles.grid='auto-flow / 3em 7em 5em 5em 4em 6em 7em';
 
             if(this.emojisListContainer)
                 this.emojisListContainer.remove();
@@ -703,16 +705,19 @@ class ShowEmojisList{
                 throw 411; 
 
             // ? Form Header
-            let emojiBox = document.createElement('tr');
-            Object.assign(emojiBox.style,rowStyles);
-            emojiBox.classList.add('emojiBox', 'flexBox', 'input_field' );
-            Object.assign(emojiBox.style,{
+            let emojiBoxHeader = document.createElement('tr');
+            Object.assign(emojiBoxHeader.style,rowStyles);
+            emojiBoxHeader.classList.add('emojiBoxHeader', 'flexBox', 'input_field' );
+            Object.assign(emojiBoxHeader.style,{
                 borderBottom: "var(--thin-wh-border)",
                 flexWrap: 'nowrap',
+                zIndex:'1',
             })
-            this.emojisListContainer.appendChild(emojiBox);
+            this.emojisListContainer.appendChild(emojiBoxHeader);
             
             clmHeading("No.");
+            if(this.from=="GROUP")
+                clmHeading("Uploader");
             clmHeading("Scope");
             clmHeading("Name");
             clmHeading("Emoji");
@@ -724,31 +729,42 @@ class ShowEmojisList{
             actionCLM.style.removeProperty('width');
 
             function clmHeading(title){
-                let nodeEle= document.createElement("td");
+                let nodeEle= document.createElement("th");
                 nodeEle.textContent=title+":";
                 nodeEle.style.color="lime";
-                emojiBox.appendChild(nodeEle);
+                emojiBoxHeader.appendChild(nodeEle);
                 return nodeEle;
             }
             // ?
 
             var count=0;
             emojisList.forEach(emojisDetails => {
+                // tabler row
                 let emojiBox = document.createElement('tr');
                 Object.assign(emojiBox.style,rowStyles);
                 emojiBox.classList.add('emojiBox', 'flexBox', 'input_field','member');
                 this.emojisListContainer.appendChild(emojiBox);
                 
+                // index no.
                 var node=nodeEle();
                 let index = document.createElement('p');
                 index.classList.add('margin-dead');
                 index.textContent = ++count + ".";
                 node.appendChild(index);
 
+                if(this.from=="GROUP"){
+                    // Uploader name.
+                    var node=nodeEle();
+                    let index = document.createElement('p');
+                    index.classList.add('margin-dead');
+                    index.textContent =  emojisDetails.uploaderUNM;
+                    node.appendChild(index);
+                }
+                // scope of the emoji
                 node=nodeEle();
                 let scope = document.createElement('p');
                 scope.classList.add('margin-dead');
-                scope.textContent = emojisDetails.scope +( (emojisDetails.scope == "GROUP") ? "-"+emojisDetails.GNM : "" );
+                scope.textContent = (emojisDetails.scope == "GROUP") ? `G- '${emojisDetails.GNM}'` : emojisDetails.scope;
                 node.appendChild(scope);
                 
                 node=nodeEle();
@@ -795,6 +811,21 @@ class ShowEmojisList{
                     return nodeEle;
                 }
             });
+            
+            // on scroll changing emojiBoxHeader position : absolute | static
+            this.body.onscroll=()=>{
+                if(this.body.scrollTop <= 10){
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'static',
+                        backgroundColor:'transparent',
+                    })
+                }else{
+                    Object.assign(emojiBoxHeader.style,{
+                        position:'absolute',
+                        backgroundColor:'black',
+                    })
+                }
+            }
         }catch(err){
             if(err === 411){
                 this.#showMsg("No Emojis Found.");
@@ -817,7 +848,7 @@ class ShowEmojisList{
         let uploadBtn= document.createElement('button');
         uploadBtn.classList.add('green','margin-dead','btn');
         uploadBtn.textContent="Upload More Emojis";
-        uploadBtn.onclick=()=>{this.hide();openUploadEmojiForm();};
+        uploadBtn.onclick=()=>{this.hide();openUploadEmojiForm(this.from,this.GID)};
         btns.appendChild(uploadBtn);
     }
 

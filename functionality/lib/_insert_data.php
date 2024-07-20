@@ -277,11 +277,11 @@ function add_emoji(array $emojiObj=[]){
             throw new Exception("Invalid emoji scope: The scope '" . $emojiObj['scope'] . "' is not allowed.",401);
         else if($emojiObj['scope'] == "GROUP"){
             if(!isset($emojiObj['GID']))
-                throw new Exception("No GID found",402);
+                throw new Exception("No Valid Group Found",402);
 
             $groupID=base64_decode($emojiObj['GID']);
             if(!is_member_of_group($userID,$groupID))
-                throw new Exception("No GID found",402);
+                throw new Exception("No Valid Group Found",402);
         }
 
         //? name validation

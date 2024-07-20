@@ -297,7 +297,7 @@
     border-radius: 0 10px 10px 0;
     background-color: var(--main-bg-color);
     /* font-family: 'Arial Narrow', Arial, sans-serif; */
-font-family: cursive , 'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
     justify-content: center;
     --chat-font-small : 10px;
     --chat-font-medium : 12px;

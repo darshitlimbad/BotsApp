@@ -54,7 +54,6 @@
 .form .body ,#emojis_list_form .body{
     min-height: 25vh;
     overflow: auto;
-    overflow-x: hidden;
 }
 
 .form table, #emojis_list_form table{
@@ -67,6 +66,7 @@
     display: flex;
     align-items:center;
     justify-content: center;
+    text-align: center;
 }
 
 #create_newGroup_form .heading , #blocked_chatter_list .heading ,#emojis_list_form .heading, .form .heading{
@@ -290,16 +290,16 @@ tbody.center{
     font-family: cursive;
 }
 
-.form table tr td{
+/* .form table tr td{
     overflow: hidden;
-}
+} */
 
-#emojis_list_form{
+.form{
     width: auto;
     max-width: 100%;
 }
 
-.mobile #emojis_list_form .memberList{
+.mobile .form .memberList{
     font-size: 10px;
 }
 

@@ -847,10 +847,11 @@ footer {
     width: 50% !important;
     left: 40%;
     --margin: 5px;
-    --color: aliceblue;
+    --color: whitesmoke;
     --background-image: linear-gradient(to bottom right , rgb(89, 43, 226) ,rgba(33, 16, 84, 0.797) , rgb(89, 43, 226) );
     --btn-shadow: rgba(12, 56, 145, 0.489);
 }
+
 .danger-button {
     text-decoration: none;
     filter: brightness(100%);
@@ -861,6 +862,11 @@ footer {
     --background-image: linear-gradient(to bottom right, rgb(70 20 20 / 83%), rgb(254 158 158 / 50%), rgb(70 20 20 / 83%));
     --btn-shadow: rgba(206, 82, 82, 0.466);
     
+}
+
+.button.green{
+    --background-image: linear-gradient(to bottom right , rgb(13, 102, 21) ,rgba(13, 102, 21,0.7) , rgb(13, 102, 21) );
+    --btn-shadow: rgba(13, 102, 21,0.7);
 }
 
 .settings-container .danger-button{

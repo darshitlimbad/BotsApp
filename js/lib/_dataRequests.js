@@ -53,7 +53,6 @@ const _getAllMsgs = async () => {
         //     return JSON.parse(decodeURIComponent(atob(cache_msgData)));
         // else{
             const res = await postReq(url , JSON.stringify(data));
-        
             if(res.status == "success" && !res.responseText.error){
                 // localStorage.setItem('cache-msgData-'+chat, btoa(encodeURIComponent(JSON.stringify(res.responseText))) );
                 return res.responseText;
@@ -525,4 +524,32 @@ function _deleteUploadedEmoji(emojiID=null){
                 resolve(0);
             })
     })
+}
+
+function _searchEmoji(data=null){
+    // ? FORMAT
+    /*data={
+    //     name:':',
+    //     scope:'SELF'| 'SELF&GROUP,
+    //      gid:'...',
+    };*/
+    
+    if(!data) return;
+
+    let url= "/functionality/lib/_fetch_data.php";
+    data.req="searchEmojis";
+
+    return new Promise(resolve=>{
+        postReq(url,JSON.stringify(data)).then(res=>{
+            if(!res.responseText.error){
+                resolve(res.responseText);
+            }else{
+                throw res.responseText;
+            }
+        }).catch(err=>{
+            resolve(0);
+            customError(err);
+        })
+    })
+    
 }

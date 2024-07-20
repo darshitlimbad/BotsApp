@@ -2,19 +2,20 @@ document.addEventListener('DOMContentLoaded' , function () {
         var url = decodeURI(window.location.href)
         var URL_params = new URLSearchParams(url.substring(url.indexOf('?')));
         
-            
             setTimeout(() => {
                 if(URL_params.get('ACTION') == 'sign-in')    {
                     buttons[1].click();
                 }
-                if( (URL_params.get('ERROR') == '404') && (URL_params.get('USER')) ) {
-                    new_Alert( "404 : Password is wrong!");
+                if( (URL_params.get('ERROR') && URL_params.get('msg')) && handler['err_'+URL_params.get('ERROR')] ){
+                        new_Alert(URL_params.get('msg'));
+                }else if( (URL_params.get('ERROR') == '404') && (URL_params.get('USER')) ) {
+                    new_Alert( "Password is wrong!");
                 }else if(URL_params.get('ERROR') == '404') {
-                    new_Alert( URL_params.get('ERROR') + " : User not Found!");
+                    new_Alert(" User not Found!");
                 }else if(URL_params.get('ERROR') == '409') {
-                    new_Alert( URL_params.get('ERROR') + " : Username conflicts , Please contect Admin or manager");
+                    new_Alert(" Username conflicts , Please contect Admin or manager");
                 }else if(URL_params.get('ERROR') == '1146')    {
-                    new_Alert( URL_params.get('ERROR') + " : DATABASE error , Please contect Admin or manager");
+                    new_Alert(" DATABASE error , Please contect Admin or manager");
                 }else if(handler['err_'+URL_params.get('ERROR')])
                     handler['err_'+URL_params.get('ERROR')]();
 

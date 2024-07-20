@@ -124,9 +124,26 @@ include_once('../functionality/lib/_data_delete.php');
 // echo $list['msg'];
 // print_r($list);
 
-$userID="Admin";
-$emojiID="10";
-echo is_data_present('emojis',['id','uploaderID'],[$emojiID,$userID],"id");
+// $userID="Admin";
+// $emojiID="10";
+// echo is_data_present('emojis',['id','uploaderID'],[$emojiID,$userID],"id");
+
+// print_r(search_columns("emojis","name",":du",'*')->fetch_all());
+// $arr=[
+//     'hel'=>"hello world",
+// ];
+// // $arr=['sdsdsd'];
+
+
+// print_r(...$arr);
+
+// $result= fetch_columns("emojis",[1],[1],['*'],"conn",['ORDER BY'=>"id ASC"]);
+
+// echo json_encode($result->fetch_all()); 
+
+$data=['scope'=>"SELF&GROUP",'name'=>':','GID'=>'R3JvdXAwMDAwMDAwMg=='];
+// $data=['scope'=>"SELF",'name'=>':'];
+echo search_emojis($data);
 ?>
 
 <!-- 

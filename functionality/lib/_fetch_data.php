@@ -6,35 +6,51 @@
                 require_once('../db/_conn.php');
                 require_once('../lib/_validation.php');
 
-                if($data['req'] == "get_dp") {
-                    if(isset($data['unm']))
-                        echo get_dp( null,$data['unm']);    
-                    else if(isset($data['GID'])){
-                        echo get_dp( null,null,$data['GID']);
-                    }
-                }else if($data['req'] == "get_unm"){
-                        echo search_user($data['from'] , $data['value']);
-                
-                }else if($data['req'] == "getDocBlob") { 
-                        $res = getDocBlob($data);
-                        $size = strlen($res);
-                        header('Content-Type: application/json');
-                        header('Content-Length:'.$size);
-                        echo $res;
-                
-                }else if($data['req'] == "getProfile"){
-                    echo getProfile();
-                }else if($data['req'] == "getBlockedMemberList"){
-                    echo getBlockedMemberList();
-                }else if($data['req'] == "getEmojisDetails"){
-                    echo getEmojisDetails($data);
+                switch($data['req']){
+                    case "get_dp": 
+                        if(isset($data['unm']))
+                            echo get_dp( null,$data['unm']);    
+                        else if(isset($data['GID'])){
+                            echo get_dp( null,null,$data['GID']);
+                        }
+                    break;
+
+                    case "get_unm":
+                            echo search_user($data['from'] , $data['value']);
+                    break;
+
+                    case "getDocBlob": 
+                            $res = getDocBlob($data);
+                            $size = strlen($res);
+                            header('Content-Type: application/json');
+                            header('Content-Length:'.$size);
+                            echo $res;
+                    break;
+
+                    case "getProfile":
+                        echo getProfile();
+                    break;
+
+                    case "getBlockedMemberList":
+                        echo getBlockedMemberList();
+                    break;
+
+                    case "getEmojisDetails":
+                        echo getEmojisDetails($data);
+                    break;
+
+                    case "searchEmojis":
+                        echo search_emojis($data);
                 }
             }
             session_abort();
         }
     }
 
-    function _get_userID_by_UNM(string $unm){
+    //@param $unm = string unm
+    //@return 0 or user ID
+    function _get_userID_by_UNM(string $unm=null){
+        if(!$unm)   return 0;
         $fetchUID = fetch_columns('users_account', ["unm"], [$unm], array("userID"));
         return ($fetchUID->num_rows != 0) ? $fetchUID->fetch_column() : 0 ;
     }
@@ -173,7 +189,7 @@
             $userID=getDecryptedUserID();
 
             if($from == "add_new_chat")
-                $result = search_columns("users_account" , "unm" , $value , "userID" , "unm");
+                $result = search_columns("users_account" , "unm" , $value , ["userID" , "unm"],'conn',["ORDER BY unm ASC"]);
             else   
                 throw new Exception();
     
@@ -437,7 +453,7 @@
                 $points_value=[$userID];
                 $columns=['id','scope','groupID','name','mime','blob_data','status'];
 
-                $result= fetch_columns("emojis",$points,$points_value,$columns);
+                $result= fetch_columns("emojis",$points,$points_value,$columns,"conn",["ORDER BY name ASC"]);
                 if(!$result || !$result->num_rows)
                     throw new Exception("",400);
                 
@@ -461,14 +477,15 @@
                     throw new Exception("",400);
 
                 $groupID= base64_decode($data['GID']);
+                $GNM= _fetch_group_nm($groupID);
                 if(!is_member_of_group($userID,$groupID))
-                    throw new Exception("User is not a member of group",410);
-
+                    throw new Exception("User is not a member of this group",410);
+                
                 $points= ['scope','groupID'];
                 $points_value= ['GROUP',$groupID];
                 $columns= ['id','uploaderID','scope','name','mime','blob_data','status'];
 
-                $result= fetch_columns("emojis",$points,$points_value,$columns);
+                $result= fetch_columns("emojis",$points,$points_value,$columns,"conn",["ORDER BY name ASC"]);
                 if(!$result || !$result->num_rows)
                     throw new Exception("",400);
                 
@@ -481,11 +498,11 @@
                         'mime'=>$row['mime'],
                         'blob'=>$row['blob_data'],
                         'status'=>$row['status'],
+                        'GNM'=>$GNM,
                     ];
                 }
             }
 
-            array_multisort( $list, SORT_ASC);
             return json_encode($list);
 
         }catch(Exception $e){
@@ -497,5 +514,73 @@
 
             return json_encode($error);
         }
+    }
+
+    // @param $emojiNm - it's the name to search 
+    // @return list of emojis | 0 | error all of them in json encoded
+    function search_emojis(array $emojiObj=[]){
+        try{
+            //? SELF = PUBLIC & PRIVATE | SELF&GROUP = PUBLIC & PRIVATE & SPECIFIC GROUP
+            $allowedScopes= ['SELF','SELF&GROUP'];
+
+            //verifying all variables are okay
+            if(!isset($emojiObj['name']) || !isset($emojiObj['scope']) || ($emojiObj['scope'] == $allowedScopes[1] && !isset($emojiObj['GID'])))
+                throw new Exception("Something went wrong!",400);
+
+            // scope verification
+            if(!in_array($emojiObj['scope'],$allowedScopes))
+                throw new Exception("Invalid emoji scope: The scope '" . $emojiObj['scope'] . "' is not allowed.",409);
+
+            // fetching user ID
+            $userID=getDecryptedUserID();
+            
+            // creating flags array for searching
+            $flags=[];
+            if($emojiObj['scope'] == $allowedScopes[0]){
+                $flags=["AND status != 'PENDING'","AND (scope = 'PRIVATE' AND uploaderID= '$userID')","OR (scope = 'PUBLIC')","ORDER BY scope,name ASC"];
+            }else {
+                // verification of the group if there is any GID
+                $groupID= base64_decode($emojiObj['GID']);
+
+                if(!$groupID || !is_member_of_group($userID,$groupID))
+                    throw new Exception(" Unauthorised Access Denied !!! ",410);
+
+                $flags=["AND status != 'PENDING'","AND (scope = 'PRIVATE' AND uploaderID='$userID')","OR (scope = 'GROUP' AND groupID= '$groupID')","OR (scope = 'PUBLIC')","ORDER BY scope,name ASC"];
+
+            }
+
+            $clms=['id','scope','name','mime','blob_data  AS `blob`'];
+            $result= search_columns('emojis','name',$emojiObj['name'],$clms,'conn',$flags);
+
+            if(!$result)
+                return 0;
+
+            $list=[];
+            $i=0;
+            while($row= $result->fetch_assoc()){
+                $list[$i++]= $row;
+            }
+
+            return json_encode($list);
+        }catch(Exception $e){
+            $error=[
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+
+            return json_encode($error);
+        }
+    }
+
+    function fetch_emoji(array $emojiObj=[]){
+        //use this 
+        // || !isset($emojiObj['emoji_user'])
+        
+        // // verifaction of emoji user id 
+        //     //? emoji user id is the id of the emoji user(who used the emoji name in messages)
+        //     $emoji_user_id= _get_userID_by_UNM($emojiObj['emoji_user']);
+        //     if(!$emoji_user_id)
+        //         throw new Exception("User not found!",411);
     }
 ?>
