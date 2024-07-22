@@ -380,6 +380,8 @@ const getCookie = (name) => {
             }
         }
 
+        if(e.target.closest("input[name='searchTxtInput']"))
+            return;
         // Message Input box shortcut
         let msgInput=document.querySelector('.msgInput');
         if(msgInput && e.keyCode == 191 && document.activeElement!=msgInput)   {e.preventDefault();msgInput.focus();}

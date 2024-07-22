@@ -527,13 +527,6 @@ function _deleteUploadedEmoji(emojiID=null){
 }
 
 function _searchEmoji(data=null){
-    // ? FORMAT
-    /*data={
-    //     name:':',
-    //     scope:'SELF'| 'SELF&GROUP,
-    //      gid:'...',
-    };*/
-    
     if(!data) return;
 
     let url= "/functionality/lib/_fetch_data.php";

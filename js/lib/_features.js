@@ -1102,6 +1102,8 @@ function showEmojisList(from="SELF",GID=null){
 
 //action can me be by lastMsgTime and by user searched input name
 function sortChatByTime(){
+    if(document.querySelector(".inbox .search input[name='chatSearch']").value)
+        return;
     var allChats= document.querySelectorAll(".chat-box .inbox .inbox-user");
     
     if(allChats.length != 0){

@@ -8,6 +8,7 @@
 .selectedWord               {
     animation: selectedWordAnimation 1s .2s alternate ;
     transition: all .4s cubic-bezier(0.075, 0.82, 0.165, 1);
+    border-radius: 3em;
 }
 
 .selectedWord{
@@ -1032,10 +1033,15 @@
 }
 
 .flexBox .avatar{
-    height: 20px;
-    width: 20px;
+    height: 1em;
+    width: 1em;
     margin:5px;
 }
+/* .mobile .flexBox .avatar{
+    height: 10px;
+    width: 10px;
+    margin:5px;
+} */
 
 .user-profile input{
     width: 70%;

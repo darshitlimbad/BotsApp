@@ -518,6 +518,12 @@
 
     // @param $emojiNm - it's the name to search 
     // @return list of emojis | 0 | error all of them in json encoded
+    // ? FORMAT
+    /*data=[
+        'name'=>':',
+        'scope'=>'SELF'| 'SELF&GROUP,
+        gid=>'...',
+    ];*/
     function search_emojis(array $emojiObj=[]){
         try{
             //? SELF = PUBLIC & PRIVATE | SELF&GROUP = PUBLIC & PRIVATE & SPECIFIC GROUP

@@ -95,6 +95,7 @@ function _searchWords(e,val) {
 
     let chatMsgs = chatBody.querySelectorAll(".msgContainer .msg .msgData, .msgContainer .msg .fileName");
 
+    val=val.replace(/\\/g,'\\\\');
     Object.entries(chatMsgs)
         .filter(msgObj=> new RegExp(val,'i').test(msgObj[1].textContent))
         .map(msgObj=> {
@@ -105,7 +106,7 @@ function _searchWords(e,val) {
         searchedWords.forEach(word=>searchedMsgList.push(word));
     
     if(searchedMsgList.rear!=-1){
-        _enableMoveBtn();
+        _enableMoveBtns();
         SfSpan[0].textContent = `?`;
         SfSpan[1].textContent = `${searchedMsgList.rear+1}`;
     }
@@ -162,7 +163,7 @@ const _disableMoveBtns = (btn="both")=>{
     }
 };
 
-const _enableMoveBtn = (btn="both")=>{
+const _enableMoveBtns = (btn="both")=>{
     let searchTxt = document.querySelector("div#searchTxt");
     var moveBtns = searchTxt.querySelectorAll(".move button");
 
@@ -183,14 +184,18 @@ const _enableMoveBtn = (btn="both")=>{
     }
 }
 
-function moveSearch(dir){
+function moveSearch(dir=""){
+    dir=dir.toLowerCase().trim();
+
+    let allowed_direction=['up','down'];
+    if(!allowed_direction.includes(dir))
+        return;
+
     let searchTxt = document.querySelector("div#searchTxt");
     var SfSpan = searchTxt.querySelectorAll('.search_found_span span');
 
     if(!searchedMsgList)
         return;
-
-    dir=dir.toLowerCase().trim();
 
     if(searchedMsgList.front != -1){
         // pre Actions
@@ -205,11 +210,9 @@ function moveSearch(dir){
         if(dir == "up"){
             if(SfSpan[0].textContent == '?' && searchedMsgList.front != 0){
                 searchedMsgList.front=0;
-            }
-            else if(searchedMsgList.front > 0){
+            }else if(searchedMsgList.front > 0){
                 searchedMsgList.front--;
-            }
-            
+            }            
         }else if(dir == "down"){
             if( (SfSpan[0].textContent == '?') && (searchedMsgList.front != searchedMsgList.rear)){
                 searchedMsgList.front=searchedMsgList.rear;
@@ -231,8 +234,8 @@ function moveSearch(dir){
     }
 
     SfSpan[0].textContent = searchedMsgList.front+1;
-    ( (searchedMsgList.front == 0) || ( searchedMsgList.front == -1))?_disableMoveBtns("up"):_enableMoveBtn("up");
-    (searchedMsgList.front == searchedMsgList.rear)?_disableMoveBtns("down"):_enableMoveBtn("down");
+    ( (searchedMsgList.front == 0) || ( searchedMsgList.front == -1)) ? _disableMoveBtns("up") : _enableMoveBtns("up");
+    (searchedMsgList.front == searchedMsgList.rear) ? _disableMoveBtns("down") : _enableMoveBtns("down");
 }
 
 const toggleDocsContainer = () => {

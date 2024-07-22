@@ -993,6 +993,10 @@ footer {
     font-weight: 500;
     color: rgb(240, 31, 31);
     font-size: .6rem;
+    background-color: black;
+    padding: 5px;
+    border-radius: 6px;
+    border: 1px solid;
 }
 
 .input_field #pass_rules {

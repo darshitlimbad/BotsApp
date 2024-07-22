@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded' , () => {
     var online = "green";
     var offline = "red";
     var user = null;
-    chatOpened= false;
+    var chatOpened= false;
     var lastMsg = null;
 // 
 

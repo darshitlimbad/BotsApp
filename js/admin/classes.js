@@ -707,7 +707,7 @@ class reportsReviewForm{
         try{
             var rowStyles={
                 display: 'grid',
-                grid:"none / 3em 9em 9em 12em",
+                grid:"none / 3em 11em 9em 12em",
                 overflow:'hidden',
                 overflowWrap:'anywhere',
             }
@@ -722,6 +722,10 @@ class reportsReviewForm{
                 overflowWrap:'normal',
             }
             if(device=="mobile"){
+                rowStyles.gridAutoRows="auto 5em";
+                rowStyles.grid="none / 3em 13em 13em";
+
+                btnCellStyles.width="25em";
                 btnStyles.fontSize="8px";
             }
             if(this.reportsListBox)
@@ -745,13 +749,17 @@ class reportsReviewForm{
                 flexWrap: 'wrap',
                 zIndex:'1',
             });
+            if(device=="mobile")
+                reportHeader.style.fontSize='8px';
             this.reportsListBox.appendChild(reportHeader);
             
             //heading columns
             clmHeading("No ");
             clmHeading("Reported Person").style.color="red";
             clmHeading("Reported By");
-            clmHeading("Action").classList.add('btn');
+            let acttionClm= clmHeading("Action");
+            acttionClm.classList.add('btn');
+            Object.assign(acttionClm.style,btnCellStyles);
 
             function clmHeading(title){
                 let nodeEle= document.createElement("td");

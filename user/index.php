@@ -98,10 +98,10 @@
                 
                 <div id="pass_rules">
                     <p>Password Rules :</p>
-                    <span name="1">password can't be emety.</span>
-                    <span name="2">password should have min 8 charecters</span>
-                    <span name="3">all cherecters of password can't be same.</span>
-                    <span name="4">password should have uper &lower case cherecters,<br>symbols( @#$% ) , digit(0-9).</span>
+                    <span name="1">1: password can't be emety.</span>
+                    <span name="2">2: password should have min 8 charecters</span>
+                    <span name="3">3: all cherecters of password can't be same.</span>
+                    <span name="4">4: password should have uper &lower case cherecters,<br>symbols( @#$% ) , digit(0-9).</span>
                 </div>
             </div>
             
