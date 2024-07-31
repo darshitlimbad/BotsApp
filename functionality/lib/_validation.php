@@ -28,24 +28,61 @@ function gen_new_id($preFix)  {
             default:
                 throw new Exception("",400);
         }
+        // do{
+        // }while();
+        do{
+            $newID= $preFix.(int)rand(10000000,99999999);
+            
+            $sql = "SELECT `$clm` FROM `$table` WHERE $clm= '$newID'";
+            $sqlfire = $GLOBALS['conn'] -> query($sql);
+            if($sqlfire && ($sqlfire->num_rows == 0))
+                break;
+        }while(1);
 
-        $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
-        $sqlfire = $GLOBALS['conn'] -> query($sql);
-
-        if($sqlfire && ($sqlfire -> num_rows > 0)) {
-            $ID = $sqlfire->fetch_column();
-            $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
-            $newID =  sprintf("%08d" , ++$oldID);    
-        }
-        else {
-            $newID = sprintf("%08d" , 1);
-        }
-
-        return $preFix.$newID;
+        return $newID;
     }catch(Exception $e){
-        return $e->getCode();
+        return 0;
     }
 }
+
+// function gen_new_id($preFix)  {
+//     try{
+//         $preFix = ucfirst(strtolower(trim($preFix)));
+
+//         switch($preFix){
+//             case "User":
+//                 $table = "users";
+//                 $clm = "userID";
+//                 break;
+//             case "Msg":
+//                 $table = "messages";
+//                 $clm = "msgID";
+//                 break;
+//             case "Group":
+//                 $table= "groups";
+//                 $clm= "groupID";
+//                 break;
+//             default:
+//                 throw new Exception("",400);
+//         }
+
+//         $sql = "SELECT `$clm` FROM `$table` ORDER BY `$clm` DESC LIMIT 1";
+//         $sqlfire = $GLOBALS['conn'] -> query($sql);
+
+//         if($sqlfire && ($sqlfire -> num_rows > 0)) {
+//             $ID = $sqlfire->fetch_column();
+//             $oldID = (int)preg_replace("/[^0-9]/", "", $ID);
+//             $newID =  sprintf("%08d" , ++$oldID);    
+//         }
+//         else {
+//             $newID = sprintf("%08d" , 1);
+//         }
+
+//         return $preFix.$newID;
+//     }catch(Exception $e){
+//         return $e->getCode();
+//     }
+// }
 
 function getDecryptedUserID(){
     try{

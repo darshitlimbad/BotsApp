@@ -46,7 +46,7 @@ const handler={};
 
 //Alerts
 handler.err_400 = () => {
-    new_Alert( " Something went Wrong :( , Please try again");
+    new_Alert( " Something went Wrong! ");
 }
 handler.err_401 = () => {
     new_Alert( " NO NETWORK, PLEASE TRY AGAIN LATER");

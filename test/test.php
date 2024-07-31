@@ -141,9 +141,25 @@ include_once('../functionality/lib/_data_delete.php');
 
 // echo json_encode($result->fetch_all()); 
 
-$data=['scope'=>"SELF&GROUP",'name'=>':','GID'=>'R3JvdXAwMDAwMDAwMg=='];
-// $data=['scope'=>"SELF",'name'=>':'];
-echo search_emojis($data);
+// $data=['scope'=>"SELF&GROUP",'name'=>':','GID'=>'R3JvdXAwMDAwMDAwMg=='];
+// // $data=['scope'=>"SELF",'name'=>':'];
+
+// $emoji_user_id="User00000006";
+// $emoji_user_id="Admin";
+
+// $fetchedDataObj= fetch_columns("emojis",['name'],[':hehe:'],['*'],'conn',["AND ( (`scope` = 'PRIVATE' AND `uploaderID` = '$emoji_user_id') OR (`scope` = 'PUBLIC') )"]);
+
+// print_r($fetchedDataObj->fetch_assoc());
+
+// echo gen_new_id("msg");
+$data=[
+    'name'=>":worrymaybe:",
+    'emojiUser'=>"test#321",
+    'scope'=>"SELF",
+];
+
+echo fetch_emoji($data);
+
 ?>
 
 <!-- 

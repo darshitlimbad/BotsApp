@@ -41,6 +41,11 @@
 
                     case "searchEmojis":
                         echo search_emojis($data);
+                    break;
+
+                    case "fetchEmoji":
+                        echo fetch_emoji($data);
+                    break;
                 }
             }
             session_abort();
@@ -542,8 +547,9 @@
             
             // creating flags array for searching
             $flags=[];
+            
             if($emojiObj['scope'] == $allowedScopes[0]){
-                $flags=["AND status != 'PENDING'","AND (scope = 'PRIVATE' AND uploaderID= '$userID')","OR (scope = 'PUBLIC')","ORDER BY scope,name ASC"];
+                $flags=["AND status = 'UPLOADED' AND ( (scope = 'PRIVATE' AND uploaderID='$userID') OR (scope = 'PUBLIC') )","ORDER BY scope,name ASC"];
             }else {
                 // verification of the group if there is any GID
                 $groupID= base64_decode($emojiObj['GID']);
@@ -551,7 +557,7 @@
                 if(!$groupID || !is_member_of_group($userID,$groupID))
                     throw new Exception(" Unauthorised Access Denied !!! ",410);
 
-                $flags=["AND status != 'PENDING'","AND (scope = 'PRIVATE' AND uploaderID='$userID')","OR (scope = 'GROUP' AND groupID= '$groupID')","OR (scope = 'PUBLIC')","ORDER BY scope,name ASC"];
+                $flags=["AND status = 'UPLOADED' AND ( (scope = 'PRIVATE' AND uploaderID='$userID') OR (scope = 'GROUP' AND groupID= '$groupID') OR (scope = 'PUBLIC') )","ORDER BY scope,name ASC"];
 
             }
 
@@ -579,14 +585,75 @@
         }
     }
 
+    // @param [emojiNm, used By, scope= SELF|GROUP, gid= null|gid ], - emoji name, user name who used the emoji, scope where emoji is used
+    // @return list of emojis | 0 | error all of them in json encoded
+    // ? FORMAT
+    /*emojiObj=[
+        'name'=>':',
+        'emojiUser'=>'',
+        'scope'=>'SELF' | 'SELF&GROUP,
+        'GID'=>'',
+    ];*/
     function fetch_emoji(array $emojiObj=[]){
-        //use this 
-        // || !isset($emojiObj['emoji_user'])
-        
-        // // verifaction of emoji user id 
-        //     //? emoji user id is the id of the emoji user(who used the emoji name in messages)
-        //     $emoji_user_id= _get_userID_by_UNM($emojiObj['emoji_user']);
-        //     if(!$emoji_user_id)
-        //         throw new Exception("User not found!",411);
+        try{
+            //? SELF = PUBLIC & PRIVATE | GROUP = PUBLIC & PRIVATE & SPECIFIC GROUP
+            $allowedScopes= ['SELF','SELF&GROUP'];
+            
+            if(!isset($emojiObj['name']) || !isset($emojiObj['emojiUser']) || !isset($emojiObj['scope']) || ( isset($emojiObj['scope']) && (!in_array($emojiObj['scope'],$allowedScopes) || ($emojiObj['scope'] == $allowedScopes[1] && !isset($emojiObj['GID'])) ) ) )
+                throw new Exception("Something went wrong!",400);
+
+            $userID=getDecryptedUserID();
+            $emoji_user_id= _get_userID_by_UNM($emojiObj['emojiUser']);
+
+            //varifying name 
+            if(!preg_match('/:\w+:/',$emojiObj['name']))
+                return 0;
+            
+            //varifying group id if scope is allowedScopes[1]
+            $groupID=null;
+            if($emojiObj['scope'] == $allowedScopes[1]){
+                $groupID= base64_decode($emojiObj['GID']);
+                if(!$groupID || !is_member_of_group($userID,$groupID) || !is_member_of_group($emoji_user_id,$groupID))
+                    throw new Exception(" Unauthorised Access Denied !!! ",410);
+            }
+            
+            // verification of emoji user id             
+            if(!$emoji_user_id || ($emojiObj['scope'] == $allowedScopes[0] && !is_chat_exist($userID,$emoji_user_id)))
+            {
+                throw new Exception("User not found!",411);
+            }
+            
+
+            $flags=[];
+            switch($emojiObj['scope']){
+                case $allowedScopes[0]:
+                    $flags=["AND status='UPLOADED' AND ( (`scope` = 'PRIVATE' AND `uploaderID` = '$emoji_user_id') OR (`scope` = 'PUBLIC') ) "];
+                    break;
+
+                case $allowedScopes[1]:
+                    $flags=["AND status='UPLOADED' AND ( (`scope` = 'PRIVATE' AND `uploaderID` = '$emoji_user_id') OR (`scope`= 'GROUP' AND `groupID` = '$groupID' ) OR(`scope` = 'PUBLIC') ) "];
+
+                    break;
+
+                default:
+                    return 0;
+            }
+
+            $fetchedDataObj= fetch_columns("emojis",['name'],[$emojiObj['name']],['id','name','mime','blob_data as `blob`'],'conn',$flags);
+
+            if(!$fetchedDataObj || !$fetchedDataObj->num_rows)
+                return 0;
+            
+            return json_encode($fetchedDataObj->fetch_assoc());
+
+        }catch(Exception $e){
+            $error=[
+                'error'=>true,
+                'code'=> $e->getCode(),
+                'message'=> $e->getMessage(),
+            ];
+
+            return json_encode($error);
+        }
     }
 ?>

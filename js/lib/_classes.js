@@ -478,6 +478,7 @@ class openChatClass{
             msgInput.title="Type a Message";
             msgInput.disabled=true;
             msgInput.onkeydown=(e)=>msgBoxSizing(e);
+            msgInput.oninput=(e)=>emojiSyntaxChecker(msgInput.value,e);
             chatStruct.footer.appendChild(msgInput);
 
             let sendMsgBtn = document.createElement("button");
@@ -499,7 +500,6 @@ class openChatClass{
             return node;
         }
 
-        // chatStruct.footer.querySelector(".msgInput").addEventListener( 'keydown' , msgBoxSizing);
     };
 }
 
@@ -878,81 +878,165 @@ class ShowEmojisList{
     }
 }
 
-// class msgInfo{
-//     constructor(){
-//         this.constructTemplate();
-//         console.log(this.box);
-//         document.querySelector('.pop_up_box').appendChild(this.box);
-//     }
+// this claas is used to open searched emoji list at footer of the chat
+class showEmojiListContainer{
+    input= chatStruct.footer.querySelector(".msgInput");
+    
+    constructor(emojiNm=""){
+        if(!chatStruct.footer || emojiNm.length < 1 || !getCookie('currOpenedChat'))
+            return;
 
-//     constructTemplate(){
-//         this.box=document.createElement('div');
-//         this.box.classList.add('pop_up','info');
+        this.searchEmojis(emojiNm);
+    }
 
+    async setBody(){
+        //removing body if there is any
+        this.body?.remove();
+
+        //declaring body
+        this.body = document.createElement("div");
+        this.body.id="emojisListContainer";
+        //seting loader in body
+        setLoader(this.body);
+
+        // creating emojis List
+        this.emojisList={};
+
+        //adding container in footer
+        this.show();
+    }
+
+    async displayList() {
+        try{
+            await this.setBody();
+            //creating data obj for searching
+            let data= {name:this.emojiName,}
+
+            //scope selecting
+            if(getCookie('chat').toLowerCase() == "group" ){
+                data.scope="SELF&GROUP";
+                data.GID= getCookie('currOpenedGID'); 
+            }else
+                data.scope="SELF";
+            
+            //serching emoji by name and scope
+            let list= await _searchEmoji(data);
+            this.body.querySelector('.loader')?.remove();
+            if(!list)
+                throw 411;
+
+            //this function will filter the the emojis which are in list and divide in group,private and public
+            //?stores it in this.emojiList obj
+            this.#filterEmojiList(list);
+
+            //? adding emojis in list.
+            
+            //group, private , public 
+            let scopes=["private","group","public"];
+
+            
+            
+            scopes.forEach(scope=>{
+                if(this.emojisList[scope].length){
+                    this.#setEmojiListTitle(scope);
+                    this.emojisList[scope].forEach(emojiObj=> this.#appendEmoji(emojiObj));
+                }
+            });
+
+        }catch(err){
+            this.hide();
+            if(err != 411)
+                customError(err)
+        }
+    }
+
+    async searchEmojis(emojiNm) {
+        if(!chatStruct.footer || emojiNm.length < 1 || !getCookie('currOpenedChat')){
+            this.hide();
+            return;
+        }
         
-//         // <div class="buttons">
-//         //     <button class="pop_up_no_btn button" onclick="_hide_this_pop_up(document.querySelector('#add_new_chat_form'))">
-//         //     <img src="/img/icons/close.png" alt="Close" height="15px" width="15px" style="top: 2px;position: relative;"></button>
-//         // </div>
+        this.emojiName = emojiNm;
+        await this.displayList();
+    }
 
-//         this.header= document.createElement('header');
-//         this.header.classList.add('heading');
-//         this.box.appendChild(this.header);
+    show(){
+        document.querySelector('#emojisListContainer')?.remove();
+        chatStruct.footer.insertBefore(this.body,chatStruct.footer.firstChild);
+        // chat.insertBefore(this.body,chatStruct.footer);
+    }
 
-//         let h3= document.createElement('h3');
-//         h3.textContent="Info";
-//         this.header.appendChild(h3);
+    hide(){
+        this.body?.remove();
+    }
 
-//         this.body= document.createElement('div');
-//         this.body.classList.add('body');
-//         this.box.appendChild(this.body);
+    #filterEmojiList(list){
+         //private, group , public 
+        let scopes= ["private","group","public"];
+        
+        scopes.forEach(scope=>{
+            this.emojisList[scope] = list.filter(emojiObj=>{
+                if(emojiObj.scope === scope.toUpperCase())
+                    return emojiObj;
+            })
+        });
+    }
 
-//         this.footer= document.createElement('footer');
-//         this.footer.classList.add('footer');
-//         this.box.appendChild(this.footer);
+     // to set emoji list Title like Private and Group
+    #setEmojiListTitle(name){
+        let title= document.createElement("h5");
+        title.classList.add("title")
+        title.textContent=name+":";
+        this.body.appendChild(title);
+    }
 
-//         // let buttons= document.createElement('div');
-//         // buttons.classList.add('buttons');
-//         // header.appendChild(buttons)
+    //to add emojiObj in list
+    #appendEmoji(emojiObj){
+        //a flexable container for emoji and emoji-name 
+        let node= document.createElement("div");
+        node.className='emoji-node flexbox member';
 
-//         // buttons.
-//     }
+            //Emoji image Container
+            let emoji= document.createElement('div');
+            emoji.className="emoji small-img";
+            node.appendChild(emoji);
 
-  
-// }
+                //emoji image
+                let img= new Image();
+                img.className="img";
+                img.src= `data:${emojiObj.mime};base64,${emojiObj.blob}`;
+                img.alt="Emoji";
+                emoji.appendChild(img);
 
-// class pop_up {
-//     /*
-//     !popUp Names which can be created by this class
-//     - confirmation_pop_up
-//     - upload_img_form
-//     - upload_doc_form
-//     - add_new_chat_form
-//     */
-    
-//     center= document.createElement('div');
-//     pop_up= document.createElement('div');
-//     title= document.createElement('h3');
+            //Emoji name Container
+            let emojiNameContainer= document.createElement("div");
+            emojiNameContainer.className="emoji-name";
+            node.appendChild(emojiNameContainer)
 
-//     constructor(pop_up_name=null){
-//         this.center.classList.add('center');
-//         this.pop_up.classList.add('pop_up');
-//         this.title.classList.add('title');
+                //name of the Emoji
+                let emojiName = document.createElement("p");
+                emojiName.className="margin-dead";
+                emojiName.textContent= emojiObj.name;
+                emojiNameContainer.appendChild(emojiName);
 
-//         if(!pop_up_name)
-//             return;
+        this.body.appendChild(node);  
 
-//         this.pop_up.id=pop_up_name;
-//     }  
+        //emoji node onclick event
+        node.onclick=()=>{
+            this.input.value= replaceAt(this.input.value,emoji_search_start_index,this.input.selectionEnd,emojiObj.name);
+            // this.input.value= this.input.value.slice(0,emoji_search_start_index) + emojiObj.name + this.input.value.slice(this.input.selectionEnd,);
+            turn_off_emoji_searching();
+        }
 
-//     show(){
-//         this.center.appendChild(this.pop_up);
-//         document.appendChild(this.center);
-//     }
-    
-//     title(title= null){
-//         this.title.textContent=title;
-//         this.pop_up.appendChild(this.title);
-//     }
-    
-// }
+    }
+
+}
+
+
+/*
+
+    next session changes (specifically fir emoji list container):
+
+    1. set title alignment at start 
+    2. test styles for mobile also( if needed add more hight for the .emoji-node )
+*/

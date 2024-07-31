@@ -29,7 +29,7 @@ class Status {
 
     setOnlineStatusUpdateInterval=()=>{
         this.onlineStatusUpdate();
-        this.intervalID.onlineStatusUpdate = setInterval(()=>this.onlineStatusUpdate(),this.#requestTime);
+        this.intervalID.onlineStatusUpdate = setInterval(()=>{this.onlineStatusUpdate()},this.#requestTime);
         
         window.onoffline= ()=> {window.ononline= ()=>{
             this.setOnlineStatusUpdateInterval();
@@ -68,7 +68,7 @@ class Status {
     checkStatus(){
         let chatType= getCookie('chat').toLowerCase();
         if(!this.intervalID.checkStatus)
-            this.intervalID.checkStatus = setInterval(()=>this.checkStatus(),this.#requestTime);
+            this.intervalID.checkStatus = setInterval(()=>{this.checkStatus()},this.#requestTime);
 
         let data={
             req:"checkStatus",

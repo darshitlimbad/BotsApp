@@ -45,27 +45,39 @@ const _getAllMsgs = async () => {
         req: "getAllMsgs",
     };
 
-    // var chat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+    let openedChat=getCookie('currOpenedChat');
+    
+        return new Promise((resolve,reject)=>{
+            postReq(url, JSON.stringify(data),{
+                onDOwnloadAbortXMLOrNot:()=>{
+                    return (openedChat != getCookie('currOpenedChat')) ? true : false;
+                }
+            }).then(res=>{
+                if(res.status == "success" && !res.responseText.error){
+                    resolve(res.responseText);
+                }else 
+                    throw res.responseText;
+            }).catch(err=>{
+                customError(err); 
+            });
+        })  
+}
 
-    try{
-        // var cache_msgData= localStorage.getItem('cache-msgData-'+chat);
+//? using localstorage to store message data  
+ // var chat= (getCookie('chat').toLowerCase() === 'personal') ? getCookie('currOpenedChat') : getCookie('currOpenedGID');
+  // var cache_msgData= localStorage.getItem('cache-msgData-'+chat);
         // if(cache_msgData)
         //     return JSON.parse(decodeURIComponent(atob(cache_msgData)));
         // else{
-            const res = await postReq(url , JSON.stringify(data));
-            if(res.status == "success" && !res.responseText.error){
                 // localStorage.setItem('cache-msgData-'+chat, btoa(encodeURIComponent(JSON.stringify(res.responseText))) );
-                return res.responseText;
-
-            }else 
-                throw res.responseText;
         // }
-        
-    }catch(err){
-        customError(err); 
-        return 0;
-    }
-}
+
+            // const res = await postReq(url , JSON.stringify(data));
+            // if(res.status == "success" && !res.responseText.error){
+            //     return res.responseText;
+
+            // }else 
+            //     throw res.responseText;
 
 const _getNewMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
@@ -164,7 +176,7 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
 
     postReq(url, JSON.stringify(data) , { 
         onDownloadProgress:(progressEvent) =>{
-            progressPR.textContent = Math.ceil(progressEvent.loaded*100 / progressEvent.total)+"%";
+            progressPR.textContent = Math.ceil((progressEvent.loaded / progressEvent.total)*100)+"%";
             
             if(progressEvent.done)
                 progressPR.remove();
@@ -184,7 +196,7 @@ const _downloadThisDoc = (msgID,fileName,msgLoad)=>{
                 _getDataURL(base64)
                     .then(res=>{
                         if(res.status=='success' && res.url){
-                            a.href = res.url;
+                            a.href = res.url;//base64
                             a.click();
                         }else{
                             throw res;
@@ -543,6 +555,46 @@ function _searchEmoji(data=null){
             resolve(0);
             customError(err);
         })
+    })
+    
+}
+
+function _fetchEmoji(data=null){
+    //format
+    // data={
+    //     name:':duar:',
+    //     scope:'SELF&GROUP',
+    //     GID:,
+    //     emojiUser:'test#234',
+    // }
+    if(!data) return;
+
+    let url= "/functionality/lib/_fetch_data.php";
+    data.req="fetchEmoji";
+
+    return new Promise(resolve=>{
+        let key= 'cache-emoji-'+data.name;
+        let emojiURL= localStorage.getItem(key);
+        if(emojiURL){
+            resolve(atob(blob));
+        }else{
+            postReq(url,JSON.stringify(data)).then(res=>{
+                if(!res.responseText.error){
+                    let {mime,blob}= res.responseText;
+                    let base64= `data:${mime};base64,${blob}`;
+                    _getDataURL(base64)
+                        .then(res=>{
+                            localStorage.setItem(key, btoa(res.url));
+                            resolve(res.url);
+                        })
+                }else{
+                    throw res.responseText;
+                }
+            }).catch(err=>{
+                resolve(0);
+                customError(err);
+            })
+        }
     })
     
 }

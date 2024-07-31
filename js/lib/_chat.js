@@ -691,6 +691,7 @@ const setChatBody = async () =>{
         setLoader(chatStruct.chatBody);
         try{
             let msgObjs= await _getAllMsgs();
+
             if(!msgObjs)  {
                 new_notification("Let's start new convertation.");
             }else{
@@ -802,6 +803,8 @@ const closeChat = () =>{
         showInbox();
     }
     chatOpened=false;
+    if(emoji_searching)
+        turn_off_emoji_searching();
 }
 
 const _trigerSendMsg = async (type) => {
@@ -993,6 +996,18 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     switch(msgObj['type']){
         case 'text':
+            //msg has only emojis or text(+emojis) - this is for sizing the emojis
+            let regexp= /(:\w+:)/g;
+            let hasEmojis= msgObj.msg.match(regexp);
+            let hasOnlyEmojis= hasEmojis != null && msgObj.msg.replace(regexp,'').trim() === "";
+
+            //replacing emojis names with emojis if there is any 
+            if(hasEmojis){
+                let emojiSizeClass= (hasOnlyEmojis) ? ( (hasEmojis.length > 2 ) ? 'mid-img' : 'large-img' ) : 'small-img';
+                console.log(emojiSizeClass);
+            }
+//!start from here what i now need to do is to replace emoji name with it's emoji function 
+            //msgdata object
             let msgData = document.createElement("p");
             msgData.classList.add("msgData");
             msgData.textContent=msgObj.msg;

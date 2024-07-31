@@ -22,26 +22,26 @@
                 try{
                     var key= 'cache-dp-'+ ((GID) ? GID : unm);
                     var base64= localStorage.getItem(key);
-
-                    if(!base64){
+                    if(base64){
+                        base64= atob(base64);
+                    }else{
                         let res= await postReq(url_for_get_dp , JSON.stringify(dataToSend));
                         if(res.status != "success" || res.responseText == 0 || !res.responseText.data )
                             throw res.responseText;
                         
                         const { data , mime } = res.responseText;
                         base64 = `data:${mime};base64,${data}`;
-                        localStorage.setItem(key, base64);
+                        _getDataURL(base64)
+                            .then(res=>{
+                                if(res.status == 'success')
+                                    localStorage.setItem(key, btoa(res.url));
+                            })
+                            .catch(err=>{
+                                console.warn(err);
+                            })
                     }
 
                     resolve(base64)
-                    // _getDataURL(base64)
-                    //     .then(res=>{
-                    //         if(res.status == 'success')
-                    //             resolve(res.url);
-                    //     })
-                    //     .catch(err=>{
-                    //         console.warn(err);
-                    //     })
                 }catch(err){
                     resolve("/img/default_dp.png");
                 }
@@ -1116,7 +1116,7 @@ function sortChatByTime(){
                     continue;
 
                 if(lastMsgTimeChat1 < lastMsgTimeChat2 || (lastMsgTimeChat1 == "undefined" && lastMsgTimeChat2 !="undefined")){
-                    allChats[i].remove();
+                    // allChats[i].remove();
                     allChats[j].after(allChats[i]);
                 }
             }
@@ -1129,106 +1129,88 @@ function sortChatBySearch(unm){
     if(allChats.length == 0)
         return 
 
-    if(allChats.length != 0){
-        unm=unm.replace(/\\/g,'\\\\');
-        var searchWord=new RegExp(unm,'i');
-        for(let i=0 ; i< allChats.length ; i++){
-            for (j=i+1 ; j< allChats.length ; j++){
-                if(allChats[j].title.search(searchWord) != -1 || allChats[j].querySelector(".inbox-name")?.textContent.search(searchWord) != -1){
-                    allChats[i].remove();
-                    allChats[j].after(allChats[i]);
-                }
+    unm=unm.replace(/\\/g,'\\\\');
+    var searchWord=new RegExp(unm,'i');
+    for(let i=0 ; i< allChats.length ; i++){
+        for (j=i+1 ; j< allChats.length ; j++){
+            if(allChats[j].title.search(searchWord) != -1 || allChats[j].querySelector(".inbox-name")?.textContent.search(searchWord) != -1){
+                // allChats[i].remove();
+                allChats[j].after(allChats[i]);
             }
         }
     }
-
     // sortChatByTime();
 }
 
-// var db= indexedDB.open('Botsapp',1);
+//this function is used to replace a word within a string with using indices
+//str is a string 
+// start is a strting index
+// end is a ending index
+// replacement is word which we want to replace
+function replaceAt( str="", start=0, end=0, replacement="" ){
+    if( start >= str.length || end > str.length){
+        return str;
+    }
+    return str.slice(0,start) + replacement + str.slice(end,); 
+}
+
+var emojiContainer=null;
+var emoji_search_start_index= null;
+var emoji_searching=false;
+
+const turn_off_emoji_searching=()=>{
+    emoji_searching=false;
+    emoji_search_start_index=null;
+    emojiContainer.hide();
+}
+
+const turn_on_emoji_searching=(start_index)=>{
+    emoji_searching=true;
+    emoji_search_start_index=start_index;
+}
+
+// this function check for the emoji syntax :\w+ in a string at user input cursor 
+// if it founds it start searching for the emoji 
+// if the process is already in searching phase and user input is either space or : it will end the search 
+// if in uper case user input is ':' then it will highlight the emoji name part (by calling a function) in the str so user can know emoji has found
+function emojiSyntaxChecker(str=null,e=null){
+    if(!e)
+        return
+
+    //creating a emoji container object
+    if(!emojiContainer)
+        emojiContainer=new showEmojiListContainer();
+
+    //user input is : or not    || user input is space or enter with emoji_searching on or not
+    if(e.data == ":" || ( (!e.data || e.data==" ") && emoji_searching && e.inputType != "deleteContentBackward")){
+        if(emoji_searching){
+            //this executes when emoji searching is true        
+            turn_off_emoji_searching();
+        }else{
+            //thist part is executed when emoji searching is false
+            const regex = new RegExp(/(?<=^|\s):/,'i');
+            if(str.slice(e.target.selectionStart-2,e.target.selectionStart).match(regex))
+                turn_on_emoji_searching(e.target.selectionStart-1);
+        }
+    }
+
+    if(emoji_searching){
+
+        // fetching the emoji name from the str
+        if(str.length > 1)
+            str= str.slice(emoji_search_start_index,e.target.selectionStart)
     
-    // db.onupgradeneeded=()=>{
-    //     console.log(de);
-    // }
+        //if no emoji name found then turn off the emoji searching
+        if(!str){
+            turn_off_emoji_searching();
+            return;
+        }
 
-    // var cache= window.caches;
-    // console.log(cache);
-// async function getCacheData(
-//             cacheName=null,
-//             request=null,
-//             ){
-//     var cache= await caches.open(cacheName);
+        //search emoji
+        emojiContainer.searchEmojis(str);
+    }else{
 
-//     if((await cache.keys()).length == 0){
-//         caches.delete(cacheName);
-//         return 0;
-//     }
-
-//     var result= await cache.match(request);
-//     return result;
-// }
-
-// async function setCacheData(
-//                 cacheName=null,
-//                 request=null,
-//                 resposone=null,
-//                 ){
-//     var cache= await caches.open(cacheName);
-//     var result= cache.put(request,resposone);
-
-//     return result;
-// }
-
-// async function deleteCacheData(
-//                 cacheName=null,
-//                 request=null,
-//                 ){
-//     var cache= await caches.open(cacheName);
-
-//     if((await cache.keys()).length == 0){
-//         caches.delete(cacheName);
-//         return 0;
-//     }
-
-//     var result= cache.delete(request);
-//     return result;
-// }
-
-// function setDpCache(
-//                 key=null,
-//                 value=null,
-//                 ){
-//     if(!key || !value)
-//         return 0;
-
-//     key= '-dp-cache-'.concat(key);
-//     localStorage.setItem(key,value);
-//     return 1;
-// }
-
-// function getDpCache(
-//                 key=null,
-//                 ){
-//     if(!key)
-//         return 0;
-
-//     key= '-dp-cache-'.concat('key');
-//     return localStorage.getItem(key);
-// }
-
-// function deleteDpCache(
-//                     key=null,
-//                     ){
-//     if(!key)
-//         return 0;
-
-    
-
-// }
-
-// function setLocalData(
-//                 key=null,
-//                 value,
-//                 ){
-    
-// }
+        //if emoji_searching is off then hide() the emoji container
+        emojiContainer.hide();
+    }
+}

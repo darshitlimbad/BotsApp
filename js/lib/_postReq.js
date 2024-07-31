@@ -1,19 +1,22 @@
 // js to php post reqest 
 const postReq = (url, data=null ,
-                    {   method="POST" , 
+                    {   
+                        method="POST" , 
                         async=true ,
                         Content_Type='application/json',
                         onUploadProgress=null,
                         onDownloadProgress=null,
+                        onDOwnloadAbortXMLOrNot=null,
+                        onUploadAbortXMLOrNot=null,
                     }={}
                 ) => {  
 
     var promise = new Promise((resolve,reject) => {
-        const xml = new XMLHttpRequest();
+        const XHR = new XMLHttpRequest();
 
-        xml.onload = (res) => {
-            if (xml.readyState === 4) {
-                if (xml.status === 200) {
+        XHR.onload = (res) => {
+            if (XHR.readyState === 4) {
+                if (XHR.status === 200) {
                     try{
                         // console.log(res.target.responseText);
                         let resTxt = JSON.parse(res.target.responseText);
@@ -24,38 +27,59 @@ const postReq = (url, data=null ,
                         resolve({ status:"success", responseText: res.target.responseText });    
                     }
                 } else {
-                    reject({ status: "error", error: 'Something went wrong with AJAX Request.' , code:xml.status });
+                    reject({ status: "error", error: 'Something went wrong with AJAX Request.' , code:XHR.status });
                 }
             }
         };
-        
+
         if(onDownloadProgress){
-            xml.onprogress = (progressEvent) => {
+            XHR.onprogress = (progressEvent) => {
                 let progress = new Progress(progressEvent);
                 onDownloadProgress(progress);
             };
-        };
+        }
         if(onUploadProgress){
-            xml.upload.onprogress = (progressEvent) => {
+            XHR.upload.onprogress = (progressEvent) => {
                 let progress = new Progress(progressEvent);
                 onUploadProgress(progress);
             }
-        };
+        }
+        if(onDOwnloadAbortXMLOrNot){
+            XHR.onprogress=()=>{
+                if(onDOwnloadAbortXMLOrNot()){
+                    XHR.abort();
+                    // reject({ status: "abort", error: 'Process has been aborted.' , code:XHR.status});
+                }
+            }
+        }
+        if(onUploadAbortXMLOrNot){
+            XHR.upload.onprogress=()=>{
+                if(onUploadAbortXMLOrNot()){
+                    XHR.abort();
+                }
+            }
+        }
 
-        xml.onerror = (err) => {
-            xml.abort();
-            reject({ status: "error", error: 'Something went wrong' , code:xml.status});
+        XHR.onerror = (err) => {
+            XHR.abort();
+            reject({ status: "error", error: 'Something went wrong' , code:XHR.status});
         }
         
-        xml.ontimeout= ()=>{
-            xml.abort();
+        XHR.ontimeout= ()=>{
+            XHR.abort();
+            reject({ status: "error", error: 'Request Timeout.' , code:XHR.status});
         }
-        xml.open(method, url, async);
+
+        XHR.onabort=()=>{
+            reject({ status: "abort", error: 'Process has been aborted.' , code:XHR.status});
+        }
+        
+        XHR.open(method, url, async);
         if(method == "POST"){
-            xml.setRequestHeader('Content-Type', Content_Type);
-            xml.send(data);
+            XHR.setRequestHeader('Content-Type', Content_Type);
+            XHR.send(data);
         }else if(method == "get"){
-            xml.send();
+            XHR.send();
         }
     });
 
