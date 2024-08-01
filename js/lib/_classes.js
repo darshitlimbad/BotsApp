@@ -896,6 +896,7 @@ class showEmojiListContainer{
         //declaring body
         this.body = document.createElement("div");
         this.body.id="emojisListContainer";
+
         //seting loader in body
         setLoader(this.body);
 
@@ -1022,7 +1023,8 @@ class showEmojiListContainer{
         this.body.appendChild(node);  
 
         //emoji node onclick event
-        node.onclick=()=>{
+        node.onclick=(e)=>{
+            //! this has a bug fix it when we change chat or we do anything else and then try to acces this it does not work.
             this.input.value= replaceAt(this.input.value,emoji_search_start_index,this.input.selectionEnd,emojiObj.name);
             // this.input.value= this.input.value.slice(0,emoji_search_start_index) + emojiObj.name + this.input.value.slice(this.input.selectionEnd,);
             turn_off_emoji_searching();

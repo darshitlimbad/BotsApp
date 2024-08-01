@@ -618,7 +618,7 @@
             }
             
             // verification of emoji user id             
-            if(!$emoji_user_id || ($emojiObj['scope'] == $allowedScopes[0] && !is_chat_exist($userID,$emoji_user_id)))
+            if(!$emoji_user_id || ($emojiObj['scope'] == $allowedScopes[0] && $userID != $emoji_user_id && !is_chat_exist($userID,$emoji_user_id)))
             {
                 throw new Exception("User not found!",411);
             }

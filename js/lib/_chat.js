@@ -996,22 +996,50 @@ const addNewMsgInCurrChat = (msgObj) => {
 
     switch(msgObj['type']){
         case 'text':
-            //msg has only emojis or text(+emojis) - this is for sizing the emojis
-            let regexp= /(:\w+:)/g;
-            let hasEmojis= msgObj.msg.match(regexp);
-            let hasOnlyEmojis= hasEmojis != null && msgObj.msg.replace(regexp,'').trim() === "";
-
-            //replacing emojis names with emojis if there is any 
-            if(hasEmojis){
-                let emojiSizeClass= (hasOnlyEmojis) ? ( (hasEmojis.length > 2 ) ? 'mid-img' : 'large-img' ) : 'small-img';
-                console.log(emojiSizeClass);
-            }
-//!start from here what i now need to do is to replace emoji name with it's emoji function 
             //msgdata object
             let msgData = document.createElement("p");
             msgData.classList.add("msgData");
             msgData.textContent=msgObj.msg;
             msg.appendChild(msgData);
+
+            //msg has only emojis or text(+emojis) - this is for sizing the emojis
+            let regexp= /(:\w+:)/g;
+            let msgEmojis= new Set(msgObj.msg.match(regexp));
+            let hasEmojis= msgEmojis != null;
+            let hasOnlyEmojis= hasEmojis && msgObj.msg.replace(regexp,'').trim() === "";
+
+            //replacing emojis names with emojis elements if there is any 
+            if(hasEmojis){                
+                let scope= (getCookie('chat').toLowerCase() === "personal" ) ? "SELF" : "SELF&GROUP";
+
+                msgEmojis.forEach(emojiName=>{
+                    data={
+                        name:emojiName,
+                        scope,
+                        emojiUser:msgObj.fromUnm,
+                    }
+                    if(scope === "SELF&GROUP")
+                        data.GID= getCookie('currOpenedGID');
+
+                    _fetchEmoji(data)
+                        .then(res=>{
+                            if(res){
+                                let emojiContainer= document.createElement("div");
+                                emojiContainer.className= (hasOnlyEmojis) ? ( (msgEmojis.length > 2 ) ? 'mid-img' : 'big-img' ) : 'small-img';
+                                // emojiContainer.className= (hasOnlyEmojis) ? 'mid-img'  : 'small-img';
+
+                                    let emoji= new Image();
+                                    emoji.className="img";
+                                    emoji.src=res;
+                                    emoji.alt=emojiName;
+                                    emojiContainer.appendChild(emoji);
+
+                                msgData.innerHTML= msgData.getHTML().replaceAll(emojiName, emojiContainer.outerHTML) 
+                            }
+                        })
+                })
+                
+            }
 
             break;
         

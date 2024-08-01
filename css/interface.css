@@ -160,17 +160,25 @@ span{
 }
 
 /* meme images height width */
+.small-img,.mid-img,.big-img{
+    display: inline-block;
+}
+
+.small-img .img,.mid-img .img, .big-img .img{
+    vertical-align: middle;
+}
+
 .small-img .img {
-    height: 1.4em;
-    width: 1.4em;
+    height: 2em;
+    width: 2em;
 }
 .mid-img .img {
     height: 2.5em;
     width: 2.5em;
 }
 .big-img .img {
-    height: 5em;
-    width: 5em;
+    height: 4em;
+    width: 4em;
 }
 
 .ele{

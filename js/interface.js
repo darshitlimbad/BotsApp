@@ -86,10 +86,10 @@ document.addEventListener('DOMContentLoaded' , function () {
 
     //functions to be called
     set_profile_dp();  
-
-    //?clearing localstorage on load localstorage
-    localStorage.clear();
 });  
+
+//?clearing localstorage on load localstorage
+localStorage.clear();
 
 // 
 const initiateChatBox = (chatType) => {

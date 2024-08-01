@@ -573,20 +573,26 @@ function _fetchEmoji(data=null){
     data.req="fetchEmoji";
 
     return new Promise(resolve=>{
-        let key= 'cache-emoji-'+data.name;
-        let emojiURL= localStorage.getItem(key);
-        if(emojiURL){
-            resolve(atob(blob));
+        let key= 'cache-emoji-'+data.name+'_'+data.emojiUser;
+        let encryptedEmojiURL= localStorage.getItem(key);
+
+        if(encryptedEmojiURL){
+            resolve(atob(encryptedEmojiURL));
         }else{
             postReq(url,JSON.stringify(data)).then(res=>{
-                if(!res.responseText.error){
+
+                if(res.responseText && !res.responseText.error){
                     let {mime,blob}= res.responseText;
                     let base64= `data:${mime};base64,${blob}`;
+
                     _getDataURL(base64)
                         .then(res=>{
                             localStorage.setItem(key, btoa(res.url));
                             resolve(res.url);
                         })
+
+                }else if(res.responseText === 0){
+                    resolve(0);
                 }else{
                     throw res.responseText;
                 }
