@@ -166,6 +166,7 @@ span{
 
 .small-img .img,.mid-img .img, .big-img .img{
     vertical-align: middle;
+    padding: 0 0.5em;
 }
 
 .small-img .img {

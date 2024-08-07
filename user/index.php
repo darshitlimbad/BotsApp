@@ -126,6 +126,7 @@
                 <div class="button-div submit fadeout">
                     <input type="submit" name="submit" value="Log in" spellcheck="false" class="button" disabled/>
                 </div>
+                
                 <div class="button-div change fadeout">
                     <input type="button" name="change" value="Register"  class="button" disabled />        
                 </div>

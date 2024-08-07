@@ -157,6 +157,7 @@ const _chatList_isEmpty = () => {
 
 const _chatList_footer = ()=> {
     var footer=document.createElement('footer');
+        
         var div = document.createElement('div');
         div.style.textAlign="center";
         div.textContent="All rights NOT -_- reserverd by ";
@@ -802,9 +803,10 @@ const closeChat = () =>{
     if(device == 'mobile'){
         showInbox();
     }
-    chatOpened=false;
-    if(emoji_searching)
+    if(chatOpened)
         turn_off_emoji_searching();
+    
+    chatOpened=false;
 }
 
 const _trigerSendMsg = async (type) => {
@@ -1025,7 +1027,7 @@ const addNewMsgInCurrChat = (msgObj) => {
                         .then(res=>{
                             if(res){
                                 let emojiContainer= document.createElement("div");
-                                emojiContainer.className= (hasOnlyEmojis) ? ( (msgEmojis.length > 2 ) ? 'mid-img' : 'big-img' ) : 'small-img';
+                                emojiContainer.className='icon '.concat((hasOnlyEmojis) ? ( (msgEmojis.size > 2 ) ? 'mid-img' : 'big-img' ) : 'small-img');
                                 // emojiContainer.className= (hasOnlyEmojis) ? 'mid-img'  : 'small-img';
 
                                     let emoji= new Image();

@@ -98,8 +98,9 @@ function _searchWords(e,val) {
     val=val.replace(/\\/g,'\\\\');
     Object.entries(chatMsgs)
         .filter(msgObj=> new RegExp(val,'i').test(msgObj[1].textContent))
-        .map(msgObj=> {
-            msgObj[1].innerHTML = msgObj[1].innerHTML.replace(new RegExp(val , 'gi'), match => `<span class="highlight">${match}</span>`);
+        .map(msgObj=> {            
+            //adding span.highlight in textcontent of the msgObj and then replacing it with innerHTML of the same same msgObj so if there is any emojis it does not effect them
+            msgObj[1].innerHTML= msgObj[1].innerHTML.replace(msgObj[1].textContent,msgObj[1].textContent.replace(new RegExp(val , 'gi'), match => `<span class="highlight">${match}</span>`));
         });
     
         var searchedWords = chatBody.querySelectorAll("span.highlight");
@@ -126,11 +127,13 @@ const _clearSearchedWords = ()=> {
 
                 if(rmContainerClass)
                     rmContainerClass.classList.remove('selectedWordContainer');
+            console.log(msgDataToRmHl);
             
             msgDataToRmHl.forEach(msgData => {
-                if(msgData.children[0] && msgData.children[0].classList.contains('highlight')){
-                    msgData.textContent=msgData.textContent;
-                }
+                let highlightedNode= msgData.querySelector("span.highlight");
+                
+                if(highlightedNode)
+                    msgData.innerHTML= msgData.innerHTML.replaceAll(highlightedNode.outerHTML,highlightedNode.textContent);
             })
 
         }catch(err){

@@ -74,6 +74,10 @@
             <div class="input-doc">
                 <input type="file" name="doc" id="doc" accept="*">
             </div>
+            <span id="doc_span"
+                style=" margin: 2em 0 0 0;
+                        text-align: center;"
+                ></span>
         </div>
 
 

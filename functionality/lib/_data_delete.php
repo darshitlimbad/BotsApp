@@ -210,11 +210,11 @@
                     throw new Exception("Unauthorise Access !!!",410);
 
             }elseif($chatType === 'group'){
-                $oppoUserID = base64_decode($_COOKIE['currOpenedGID']);
+                $oppoGroupID = base64_decode($_COOKIE['currOpenedGID']);
 
-                if(!is_data_present('groups',['groupID'], [$oppoUserID] ,'groupID'))
+                if(!is_data_present('groups',['groupID'], [$oppoGroupID] ,'groupID'))
                     throw new Exception("There is no group with the GID.",404);
-                else if(!is_member_of_group($userID,$oppoUserID))
+                else if(!is_member_of_group($userID,$oppoGroupID))
                     throw new Exception("You are not a member of this group.",410);
                 
                 $msgObjSQL = "  SELECT m.fromID, m.toID, ms.hide, ms.hide_by
@@ -233,9 +233,25 @@
                 $stmt->close();
                 $msgObj= $result->fetch_assoc();
 
-                if($msgObj['fromID'] === $userID && $msgObj['toID'] === $oppoUserID)
+                if($msgObj['fromID'] === $userID && $msgObj['toID'] === $oppoGroupID){
                     $deleteRes= deleteData('messages',$msgID,'msgID');
-                else if($msgObj['fromID'] !== $userID && $msgObj['toID'] === $oppoUserID){
+
+                    if($deleteRes){
+                        $members= fetch_all_group_members($oppoGroupID,true);
+                        foreach($members as $member){
+                            if($member != $userID && is_user_on($member)){
+                                $data=[
+                                    'action'=>'msgDeleted',
+                                    'msg'=> ['msgID'=>base64_encode($msgID)],
+                                    'toID'=>$member,
+                                ];
+                                add_new_noti($data);
+                            }
+                        }
+                        
+                    }
+
+                }else if($msgObj['fromID'] !== $userID && $msgObj['toID'] === $oppoGroupID){
                     $hide_by = ($msgObj['hide'] == 1) ? unserialize($msgObj['hide_by']) : [];
 
                     if(in_array($userID,$hide_by))

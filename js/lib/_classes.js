@@ -306,17 +306,17 @@ class openChatClass{
 
     setChatHeader = async (unm,ID) =>{
 
-        let closeIconDiv = document.createElement('div');
-        closeIconDiv.classList.add("icon","center","align-center");
-        closeIconDiv.title="Close";
-        closeIconDiv.name="closeChat";
-        closeIconDiv.onclick=()=>closeChat();
-        closeIconDiv.tabIndex=0;
-        chatStruct.heading.appendChild(closeIconDiv);
+        let closeIconBtn = document.createElement('Button');
+        closeIconBtn.classList.add("icon","center","align-center","heading_btn");
+        closeIconBtn.title="Close";
+        closeIconBtn.name="closeChat";
+        closeIconBtn.tabIndex=0;
+        closeIconBtn.onclick=()=>closeChat();
+        chatStruct.heading.appendChild(closeIconBtn);
             let closeIconImg = new Image();
             closeIconImg.src="img/icons/close.png";
             closeIconImg.alt="Close";
-            closeIconDiv.appendChild(closeIconImg);
+            closeIconBtn.appendChild(closeIconImg);
 
         let dpDiv = document.createElement('div');
         dpDiv.classList.add("dp","align-center");
@@ -359,7 +359,7 @@ class openChatClass{
                 fullScreenIcon.appendChild(fullScreenIconImg);
 
             let searchBtnDiv = document.createElement('button');
-            searchBtnDiv.classList.add("search-btn","icon");
+            searchBtnDiv.classList.add("search-btn","heading_btn","icon");
             searchBtnDiv.onclick= ()=> toggleSearchTxt();
             searchBtnDiv.disabled=true;
             flexBox.appendChild(searchBtnDiv);
@@ -473,6 +473,7 @@ class openChatClass{
             msgInput.classList.add("msgInput","ele");
             msgInput.placeholder="Type a Message";
             msgInput.autocomplete="off";
+            msgInput.spellcheck=false;
             msgInput.accessKey="/";
             msgInput.lang="en";
             msgInput.title="Type a Message";
@@ -485,11 +486,11 @@ class openChatClass{
             sendMsgBtn.classList.add("sendMsg","icon");
             sendMsgBtn.tabIndex=0;
             sendMsgBtn.disabled=true;
+            sendMsgBtn.onclick = ()=>_trigerSendMsg('text');
             chatStruct.footer.appendChild(sendMsgBtn);
                 let sendMsgImg= new Image();
                 sendMsgImg.src="img/icons/send.png";
                 sendMsgImg.alt="Send Message";
-                sendMsgImg.onclick = ()=>_trigerSendMsg('text');
                 sendMsgBtn.appendChild(sendMsgImg);
         
         function newNode(){
@@ -526,17 +527,18 @@ class blockedChatterListBox{
         title.textContent = "Blocked List";
         header.appendChild(title);
 
-        let closeIconDiv = document.createElement('button');
-        closeIconDiv.classList.add("icon",'ele','skeleton','closeIcon');
-        closeIconDiv.style.border='none';
-        closeIconDiv.title="Close";
-        closeIconDiv.onclick=()=>this.hide();
-        header.appendChild(closeIconDiv);
+        let closeIconBtn = document.createElement('button');
+        closeIconBtn.classList.add("icon",'ele','skeleton','closeIcon');
+        closeIconBtn.style.border='none';
+        closeIconBtn.title="Close";
+        closeIconBtn.tabIndex=0;
+        closeIconBtn.onclick=()=>this.hide();
+        header.appendChild(closeIconBtn);
             let closeIconImg = new Image();
             closeIconImg.style.height="1em";
             closeIconImg.src="img/icons/close.png";
             closeIconImg.alt="Close";
-            closeIconDiv.appendChild(closeIconImg);
+            closeIconBtn.appendChild(closeIconImg);
 
         let hr= document.createElement('hr');
         hr.classList.add('hr','red');
@@ -880,7 +882,6 @@ class ShowEmojisList{
 
 // this claas is used to open searched emoji list at footer of the chat
 class showEmojiListContainer{
-    input= chatStruct.footer.querySelector(".msgInput");
     
     constructor(emojiNm=""){
         if(!chatStruct.footer || emojiNm.length < 1 || !getCookie('currOpenedChat'))
@@ -904,7 +905,7 @@ class showEmojiListContainer{
         this.emojisList={};
 
         //adding container in footer
-        this.show();
+        this.show();        
     }
 
     async displayList() {
@@ -962,6 +963,8 @@ class showEmojiListContainer{
     }
 
     show(){
+        this.input= chatStruct.footer.querySelector(".msgInput");
+
         document.querySelector('#emojisListContainer')?.remove();
         chatStruct.footer.insertBefore(this.body,chatStruct.footer.firstChild);
         // chat.insertBefore(this.body,chatStruct.footer);
@@ -999,7 +1002,7 @@ class showEmojiListContainer{
 
             //Emoji image Container
             let emoji= document.createElement('div');
-            emoji.className="emoji small-img";
+            emoji.className="emoji small-img icon";
             node.appendChild(emoji);
 
                 //emoji image
@@ -1024,10 +1027,10 @@ class showEmojiListContainer{
 
         //emoji node onclick event
         node.onclick=(e)=>{
-            //! this has a bug fix it when we change chat or we do anything else and then try to acces this it does not work.
             this.input.value= replaceAt(this.input.value,emoji_search_start_index,this.input.selectionEnd,emojiObj.name);
-            // this.input.value= this.input.value.slice(0,emoji_search_start_index) + emojiObj.name + this.input.value.slice(this.input.selectionEnd,);
             turn_off_emoji_searching();
+
+            this.input.focus();
         }
 
     }

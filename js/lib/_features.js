@@ -185,9 +185,9 @@
                             }else if(row['action'] === 'msgDeleted'){
                                 _deleteThisNoti(row.notiID);
 
-                                if(getCookie('chat').toLowerCase() === 'personal' 
-                                    && getCookie('currOpenedChat') === row.unm)
-                                        chat.querySelector(`div[data-msgid='${row.msg.msgID}'`).remove();
+                                if( (getCookie('chat').toLowerCase() === 'personal' 
+                                    && getCookie('currOpenedChat') === row.unm) || getCookie('chat').toLowerCase() === 'group'  )
+                                        chat.querySelector(`div[data-msgid='${row.msg.msgID}'`)?.remove();
                                     
                                 // if(getCookie('chat').toLowerCase() === 'personal'){
                                 //     var cacheData= JSON.parse(decodeURIComponent(atob(localStorage.getItem('cache-msgData-'+row.unm))));
@@ -450,10 +450,17 @@ const _upload_doc_form = (title , action , theme = 'blue') => {
     _show_this_pop_up(upload_doc_form);
 
     function upload_doc_validation(doc_input){
-        if(doc_input.value != null || doc_input.value != "")
-            _submit_btn_enable(doc_submit_btn);
-        else
-            _submit_btn_disable(doc_submit_btn);
+        if(doc_input.files[0]){
+            if(doc_input.files[0].size > 16777216){
+                doc_span.textContent="Maximum File Size is 16 MB";
+                doc_span.style.display='block';
+            }else{
+                _submit_btn_enable(doc_submit_btn);
+                doc_span.style.display='none';
+                return;
+            }
+        }
+        _submit_btn_disable(doc_submit_btn);
     }
 }
 
@@ -1161,7 +1168,7 @@ var emoji_searching=false;
 const turn_off_emoji_searching=()=>{
     emoji_searching=false;
     emoji_search_start_index=null;
-    emojiContainer.hide();
+    emojiContainer?.hide();
 }
 
 const turn_on_emoji_searching=(start_index)=>{

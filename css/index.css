@@ -381,8 +381,9 @@
 }
 
 .chat .heading .details .name{
+    font-size:.8em;
     font-family: var(--text-font);
-    font-weight: 900;
+    font-weight: 600;
     word-break: break-word;
     overflow: hidden;
     white-space: nowrap;
@@ -424,7 +425,7 @@
     width: 0.8em;
 }
 
-.chat .heading .search-btn{
+.chat .heading .heading_btn{
     background-color: transparent;
     border: none;
     height: 2.3em;
