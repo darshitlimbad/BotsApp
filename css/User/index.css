@@ -7,6 +7,7 @@ body.user{
     background-image:linear-gradient( to bottom right ,  rgba(1, 18, 35, 0.97) 30%, rgb(5, 33, 60) );
     color: aliceblue;
     user-select: none;
+    -webkit-user-select: none;
     background-size: 200% 110%;
     overflow: hidden;
     animation: bg-animation 2s alternate infinite ease-out;
@@ -98,7 +99,6 @@ header h1{
     outline: 1px solid aliceblue;
     color: var(--text-color);
     border-radius: 10px 30px;
-    padding: 20px;
     overflow-y: visible;
     overflow-x: hidden;
     opacity: 0;
@@ -188,9 +188,16 @@ header h1{
     --btn-shadow: rgba(89, 43, 226, 0.373);
 }
 
-.input_field .button-div input[disabled="true"]   {
+.input_field .button-div *[disabled="true"]   {
     background-image: none;
     background-color: rgba(58, 58, 58, 0.699) ;
+}
+
+.loader{
+    position: absolute;
+    background: #00000087;
+    height: 100%;
+    width: 100%;
 }
 
 @media screen and ( max-width:768px ) {

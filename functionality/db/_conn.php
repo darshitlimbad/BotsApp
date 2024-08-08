@@ -1,23 +1,20 @@
-<?php
+<?php    
+    include "env.php";
+
     // php.ini changes
         define("SYSTEM", "ADMIN00000001");
         define("MAX_DOC_SIZE" , 16777200);
         define("REQUEST_TIME",2);
     // 
 
-    $host = "localhost";
-    $unm = "root";
-    $pass = "";
-    $db = "botsapp";
-
     try{
-    $GLOBALS['conn'] = new mysqli( $host , $unm , $pass , $db );
-    $GLOBALS['status'] = new mysqli( $host , $unm , $pass , "botsapp_statusDB" );
+        $GLOBALS['conn'] = new mysqli( DB_HOST , DB_USER , DB_PASSWORD , DB_MAIN_NAME );
+        $GLOBALS['status'] = new mysqli(  DB_HOST , DB_USER , DB_PASSWORD , DB_STATUS_NAME );
 
-    if($GLOBALS['conn'] -> connect_error)
-        die("Database Connection failed: " . $GLOBALS['conn']->connect_error);
-    if($GLOBALS['status'] -> connect_error)
-        die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
+        if($GLOBALS['conn'] -> connect_error)
+            die("Database Connection failed: " . $GLOBALS['conn']->connect_error);
+        if($GLOBALS['status'] -> connect_error)
+            die("Online real time status database Connection failed: " . $GLOBALS['status']->connect_error);
 
     }catch(Exception $e){
         echo "Database is offline.";

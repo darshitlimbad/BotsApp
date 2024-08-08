@@ -6,10 +6,38 @@ document.addEventListener('DOMContentLoaded' , function () {
     pass = document.querySelector('#pass');
     avatar = document.querySelector('#avatar');
     submit_btn = document.querySelector('.submit input');
-    buttons = document.querySelectorAll('.button-div input');
+    buttons = document.querySelectorAll('.button-div *');
     // 
 
-    form.onsubmit=()=>{return check_all_fields()};
+    form.addEventListener('submit',(e)=>{
+        e.preventDefault();
+
+        if(!check_all_fields())
+            return false;
+
+        form.parentElement.scroll(1,1);
+        setLoader(form.parentElement);
+        //g-recaptcha
+        grecaptcha.ready(async () => {
+            let token= await grecaptcha.execute('6LdWOSEqAAAAAIO6YwlHIZdbVmFcGotoEredZwHd', {action: 'submit'});
+            
+            //  Creating Element with token name and value
+            if(token){
+                let token_ele= document.createElement("input");
+                token_ele.type="hidden";
+                // token_ele.style.display="none";
+                token_ele.id="g-recaptcha_token";
+                token_ele.name="g-recaptcha-response";
+                token_ele.value=token;
+
+                form.querySelector("#g-recaptcha_token")?.remove();
+                form.appendChild(token_ele);
+                // console.log(form.action);
+                form.submit();
+            }
+        })
+    });
+    
     // chnage button toggle //log-in ,sign-in toggle
     document.querySelector('input[name="change"]').addEventListener( 'click' , function (){
         form.reset();
@@ -165,11 +193,11 @@ function fade_out(ele){
 
             if(user.value == '' || pass.value == ''){  
                 new_Alert('Username or/and Password is Empty!!!');
-                return false;
+                return false
             }
 
         }else if(form.attributes.name.value == 'sign-in')    {
-            all_input_fields = document.querySelectorAll('.input_field #user , .input_field #surname , .input_field #name , .input_field #e-mail , .input_field #pass , .input_field #con_pass , .input_field #avatar');
+            var all_input_fields = document.querySelectorAll('.input_field #user , .input_field #surname , .input_field #name , .input_field #e-mail , .input_field #pass , .input_field #con_pass , .input_field #avatar');
             var fleg=-1;
             all_input_fields.forEach(field => {
                 if(field.value == ''){
@@ -179,7 +207,7 @@ function fade_out(ele){
             })
 
             if(fleg != -1)  {
-                return false;
+                return false
             }
         }
         
@@ -197,5 +225,27 @@ function handleResize(){
     }
 }
 
+
+// loader setter and remover
+function setLoader(loc){
+    removeLoader(loc);
+
+    let loaderDiv = document.createElement('div');
+    loaderDiv.classList.add('loader','blank-layer-chat');
+    loc.appendChild(loaderDiv);
+
+        let loaderImg = new Image();
+        loaderImg.src="/img/icons/loader.svg";
+        loaderImg.classList.add('loader-img');
+        loaderDiv.appendChild(loaderImg);
+        let loaderText =  document.createElement('b');
+        loaderText.classList.add('loader-text');
+        loaderText.textContent = "Loading...";
+        loaderDiv.appendChild(loaderText);
+};
+
+function removeLoader(loc){
+    loc.querySelector(".loader")?.remove();
+}
 // 
 

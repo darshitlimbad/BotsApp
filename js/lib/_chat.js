@@ -230,24 +230,11 @@ const _st_chLi_skltn = () => {
 //     setChatBody();
 // };
 
-const setLoader = (loc)=>{
-    let loaderDiv = document.createElement('div');
-    loaderDiv.classList.add('loader','blank-layer-chat');
-    loc.appendChild(loaderDiv);
-        let loaderImg = new Image();
-        loaderImg.src="/img/icons/loader.svg";
-        loaderImg.classList.add('loader-img');
-        loaderDiv.appendChild(loaderImg);
-        let loaderText =  document.createElement('b');
-        loaderText.classList.add('loader-text');
-        loaderText.textContent = "Loading...";
-        loaderDiv.appendChild(loaderText);
-};
+//set loader & remove loader @ interface.js 
 
-const removeLoader = (loc)=>{
-    let loader=loc.querySelector(".loader");
-    if(loader)
-        loc.removeChild(loader);
+// it's only for this page.
+function removeLoader(loc){
+    loc.querySelector(".loader")?.remove();
 
     let disabledEle = chat.querySelectorAll("footer .upDocsBtn , footer .msgInput, footer .sendMsg, .heading .search-btn");
     disabledEle?.forEach(ele => ele.removeAttribute('disabled'));

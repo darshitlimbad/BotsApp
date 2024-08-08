@@ -158,8 +158,10 @@ $data=[
     'scope'=>"SELF",
 ];
 
-echo fetch_emoji($data);
+// echo fetch_emoji($data);
 
+
+echo json_encode($_ENV);
 ?>
 
 <!-- 

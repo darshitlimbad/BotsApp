@@ -3,8 +3,17 @@ require_once('db/_conn.php');
 require_once('lib/_insert_data.php');
 require_once('lib/_validation.php');
 try{
-    if( (isset($_POST['submit'])) && (isset($_GET['action'])) )
+    if( (isset($_GET['action'])) && ( isset($_POST['g-recaptcha-response']) ))
     {
+        $recaptchaSecret= RECAPTCHA_SECRET;
+        $recaptchaClientResponse= $_POST['g-recaptcha-response'];
+
+        $response= file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaClientResponse");
+
+        $serverResponse= json_decode($response,true);
+        if(!$serverResponse['success'])
+            throw new Exception("Recaptcha Error! Please Try Again",400);
+        
         $action = $_GET['action'];
         if($action == "sign-in")
         {
@@ -22,7 +31,7 @@ try{
             if(!$surname || !$name || !$unm || !$email || !$hashed_pass || !$pass_key )
                 throw new Exception('Something went wrong',400);
             else if(!filter_var( $email , FILTER_VALIDATE_EMAIL ))
-                throw new Exception("Email is wrong please fill valid email",412);
+                throw new Exception("Email is wrong please Enter valid email",412);
             else if(strpos($unm,'@'))
                 throw new Exception("Username is Invalid!!",414);
             else if(is_data_present("users" , ["unm"] , [$unm] , 'unm') || 
