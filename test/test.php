@@ -3,14 +3,14 @@
     <input type="radio" value="PUBLIC" name="scope">
 </div> -->
 <?php
-session_start();
+// session_start();
 
-include_once('../functionality/db/_conn.php');
-include_once('../functionality/lib/_notification.php');
-include_once('../functionality/lib/_validation.php');
-include_once('../functionality/lib/_insert_data.php');
-include_once('../functionality/lib/_fetch_data.php');
-include_once('../functionality/lib/_data_delete.php');
+// include_once('../functionality/db/_conn.php');
+// include_once('../functionality/lib/_notification.php');
+// include_once('../functionality/lib/_validation.php');
+// include_once('../functionality/lib/_insert_data.php');
+// include_once('../functionality/lib/_fetch_data.php');
+// include_once('../functionality/lib/_data_delete.php');
 
 // if(isset($_POST['sub'])){
 //     $imgObj= $_FILES['input'];
@@ -152,16 +152,36 @@ include_once('../functionality/lib/_data_delete.php');
 // print_r($fetchedDataObj->fetch_assoc());
 
 // echo gen_new_id("msg");
-$data=[
-    'name'=>":worrymaybe:",
-    'emojiUser'=>"test#321",
-    'scope'=>"SELF",
-];
+// $data=[
+//     'name'=>":worrymaybe:",
+//     'emojiUser'=>"test#321",
+//     'scope'=>"SELF",
+// ];
 
 // echo fetch_emoji($data);
 
 
-echo json_encode($_ENV);
+// echo json_encode($_ENV);
+
+$array= [[3,43],[4,343],2,3,4,5,6,7,8,9,10];
+// $arr2=[];
+// foreach($array as $i){
+//     if($i % 2 == 0){
+//         $arr2[]=$i;
+//     }
+// }
+function filter($i){
+    if($i % 2 == 0){
+        echo $i."<br>";
+    }
+}
+
+array_map('filter',$array);
+
+// print_r($arr2);
+// echo json_encode($array);
+// echo json_encode($arr2);
+
 ?>
 
 <!-- 

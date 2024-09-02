@@ -2,6 +2,7 @@ var default_dp_src = '/img/default_dp.png';
 var device;
 
 const tohomepage=()=>window.location.assign('/');
+
 document.addEventListener('DOMContentLoaded' , function () {
     //context menu off
         document.oncontextmenu=(e)=>e.preventDefault();
@@ -84,8 +85,21 @@ document.addEventListener('DOMContentLoaded' , function () {
         });
     //
 
+    // Wallpapers settings Actions
+    const wallpaperActionList={
+        'change':"changeWP()",
+        'set_default':"defaultWP()",
+    }
+
+    document.querySelectorAll(".settings-box .settings-container .body[name='chat-body'] a.Wallpaper_Btn").forEach(btn=>{
+        var data_type= btn.getAttribute('data-type');
+        if(wallpaperActionList.hasOwnProperty(data_type))
+            btn.onclick=()=> eval(wallpaperActionList[data_type]);
+    })
+
     //functions to be called
     set_profile_dp();  
+    checkForUserWallpaper();
 });  
 
 //?clearing localstorage on load localstorage
@@ -123,6 +137,7 @@ const initiateChatBox = (chatType) => {
     _cht_sk_loading();
     closeChat();
     openChatList();
+
 }
 
 // toggle add new Chatter
@@ -388,9 +403,8 @@ const getCookie = (name) => {
 
     };
 
-
     function setLoader(loc){
-        removeLoader(loc);
+        loc.querySelector(".loader")?.remove();
         
         let loaderDiv = document.createElement('div');
         loaderDiv.classList.add('loader','blank-layer-chat');
@@ -404,10 +418,7 @@ const getCookie = (name) => {
             loaderText.textContent = "Loading...";
             loaderDiv.appendChild(loaderText);
     };
-    
-    function removeLoader(loc){
-        loc.querySelector(".loader")?.remove();
-    }
-    
 // 
+
+
 

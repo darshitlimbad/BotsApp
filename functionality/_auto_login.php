@@ -12,11 +12,13 @@ if(!isset($_SESSION['userID'])) {
 
     request.onupgradeneeded = (event) => {
         var db = event.target.result;
+        var objectStore = db.createObjectStore("session" , { keyPath: "id"});
+        let dataTable= db.createObjectStore("data", { keyPath:'name' } )
 
-        if(!db.objectStoreNames.contains('session')) {
-            db.close();
-            indexedDB.deleteDatabase('Botsapp');
-        }
+        objectStore.createIndex("id" , "id" , { unique: true });
+        dataTable.createIndex("name", "name", { unique: true} )
+
+        db.close();
     };
 
     request.onsuccess = ((event) => {

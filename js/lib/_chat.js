@@ -235,7 +235,7 @@ const _st_chLi_skltn = () => {
 // it's only for this page.
 function removeLoader(loc){
     loc.querySelector(".loader")?.remove();
-
+    
     let disabledEle = chat.querySelectorAll("footer .upDocsBtn , footer .msgInput, footer .sendMsg, .heading .search-btn");
     disabledEle?.forEach(ele => ele.removeAttribute('disabled'));
 }
@@ -671,7 +671,7 @@ async function openGroupProfile(){
     },200 );
 }
 
-const setChatBody = async () =>{
+const setChatBody = async () =>{    
     return new Promise(async (resolve)=>{
         chatStruct.chatBody.innerHTML="";
         lastMsg=null;

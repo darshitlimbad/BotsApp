@@ -313,7 +313,7 @@ const _togle_user_data = (ele) => {
 
     if(ele.id == "theme"){
         ele.checked = false;
-        new_Alert("I am wannabe Backend dev , so don't expect a Light theme from me :)");
+        new_Alert("Don't expect a Light theme from me :)..., PLEASE");
         return;
     }
     var field=ele.name;
@@ -513,6 +513,22 @@ const _upload_img_form = (title , action , theme = 'blue') => {
                             })
                         
                 }
+                }
+            }
+        }else if(action === "CHANGE_WALLPAPER"){
+            yes_btn.onclick=async ()=>{
+                if(!disabled_pop_up_btn.upload_img_form){
+                    _submit_btn_disable(img_submit_btn);
+                    if(!avatar.files[0])
+                        return;
+                    else{
+                        let blob= (await _read_doc(avatar.files[0]));
+                        if(!blob || !blob.startsWith("data:image"))
+                            return
+
+                        _hide_this_pop_up(upload_img_form);
+                        changeWP(blob); 
+                    }
                 }
             }
         }else if(action.action == "UPLOAD_EMOJI" ){
@@ -1219,5 +1235,104 @@ function emojiSyntaxChecker(str=null,e=null){
 
         //if emoji_searching is off then hide() the emoji container
         emojiContainer.hide();
+    }
+}
+
+// Wallpaper Setting Action functions
+function checkForUserWallpaper(){        
+    var DB_data= indexedDB.open("botsapp",1);
+
+    DB_data.onupgradeneeded=()=>{
+        var DB = DB_data.result;
+        
+        var objectStore = DB.createObjectStore("session" , { keyPath: "id"});
+        let dataTable= DB.createObjectStore("data", { keyPath: "name" } )
+
+        objectStore.createIndex("id" , "id" , { unique: true });
+        dataTable.createIndex("name", "name", { unique: true} )
+
+        DB.close();
+        return;
+    }
+
+    DB_data.onsuccess=()=>{
+        var DB= DB_data.result;
+
+        var transaction= DB.transaction("data","readonly");
+        var objectstore= transaction.objectStore("data")
+        var UserWallpaper= objectstore.get("UserWallpaper");
+
+        transaction.oncomplete=()=>{
+            UserWallpaper=UserWallpaper.result;
+
+            if(!UserWallpaper){
+                DB.close();
+                return
+            }else{
+                let blob= atob(UserWallpaper.blob);
+                _getDataURL(blob).then(res=>{
+                    if(res.status === "success"){
+                        var container= document.querySelector("main.chat-box.bg-img");                    
+                        container.style.background=` url(${res.url}) center / cover no-repeat fixed border-box`;
+                    }
+                    
+                })
+            }
+        }
+    }   
+}
+
+
+function changeWP(blob=""){
+    if(!blob){
+        _upload_img_form("Upload Wallpaper","CHANGE_WALLPAPER");
+        return;
+    }
+
+    var DB_data= indexedDB.open("botsapp",1)
+
+    DB_data.onupgradeneeded= (e) => {
+        new_Alert("Something went Wrong!!");
+        navigation.reload()
+    }
+
+    DB_data.onsuccess=(e)=>{
+        var DB= DB_data.result;
+
+        if( DB.objectStoreNames.length != 2){
+            new_Alert("Something went Wrong!!");
+            navigation.reload()
+        }
+        
+        var transaction= DB.transaction( "data", "readwrite");
+        var objectStore = transaction.objectStore("data");
+        objectStore.put({ name:"UserWallpaper", blob:btoa(blob) });
+
+        transaction.oncomplete= ()=>{
+            new_notification("Wallpaper updated Successfuly.")
+            navigation.reload()
+        }
+    }
+
+    DB_data.onerror=()=>{
+        new_Alert("Something went Wrong!!");
+        navigation.reload()
+    }
+    
+}
+
+function defaultWP(){
+    var DB_data= indexedDB.open("botsapp",1)
+
+    DB_data.onsuccess=()=>{
+        var DB= DB_data.result;
+        var transaction= DB.transaction( "data", "readwrite");
+        var objectStore = transaction.objectStore("data");
+        objectStore.delete("UserWallpaper");
+
+        transaction.oncomplete= ()=>{
+            new_notification("Wallpaper updated Successfuly.")
+            navigation.reload()
+        }
     }
 }

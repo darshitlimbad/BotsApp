@@ -189,7 +189,7 @@
                 <h4 class="red">Blocked Accounts</h4>
                 
                 <p>The accounts you Blocked can be seen here.</p>
-                <p style="font-size:12px;"> <span class="red"> Note: </span> Please do remember that chatters block by you or them will not be able to direct contect you or message you but if you are in a group with him/her/them than they can message you from the same groups, so leave the groups immediately.</p>
+                <p> <span class="red"> Note: </span> Please do remember that chatters block by you or them will not be able to direct contect you or message you but if you are in a group with him/her/them than they can message you from the same groups, so leave the groups immediately.</p>
 
                 <button class="danger-button button" name="blocked-list-open-btn" style="font-size:10px;">Check Blocked List</button>
                 
@@ -211,17 +211,13 @@
                     <label for="theme">Light</label>
                 </div>
 
-                <h4>Chat Wallpaper</h4>
+                <h4>Wallpaper Settings</h4>
 
-                <a href="wallpaper.php?type=add_new" class="link">Change Wallpaper</a>
+                <a class="Wallpaper_Btn link" data-type="change">Change Background Wallpaper</a>
 
                 <br><br>
 
-                <a href="wallpaper.php?type=set_default" class="link">Set Default BotsApp Wallpaper</a>
-                
-                <br><br>
-
-                <a href="wallpaper.php?type=remove" class="link">Remove Wallpaper</a>
+                <a class="Wallpaper_Btn link" data-type="set_default" >Set Default BotsApp Wallpaper</a>
 
             </div>
 

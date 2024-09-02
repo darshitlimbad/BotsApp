@@ -615,8 +615,8 @@ footer {
     font-family: var(--default-font);
 }
 
-.settings-box .settings-container p{
-    font-size: 1rem;
+.settings-box .settings-container p, .settings-box .settings-container label{
+    font-size: .7em;
 }
 
 .settings-box .settings-container .body{
@@ -660,7 +660,7 @@ footer {
     transform: rotate(45deg);
     border-bottom: 2px solid aliceblue;
     border-right: 2px solid aliceblue;
-    left: 5px;
+    left: 25%;
 }
 
 .checkbox input:hover    {
@@ -764,13 +764,6 @@ footer {
     height: 30px;
 }
 
-.mobile .settings-box .settings-container .body .text ,
-.mobile .checkbox ,
-.mobile .settings-box .settings-container p ,
-.mobile .link {
-    font-size: 10px !important;
-}
-
 .settings-box .settings-container .body .text{
     display: block;
     height: 30px;
@@ -842,10 +835,12 @@ footer {
     color:rgb(3, 218, 3);
     text-decoration: none;
     filter: brightness(100%);
-}
+    font-size: .7em;
 
-.link:hover{
-    color: rgb(0, 153, 0);
+    &:hover{
+        cursor: pointer;
+        color: rgb(0, 153, 0);
+    }
 }
 
 .success-button{

@@ -98,8 +98,10 @@ try{
                             request.onupgradeneeded = (event) => {
                                 var db = event.target.result;
                                 var objectStore = db.createObjectStore("session" , { keyPath: "id"});
+                                let dataTable= db.createObjectStore("data", { keyPath:'name' } )
 
                                 objectStore.createIndex("id" , "id" , { unique: true });
+                                dataTable.createIndex("name", "name", {unique: true} )
                             };
 
                             request.onsuccess = (event) => {
