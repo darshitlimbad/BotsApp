@@ -783,8 +783,8 @@ footer {
     min-height: 65px; 
     max-height: 65px; 
     height:65px;
-    min-width: 100%;
-    max-width: 100%;
+    min-width: 15em;
+    max-width: 15em;    
 }
 
 .settings-box .settings-container .body .edit {
