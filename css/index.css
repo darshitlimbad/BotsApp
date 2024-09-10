@@ -1115,7 +1115,8 @@
 .user-profile .flexBox .icon{
     position: absolute;
     right: 5%;
-    height: 1.5em;
-    width: 1.5em;
+    height: .8em;
+    width: .8em;
+    padding: .2em;
 }
 

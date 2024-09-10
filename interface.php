@@ -1,4 +1,9 @@
 <?php
+    if(!extension_loaded("sodium")){
+        echo "SODIUM Extention is not loaded.";
+        exit();
+    }
+    
     require_once('functionality/db/_conn.php');
     require_once('functionality/_auto_login.php');
     require_once('functionality/lib/_validation.php');

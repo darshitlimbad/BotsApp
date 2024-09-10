@@ -27,6 +27,7 @@ const openChatList = async () =>  {
         // return;
         var chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
+
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));
             sortChatByTime();
@@ -155,17 +156,26 @@ const _chatList_isEmpty = () => {
     footer.appendChild(div);
 };
 
-const _chatList_footer = ()=> {
+const _chatList_footer = async ()=> {
     var footer=document.createElement('footer');
         
+        var span = document.createElement('span');
+        span.style.textAlign="center";
+        span.id="user-id";
+        footer.appendChild(span);
+
         var div = document.createElement('div');
         div.style.textAlign="center";
         div.textContent="All rights NOT -_- reserverd by ";
             var a_botsapp=document.createElement('a');a_botsapp.href="/t&c/policy.php";a_botsapp.classList.add('link');a_botsapp.textContent="BotsApp";div.appendChild(a_botsapp);
         div.append(".");
+
         footer.appendChild(div);
         var a_help=document.createElement('a');a_help.href="/help/user-help.php";a_help.classList.add('link');a_help.textContent="Need help?";footer.appendChild(a_help);
     list.appendChild(footer);
+
+    getUserIP().then(ip=>span.textContent=`I think your IP is:${ip} \n Is it?`);
+
 }
 
 // skeleton animation stop 
@@ -679,7 +689,7 @@ const setChatBody = async () =>{
         setLoader(chatStruct.chatBody);
         try{
             let msgObjs= await _getAllMsgs();
-
+            
             if(!msgObjs)  {
                 new_notification("Let's start new convertation.");
             }else{

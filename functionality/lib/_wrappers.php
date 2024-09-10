@@ -15,6 +15,8 @@
         // if any changes made in this also change in _chat.php for inbox footer.
         ?>
         <div>
+            <span id="user-ip"></span>
+            
             All rights NOT -_- reserverd by <a href="/t&c/policy.php" class="link">BotsApp</a>.
         </div>
         <a href="/help/user-help.php" class="link">Need help?</a>

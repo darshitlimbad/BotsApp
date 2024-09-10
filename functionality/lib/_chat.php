@@ -59,8 +59,6 @@ function getChatList(string $chatType=null){
         $dataFromInbox = fetch_columns('inbox', ['fromID','chatType'], [$userID,$chatType], array("toID"));
         
         if($dataFromInbox -> num_rows != 0 ){
-            $chatList[0]=false;
-            
             $i=0;
             while( $toID = $dataFromInbox->fetch_column() ){
                 if( $chatType == 'personal' ){
@@ -72,7 +70,7 @@ function getChatList(string $chatType=null){
                         $GLOBALS['conn']->query($del);
                         continue;
                     }
-                    
+
                     $chatList[$i]['unm'] = ($userID != $toID ) ? _fetch_unm($toID) : "You";
 
                 }elseif($chatType == 'group'){
@@ -95,10 +93,12 @@ function getChatList(string $chatType=null){
                 $i++;
             }
             
-            if(!$chatList[0])
-                return 0;
+            if(isset($chatList)){
+                if(!$chatList[0])
+                    return 0;
 
             return json_encode($chatList);
+            }
         }else{
             return 0;        
         }
@@ -182,7 +182,7 @@ function getAllMsgs($data){
             $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
             $msgObjs[$i][($row['type'] == 'text') ? 'msg' : 'fileName']=$row['msg'];
             $msgObjs[$i]['type']= $row['type'];
-            $msgObjs[$i]['details'] = unserialize($row['details']);
+            $msgObjs[$i]['details'] = unserialize((!$row['details']) ? "" : $row['details'] );
             $msgObjs[$i]['time']= $row['time'];
             $i++;
 

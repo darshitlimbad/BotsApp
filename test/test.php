@@ -163,21 +163,22 @@
 
 // echo json_encode($_ENV);
 
-$array= [[3,43],[4,343],2,3,4,5,6,7,8,9,10];
+// $array= [[3,43],[4,343],2,3,4,5,6,7,8,9,10];
 // $arr2=[];
 // foreach($array as $i){
 //     if($i % 2 == 0){
 //         $arr2[]=$i;
 //     }
 // }
-function filter($i){
-    if($i % 2 == 0){
-        echo $i."<br>";
-    }
-}
+// function filter($i){
+//     if($i % 2 == 0){
+//         echo $i."<br>";
+//     }
+// }
 
-array_map('filter',$array);
+// array_map('filter',$array);
 
+echo !extension_loaded("sodium");
 // print_r($arr2);
 // echo json_encode($array);
 // echo json_encode($arr2);
@@ -197,3 +198,8 @@ array_map('filter',$array);
     // adocument.appendchild(at());
     at();
 </script> -->
+
+
+niravthakar@hotmail.com
+-> chat applicaiotion software
+-> darshitlimbad

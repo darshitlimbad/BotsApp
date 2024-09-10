@@ -1,4 +1,9 @@
 <?php
+if(!extension_loaded("sodium")){
+    echo "SODIUM Extention is not loaded.";
+    exit();
+}
+
 include_once('../functionality/_auto_login.php');
 
 if (isset($_SESSION['userID'])) {
