@@ -1,4 +1,6 @@
 
+![Image betrayed me 😒](img/logo.png)
+
 # BotsApp - Web Chat Application
 
 **BotsApp** is a fully PHP-based web chat application designed for seamless individual and group communication. It allows users to send and receive messages in real-time, using a hybrid approach of polling and notifications. This project was created as part of a 5th semester academic requirement and showcases a simple, functional alternative to socket-based chat systems. 
