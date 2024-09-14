@@ -69,7 +69,7 @@ Contributions are welcome! Feel free to fork the repository and submit pull requ
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is not licenced and i will only use it for education purpose so you should also do the same 😊
 
 ## Contact
 
