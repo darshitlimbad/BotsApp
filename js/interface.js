@@ -4,6 +4,18 @@ var device;
 const tohomepage=()=>window.location.assign('/');
 
 document.addEventListener('DOMContentLoaded' , function () {
+
+    let header= document.createElement("header");
+    header.classList.add('loader',"main-loader");
+    document.querySelector("body").appendChild(header);
+        let img=new Image();
+        img.src="../img/loading-screen.png";
+        header.appendChild(img);
+
+        setTimeout(() => {
+            document.querySelector("body").removeChild(header);
+        }, 500);
+
     //context menu off
         document.oncontextmenu=(e)=>e.preventDefault();
 

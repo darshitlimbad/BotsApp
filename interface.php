@@ -51,6 +51,7 @@
 
 </head>
 <body class="main">
+
     <header>
             <?php custom_header($isAdmin);?>
         <span class="status red">

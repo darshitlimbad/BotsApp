@@ -240,6 +240,20 @@ header  {
     text-align: center;
 }
 
+header.main-loader {
+    position: absolute;
+    z-index: 100;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+header.main-loader img{
+    height: 50% !important;
+    width: 50% !important;
+    border-radius: 50px;
+    box-shadow: 10px 10px 20px black;
+}
+
 .title{
     text-transform: capitalize;
     height: inherit;

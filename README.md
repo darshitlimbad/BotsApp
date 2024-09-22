@@ -1,7 +1,6 @@
+# BotsApp - Web Chat Application
 
 ![Image betrayed me 😒](img/logo.png)
-
-# BotsApp - Web Chat Application
 
 **BotsApp** is a fully PHP-based web chat application designed for seamless individual and group communication. It allows users to send and receive messages in real-time, using a hybrid approach of polling and notifications. This project was created as part of a 5th semester academic requirement and showcases a simple, functional alternative to socket-based chat systems. 
 
@@ -69,7 +68,7 @@ Contributions are welcome! Feel free to fork the repository and submit pull requ
 
 ## License
 
-This project is not licenced and i will only use it for education purpose so you should also do the same 😊
+This project is not licenced and I will only use it for educational purposes so you should also do the same 😊
 
 ## Contact
 
@@ -77,3 +76,83 @@ For further information or support, please reach out at:
 - **Email:** darshitlimbad+git@example.com
 - **LinkedIn:** [Don't click](https://www.linkedin.com/in/darshit-limbad/)
 
+## `postReq(url, data, options)`
+
+### Description
+
+The `postReq` function is a custom AJAX utility that provides a standardized way to send asynchronous HTTP requests to the BotsApp server. It simplifies data communication and offers advanced features like progress tracking and request cancellation.
+
+### Parameters
+
+- **`url`:** (String) The URL of the target server-side endpoint. For example, `/functionality/lib/_chat.php`.
+- **`data`:** (Object or String) Data to be sent with the request. This is usually JSON-encoded data for POST requests.
+- **`options`:** (Object)  An optional object for customizing the request behavior. See table below for available options.
+
+### Options Table
+
+| Option                 | Type        | Description                                                                                        |
+|--------------------------|--------------|-----------------------------------------------------------------------------------------------------|
+| `method`               | String      | The HTTP method to use (e.g., "POST" by default or "GET").                                             |
+| `async`                | Boolean     | Whether the request should be asynchronous (true by default).                                            |
+| `Content_Type`          | String      | The content type of the request data (e.g., 'application/json' by default).                              |
+| `onUploadProgress`     | Function    | Callback function for progress updates during file uploads. It receives a `Progress` object.        |
+| `onDownloadProgress`    | Function    | Callback function for progress updates during file downloads. It receives a `Progress` object.       |
+| `onDOwnloadAbortXMLOrNot` | Function    | Callback function to determine if the download should be aborted.                                   |
+| `onUploadAbortXMLOrNot` | Function    | Callback function to determine if the upload should be aborted.                                   |
+
+
+### Return Value
+
+- **Promise:**  The `postReq` function returns a Promise that resolves with an object containing:
+    - **`status`:** (String) "success" for a successful request, "error" for an error, or "abort" for an aborted request.
+    - **`responseText`:** (String)  The server's response text. If the response is in JSON format, it is parsed into a JavaScript object.
+
+### Example Usage
+
+```javascript
+// Send a POST request to the chat endpoint
+postReq('/functionality/lib/_chat.php', JSON.stringify({ req: 'sendMsg', msg: 'Hello!' }))
+    .then(response => {
+        if (response.status === 'success') {
+            console.log('Message sent successfully:', response.responseText);
+        } else {
+            console.error('Error sending message:', response.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+```
+
+#### `Progress` Class
+
+### Description
+
+The `Progress` class provides a convenient structure for accessing progress information during file uploads and downloads. It contains information about the amount of data loaded, the total size, and whether the operation is complete.
+
+### Properties
+
+- **`done`:** (Boolean)  Indicates whether the operation is complete (`true`) or not (`false`).
+- **`loaded`:** (Number) The amount of data that has been loaded so far.
+- **`total`:** (Number) The total size of the data being transferred.
+- **`timeStamp`:** (Number) The timestamp of the progress event.
+
+### Example Usage
+
+```javascript
+const onUploadProgress = (progress) => {
+    let progressPR = document.querySelector(".progressPR");
+    progressPR.textContent = Math.ceil(progress.loaded * 100 / progress.total) + "%";
+    
+    if (progress.done) {
+        progressPR.remove();
+    }
+};
+```
+
+## `Contact`
+
+For further information or support, please reach out at:
+- **Email:** darshitlimbad+git@example.com
+- **LinkedIn:**
+https://www.linkedin.com/in/darshit-limbad/

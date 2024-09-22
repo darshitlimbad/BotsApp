@@ -783,9 +783,9 @@ const closeChat = () =>{
         img.src="../img/logo.png";
         header.appendChild(img);
         
-        let b=document.createElement('b');
-        b.textContent="BotsApp";
-        header.appendChild(b);
+        let title=document.createElement('title');
+        title.textContent="BotsApp";
+        header.appendChild(title);
         
     setCookie('currOpenedChat' ,0);
     setCookie('currOpenedGID' ,0);

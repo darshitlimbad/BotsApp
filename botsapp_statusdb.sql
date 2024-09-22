@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 15, 2024 at 06:40 PM
+-- Generation Time: Sep 20, 2024 at 08:36 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,15 +48,6 @@ CREATE TABLE `messages` (
   `hide_by` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `messages`
---
-
-INSERT INTO `messages` (`id`, `msgID`, `status`, `seenByIDs`, `hide`, `hide_by`) VALUES
-(20, 'Msg00000008', 'read', '', 0, NULL),
-(21, 'Msg00000009', 'read', 'a:1:{i:0;s:12:\"User00000005\";}', 0, NULL),
-(22, 'Msg00000010', 'read', '', 0, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -71,6 +62,13 @@ CREATE TABLE `notification` (
   `action` varchar(20) DEFAULT 'newMessage',
   `msg` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notification`
+--
+
+INSERT INTO `notification` (`id`, `notificationID`, `fromID`, `toID`, `action`, `msg`) VALUES
+(799, 'Noti00000002', 'Admin', 'User95304512', 'acceptedChatterReq', 'N;');
 
 -- --------------------------------------------------------
 
@@ -89,10 +87,12 @@ CREATE TABLE `on_status` (
 --
 
 INSERT INTO `on_status` (`id`, `userID`, `last_on_time`) VALUES
-(3, 'Admin', 1721061656),
-(9176, 'User00000004', 1720951856),
+(3, 'Admin', 1726045333),
 (9202, 'Admin00000001', 1720803204),
-(9230, 'User00000005', 1720805226);
+(9230, 'User00000005', 1720805226),
+(10368, 'User00000007', 1721457477),
+(10402, 'User00000006', 1726043786),
+(10954, 'User95304512', 1721730851);
 
 -- --------------------------------------------------------
 
@@ -106,6 +106,13 @@ CREATE TABLE `reports` (
   `toID` varchar(20) NOT NULL,
   `reason` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reports`
+--
+
+INSERT INTO `reports` (`id`, `fromID`, `toID`, `reason`) VALUES
+(76, 'Admin', 'User00000006', 'zxxzx');
 
 --
 -- Indexes for dumped tables
@@ -158,31 +165,31 @@ ALTER TABLE `reports`
 -- AUTO_INCREMENT for table `blocked`
 --
 ALTER TABLE `blocked`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `notification`
 --
 ALTER TABLE `notification`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=753;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=821;
 
 --
 -- AUTO_INCREMENT for table `on_status`
 --
 ALTER TABLE `on_status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9236;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13151;
 
 --
 -- AUTO_INCREMENT for table `reports`
 --
 ALTER TABLE `reports`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- Constraints for dumped tables
