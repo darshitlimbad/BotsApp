@@ -13,6 +13,130 @@ Date: 21/09/2024
 ![Image betrayed me 😒](img/documentation/botsapp.png)
 <h3 style="text-align: center;">"A Better Place for Chat"</h3>
 
+<div class="page" />
+
+## **BotsApp Documentation - Indexing**
+
+**I. Introduction**
+
+* **1.1 Welcome and Overview**
+* **1.2 Target Audience**
+* **1.3 Next Steps**
+
+**II. System Architecture**
+
+* **2.1 Frontend and Backend Overview**
+* **2.2 Technology Stack**
+* **2.3 Key Interactions**
+
+**III. Technology Stack**
+
+* **3.1 Frontend Technologies**
+    * **3.1.1 HTML**
+    * **3.1.2 CSS**
+    * **3.1.3 JavaScript**
+* **3.2 Backend Technologies**
+    * **3.2.1 PHP**
+    * **3.2.2 MySQL**
+* **3.3 Security Technologies**
+    * **3.3.1 Bcrypt**
+    * **3.3.2 Sodium**
+
+**IV. Frontend Implementation (JavaScript)**
+
+* **4.1 Data Fetching and Sending**
+    * **4.1.1 Native HTML Forms**
+    * **4.1.2 `postReq` Function**
+    * **4.1.3 Handling Group and Personal Chat Data**
+* **4.2 Status Management**
+    * **4.2.1 `userStatus` Object**
+    * **4.2.2 `setOnlineStatusUpdateInterval()` Function**
+    * **4.2.3 `onlineStatusUpdate()` Function**
+    * **4.2.4 `checkStatus()` Function**
+    * **4.2.5 Message Status Management** 
+* **4.3 Additional Functionality**
+    * **4.3.1 User Profile Management**
+    * **4.3.2 Group Chat Management**
+    * **4.3.3 Member Actions**
+    * **4.3.4 Custom Emoji System**
+    * **4.3.5 Chat Request System**
+
+**V. Backend Implementation (PHP)**
+
+* **5.1 Database Structure**
+    * **5.1.1 Main Database (`botsapp`)**
+        * **5.1.1.1 Table: `users`**
+        * **5.1.1.2 Table: `users_account`**
+        * **5.1.1.3 Table: `users_details`**
+        * **5.1.1.4 Table: `groups`**
+        * **5.1.1.5 Table: `inbox`**
+        * **5.1.1.6 Table: `messages`**
+        * **5.1.1.7 Table: `admins`**
+        * **5.1.1.8 Table: `avatar`**
+        * **5.1.1.9 Table: `emojis`**
+    * **5.1.2 Status Database (`botsapp_statusdb`)**
+        * **5.1.2.1 Table: `messages`**
+        * **5.1.2.2 Table: `blocked`**
+        * **5.1.2.3 Table: `notification`**
+        * **5.1.2.4 Table: `on_status`**
+        * **5.1.2.5 Table: `reports`**
+
+**VI. Security**
+
+* **6.1 Overview**
+* **6.2 Password Hashing with Bcrypt**
+* **6.3 Sodium Encryption for Browser Login Details**
+* **6.4 SQL Injection Protection with Prepared Statements**
+* **6.5 Session Handling and Authentication**
+
+**VII. Core Functionality**
+
+* **7.1 User Login Flow**
+    * **7.1.1 IndexedDB for Login Credentials**
+    * **7.1.2 Decryption and Verification**
+
+**VIII. Chat Features**
+
+* **8.1 Group Chat Management**
+* **8.2 File and Image Sharing**
+* **8.3 Custom Emoji System**
+* **8.4 Chat Request System**
+
+**IX. Challenges and Solutions**
+
+* **9.1 Avoiding WebSockets: Polling as an Alternative**
+* **9.2 Implementing a Fully Native Web Approach**
+* **9.3 Security Considerations**
+
+**X. Testing**
+
+* **10.1 Manual Testing**
+    * **10.1.1 Functionality Testing**
+    * **10.1.2 Usability Testing**
+    * **10.1.3 Performance Testing**
+* **10.2 Security and Authentication Testing**
+    * **10.2.1 Vulnerability Scanning**
+    * **10.2.2 Penetration Testing**
+    * **10.2.3 Authentication Testing**
+
+**XI. Error Handling**
+
+* **11.1 Error Handling in JavaScript**
+    * **11.1.1 `customError` Function**
+    * **11.1.2 `handler` Object**
+    * **11.1.3 `new_Alert` and `new_notification` Functions**
+    * **11.1.4 `DOMContentLoaded` Event Listener**
+* **11.2 Error Handling in PHP**
+* **11.3 Error Reporting**
+
+**XII. Appendix**
+
+* **12.1 Glossary**
+* **12.2 Error Codes and Messages**
+* **12.3 References** 
+
+***
+<div class="page" />
 
 ## **I. Introduction:**
 
