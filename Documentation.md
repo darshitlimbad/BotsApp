@@ -1,34 +1,44 @@
 <h1 style="text-align: center;font-size:40px;"><b>BotsApp Documentation.</b></h1>
 
-### BotsApp - A Better Place for Chat
+<h2 style="text-align: center;">"BotsApp - A Better Place for Chat"</h2>
 
-**Submitted By :**
 <br>
-Darshit Limbad
 <br>
-BCA Semester–5
-<br>
-Project Guide:
-Prof. Pranav Trivedi
 <br>
 
 ```md
 |---------------------------------------------------|
-| **Submitted To:**                                 |
+| Submitted By :                                    |
+|   Darshit Limbad                                  |
+|   BCA Semester–5                                  |
+|                                                   |
+| Project Guide:                                    |
+|   Prof. Pranav Trivedi                            |
+|---------------------------------------------------|
+```
+
+<br>
+<br>
+<br>
+<br>
+
+```md
+|---------------------------------------------------|
+| Submitted To:                                     |
 | Geetanjali College Of                             |
 | Computer Science And Commerce (B.B.A).            |
 | Rajkot.                                           |
 | Academic Year: 2024-2025                          |
 |---------------------------------------------------|
 ```
-
 ***
+<div class="page" />
 
 ## Project Profile: BotsApp
 
 **Project Overview:**
 
-BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The project was created for a semester 5 project in BCA Degree. 
+BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The project was created for Bachelor of Computer Applications(B.C.A) Degree semester 5 project. 
 
 **Technical Details:**
 
@@ -1352,5 +1362,11 @@ This section provides links to relevant resources and documentation for the tech
 
 <div class="page" />
 
-
-
+<!-- style :: Ignore-->
+<style>
+    *{
+        ::selection {
+            background-color: rgb(10 10 10 / 30%);
+        }
+    }
+</style>
