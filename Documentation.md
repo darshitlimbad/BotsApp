@@ -1,12 +1,77 @@
 <h1 style="text-align: center;font-size:40px;"><b>BotsApp Documentation.</b></h1>
 
-<p>
-Project title: <b>BotsApp</b>
+### BotsApp - A Better Place for Chat
+
+**Submitted By :**
 <br>
-Author: <b>Darshit Limbad</b>
+Darshit Limbad
 <br>
-Date: 21/09/2024
-</p>
+BCA Semester–5
+<br>
+Project Guide:
+Prof. Pranav Trivedi
+<br>
+
+```md
+|---------------------------------------------------|
+| **Submitted To:**                                 |
+| Geetanjali College Of                             |
+| Computer Science And Commerce (B.B.A).            |
+| Rajkot.                                           |
+| Academic Year: 2024-2025                          |
+|---------------------------------------------------|
+```
+
+***
+
+## Project Profile: BotsApp
+
+**Project Overview:**
+
+BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The project was created for a semester 5 project in BCA Degree. 
+
+**Technical Details:**
+
+* **Development Environment:**
+    * IDE: VS Code
+    * Server: XAMPP
+    * Browser: Brave, Edge
+* **Technologies:**
+    * Frontend: HTML, CSS, JS
+    * Backend: PHP, MySQL
+* **Operating System:** Windows
+* **Documentation:** Created using VS Code & Markdown
+
+**Project Team:**
+
+* Developer: Darshit Limbad
+
+**Submission:**
+
+* Submitted to: Geetanjali College
+
+**Timeline:**
+
+* Academic Year: 2024-2025
+
+**Key Features:**
+
+* Real-time chat functionality 
+* User profile management
+* Group Creation and manage
+* Emojis Uploading
+
+**Project Goals:**
+
+* To create a user-friendly platform for communication
+* To implement a chat system for People.
+* To learn how chat application works.
+
+**Project Significance:**
+
+* BotsApp offers a convenient way to communicate with user to user or group.
+* This project explores the potential of chat technology in Web.
+
 
 ***
 
