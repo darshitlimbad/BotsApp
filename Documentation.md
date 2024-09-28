@@ -1,6 +1,6 @@
 <h1 style="text-align: center;font-size:40px;"><b>BotsApp Documentation.</b></h1>
 
-<h2 style="text-align: center;">"BotsApp - A Better Place for Chat"</h2>
+<h2 style="text-align: center;font-weight:800;">"BotsApp - A Better Place for Chat"</h2>
 
 <br>
 <br>
@@ -34,7 +34,7 @@
 ***
 <div class="page" />
 
-## Project Profile: BotsApp
+<h3 style="font-weight:800;">Project Profile: BotsApp</h3>
 
 **Project Overview:**
 
@@ -88,6 +88,22 @@ BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The proj
 ![Image betrayed me 😒](img/documentation/botsapp.png)
 <h3 style="text-align: center;">"A Better Place for Chat"</h3>
 
+```md
+    BotsApp - Web Chat Application
+    Copyright (C) 2024  Darshit Limbad
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+```
 <div class="page" />
 
 ## **BotsApp Documentation - Indexing**
