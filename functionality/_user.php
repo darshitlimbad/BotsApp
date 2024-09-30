@@ -3,17 +3,19 @@ require_once('db/_conn.php');
 require_once('lib/_insert_data.php');
 require_once('lib/_validation.php');
 try{
-    if( (isset($_GET['action'])) && ( isset($_POST['g-recaptcha-response']) ))
+    // if( (isset($_GET['action'])) && ( isset($_POST['g-recaptcha-response']) ))
+    // {
+        // $recaptchaSecret= RECAPTCHA_SECRET;
+        // $recaptchaClientResponse= $_POST['g-recaptcha-response'];
+
+        // $response= file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaClientResponse");
+
+        // $serverResponse= json_decode($response,true);
+        // if(!$serverResponse['success'])
+        //     throw new Exception("Recaptcha Error! Please Try Again",400);
+     
+    if( (isset($_GET['action'])) )
     {
-        $recaptchaSecret= RECAPTCHA_SECRET;
-        $recaptchaClientResponse= $_POST['g-recaptcha-response'];
-
-        $response= file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaClientResponse");
-
-        $serverResponse= json_decode($response,true);
-        if(!$serverResponse['success'])
-            throw new Exception("Recaptcha Error! Please Try Again",400);
-        
         $action = $_GET['action'];
         if($action == "sign-in")
         {

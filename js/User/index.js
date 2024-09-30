@@ -17,25 +17,27 @@ document.addEventListener('DOMContentLoaded' , function () {
 
         form.parentElement.scroll(1,1);
         setLoader(form.parentElement);
-        //g-recaptcha
-        grecaptcha.ready(async () => {
-            let token= await grecaptcha.execute('6LdWOSEqAAAAAIO6YwlHIZdbVmFcGotoEredZwHd', {action: 'submit'});
-            
-            //  Creating Element with token name and value
-            if(token){
-                let token_ele= document.createElement("input");
-                token_ele.type="hidden";
-                // token_ele.style.display="none";
-                token_ele.id="g-recaptcha_token";
-                token_ele.name="g-recaptcha-response";
-                token_ele.value=token;
+        form.submit();
 
-                form.querySelector("#g-recaptcha_token")?.remove();
-                form.appendChild(token_ele);
-                // console.log(form.action);
-                form.submit();
-            }
-        })
+        // //g-recaptcha
+        // grecaptcha.ready(async () => {
+        //     let token= await grecaptcha.execute('6LdWOSEqAAAAAIO6YwlHIZdbVmFcGotoEredZwHd', {action: 'submit'});
+            
+        //     //  Creating Element with token name and value
+        //     if(token){
+        //         let token_ele= document.createElement("input");
+        //         token_ele.type="hidden";
+        //         // token_ele.style.display="none";
+        //         token_ele.id="g-recaptcha_token";
+        //         token_ele.name="g-recaptcha-response";
+        //         token_ele.value=token;
+
+        //         form.querySelector("#g-recaptcha_token")?.remove();
+        //         form.appendChild(token_ele);
+        //         // console.log(form.action);
+        //         form.submit();
+        //     }
+        // })
     });
     
     // chnage button toggle //log-in ,sign-in toggle

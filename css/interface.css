@@ -193,7 +193,7 @@ span{
     background-color: rgba(145, 145, 145, 0.218) !important;
 }
 
-body.main{
+body.main, body#help, body#t_c{
     background-color:rgb(1, 12, 23);
     color: aliceblue;
     user-select: none;
@@ -801,6 +801,11 @@ footer {
     max-width: 15em;    
 }
 
+.mobile .settings-box .settings-container .body textarea.text {
+    min-width: 7em;
+
+}
+
 .settings-box .settings-container .body .edit {
     border: 1px solid rgba(255, 255, 255, 0.373);
     border-radius: 5.5px;
@@ -849,7 +854,7 @@ footer {
     color:rgb(3, 218, 3);
     text-decoration: none;
     filter: brightness(100%);
-    font-size: .7em;
+    font-size: 1em;
 
     &:hover{
         cursor: pointer;

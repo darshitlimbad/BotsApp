@@ -233,22 +233,23 @@
                 <div class="heading">New Chatter ?</div>
                 <p>Are you new user? Don't know what do ?</p>
                 <p>Don't worry just visit our information page  </p>
-                <a href="/help/info.php" class="link">More Info</a>
+                <a href="/help/info.html" class="link">More Info</a>
             
                 <br><br>
 
-                <div class="heading">Feedback</div>
+                <div class="heading">Give the project what it deserves</div>
                 <p>So how is your experience using BotsApp web-app?</p>
                 <p>Better then our competitor right?</p>
-                <p>share your thoughts...</p>  
-                <a href="/help/ux.php?form=feedback" class="link">Feedback Here</a>
+                <p>Wanna Give this project a star...</p>  
+                <a href="https://github.com/darshitlimbad/BotsApp" class="link" target="_blank">github/BotsApp</a>
             
                 <br><br>
 
                 <div class="heading">Found any bugs?</div>
                 <p>If you recently noticed any bug or mistacks by me please share it here,</p>
                 <p>It will be very helpfull for me</p>
-                <a href="/help/ux.php?form=bugs" class="link">Bugs Report</a>
+                <a href="https://github.com/darshitlimbad/BotsApp/issues" class="link" target="_blank">Bug Report/Issues</a>
+
             </div>
 
             <!-- Profile Body -->
