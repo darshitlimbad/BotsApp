@@ -297,7 +297,7 @@
     margin: 0px 10px;
     outline: 2px solid rgb(1, 12, 23);
     border-radius: 0 10px 10px 0;
-    background-color: var(--main-bg-color);
+    /* background-color: var(--main-bg-color); */
     /* font-family: 'Arial Narrow', Arial, sans-serif; */
     font-family: 'Times New Roman', Times, serif;
     justify-content: center;
@@ -337,6 +337,7 @@
     background-size: 30%;
     background-position: 100% 20%;
     background-attachment: fixed;
+    background-color: var(--main-bg-color);
 }
 
 .chat .heading .icon{
@@ -512,6 +513,9 @@
     overflow-x: hidden;
     overflow-y: auto;
     font-size: var(--chat-font-medium);
+    background-color: #8c41b812;
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
 }
 
 .chat .chatBody .msgDate {
@@ -763,6 +767,7 @@
     margin: 0;    
     padding:  0;
     border-top: 0.5px solid black;
+    background-color: var(--main-bg-color);
     font-size: var(--chat-font-medium);
     transition: all .5s cubic-bezier(0.04, 0.37, 0.49, 1.04);
 }

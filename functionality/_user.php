@@ -5,14 +5,14 @@ require_once('lib/_validation.php');
 try{
     // if( (isset($_GET['action'])) && ( isset($_POST['g-recaptcha-response']) ))
     // {
-        // $recaptchaSecret= RECAPTCHA_SECRET;
-        // $recaptchaClientResponse= $_POST['g-recaptcha-response'];
+    //     $recaptchaSecret= RECAPTCHA_SECRET;
+    //     $recaptchaClientResponse= $_POST['g-recaptcha-response'];
 
-        // $response= file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaClientResponse");
+    //     $response= file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$recaptchaSecret&response=$recaptchaClientResponse");
 
-        // $serverResponse= json_decode($response,true);
-        // if(!$serverResponse['success'])
-        //     throw new Exception("Recaptcha Error! Please Try Again",400);
+    //     $serverResponse= json_decode($response,true);
+    //     if(!$serverResponse['success'])
+    //         throw new Exception("Recaptcha Error! Please Try Again",400);
      
     if( (isset($_GET['action'])) )
     {
@@ -150,7 +150,6 @@ try{
         header('location: /');
     }
 } catch (Exception $error) {
-    // print_r($error);
     header("location: /user/?ACTION=$action&ERROR=".$error->getCode().(($error->getMessage() == "Password is Wrong" ) ? "&USER=$user" : "&msg=".$error->getMessage()));
     die();
 }
