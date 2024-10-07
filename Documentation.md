@@ -1,20 +1,20 @@
-<h1 style="text-align: center;font-size:40px;"><b>BotsApp Documentation.</b></h1>
+<p style="text-align:center;">
+    A <br>
+Project Report <br>
+ on
+</p>
 
-<h2 style="text-align: center;font-weight:800;">"BotsApp - A Better Place for Chat"</h2>
+<h2 style="text-align: center;">"BotsApp - A Better Place for Chat"</h2>
 
 <br>
 <br>
 <br>
 
 ```md
-|---------------------------------------------------|
-| Submitted By :                                    |
-|   Darshit Limbad                                  |
-|   BCA Semester–5                                  |
-|                                                   |
-| Project Guide:                                    |
-|   Prof. Pranav Trivedi                            |
-|---------------------------------------------------|
+|-----------------------------------------------------------------------------|
+|                           Submitted By:                                     |
+|                           BCA Semester–5                                    |
+|-----------------------------------------------------------------------------|
 ```
 
 <br>
@@ -23,18 +23,31 @@
 <br>
 
 ```md
-|---------------------------------------------------|
-| Submitted To:                                     |
-| Geetanjali College Of                             |
-| Computer Science And Commerce (B.B.A).            |
-| Rajkot.                                           |
-| Academic Year: 2024-2025                          |
-|---------------------------------------------------|
+|-----------------------------------------------------------------------------|
+|                         Submitted To:                                       |
+|                                                                             |
+|          Geetanjali College of Computer Science and Commerce(BCA)           |
+|              Indian Redcross Building, Opp. Shastri Maidan,                 |
+|                      Suchak Road, Rajkot-360002                             |
+|                                                                             |
+|                       Saurashtra University                                 |
+|                               Rajkot,                                       |       
+|                                                                             |
+|                       Academic Year: 2024-2025                              |     
+|-----------------------------------------------------------------------------|
 ```
-***
+
+
+```md
+|-----------------------------------------------------------------------------|
+|                           Project Guide:                                    |
+|                         Prof. Pranav Trivedi                                |
+|-----------------------------------------------------------------------------|
+```
+
 <div class="page" />
 
-<h3 style="font-weight:800;">Project Profile: BotsApp</h3>
+<h3>Project Profile: BotsApp</h3>
 
 **Project Overview:**
 
