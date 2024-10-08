@@ -10,40 +10,33 @@ Project Report <br>
 <br>
 <br>
 
-```md
-|-----------------------------------------------------------------------------|
-|                           Submitted By:                                     |
-|                           BCA Semester–5                                    |
-|-----------------------------------------------------------------------------|
-```
+    |--------------------------------------------------------------|
+    |                      Submitted By:                           |
+    |                   B.C.A. Semester – 5                        |
+    |--------------------------------------------------------------|
 
 <br>
 <br>
 <br>
 <br>
 
-```md
-|-----------------------------------------------------------------------------|
-|                         Submitted To:                                       |
-|                                                                             |
-|          Geetanjali College of Computer Science and Commerce(BCA)           |
-|              Indian Redcross Building, Opp. Shastri Maidan,                 |
-|                      Suchak Road, Rajkot-360002                             |
-|                                                                             |
-|                       Saurashtra University                                 |
-|                               Rajkot,                                       |       
-|                                                                             |
-|                       Academic Year: 2024-2025                              |     
-|-----------------------------------------------------------------------------|
-```
+    |--------------------------------------------------------------|
+    |                       Submitted To:                          | 
+    |                                                              |
+    | Geetanjali College of Computer Science and Commerce (B.C.A.) | 
+    |                       Rajkot-360002   	                   | 
+    |                                                              | 
+    |                    Saurashtra University                     | 
+    |                            Rajkot                            |   
+    |                                                              | 
+    |                    Academic Year: 2024-2025                  |   
+    |--------------------------------------------------------------| 
 
 
-```md
-|-----------------------------------------------------------------------------|
-|                           Project Guide:                                    |
-|                         Prof. Pranav Trivedi                                |
-|-----------------------------------------------------------------------------|
-```
+    |--------------------------------------------------------------| 
+    |                       Project Guide:                         | 
+    |                   Prof. NIKITA FICHADIYA                     | 
+    |--------------------------------------------------------------| 
 
 <div class="page" />
 
@@ -101,22 +94,21 @@ BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The proj
 ![Image betrayed me 😒](img/documentation/botsapp.png)
 <h3 style="text-align: center;">"A Better Place for Chat"</h3>
 
-```md
     BotsApp - Web Chat Application
     Copyright (C) 2024  Darshit Limbad
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
-```
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 <div class="page" />
 
 ## **BotsApp Documentation - Indexing**
@@ -704,8 +696,6 @@ BotsApp enables users to send chat requests to other users based on usernames. T
 * **`sendChatRequest(toUnm)`:** This function sends a chat request to another user.
 * **`acceptChatRequest(fromUnm)`:**  This function accepts a chat request from another user.
 * **`declineChatRequest(fromUnm)`:** This function declines a chat request.
-
-**[image] - A screenshot of the chat request interface.**
 
 **Example Usage:**
 
@@ -1391,8 +1381,14 @@ This section provides links to relevant resources and documentation for the tech
 
 <div class="page" />
 
-<!-- style :: Ignore-->
 <style>
+    @page {
+        margin: 2cm; /* Adjust the margins as needed */
+    }
+    body {
+        margin: 1cm;
+    }
+
     *{
         ::selection {
             background-color: rgb(10 10 10 / 30%);
