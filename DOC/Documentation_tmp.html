@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Documentation.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+    
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+html,footer,header{
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Custom MD PDF CSS
+ */
+html,footer,header{
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+
+ }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+<link rel="stylesheet" href="file:///r%3A/2.Travail/1.Enseignement/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css"><link rel="stylesheet" href="file:///d%3A/rdaros/Cours/_1.Outils/2.Developpement/1.SCSS/main.css" type="text/css">
+</head>
+
+<body>
+    <p style="text-align:center;">
+    A <br>
+Project Report <br>
+ on
+</p>
+<h2 style="text-align: center;">&quot;BotsApp - A Better Place for Chat&quot;</h2>
+<br>
+<br>
+<br>
+<pre><code>|--------------------------------------------------------------|
+|                      Submitted By:                           |
+|                   B.C.A. Semester – 5                        |
+|--------------------------------------------------------------|
+</code></pre>
+<br>
+<br>
+<br>
+<br>
+<pre><code>|--------------------------------------------------------------|
+|                       Submitted To:                          | 
+|                                                              |
+| Geetanjali College of Computer Science and Commerce (B.C.A.) | 
+|                       Rajkot-360002   	                   | 
+|                                                              | 
+|                    Saurashtra University                     | 
+|                            Rajkot                            |   
+|                                                              | 
+|                    Academic Year: 2024-2025                  |   
+|--------------------------------------------------------------| 
+
+
+|--------------------------------------------------------------| 
+|                       Project Guide:                         | 
+|                   Prof. NIKITA FICHADIYA                     | 
+|--------------------------------------------------------------| 
+</code></pre>
+<div class="page">
+</div><h3>Project Profile: BotsApp</h3>
+<p><strong>Project Overview:</strong></p>
+<p>BotsApp is a web application developed using HTML, CSS, PHP, and MySQL. The project was created for Bachelor of Computer Applications(B.C.A) Degree semester 5 project.</p>
+<p><strong>Technical Details:</strong></p>
+<ul>
+<li><strong>Development Environment:</strong>
+<ul>
+<li>IDE: VS Code</li>
+<li>Server: XAMPP</li>
+<li>Browser: Brave, Edge</li>
+</ul>
+</li>
+<li><strong>Technologies:</strong>
+<ul>
+<li>Frontend: HTML, CSS, JS</li>
+<li>Backend: PHP, MySQL</li>
+</ul>
+</li>
+<li><strong>Operating System:</strong> Windows</li>
+<li><strong>Documentation:</strong> Created using VS Code &amp; Markdown</li>
+</ul>
+<p><strong>Project Team:</strong></p>
+<ul>
+<li>Developer: Darshit Limbad</li>
+</ul>
+<p><strong>Submission:</strong></p>
+<ul>
+<li>Submitted to: Geetanjali College</li>
+</ul>
+<p><strong>Timeline:</strong></p>
+<ul>
+<li>Academic Year: 2024-2025</li>
+</ul>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Real-time chat functionality</li>
+<li>User profile management</li>
+<li>Group Creation and manage</li>
+<li>Emojis Uploading</li>
+</ul>
+<p><strong>Project Goals:</strong></p>
+<ul>
+<li>To create a user-friendly platform for communication</li>
+<li>To implement a chat system for People.</li>
+<li>To learn how chat application works.</li>
+</ul>
+<p><strong>Project Significance:</strong></p>
+<ul>
+<li>BotsApp offers a convenient way to communicate with user to user or group.</li>
+<li>This project explores the potential of chat technology in Web.</li>
+</ul>
+<hr>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/botsapp.png" alt="Image betrayed me 😒"></p>
+<h3 style="text-align: center;">&quot;A Better Place for Chat&quot;</h3>
+<pre><code>BotsApp - Web Chat Application
+Copyright (C) 2024  Darshit Limbad
+</code></pre>
+<p>This program is free software: you can redistribute it and/or modify<br>
+it under the terms of the GNU General Public License as published by<br>
+the Free Software Foundation, either version 3 of the License, any later version.</p>
+<p>This program is distributed in the hope that it will be useful,<br>
+but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
+GNU General Public License for more details.</p>
+<p>You should have received a copy of the GNU General Public License<br>
+along with this program.  If not, see <a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>.</p>
+<div class="page">
+</div><h2 id="botsapp-documentation---indexing"><strong>BotsApp Documentation - Indexing</strong></h2>
+<p><strong>I. Introduction</strong></p>
+<ul>
+<li><strong>1.1 Welcome and Overview</strong></li>
+<li><strong>1.2 Target Audience</strong></li>
+<li><strong>1.3 Next Steps</strong></li>
+</ul>
+<p><strong>II. System Architecture</strong></p>
+<ul>
+<li><strong>2.1 Frontend and Backend Overview</strong></li>
+<li><strong>2.2 Technology Stack</strong></li>
+<li><strong>2.3 Key Interactions</strong></li>
+</ul>
+<p><strong>III. Technology Stack</strong></p>
+<ul>
+<li><strong>3.1 Frontend Technologies</strong>
+<ul>
+<li><strong>3.1.1 HTML</strong></li>
+<li><strong>3.1.2 CSS</strong></li>
+<li><strong>3.1.3 JavaScript</strong></li>
+</ul>
+</li>
+<li><strong>3.2 Backend Technologies</strong>
+<ul>
+<li><strong>3.2.1 PHP</strong></li>
+<li><strong>3.2.2 MySQL</strong></li>
+</ul>
+</li>
+<li><strong>3.3 Security Technologies</strong>
+<ul>
+<li><strong>3.3.1 Bcrypt</strong></li>
+<li><strong>3.3.2 Sodium</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>IV. Frontend Implementation (JavaScript)</strong></p>
+<ul>
+<li><strong>4.1 Data Fetching and Sending</strong>
+<ul>
+<li><strong>4.1.1 Native HTML Forms</strong></li>
+<li><strong>4.1.2 <code>postReq</code> Function</strong></li>
+<li><strong>4.1.3 Handling Group and Personal Chat Data</strong></li>
+</ul>
+</li>
+<li><strong>4.2 Status Management</strong>
+<ul>
+<li><strong>4.2.1 <code>userStatus</code> Object</strong></li>
+<li><strong>4.2.2 <code>setOnlineStatusUpdateInterval()</code> Function</strong></li>
+<li><strong>4.2.3 <code>onlineStatusUpdate()</code> Function</strong></li>
+<li><strong>4.2.4 <code>checkStatus()</code> Function</strong></li>
+<li><strong>4.2.5 Message Status Management</strong></li>
+</ul>
+</li>
+<li><strong>4.3 Additional Functionality</strong>
+<ul>
+<li><strong>4.3.1 User Profile Management</strong></li>
+<li><strong>4.3.2 Group Chat Management</strong></li>
+<li><strong>4.3.3 Member Actions</strong></li>
+<li><strong>4.3.4 Custom Emoji System</strong></li>
+<li><strong>4.3.5 Chat Request System</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>V. Backend Implementation (PHP)</strong></p>
+<ul>
+<li><strong>5.1 Database Structure</strong>
+<ul>
+<li><strong>5.1.1 Main Database (<code>botsapp</code>)</strong>
+<ul>
+<li><strong>5.1.1.1 Table: <code>users</code></strong></li>
+<li><strong>5.1.1.2 Table: <code>users_account</code></strong></li>
+<li><strong>5.1.1.3 Table: <code>users_details</code></strong></li>
+<li><strong>5.1.1.4 Table: <code>groups</code></strong></li>
+<li><strong>5.1.1.5 Table: <code>inbox</code></strong></li>
+<li><strong>5.1.1.6 Table: <code>messages</code></strong></li>
+<li><strong>5.1.1.7 Table: <code>admins</code></strong></li>
+<li><strong>5.1.1.8 Table: <code>avatar</code></strong></li>
+<li><strong>5.1.1.9 Table: <code>emojis</code></strong></li>
+</ul>
+</li>
+<li><strong>5.1.2 Status Database (<code>botsapp_statusdb</code>)</strong>
+<ul>
+<li><strong>5.1.2.1 Table: <code>messages</code></strong></li>
+<li><strong>5.1.2.2 Table: <code>blocked</code></strong></li>
+<li><strong>5.1.2.3 Table: <code>notification</code></strong></li>
+<li><strong>5.1.2.4 Table: <code>on_status</code></strong></li>
+<li><strong>5.1.2.5 Table: <code>reports</code></strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>VI. Security</strong></p>
+<ul>
+<li><strong>6.1 Overview</strong></li>
+<li><strong>6.2 Password Hashing with Bcrypt</strong></li>
+<li><strong>6.3 Sodium Encryption for Browser Login Details</strong></li>
+<li><strong>6.4 SQL Injection Protection with Prepared Statements</strong></li>
+<li><strong>6.5 Session Handling and Authentication</strong></li>
+</ul>
+<p><strong>VII. Core Functionality</strong></p>
+<ul>
+<li><strong>7.1 User Login Flow</strong>
+<ul>
+<li><strong>7.1.1 IndexedDB for Login Credentials</strong></li>
+<li><strong>7.1.2 Decryption and Verification</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>VIII. Chat Features</strong></p>
+<ul>
+<li><strong>8.1 Group Chat Management</strong></li>
+<li><strong>8.2 File and Image Sharing</strong></li>
+<li><strong>8.3 Custom Emoji System</strong></li>
+<li><strong>8.4 Chat Request System</strong></li>
+</ul>
+<p><strong>IX. Challenges and Solutions</strong></p>
+<ul>
+<li><strong>9.1 Avoiding WebSockets: Polling as an Alternative</strong></li>
+<li><strong>9.2 Implementing a Fully Native Web Approach</strong></li>
+<li><strong>9.3 Security Considerations</strong></li>
+</ul>
+<p><strong>X. Testing</strong></p>
+<ul>
+<li><strong>10.1 Manual Testing</strong>
+<ul>
+<li><strong>10.1.1 Functionality Testing</strong></li>
+<li><strong>10.1.2 Usability Testing</strong></li>
+<li><strong>10.1.3 Performance Testing</strong></li>
+</ul>
+</li>
+<li><strong>10.2 Security and Authentication Testing</strong>
+<ul>
+<li><strong>10.2.1 Vulnerability Scanning</strong></li>
+<li><strong>10.2.2 Penetration Testing</strong></li>
+<li><strong>10.2.3 Authentication Testing</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>XI. Error Handling</strong></p>
+<ul>
+<li><strong>11.1 Error Handling in JavaScript</strong>
+<ul>
+<li><strong>11.1.1 <code>customError</code> Function</strong></li>
+<li><strong>11.1.2 <code>handler</code> Object</strong></li>
+<li><strong>11.1.3 <code>new_Alert</code> and <code>new_notification</code> Functions</strong></li>
+<li><strong>11.1.4 <code>DOMContentLoaded</code> Event Listener</strong></li>
+</ul>
+</li>
+<li><strong>11.2 Error Handling in PHP</strong></li>
+<li><strong>11.3 Error Reporting</strong></li>
+</ul>
+<p><strong>XII. Appendix</strong></p>
+<ul>
+<li><strong>12.1 Glossary</strong></li>
+<li><strong>12.2 Error Codes and Messages</strong></li>
+<li><strong>12.3 References</strong></li>
+</ul>
+<hr>
+<div class="page">
+</div><h2 id="i-introduction"><strong>I. Introduction:</strong></h2>
+<p>Welcome to the BotsApp Documentation! This guide provides a comprehensive overview of the BotsApp web application, designed to facilitate seamless communication and collaboration.</p>
+<p>BotsApp is a fully native web application built with a focus on user-friendliness, reliability, and security.  It offers a robust set of features for both personal and group chats, including:</p>
+<ul>
+<li><strong>Real-time messaging:</strong>  Enjoy instant communication with friends, family, and colleagues.</li>
+<li><strong>Group chats:</strong>  Stay connected with multiple people in a single chat.</li>
+<li><strong>File and image sharing:</strong>  Easily share documents and images within conversations.</li>
+<li><strong>Custom emojis:</strong>  Express yourself with a library of emojis, including the ability to upload your own.</li>
+<li><strong>Chat requests:</strong>  Connect with new users seamlessly using usernames.</li>
+<li><strong>Group management:</strong>  Create and manage group chats with administrative controls.</li>
+<li><strong>Secure communication:</strong>  Enjoy peace of mind with robust security measures for user data and authentication.</li>
+</ul>
+<h3 id="target-audience"><strong>Target Audience:</strong></h3>
+<p>This documentation is primarily intended for developers who need to understand the technical aspects of BotsApp, including its frontend (JavaScript) and backend (PHP) implementation. It will also be useful for designers and testers involved in the development process.</p>
+<h3 id="next-steps"><strong>Next Steps:</strong></h3>
+<p>Continue reading to learn more about the system architecture, database structure, frontend and backend code, security measures, and testing procedures.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/logo.png" alt="Image betrayed me 😒"></p>
+<div class="page">
+</div><h2 id="ii-system-architecture"><strong>II. System Architecture</strong></h2>
+<h3 id="21-frontend-and-backend-overview"><strong>2.1 Frontend and Backend Overview</strong></h3>
+<p>BotsApp is a client-server application, meaning it consists of two main components:</p>
+<ul>
+<li><strong>Frontend:</strong> The user interface (UI) that users interact with. This is built using HTML, CSS, and JavaScript.</li>
+<li><strong>Backend:</strong>  The server-side logic that handles data processing, database interactions, and communication with the frontend. This is implemented using PHP and MySQL.</li>
+</ul>
+<pre class="hljs"><code><div>+--------+          +---------+          +-----------+ 
+| Client | <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">-----</span>&gt;</span></span>  | Server  | <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">-----</span>&gt;</span></span>  | Database  |
++--------+          +---------+          +-----------+
+<span class="hljs-code">       | Chat Request  |           | User Data |</span>
+<span class="hljs-code">       | User Login    |           | Chat Messages |</span>
+<span class="hljs-code">       | File Upload   |           | Group Information |</span>
+<span class="hljs-code">       | Emoji Fetch   |           | Emoji Data |</span>
+<span class="hljs-code">       &lt;----- Chat Response |       &lt;----  Response |</span>
+<span class="hljs-code">       &lt;----- User Data |           &lt;----  Chat Messages |</span>
+<span class="hljs-code">       &lt;----- File Data |           &lt;----  Group Data |</span>
+<span class="hljs-code">       &lt;----- Emoji Data |           &lt;----  Emoji Data |</span>
+</div></code></pre>
+<p>The frontend (JavaScript) sends requests to the backend (PHP) using AJAX (Asynchronous JavaScript and XML) requests. These requests are typically in JSON format and are handled by specific PHP scripts on the server. The backend interacts with the MySQL database to store and retrieve user data, chat messages, group information, and other relevant data.</p>
+<h3 id="22-technology-stack"><strong>2.2 Technology Stack</strong></h3>
+<p>BotsApp utilizes a combination of technologies to deliver a robust and feature-rich chat experience:</p>
+<ul>
+<li><strong>HTML:</strong> Provides the structural foundation of the user interface, defining elements like chat windows, forms, and buttons.</li>
+<li><strong>CSS:</strong>  Styles the user interface, creating the visual appearance and layout of the application.</li>
+<li><strong>JavaScript:</strong>  Handles dynamic behavior, user interactions, and communication with the backend.</li>
+<li><strong>PHP:</strong>  Manages server-side logic, database interactions, and data processing.</li>
+<li><strong>MySQL:</strong>  Provides the database system for storing and retrieving application data.</li>
+<li><strong>Bcrypt:</strong>  Used for secure password hashing.</li>
+<li><strong>Sodium:</strong>  Used for encrypting sensitive user information in the browser.</li>
+</ul>
+<p><strong>Key Interactions:</strong></p>
+<ul>
+<li><strong>Frontend to Backend:</strong> The frontend sends AJAX requests to PHP scripts on the server to perform actions like sending messages, fetching chat data, and updating user profiles.</li>
+<li><strong>Backend to Database:</strong>  The PHP scripts interact with the MySQL database to store and retrieve data, ensuring data persistence and security.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>In the following sections, we'll explore the details of the frontend and backend implementations, including the database structure, security measures, and key functionalities.</p>
+<h2 id="iii-technology-stack"><strong>III. Technology Stack</strong></h2>
+<p>BotsApp utilizes a combination of technologies to deliver a robust and feature-rich chat experience.  Each technology plays a crucial role in building the frontend user interface, the backend server logic, and the underlying database.</p>
+<h3 id="31-frontend-technologies"><strong>3.1 Frontend Technologies</strong></h3>
+<ul>
+<li>
+<p><strong>HTML (HyperText Markup Language):</strong>  HTML provides the structural foundation of the BotsApp user interface.  It defines the layout, elements, and content of the application, such as chat windows, forms, buttons, and text areas.</p>
+</li>
+<li>
+<p><strong>CSS (Cascading Style Sheets):</strong>  CSS is responsible for styling the BotsApp user interface, creating its visual appearance and layout.  It controls aspects like colors, fonts, spacing, and the responsive behavior of the application across different screen sizes.</p>
+</li>
+<li>
+<p><strong>JavaScript:</strong>  JavaScript is the core of the BotsApp frontend, handling dynamic behavior, user interactions, and communication with the backend server. It powers features like real-time messaging, user input, UI updates, and asynchronous file operations.</p>
+</li>
+</ul>
+<p><strong>3.2 Backend Technologies</strong></p>
+<ul>
+<li>
+<p><strong>PHP (Hypertext Preprocessor):</strong> PHP is the server-side language that manages BotsApp's backend logic. It handles data processing, database interactions, authentication, and communication with the frontend using AJAX requests.</p>
+</li>
+<li>
+<p><strong>MySQL:</strong>  MySQL is the relational database management system (RDBMS) used to store and manage BotsApp's data, including user information, chat messages, group details, and emojis.</p>
+</li>
+</ul>
+<p><strong>3.3 Security Technologies</strong></p>
+<ul>
+<li>
+<p><strong>Bcrypt:</strong>  Bcrypt is a robust password hashing algorithm used to secure user passwords. It converts plain-text passwords into irreversible hashes, making it difficult for attackers to steal or compromise user credentials.</p>
+</li>
+<li>
+<p><strong>Sodium:</strong>  Sodium is a library used for cryptographic operations, including encryption and decryption. In BotsApp, it is used to encrypt sensitive user information stored in the browser, such as session tokens, to enhance security.</p>
+</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>In the following sections, we'll delve deeper into the specific implementations of these technologies, including the database structure, security measures, and key functionalities of the chat application.</p>
+<div class="page">
+</div><pre class="hljs"><code><div>+--------+          +---------+          +-----------+ 
+| Client | <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">-----</span>&gt;</span></span>  | Server  | <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">-----</span>&gt;</span></span>  | Database  |
++--------+          +---------+          +-----------+
+
+<span class="hljs-code">     |             |            |</span>
+<span class="hljs-code">     |             |            |</span>
+  +---+ +---+   +---+ +---+   +---+ +---+
+  | HTML | | CSS | | JS | | PHP | | MySQL | 
+  +---+ +---+   +---+ +---+   +---+ +---+
+</div></code></pre>
+<div class="page">
+</div><h2 id="iv-frontend-implementation-javascript"><strong>IV. Frontend Implementation (JavaScript)</strong></h2>
+<h3 id="41-data-fetching-and-sending"><strong>4.1 Data Fetching and Sending</strong></h3>
+<p>BotsApp relies on a robust data communication system to manage chat conversations, notifications, and user data. This section explores the frontend's data fetching and sending mechanisms, highlighting the use of native HTML forms, the custom <code>postReq</code> function, and how data is handled for both personal and group chats.</p>
+<h4 id="411-native-html-forms"><strong>4.1.1 Native HTML Forms</strong></h4>
+<p>BotsApp utilizes native HTML forms for user interactions like login, registration. These forms provide a user-friendly interface for collecting input data.</p>
+<p><strong>Example:</strong></p>
+<ul>
+<li><strong>Login Form:</strong>  The login form typically includes input fields for the username or email and password.</li>
+<li><strong>Registration Form:</strong>  The registration form include fields for username, email, password, and potentially other user details.</li>
+</ul>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/login-signin page.png" alt="alt text"></p>
+<h4 id="412-postrequrl-data-options-function"><strong>4.1.2  <code>postReq(url, data, options)</code> Function</strong></h4>
+<p>The <code>postReq</code> function is a core component of BotsApp's data communication system. It wraps the standard <code>XMLHttpRequest</code> object, providing a standardized and versatile way to make asynchronous HTTP requests to the server.</p>
+<p><strong>Key Features of <code>postReq</code>:</strong></p>
+<ul>
+<li><strong>Method Flexibility:</strong>  Allows you to use both POST and GET requests.</li>
+<li><strong>Asynchronous Operations:</strong>  Handles requests asynchronously, allowing the UI to remain responsive.</li>
+<li><strong>Progress Tracking:</strong>  Provides progress updates for file uploads and downloads.</li>
+<li><strong>Request Cancellation:</strong>  Offers the ability to abort requests if needed.</li>
+</ul>
+<pre class="hljs"><code><div>-&gt; A diagram showing the structure of a typical XHR request. :
+
++---------------------+
+|     HTTP Request    |
++---------------------+
+| Method: GET/POST    |
+| Endpoint: /api/data |
+| Headers:            |
+|  Content-Type       |
+|  Accept             |
+|  Authorization      |
+| Body: { ... }      |  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">--</span> <span class="hljs-attr">Optional</span>
++<span class="hljs-attr">---------------------</span>+
+
+                  ↓
+
++<span class="hljs-attr">---------------------</span>+
+|        <span class="hljs-attr">Server</span>       |
++<span class="hljs-attr">---------------------</span>+
+| <span class="hljs-attr">Process</span> <span class="hljs-attr">Request</span>     |
+| <span class="hljs-attr">Generate</span> <span class="hljs-attr">Response</span>   |
++<span class="hljs-attr">---------------------</span>+
+
+                  ↓
+                  
++<span class="hljs-attr">---------------------</span>+
+|    <span class="hljs-attr">XHR</span> <span class="hljs-attr">Object</span>     |
++<span class="hljs-attr">---------------------</span>+
+| <span class="hljs-attr">Handle</span> <span class="hljs-attr">Response</span>    |
++<span class="hljs-attr">---------------------</span>+
+</span></span></div></code></pre>
+<p><strong>Example Usage:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Send a POST request to the chat endpoint to send a message</span>
+postReq(<span class="hljs-string">'/functionality/lib/_chat.php'</span>, <span class="hljs-built_in">JSON</span>.stringify({ <span class="hljs-attr">req</span>: <span class="hljs-string">'sendMsg'</span>, <span class="hljs-attr">msg</span>: <span class="hljs-string">'Hello!'</span> }))
+    .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (response.status === <span class="hljs-string">'success'</span>) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Message sent successfully:'</span>, response.responseText);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error sending message:'</span>, response.error);
+        }
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error:'</span>, error);
+    });
+</div></code></pre>
+<h4 id="413-handling-group-and-personal-chat-data"><strong>4.1.3 Handling Group and Personal Chat Data</strong></h4>
+<p>BotsApp differentiates between group and personal chat data to manage conversations and display messages appropriately. Here's how it works:</p>
+<ol>
+<li><strong>Chat Type:</strong> The <code>chatType</code> cookie is set when a user selects either &quot;Personal&quot; or &quot;Group&quot; from the sidebar.</li>
+<li><strong>Data Retrieval:</strong> When fetching chat data (using <code>getChatList</code>, <code>getAllMsgs</code>, or <code>getNewMsgs</code>), the <code>chatType</code> is used to construct the appropriate SQL query for retrieving the correct messages.</li>
+<li><strong>UI Display:</strong> The frontend code uses the <code>chatType</code> to display messages and UI elements differently for personal and group chats. For example:
+<ul>
+<li><strong>Personal Chats:</strong>  The chat window displays the username of the other user.</li>
+<li><strong>Group Chats:</strong> The chat window displays the group name and the usernames of all members.</li>
+</ul>
+</li>
+<li>Users can also see other users or groups details  by clicking on the user/group name while chat is opened.</li>
+<li>Users cam perform aplicable actions also available action is displayed below:
+<ul>
+<li><strong>Actions for User:</strong> Delete User, Blocking user, Reporting User.</li>
+<li><strong>Actions for group:</strong> Leave Group, Add new Members, Group Emojis, Add Emojis.</li>
+<li><strong>Advanced Action for group admin</strong> Delete Group.</li>
+</ul>
+</li>
+<li>Group members can also change group details like Group profile picture, Group Name,</li>
+<li><strong>last but not least</strong>: If you are wondering about namming confilicts then don't because usernames are already unique and for group named i am sending encrypted group id's to client side for any group operations and chating.</li>
+</ol>
+<h3 id="42-status-management"><strong>4.2  Status Management</strong></h3>
+<p>BotsApp's status management system is designed to provide real-time updates on user activity and message statuses, enhancing the user experience and facilitating smooth communication. This section explores the JavaScript code responsible for managing online status and message read/send statuses.</p>
+<h4 id="421-userstatus-object"><strong>4.2.1 <code>userStatus</code> Object:</strong></h4>
+<p>The <code>userStatus</code> object is a central component of the frontend status management system. It holds crucial information and functions related to user and message statuses:</p>
+<ul>
+<li><strong><code>statusURL</code>:</strong>  The URL of the server-side PHP script (<code>_status.php</code>) that handles status updates and data retrieval.</li>
+<li><strong><code>msgStatusPath</code>:</strong> The path to the directory containing the status icons used in the UI (e.g., <code>&quot;/img/icons/chat/msg_status/&quot;</code>).</li>
+<li><strong><code>isOnline</code>:</strong>  A boolean flag that indicates whether the current user is online (true) or offline (false).</li>
+<li><strong><code>adminOnlineStatusIcon</code>:</strong>  A reference to the DOM element that displays the online status of the admin (if applicable).</li>
+</ul>
+<p><code>NOTE</code>: Here admin is just a word for the current user.</p>
+<h4 id="422-setonlinestatusupdateinterval"><strong>4.2.2 <code>setOnlineStatusUpdateInterval()</code>:</strong></h4>
+<p>This function is responsible for setting up the interval that periodically checks and updates the user's online status. It works as follows:</p>
+<ol>
+<li><strong>Initial Check:</strong>  It calls the <code>onlineStatusUpdate()</code> function to get the user's initial online status.</li>
+<li><strong>Interval Setup:</strong>  It uses <code>setInterval</code> to repeatedly call <code>onlineStatusUpdate()</code> at a specified interval (<code>#requestTime</code>). This ensures that the user's online status is updated regularly.</li>
+<li><strong>Offline/Online Handlers:</strong>  It attaches event listeners (<code>window.onoffline</code> and <code>window.ononline</code>) to handle cases where the user's internet connection is lost or restored. These handlers ensure that the <code>onlineStatusUpdate</code> interval is resumed when the connection is back online.</li>
+</ol>
+<h4 id="423-onlinestatusupdate"><strong>4.2.3 <code>onlineStatusUpdate()</code>:</strong></h4>
+<p>This function updates the user's online status in the database and reflects the change in the UI. Here's how it works:</p>
+<ol>
+<li><strong>Send Status Update:</strong>  It sends a POST request to the server using <code>postReq</code> to update the user's online status in the <code>on_status</code> table.</li>
+<li><strong>Update <code>isOnline</code> Flag:</strong>  It updates the <code>isOnline</code> flag based on the server's response. If the update is successful, <code>isOnline</code> is set to <code>true</code>; otherwise, it's set to <code>false</code>.</li>
+<li><strong>Update UI:</strong>  It updates the online status icon (<code>adminOnlineStatusIcon</code>) in the UI using <code>classList.replace</code>. If the user is online, the icon's color is changed to green; otherwise, it's changed to red.</li>
+</ol>
+<h4 id="424-checkstatus"><strong>4.2.4 <code>checkStatus()</code>:</strong></h4>
+<p>This function is responsible for fetching the status of other chatters in the current conversation and updating the UI accordingly. This is where real-time updates happen.</p>
+<ol>
+<li><strong>Fetch Status Data:</strong> It sends a POST request to the server using <code>postReq</code> to retrieve the status information for other chatters.</li>
+<li><strong>Process Response:</strong>  It processes the response data from the server:
+<ul>
+<li><strong>Personal Chats:</strong>  It updates the <code>--userStatusColor</code> style property for each <code>inboxUser</code> element in the chat list to reflect the chatter's status (online, last active, new user, offline). It also updates the <code>currentChatterStatus</code> element to show the online status of the current chatter.</li>
+<li><strong>Group Chats:</strong>  It updates the UI to show the number of new messages for the group.</li>
+<li><strong>Message Status:</strong>  It checks for read status updates of sent messages and changes the <code>msgStatusIcon</code> if needed.</li>
+</ul>
+</li>
+<li><strong>Update UI:</strong>  It updates the UI elements (chat list, chat window) based on the fetched status data, including displaying new messages and updating status icons.</li>
+</ol>
+<h4 id="425-message-status-management"><strong>4.2.5 Message Status Management</strong></h4>
+<ul>
+<li>
+<p><strong><code>_getMsgStatus(msgIDs)</code>:</strong> This function fetches the status of a set of messages (read/send/uploaded) from the server. It uses <code>postReq</code> to send a request to the server.</p>
+</li>
+<li>
+<p><strong><code>_placeMsgStatus(msgStatusImage, msgID)</code>:</strong> This function updates the <code>msgStatusImage</code> (a DOM element) to reflect the status of a message. It fetches the message status from the server and updates the image accordingly.</p>
+</li>
+<li>
+<p><strong><code>_getMsgSeenData(msgID)</code>:</strong> This function fetches information about who has seen a specific message in a group chat. It uses <code>postReq</code> to send a request to the server.</p>
+</li>
+</ul>
+<p><strong>A flowchart illustrating the status management process:</strong></p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/status-management.png" alt="alt text"></p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/chat-status-update.png" alt="alt text"></p>
+<p><strong>Next Steps:</strong></p>
+<p>In the next section, we'll delve into the notification system used in BotsApp, explaining how it works on both the frontend and backend.</p>
+<h3 id="43-additional-functionality"><strong>4.3 Additional Functionality</strong></h3>
+<p>This section explores the JavaScript functions that power BotsApp's core features beyond the basic chat functionality, including:</p>
+<ul>
+<li>User Profile Management</li>
+<li>Group Chat Management</li>
+<li>Member Actions</li>
+<li>Custom Emoji System</li>
+<li>Chat Request System</li>
+</ul>
+<h4 id="431-user-profile-management"><strong>4.3.1 User Profile Management</strong></h4>
+<p>BotsApp allows users to view and edit their profile information. Here are the relevant functions:</p>
+<ul>
+<li><strong><code>getProfile()</code>:</strong>
+<ul>
+<li>This function retrieves the user's profile data from the server (likely using <code>postReq</code> to <code>_fetch_data.php</code>).</li>
+<li>It returns a Promise that resolves with the user's profile information, including their name, gender, about (bio), email, and whether they can see other users' online status.</li>
+</ul>
+</li>
+<li><strong><code>editGroupDetails(column, value)</code>:</strong>
+<ul>
+<li>
+<p>This function is primarily used for updating group details (name or profile picture).</p>
+</li>
+<li>
+<p>It sends a POST request to the server using <code>postReq</code> to update the specified <code>column</code> (e.g., <code>name</code>, <code>dp</code>) with the provided <code>value</code>.</p>
+</li>
+<li>
+<p>It returns a Promise that resolves with 1 if the update is successful, otherwise throws an error or returns 0.</p>
+</li>
+<li>
+<p><strong><code>_blockChat()</code>:</strong> This function blocks a chat conversation, preventing the user from receiving messages from the other party.</p>
+</li>
+<li>
+<p><strong><code>_reportChat(reportReason)</code>:</strong> This function reports a user or group chat.</p>
+</li>
+<li>
+<p><strong><code>getBlockedMemberList()</code>:</strong> This function fetches a list of users blocked by the current user.</p>
+</li>
+<li>
+<p><strong><code>_unblockMember(unm)</code>:</strong> This function unblocks a previously blocked user.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/users-profile.png" alt="alt text"></p>
+<p><strong>Example Usage:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Fetch the user's profile data</span>
+getProfile()
+    .then(<span class="hljs-function"><span class="hljs-params">profile</span> =&gt;</span> {
+        <span class="hljs-comment">// Update the UI with the profile information</span>
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp img'</span>).src = profile.profile_pic;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .text'</span>).textContent = profile.unm;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .name'</span>).textContent = profile.name;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .about'</span>).textContent = profile.about;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .gender'</span>).textContent = profile.gender;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .email'</span>).textContent = profile.email;
+        <span class="hljs-built_in">document</span>.querySelector(<span class="hljs-string">'.profile-dp .can_see_on_status'</span>).textContent = profile.can_see_on_status ? <span class="hljs-string">'Yes'</span> : <span class="hljs-string">'No'</span>;
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error fetching profile:'</span>, error);
+    });
+</div></code></pre>
+<h4 id="432-group-chat-management"><strong>4.3.2 Group Chat Management</strong></h4>
+<p>BotsApp provides functionality for creating, managing, and deleting group chats. Here are the key functions:</p>
+<ul>
+<li><strong><code>createNewGroup(name, memberList)</code>:</strong>
+<ul>
+<li>This function creates a new group chat on the server.</li>
+<li>It sends a POST request to the server using <code>postReq</code> to the <code>_insert_data.php</code> script.</li>
+<li>The request includes the <code>name</code> of the group and a JSON-encoded array of <code>memberList</code> (usernames) to be added to the group.</li>
+<li>It returns a Promise that resolves with 1 if the group creation is successful, otherwise throws an error or returns 0.</li>
+</ul>
+</li>
+<li><strong><code>_addNewMember(unmList)</code>:</strong>
+<ul>
+<li>This function adds new members to an existing group chat.</li>
+<li>It sends a POST request to the server using <code>postReq</code> to the <code>_insert_data.php</code> script.</li>
+<li>The request includes a JSON-encoded array of <code>unmList</code> (usernames) to be added.</li>
+<li>It returns a Promise that resolves with 1 if the member addition is successful, otherwise throws an error or returns 0.</li>
+</ul>
+</li>
+<li><strong><code>_removeMember(unm)</code>:</strong>
+<ul>
+<li>This function removes a member from a group chat.</li>
+<li>It sends a POST request to the server using <code>postReq</code> to the <code>_data_delete.php</code> script.</li>
+<li>The request includes the <code>unm</code> (username) of the member to be removed.</li>
+<li>It returns a Promise that resolves with 1 if the member removal is successful, otherwise throws an error or returns 0.</li>
+</ul>
+</li>
+<li><strong><code>deleteChat()</code>:</strong>
+<ul>
+<li>This function deletes an entire group chat.</li>
+<li>It sends a POST request to the server using <code>postReq</code> to the <code>data_delete.php</code> script.</li>
+<li>It returns a Promise that resolves with 1 if the deletion is successful, otherwise throws an error or returns 0.</li>
+</ul>
+</li>
+<li><strong><code>editGroupDetails(column, value)</code>:</strong>
+<ul>
+<li>This function updates the details of a group chat (e.g., group name, profile picture).</li>
+<li>It sends a POST request to the server using <code>postReq</code> to the <code>_chat.php</code> script.</li>
+<li>The request includes the <code>column</code> (e.g., <code>name</code>, <code>dp</code>) and the <code>value</code> to update.</li>
+<li>It returns a Promise that resolves with 1 if the update is successful, otherwise throws an error or returns 0.</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/add new gorup form.png" alt="alt text"></p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/ER_diagram for group roles.png" alt="alt text"></p>
+<p><strong>Example Usage:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Create a new group</span>
+createNewGroup(<span class="hljs-string">'My New Group'</span>, [<span class="hljs-string">'@user1'</span>, <span class="hljs-string">'@user2'</span>])
+    .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (response === <span class="hljs-number">1</span>) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Group created successfully!'</span>);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error creating group:'</span>, response);
+        }
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error:'</span>, error);
+    });
+
+<span class="hljs-comment">// Add a new member to a group</span>
+_addNewMember([<span class="hljs-string">'@user3'</span>])
+    .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (response === <span class="hljs-number">1</span>) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Member added successfully!'</span>);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error adding member:'</span>, response);
+        }
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error:'</span>, error);
+    });
+</div></code></pre>
+<h4 id="433-member-actions"><strong>4.3.3 Member Actions</strong></h4>
+<p>BotsApp provides functionality for blocking and reporting users, as well as removing members from group chats:</p>
+<ul>
+<li><strong><code>_removeMember(unm)</code>:</strong> This function removes a member from a group chat.</li>
+</ul>
+<h3 id="434-custom-emoji-system"><strong>4.3.4 Custom Emoji System</strong></h3>
+<p>BotsApp offers a custom emoji system, allowing users to upload and use their own emojis.  Here are the key functions:</p>
+<ul>
+<li><strong><code>_uploadEmoji(data)</code>:</strong>
+<ul>
+<li>This function uploads a custom emoji to the server.</li>
+<li>The <code>data</code> object contains the emoji image data (MIME type and base64-encoded blob), the emoji name, and its scope (private, public, or group).</li>
+</ul>
+</li>
+<li><strong><code>_getEmojiList(data)</code>:</strong>
+<ul>
+<li>This function retrieves a list of emojis from the server.</li>
+<li>The optional <code>data</code> object can specify the scope (e.g., &quot;GROUP&quot;) and group ID to filter the emoji list.</li>
+</ul>
+</li>
+<li><strong><code>_deleteUploadedEmoji(emojiID)</code>:</strong>
+<ul>
+<li>This function deletes an uploaded emoji from the server.</li>
+</ul>
+</li>
+<li><strong><code>_searchEmoji(data)</code>:</strong>
+<ul>
+<li>This function searches for emojis based on a provided search query.</li>
+</ul>
+</li>
+<li><strong><code>_fetchEmoji(data)</code>:</strong>
+<ul>
+<li>This function fetches a specific emoji from the server, potentially caching it locally in the user's browser.</li>
+</ul>
+</li>
+</ul>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/emoji-list-ui.png" alt="alt text"></p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/admin-emoji-review-UI.png" alt="alt text"></p>
+<p><strong>Example Usage:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Upload a new emoji</span>
+_uploadEmoji({
+    <span class="hljs-attr">name</span>: <span class="hljs-string">':myemoji:'</span>, 
+    <span class="hljs-attr">scope</span>: <span class="hljs-string">'SELF&amp;GROUP'</span>, 
+    <span class="hljs-attr">GID</span>: <span class="hljs-string">'groupID'</span>,
+    <span class="hljs-attr">mime</span>: <span class="hljs-string">'image/webp'</span>,
+    <span class="hljs-attr">blob</span>: <span class="hljs-string">'base64-encoded-emoji-image-data'</span>
+})
+    .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (response === <span class="hljs-number">1</span>) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Emoji uploaded successfully!'</span>);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error uploading emoji:'</span>, response);
+        }
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error:'</span>, error);
+    });
+
+<span class="hljs-comment">// Search for emojis</span>
+_searchEmoji({
+    <span class="hljs-attr">query</span>: <span class="hljs-string">'smile'</span>
+})
+    .then(<span class="hljs-function"><span class="hljs-params">emojis</span> =&gt;</span> {
+        <span class="hljs-comment">// Display the search results (emojis) in the UI</span>
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error searching emojis:'</span>, error);
+    });
+</div></code></pre>
+<h4 id="435-chat-request-system"><strong>4.3.5 Chat Request System</strong></h4>
+<p>BotsApp enables users to send chat requests to other users based on usernames. This allows users to initiate conversations with new contacts.</p>
+<ul>
+<li><strong><code>sendChatRequest(toUnm)</code>:</strong> This function sends a chat request to another user.</li>
+<li><strong><code>acceptChatRequest(fromUnm)</code>:</strong>  This function accepts a chat request from another user.</li>
+<li><strong><code>declineChatRequest(fromUnm)</code>:</strong> This function declines a chat request.</li>
+</ul>
+<p><strong>Example Usage:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Send a chat request to another user</span>
+sendChatRequest(<span class="hljs-string">'@newuser'</span>)
+    .then(<span class="hljs-function"><span class="hljs-params">response</span> =&gt;</span> {
+        <span class="hljs-keyword">if</span> (response === <span class="hljs-number">1</span>) {
+            <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Chat request sent successfully!'</span>);
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error sending chat request:'</span>, response);
+        }
+    })
+    .catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error:'</span>, error);
+    });
+</div></code></pre>
+<p><strong>Next Steps:</strong></p>
+<p>In the next section, we'll explore the server-side implementation of BotsApp, focusing on the PHP scripts and database interactions.</p>
+<div class="page">
+</div><h2 id="v-backend-implementation-php"><strong>V. Backend Implementation (PHP)</strong></h2>
+<h3 id="51-database-structure"><strong>5.1 Database Structure</strong></h3>
+<h4 id="511-main-database-botsapp"><strong>5.1.1 Main Database (<code>botsapp</code>)</strong></h4>
+<p>The main database, <code>botsapp</code>, stores core user information, chat messages, group details, and emojis.  Here's a detailed breakdown of the tables:</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/botsapp_er.png" alt="alt text"></p>
+<p><strong>Table: <code>users</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each user.</td>
+</tr>
+<tr>
+<td><code>userID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique user ID (used for authentication).</td>
+</tr>
+<tr>
+<td><code>surname</code></td>
+<td>VARCHAR(20)</td>
+<td>User's surname.</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>VARCHAR(20)</td>
+<td>User's first name.</td>
+</tr>
+<tr>
+<td><code>unm</code></td>
+<td>VARCHAR(30)</td>
+<td>User's username (e.g., <code>@username</code>).</td>
+</tr>
+<tr>
+<td><code>email</code></td>
+<td>VARCHAR(20)</td>
+<td>User's email address.</td>
+</tr>
+<tr>
+<td><code>pass</code></td>
+<td>VARCHAR(100)</td>
+<td>Hashed password using Bcrypt.</td>
+</tr>
+<tr>
+<td><code>pass_key</code></td>
+<td>VARCHAR(100)</td>
+<td>Password reset key (if applicable).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>users_account</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each user account.</td>
+</tr>
+<tr>
+<td><code>userID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique user ID (links to the <code>users</code> table).</td>
+</tr>
+<tr>
+<td><code>unm</code></td>
+<td>VARCHAR(30)</td>
+<td>User's username (e.g., <code>@username</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>users_details</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each user's details.</td>
+</tr>
+<tr>
+<td><code>userID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique user ID (links to the <code>users</code> table).</td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td>VARCHAR(30)</td>
+<td>User's gender.</td>
+</tr>
+<tr>
+<td><code>about</code></td>
+<td>VARCHAR(100)</td>
+<td>User's bio or description.</td>
+</tr>
+<tr>
+<td><code>can_see_online_status</code></td>
+<td>INT(1)</td>
+<td>Indicates whether the other user can see his/her online status (1 for yes, 0 for no).</td>
+</tr>
+<tr>
+<td><code>theme</code></td>
+<td>INT(1)</td>
+<td>Indicates the user's preferred theme (0 for light, 1 for dark).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>groups</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each group.</td>
+</tr>
+<tr>
+<td><code>adminID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique user ID of the group admin.</td>
+</tr>
+<tr>
+<td><code>groupID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique group ID.</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>VARCHAR(30)</td>
+<td>Name of the group.</td>
+</tr>
+<tr>
+<td><code>dp</code></td>
+<td>MEDIUMBLOB</td>
+<td>Binary data for the group's profile picture.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>inbox</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each entry in the inbox.</td>
+</tr>
+<tr>
+<td><code>chatType</code></td>
+<td>VARCHAR(10)</td>
+<td>Type of chat (personal or group).</td>
+</tr>
+<tr>
+<td><code>fromID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the sender.</td>
+</tr>
+<tr>
+<td><code>toID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the recipient (for personal chats) or the group ID (for group chats).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>messages</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each message.</td>
+</tr>
+<tr>
+<td><code>msgID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique message ID.</td>
+</tr>
+<tr>
+<td><code>fromID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the sender.</td>
+</tr>
+<tr>
+<td><code>toID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the recipient (for personal chats) or the group ID (for group chats).</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>VARCHAR(15)</td>
+<td>Type of message (text, image, document).</td>
+</tr>
+<tr>
+<td><code>mime</code></td>
+<td>VARCHAR(80)</td>
+<td>MIME type of the message (e.g., text/plain, image/webp).</td>
+</tr>
+<tr>
+<td><code>msg</code></td>
+<td>TEXT</td>
+<td>Text content of the message (if applicable).</td>
+</tr>
+<tr>
+<td><code>doc</code></td>
+<td>MEDIUMBLOB</td>
+<td>Binary data for the document or image (if applicable).</td>
+</tr>
+<tr>
+<td><code>details</code></td>
+<td>VARCHAR(150)</td>
+<td>Serialized details of the message (e.g., file size, file extension).</td>
+</tr>
+<tr>
+<td><code>time</code></td>
+<td>BIGINT(100)</td>
+<td>Timestamp of when the message was sent.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>admins</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each admin.</td>
+</tr>
+<tr>
+<td><code>adminID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the admin.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>avatar</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ID</code></td>
+<td>VARCHAR(20)</td>
+<td>Unique identifier for each avatar.</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>VARCHAR(20)</td>
+<td>MIME type of the avatar image (e.g., 'image/webp').</td>
+</tr>
+<tr>
+<td><code>imgData</code></td>
+<td>MEDIUMBLOB</td>
+<td>Binary data for the avatar image.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>emojis</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each emoji.</td>
+</tr>
+<tr>
+<td><code>uploaderID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the emoji uploader.</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>VARCHAR(10)</td>
+<td>Scope of the emoji (SELF, GROUP, PUBLIC).</td>
+</tr>
+<tr>
+<td><code>groupID</code></td>
+<td>VARCHAR(20)</td>
+<td>Group ID (if the emoji is for a specific group).</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>VARCHAR(17)</td>
+<td>Name of the emoji (e.g., &quot;<img class="emoji" alt="smile" src="data:image/png;base64,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" />&quot;).</td>
+</tr>
+<tr>
+<td><code>mime</code></td>
+<td>VARCHAR(100)</td>
+<td>MIME type of the emoji image.</td>
+</tr>
+<tr>
+<td><code>blob_data</code></td>
+<td>BLOB</td>
+<td>Binary data for the emoji image.</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>VARCHAR(10)</td>
+<td>Status of the emoji (e.g., 'approved', 'pending').</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Relationships:</strong></p>
+<ul>
+<li><strong><code>users_account</code> and <code>users</code>:</strong>  The <code>userID</code> column in <code>users_account</code> links to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>users_details</code>:</strong> The <code>userID</code> column in <code>users_details</code> links to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>inbox</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>inbox</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>groups</code> and <code>inbox</code>:</strong> The <code>toID</code> column in <code>inbox</code> links to the <code>groupID</code> column in <code>groups</code>.</li>
+<li><strong><code>messages</code> and <code>botsapp_statusdb.messages</code>:</strong> The <code>msgID</code> column in <code>botsapp_statusdb.messages</code> links to the <code>msgID</code> column in <code>messages</code>.</li>
+<li><strong><code>users</code> and <code>blocked</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>blocked</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>notification</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>notification</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>reports</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>reports</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>groups</code> and <code>emojis</code>:</strong> The <code>groupID</code> column in <code>emojis</code> links to the <code>groupID</code> column in <code>groups</code>.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>On the next page, we will explore the structure of the <code>botsapp_statusdb</code> database, which is used to track user and message status in real-time.</p>
+<div class="page">
+</div><h4 id="512-status-database-botsappstatusdb"><strong>5.1.2 Status Database (<code>botsapp_statusdb</code>)</strong></h4>
+<p>The <code>botsapp_statusdb</code> database is designed to track user and message status in real-time.  This database is used in conjunction with the main <code>botsapp</code> database to provide a dynamic and responsive chat experience.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/botsapp_statusdb.png" alt="alt text"></p>
+<p><strong>Table: <code>messages</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each message status.</td>
+</tr>
+<tr>
+<td><code>msgID</code></td>
+<td>VARCHAR(20)</td>
+<td>Message ID (links to the <code>messages</code> table in the main database).</td>
+</tr>
+<tr>
+<td><code>status</code></td>
+<td>VARCHAR(10)</td>
+<td>Status of the message (uploading, send, read).</td>
+</tr>
+<tr>
+<td><code>seenByIDs</code></td>
+<td>TEXT</td>
+<td>Serialized array of user IDs who have seen the message (for group chats).</td>
+</tr>
+<tr>
+<td><code>hide</code></td>
+<td>INT(1)</td>
+<td>Indicates whether the message is hidden (1 for yes, 0 for no).</td>
+</tr>
+<tr>
+<td><code>hide_by</code></td>
+<td>TEXT</td>
+<td>Serialized array of user IDs who have hidden the message (for group chats).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>blocked</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each blocked user.</td>
+</tr>
+<tr>
+<td><code>fromID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the person who blocked another user.</td>
+</tr>
+<tr>
+<td><code>toID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the blocked user.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>notification</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each notification.</td>
+</tr>
+<tr>
+<td><code>notificationID</code></td>
+<td>VARCHAR(30)</td>
+<td>Unique notification ID.</td>
+</tr>
+<tr>
+<td><code>fromID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the sender of the notification.</td>
+</tr>
+<tr>
+<td><code>toID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the recipient of the notification.</td>
+</tr>
+<tr>
+<td><code>action</code></td>
+<td>VARCHAR(20)</td>
+<td>Type of notification (e.g., 'newMessage', 'chatRequest').</td>
+</tr>
+<tr>
+<td><code>msg</code></td>
+<td>TEXT</td>
+<td>Message content of the notification.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>on_status</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each user's online status.</td>
+</tr>
+<tr>
+<td><code>userID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID.</td>
+</tr>
+<tr>
+<td><code>last_on_time</code></td>
+<td>BIGINT(100)</td>
+<td>Timestamp of the user's last activity.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Table: <code>reports</code></strong></p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Data Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td>INT</td>
+<td>Unique identifier for each report.</td>
+</tr>
+<tr>
+<td><code>fromID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the person who made the report.</td>
+</tr>
+<tr>
+<td><code>toID</code></td>
+<td>VARCHAR(20)</td>
+<td>User ID of the reported user or group.</td>
+</tr>
+<tr>
+<td><code>reason</code></td>
+<td>TEXT</td>
+<td>Reason for the report.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Relationships:</strong></p>
+<ul>
+<li><strong><code>users</code> and <code>botsapp_statusdb.messages</code>:</strong> The <code>userID</code> in <code>on_status</code> links to the <code>userID</code> in <code>users</code>.</li>
+<li><strong><code>messages</code> and <code>botsapp_statusdb.messages</code>:</strong> The <code>msgID</code> column in <code>botsapp_statusdb.messages</code> links to the <code>msgID</code> column in <code>messages</code>.</li>
+<li><strong><code>users</code> and <code>blocked</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>blocked</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>notification</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>notification</code> link to the <code>userID</code> column in <code>users</code>.</li>
+<li><strong><code>users</code> and <code>reports</code>:</strong> The <code>fromID</code> and <code>toID</code> columns in <code>reports</code> link to the <code>userID</code> column in <code>users</code>.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>On the next page, we will delve into the security measures implemented in BotsApp, including password hashing, encryption, SQL injection prevention, and session handling.</p>
+<div class="page">
+</div><h2 id="vi-security"><strong>VI. Security</strong></h2>
+<h3 id="61-overview"><strong>6.1 Overview</strong></h3>
+<p>Security is a top priority for BotsApp. The application implements a combination of measures to protect user data, authentication, and the overall integrity of the chat system.</p>
+<h3 id="62-password-hashing-with-bcrypt"><strong>6.2 Password Hashing with Bcrypt</strong></h3>
+<p>BotsApp uses Bcrypt for secure password hashing. When a user registers, their password is not stored in plain text. Instead, it is converted into an irreversible hash using the Bcrypt algorithm. This means that even if an attacker gains access to the database, they cannot easily recover the original passwords.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/userlogin_diagram.png" alt="alt text"></p>
+<h3 id="63-sodium-encryption-for-browser-login-details"><strong>6.3 Sodium Encryption for Browser Login Details</strong></h3>
+<p>To enhance security, BotsApp uses the Sodium library to encrypt sensitive user information stored in the browser, such as username and password salt.  This helps to protect user data from unauthorized access even if the user's browser is compromised.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/encryption and decryption.png" alt="alt text"></p>
+<h3 id="64-sql-injection-protection-with-prepared-statements"><strong>6.4 SQL Injection Protection with Prepared Statements</strong></h3>
+<p>SQL injection is a common attack that exploits vulnerabilities in database queries. BotsApp uses prepared statements to prevent SQL injection attacks. Prepared statements separate the SQL query from the data, preventing attackers from manipulating the query to gain unauthorized access.</p>
+<pre class="hljs"><code><div><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-comment">// Database connection details</span>
+$servername = <span class="hljs-string">"localhost"</span>;
+$username = <span class="hljs-string">"username"</span>;
+$password = <span class="hljs-string">"password"</span>;
+$dbname = <span class="hljs-string">"myDB"</span>;
+
+<span class="hljs-comment">// Create connection</span>
+$conn = <span class="hljs-keyword">new</span> mysqli($servername, $username, $password, $dbname);
+
+<span class="hljs-comment">// Check connection</span>
+<span class="hljs-keyword">if</span> ($conn-&gt;connect_error) {
+  <span class="hljs-keyword">die</span>(<span class="hljs-string">"Connection failed: "</span> . $conn-&gt;connect_error);
+}
+
+<span class="hljs-comment">// Vulnerable code (without prepared statement)</span>
+<span class="hljs-comment">// $username = $_POST['username'];</span>
+<span class="hljs-comment">// $sql = "SELECT * FROM users WHERE username='$username'";</span>
+
+<span class="hljs-comment">// Prepared statement</span>
+$stmt = $conn-&gt;prepare(<span class="hljs-string">"SELECT * FROM users WHERE username = ?"</span>);
+$stmt-&gt;bind_param(<span class="hljs-string">"s"</span>, $username); <span class="hljs-comment">// 's' specifies data type (string)</span>
+$username = $_POST[<span class="hljs-string">'username'</span>];
+$stmt-&gt;execute();
+
+<span class="hljs-comment">// Get result set</span>
+$result = $stmt-&gt;get_result();
+
+<span class="hljs-comment">// Process results</span>
+<span class="hljs-keyword">if</span> ($result-&gt;num_rows &gt; <span class="hljs-number">0</span>) {
+  <span class="hljs-comment">// ... </span>
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-comment">// ...</span>
+}
+
+$stmt-&gt;close();
+$conn-&gt;close();
+<span class="hljs-meta">?&gt;</span>
+</div></code></pre>
+<h3 id="65-session-handling-and-authentication"><strong>6.5 Session Handling and Authentication</strong></h3>
+<p>BotsApp uses sessions to track user logins and authenticate users. When a user logs in, a session is created on the server, and a session ID is stored in a cookie on the user's browser.  This session ID is used to verify the user's identity on subsequent requests.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/session_generate_process.png" alt="alt text"></p>
+<p><strong>Next Steps:</strong></p>
+<p>On the next page, we will discuss the user login flow, including how user data is stored locally using IndexedDB and session storage, and how the login process involves decryption and verification.</p>
+<div class="page">
+</div><h2 id="vii-core-functionality"><strong>VII. Core Functionality:</strong></h2>
+<h3 id="71-user-login-flow">7.1 User Login Flow</h3>
+<h3 id="711-indexeddb-for-login-credentials"><strong>7.1.1  IndexedDB for Login Credentials:</strong></h3>
+<p>BotsApp utilizes IndexedDB to store login credentials locally for next auto logins. This approach offers convenience and speeds up the login process.</p>
+<ul>
+<li><strong>IndexedDB:</strong> IndexedDB is used to store the user's encrypted password and other login-related information, such as username. This data persists in the browser even after the browser is closed.</li>
+</ul>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/encryption and decryption.png" alt="alt text"></p>
+<h3 id="712-decryption-and-verification"><strong>7.1.2 Decryption and Verification:</strong></h3>
+<p>When a user attempts to log in, BotsApp uses a secure decryption and verification process to ensure their identity.</p>
+<p><img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/User-Login-process.png" alt="alt text"></p>
+<p><strong>Login Process:</strong></p>
+<ol>
+<li><strong>Frontend Input:</strong> The user enters their username and password in the login form.</li>
+<li><strong>Database Verification:</strong> The password is compared to the hashed password stored in the <code>users</code> table in the database.</li>
+<li><strong>Authentication:</strong> If the passwords match, a secure session is established for the user.</li>
+<li><strong>Store Credentials in Browser:</strong> if remember me check box is checked then this process get's executed otherwise direct login.</li>
+<li><strong>Encryption (Server-side):</strong> The server Encrypt the password using the Sodium library.</li>
+<li><strong>User Credentials Storage (Browser):</strong> The Encrypted User Credentials is securely stored in the browser's session storage.</li>
+<li><strong>UI Update:</strong> The user interface updates to reflect the logged-in state, displaying the user's profile and chat list.</li>
+</ol>
+<p><strong>Security Considerations:</strong></p>
+<ul>
+<li><strong>Password Hashing:</strong>  Bcrypt is used to securely hash passwords, preventing them from being stored in plain text.</li>
+<li><strong>Sodium Encryption:</strong>  Sodium is used to encrypt sensitive data, such as the user's password, before it's Stored to the Browser.</li>
+<li><strong>User Credentials Handling:</strong> The Server encrypts User credentials (Username &amp; password) using sodium cryptobox and stores them in IndexedDB except password key which doesn't get stored in IndexedDB, The password key is created on user sign up and gets stored in users table, everytime users credentials get sotred in IndexedDB it uses stored pass key to encrypt the credentials when client side request a auto login server decrypts the username and fetch a pass key and tries to decrypt the password if the decrypted password matches with the hashed password user successfully gets login otherwise IndexedDB gets cleared and user gets redirected to login page.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>On the next page, we will explore how BotsApp handles data fetching and sending, including the use of native HTML forms, the custom <code>postReq</code> function, and the management of data for group and personal chats.</p>
+<div class="page">
+</div><h2 id="viii-chat-features"><strong>VIII. Chat Features</strong></h2>
+<p>This section will delve into the specific features that make BotsApp a robust and engaging chat application. We'll discuss the implementation of:</p>
+<ul>
+<li><strong>Group Chat Management:</strong>  How groups are created, managed, and how member roles and permissions work.</li>
+<li><strong>File and Image Sharing:</strong>  How users can upload and download files and images within chats.</li>
+<li><strong>Custom Emoji System:</strong>  How users can upload and use their own emojis.</li>
+<li><strong>Chat Request System:</strong>  How users can send and receive chat requests to connect with new contacts.</li>
+</ul>
+<p>This section will provide a detailed explanation of each feature, including:</p>
+<ul>
+<li>
+<p><strong>User Interface:</strong> How the features are implemented in the user interface.</p>
+</li>
+<li>
+<p><strong>JavaScript Code:</strong> How the frontend JavaScript code interacts with the server to manage these features.</p>
+</li>
+<li>
+<p><strong>PHP Backend:</strong>  How the server-side PHP scripts handle requests and database interactions for these features.</p>
+</li>
+<li>
+<p><strong>Security Considerations:</strong>  Any security measures implemented for each feature.</p>
+</li>
+<li>
+<p><strong>Upload Progress:</strong><br>
+<img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/upload_progress.png" alt="alt text"></p>
+</li>
+<li>
+<p><strong>Download Progress:</strong><br>
+<img src="file:///c:/xampp/htdocs/BotsApp/DOC/img/documentation/download_progress.png" alt="alt text"></p>
+</li>
+</ul>
+<p>This section is crucial for developers who need to understand the core functionality of BotsApp and how it is built.</p>
+<p>Okay, here's a draft for the page that comes after the &quot;Chat Features&quot; section:</p>
+<div class="page">
+</div><h2 id="ix-challenges-and-solutions"><strong>IX. Challenges and Solutions</strong></h2>
+<p>This section discusses some of the challenges encountered during the development of BotsApp and the solutions implemented to overcome them.</p>
+<h3 id="91-avoiding-websockets-polling-as-an-alternative"><strong>9.1 Avoiding WebSockets: Polling as an Alternative</strong></h3>
+<p>WebSockets are a popular technology for real-time communication, BotsApp opted for a polling approach to achieve real-time updates, balancing efficiency and simplicity.</p>
+<p><strong>Reasons for Choosing Polling:</strong></p>
+<ul>
+<li><strong>Browser Compatibility:</strong>  WebSockets are not universally supported by all browsers, especially older ones.  A polling approach ensures broader compatibility and a wider user base.</li>
+<li><strong>Server-Side Complexity:</strong>  WebSockets require a dedicated server infrastructure to handle persistent connections.  Polling is simpler to implement on the server side, especially for a smaller-scale application.</li>
+<li><strong>Scalability:</strong>  While WebSockets are known for their scalability, they can become resource-intensive with a large number of users. Polling can be more efficient for managing a moderate number of simultaneous users.</li>
+</ul>
+<p><strong>Polling Mechanism:</strong></p>
+<p>BotsApp uses JavaScript to periodically send requests to the server to check for updates. The <code>checkStatus</code> function in <code>chat.js</code> handles this polling process.</p>
+<p><strong>Trade-offs:</strong></p>
+<ul>
+<li><strong>Polling is less efficient:</strong>  It requires sending more frequent requests to the server, which can consume more bandwidth.</li>
+<li><strong>Polling can introduce latency:</strong>  There's a delay between when an event occurs and when the client receives an update.</li>
+</ul>
+<h3 id="92-implementing-a-fully-native-web-approach"><strong>9.2 Implementing a Fully Native Web Approach</strong></h3>
+<p>BotsApp is built using a fully native web approach, meaning it relies solely on HTML, CSS, and JavaScript for the user interface and functionality.  This approach offers several advantages:</p>
+<ul>
+<li><strong>Accessibility:</strong>  BotsApp is accessible to all users with a modern web browser, without requiring any specific software installations.</li>
+<li><strong>Cross-Platform Compatibility:</strong>  The application works seamlessly across different operating systems and devices, including desktops, laptops, tablets, and smartphones.</li>
+<li><strong>Ease of Development:</strong>  Developing a native web application can be simpler and more efficient compared to building a native mobile app for each platform.</li>
+</ul>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li><strong>Performance:</strong>  Native web applications can sometimes experience performance limitations compared to native mobile apps, especially in terms of resource usage and responsiveness.</li>
+<li><strong>Limited Functionality:</strong>  Certain features might not be available in a native web environment, such as direct access to device hardware (e.g., camera, GPS).</li>
+</ul>
+<h3 id="93-security-considerations"><strong>9.3 Security Considerations</strong></h3>
+<p>Security is paramount for any chat application. BotsApp implements several security measures to protect user data and prevent malicious activity:</p>
+<ul>
+<li><strong>Password Hashing:</strong>  User passwords are stored using the Bcrypt algorithm, which is a robust and secure way to hash passwords.</li>
+<li><strong>Sodium Encryption:</strong>  Sensitive user information, such as session tokens, is encrypted using the Sodium library for secure storage in the browser.</li>
+<li><strong>SQL Injection Protection:</strong>  Prepared statements are used to prevent SQL injection attacks, ensuring that malicious code cannot be injected into database queries.</li>
+<li><strong>Authentication:</strong>  BotsApp uses session-based authentication to verify user identities and prevent unauthorized access.</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>In the next section, we'll discuss the testing procedures used to ensure the quality and security of BotsApp.</p>
+<div class="page">
+</div><h2 id="x-testing"><strong>X. Testing</strong></h2>
+<p>This section outlines the testing procedures used to ensure the quality and security of BotsApp.</p>
+<h3 id="101-manual-testing"><strong>10.1 Manual Testing</strong></h3>
+<p>Manual testing is an essential part of the development process to ensure that the application functions as intended and meets user expectations.</p>
+<p><strong>Types of Manual Tests:</strong></p>
+<ul>
+<li>
+<p><strong>Functionality Testing:</strong>  Verifying that all features of the application work correctly, including:</p>
+<ul>
+<li><strong>Message Sending and Receiving:</strong>  Testing the ability to send and receive messages in both personal and group chats.</li>
+<li><strong>File and Image Sharing:</strong>  Testing the upload and download of files and images.</li>
+<li><strong>Custom Emoji System:</strong>  Testing the ability to upload, search, and use custom emojis.</li>
+<li><strong>Chat Request System:</strong>  Testing the sending, receiving, accepting, and declining of chat requests.</li>
+<li><strong>Group Chat Management:</strong>  Testing the creation, editing, and deletion of group chats, as well as adding and removing members.</li>
+<li><strong>User Profile Management:</strong>  Testing the ability to view and edit user profiles.</li>
+<li><strong>Notification System:</strong>  Testing the functionality of on-site notifications.</li>
+<li><strong>Status Management:</strong>  Testing the real-time updates for user status and message statuses.</li>
+</ul>
+</li>
+<li>
+<p><strong>Usability Testing:</strong>  Evaluating the user interface for ease of use and intuitiveness.  This might involve:</p>
+<ul>
+<li><strong>User Feedback:</strong>  Gathering feedback from users on the overall experience.</li>
+<li><strong>Task Completion:</strong>  Observing users as they perform common tasks within the application.</li>
+</ul>
+</li>
+<li>
+<p><strong>Performance Testing:</strong>  Assessing the application's speed and responsiveness under different load conditions. This might involve:</p>
+<ul>
+<li><strong>Load Testing:</strong>  Simulating a large number of users simultaneously accessing the application.</li>
+<li><strong>Stress Testing:</strong>  Pushing the application to its limits to determine its stability and performance under extreme conditions.</li>
+</ul>
+</li>
+</ul>
+<h2 id="102-security-and-authentication-testing"><strong>10.2 Security and Authentication Testing</strong></h2>
+<p>Security testing is crucial to ensure that the application is protected against vulnerabilities.</p>
+<p><strong>Types of Security Tests:</strong></p>
+<ul>
+<li><strong>Vulnerability Scanning:</strong>  Using automated tools to scan the application for known vulnerabilities, such as SQL injection, cross-site scripting (XSS), and cross-site request forgery (CSRF).</li>
+<li><strong>Penetration Testing:</strong>  Employing ethical hackers to simulate real-world attacks to identify security weaknesses.</li>
+<li><strong>Authentication Testing:</strong>  Verifying that the user authentication process is secure and robust. This might involve testing:
+<ul>
+<li><strong>Password Strength:</strong>  Ensuring that passwords meet strong password requirements.</li>
+<li><strong>Session Management:</strong>  Testing the security of session handling and authentication.</li>
+<li><strong>Data Encryption:</strong>  Verifying that sensitive user data is properly encrypted.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Next Steps:</strong></p>
+<p>In the next section, we'll provide a glossary of key terms and a list of error codes and messages returned by the server-side scripts.</p>
+<div class="page">
+</div><h2 id="xi-error-handling"><strong>XI. Error Handling</strong></h2>
+<p>This section discusses the error handling mechanisms implemented in BotsApp, ensuring a smooth user experience and providing helpful feedback in case of unexpected issues.</p>
+<h3 id="111-error-handling-in-javascript"><strong>11.1 Error Handling in JavaScript</strong></h3>
+<p>BotsApp uses a robust error handling system to manage unexpected situations and provide clear feedback to users.  This section explains the JavaScript error handling mechanisms.</p>
+<h4 id="1111-customerrorerr-function"><strong>11.1.1  <code>customError(err)</code> Function</strong></h4>
+<p><strong>Description:</strong></p>
+<p>The <code>customError</code> function is the central error handler in the BotsApp frontend. It receives an error object (<code>err</code>) and determines how to handle and display the error message to the user.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><strong><code>err</code>:</strong> (Object) The error object, which typically contains information like the error code (<code>err.code</code>) and a descriptive message (<code>err.message</code>).</li>
+</ul>
+<p><strong>Logic:</strong></p>
+<ol>
+<li><strong>Log Error:</strong>  The function first logs the error to the console using <code>console.error</code> for debugging purposes.</li>
+<li><strong>Error Mapping:</strong> It checks if the error object has a <code>code</code> property. If so, it attempts to map the code to a specific error handler defined in the <code>handler</code> object.</li>
+<li><strong>Display Error Message:</strong>  If a corresponding error handler is found, it is invoked to display the error message to the user.  If no handler is found, it calls the default error handler (<code>handler.err_400</code>).</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Example of an error thrown by a function</span>
+<span class="hljs-comment">// ...</span>
+.catch(<span class="hljs-function"><span class="hljs-params">error</span> =&gt;</span> {
+    customError(error); 
+});
+</div></code></pre>
+<h4 id="1112-handler-object"><strong>11.1.2 <code>handler</code> Object</strong></h4>
+<p><strong>Description:</strong></p>
+<p>The <code>handler</code> object acts as a central registry for error handling functions. Each property of the <code>handler</code> object represents a specific error code and maps to a function that handles that error.</p>
+<p><strong>Properties:</strong></p>
+<ul>
+<li><strong><code>err_400</code>:</strong> Handles generic errors (e.g., &quot;Something went wrong&quot;).</li>
+<li><strong><code>err_401</code>:</strong>  Handles network errors (e.g., &quot;No network, please try again later&quot;).</li>
+<li><strong><code>err_405</code>:</strong> Handles errors related to empty names.</li>
+<li><strong><code>err_409</code>:</strong> Handles errors related to invalid scopes.</li>
+<li><strong><code>err_410</code>:</strong> Handles unauthorized access errors.</li>
+<li><strong><code>err_411</code>:</strong> Handles errors when data is not found.</li>
+<li><strong><code>err_412</code>:</strong> Handles errors when data already exists.</li>
+<li><strong><code>err_413</code>:</strong> Handles errors when file sizes exceed the allowed limit.</li>
+<li><strong><code>err_414</code>:</strong> Handles errors related to invalid usernames.</li>
+<li><strong><code>err_415</code>:</strong> Handles errors related to unsupported media types.</li>
+<li><strong><code>err_500</code>:</strong> Handles internal server errors.</li>
+<li><strong><code>suc_dataChanged</code>:</strong>  Handles successful data change notifications.</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Example of an error handler function</span>
+handler.err_401 = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+    new_Alert(<span class="hljs-string">"NO NETWORK, PLEASE TRY AGAIN LATER"</span>);
+};
+</div></code></pre>
+<h4 id="1113-newalertmessage-time-and-newnotificationmessage"><strong>11.1.3 <code>new_Alert(message, time)</code> and <code>new_notification(message)</code></strong></h4>
+<p><strong>Description:</strong></p>
+<p>These functions are responsible for displaying error messages and success notifications to the user. They utilize a simple overlay system with a timeout to control the display duration.</p>
+<h5 id="11131-newalertmessage-time"><strong>11.1.3.1 <code>new_Alert(message, time)</code></strong></h5>
+<p><strong>Purpose:</strong></p>
+<p>This function displays an alert message to the user, typically used for error messages.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><strong><code>message</code>:</strong> (String) The message to be displayed in the alert.</li>
+<li><strong><code>time</code>:</strong> (Number)  Optional parameter to specify the duration (in seconds) the alert should be displayed. If not provided, the alert will remain visible until the user clicks outside of it.</li>
+</ul>
+<p><strong>Logic:</strong></p>
+<ol>
+<li><strong>Initialization:</strong> The function first retrieves a reference to the DOM element with the ID <code>alert</code> (presumably an overlay or a modal element).</li>
+<li><strong>Display Alert:</strong> It sets the content of the alert element to the provided <code>message</code> and adds the <code>show</code> class to the element to make it visible.</li>
+<li><strong>Event Listener:</strong> It attaches a click event listener to the document to handle when the user clicks outside of the alert. When the user clicks outside, the alert is hidden.</li>
+<li><strong>Timeout (Optional):</strong> If a <code>time</code> value is provided, it sets a <code>setTimeout</code> to automatically hide the alert after the specified duration.</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Display an alert message for 3 seconds</span>
+new_Alert(<span class="hljs-string">"Something went wrong!"</span>, <span class="hljs-number">3</span>); 
+
+<span class="hljs-comment">// Display an alert message that stays until the user clicks outside</span>
+new_Alert(<span class="hljs-string">"Please enter a valid username."</span>); 
+</div></code></pre>
+<h5 id="11132-newnotificationmessage"><strong>11.1.3.2 <code>new_notification(message)</code></strong></h5>
+<p><strong>Purpose:</strong></p>
+<p>This function displays a notification message to the user, typically used for success messages or updates.</p>
+<p><strong>Parameters:</strong></p>
+<ul>
+<li><strong><code>message</code>:</strong> (String) The message to be displayed in the notification.</li>
+</ul>
+<p><strong>Logic:</strong></p>
+<ol>
+<li><strong>Initialization:</strong> The function first retrieves a reference to the DOM element with the ID <code>notification</code> (presumably an overlay or a modal element).</li>
+<li><strong>Display Notification:</strong> It sets the content of the notification element to the provided <code>message</code> and adds the <code>show</code> class to the element to make it visible.</li>
+<li><strong>Event Listener:</strong> It attaches a click event listener to the document to handle when the user clicks outside of the notification. When the user clicks outside, the notification is hidden.</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Display a notification message</span>
+new_notification(<span class="hljs-string">"Data changed successfully."</span>); 
+</div></code></pre>
+<p><strong>Additional Notes:</strong></p>
+<ul>
+<li><strong>UI Design:</strong>  The specific implementation of the alert and notification overlays (e.g., using a modal, a simple overlay, or a custom design) will depend on your application's UI.</li>
+<li><strong>Accessibility:</strong>  Ensure that your alert and notification systems meet accessibility guidelines. For example, provide alternative text for images and use ARIA attributes to enhance screen reader compatibility.</li>
+<li><strong>Error Handling:</strong>  You could add error handling to these functions to gracefully handle cases where the <code>notification</code> or <code>alert</code> elements are not found in the DOM.</li>
+</ul>
+<h4 id="1114-domcontentloaded-event-listener"><strong>11.1.4  DOMContentLoaded Event Listener</strong></h4>
+<p>The <code>DOMContentLoaded</code> event listener is used to handle error messages and success notifications that are passed in the URL parameters.</p>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-built_in">document</span>.addEventListener(<span class="hljs-string">'DOMContentLoaded'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">var</span> url = <span class="hljs-built_in">decodeURI</span>(<span class="hljs-built_in">window</span>.location.href);
+    <span class="hljs-keyword">var</span> URL_params = <span class="hljs-keyword">new</span> URLSearchParams(url.substring(url.indexOf(<span class="hljs-string">'?'</span>)));
+
+    setTimeout(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-comment">// ... (Error and success handling logic)</span>
+    }, <span class="hljs-number">10</span>);
+});
+</div></code></pre>
+<h3 id="112-error-handling-in-php"><strong>11.2 Error Handling in PHP</strong></h3>
+<p>BotsApp's server-side PHP code also implements error handling to manage exceptions and provide appropriate responses to the client.</p>
+<p><strong>Error Handling Mechanism:</strong></p>
+<ol>
+<li><strong>Exception Handling:</strong>  PHP code uses <code>try...catch</code> blocks to handle exceptions that may occur during database operations, file handling, or other processes.</li>
+<li><strong>Error Codes and Messages:</strong>  When an exception is caught, it is typically converted into a JSON object containing an <code>error</code> flag, an <code>error code</code>, and a descriptive <code>message</code>. This JSON object is then returned to the client.</li>
+</ol>
+<p><strong>Example:</strong></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">try</span> {
+    <span class="hljs-comment">// ... (PHP code that might throw an exception)</span>
+} <span class="hljs-keyword">catch</span> (<span class="hljs-keyword">Exception</span> $e) {
+    $error = [
+        <span class="hljs-string">'error'</span> =&gt; <span class="hljs-keyword">true</span>,
+        <span class="hljs-string">'code'</span> =&gt; $e-&gt;getCode(),
+        <span class="hljs-string">'message'</span> =&gt; $e-&gt;getMessage(),
+    ];
+    <span class="hljs-keyword">echo</span> json_encode($error);
+}
+</div></code></pre>
+<h3 id="113-error-reporting"><strong>11.3 Error Reporting</strong></h3>
+<p>BotsApp may implement additional error reporting mechanisms to track and analyze errors:</p>
+<ul>
+<li><strong>Logging:</strong>  Errors can be logged to a file for later analysis and debugging.</li>
+<li><strong>Monitoring Services:</strong>  Error events can be sent to monitoring services to provide real-time alerts and insights into application performance and stability.</li>
+</ul>
+<div class="page">
+</div><h2 id="xii-appendix"><strong>XII. Appendix</strong></h2>
+<p>This appendix provides additional information that complements the main documentation.</p>
+<h3 id="121-glossary"><strong>12.1 Glossary</strong></h3>
+<p>This glossary defines key terms used throughout the documentation.</p>
+<ul>
+<li><strong>AJAX (Asynchronous JavaScript and XML):</strong> A technique for making asynchronous HTTP requests from a web page to a server.</li>
+<li><strong>Bcrypt:</strong>  A strong password hashing algorithm used to secure user passwords.</li>
+<li><strong>IndexedDB:</strong>  A database API for storing large amounts of structured data in the user's browser.</li>
+<li><strong>Native Web Application:</strong>  A web application built using HTML, CSS, and JavaScript, without requiring any specific software installations.</li>
+<li><strong>Polling:</strong>  A technique for retrieving data from a server by sending periodic requests.</li>
+<li><strong>Session Storage:</strong>  A temporary storage mechanism in the browser that persists only for the duration of the user's session.</li>
+<li><strong>Sodium:</strong>  A library used for secure encryption and decryption in the browser.</li>
+<li><strong>SQL Injection:</strong>  A type of security vulnerability where malicious code is injected into database queries.</li>
+<li><strong>WebSockets:</strong>  A protocol for real-time communication between a web browser and a server.</li>
+</ul>
+<h3 id="122-error-codes-and-messages"><strong>12.2 Error Codes and Messages</strong></h3>
+<p>This table lists the error codes and their corresponding messages returned by the server-side PHP scripts.</p>
+<table>
+<thead>
+<tr>
+<th>Error Code</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Something went wrong!</td>
+</tr>
+<tr>
+<td>401</td>
+<td>NO NETWORK, PLEASE TRY AGAIN LATER</td>
+</tr>
+<tr>
+<td>404</td>
+<td>User not found or password is wrong!</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Name can't be Empty</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Invalid Scope!!!</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Unauthorised Access Denied !!!</td>
+</tr>
+<tr>
+<td>411</td>
+<td>No Data Found !!</td>
+</tr>
+<tr>
+<td>412</td>
+<td>Data Already Exists !!</td>
+</tr>
+<tr>
+<td>413</td>
+<td>File Size is larger then allowed.</td>
+</tr>
+<tr>
+<td>414</td>
+<td>Username is Invalid!</td>
+</tr>
+<tr>
+<td>415</td>
+<td>This Media type is not Allowed.</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+</tr>
+</tbody>
+</table>
+<h3 id="123-references"><strong>12.3 References</strong></h3>
+<p>This section provides links to relevant resources and documentation for the technologies used in BotsApp.</p>
+<ul>
+<li><strong>HTML:</strong> <a href="https://www.w3.org/TR/html5/">https://www.w3.org/TR/html5/</a></li>
+<li><strong>CSS:</strong> <a href="https://www.w3.org/TR/CSS/">https://www.w3.org/TR/CSS/</a></li>
+<li><strong>JavaScript:</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">https://developer.mozilla.org/en-US/docs/Web/JavaScript</a></li>
+<li><strong>PHP:</strong> <a href="https://www.php.net/">https://www.php.net/</a></li>
+<li><strong>MySQL:</strong> <a href="https://www.mysql.com/">https://www.mysql.com/</a></li>
+<li><strong>Bcrypt:</strong> <a href="https://en.wikipedia.org/wiki/Bcrypt">https://en.wikipedia.org/wiki/Bcrypt</a></li>
+<li><strong>Sodium:</strong> <a href="https://libsodium.org/">https://libsodium.org/</a></li>
+<li><strong>IndexedDB:</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API">https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API</a></li>
+<li><strong>WebSockets:</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API</a></li>
+</ul>
+<div class="page">
+</div><style>
+    @page {
+        margin: 2cm; /* Adjust the margins as needed */
+    }
+    body {
+        margin: 1cm;
+    }
+
+    *{
+        ::selection {
+            background-color: rgb(10 10 10 / 30%);
+        }
+    }
+</style>
+</body>
+
+</html>
