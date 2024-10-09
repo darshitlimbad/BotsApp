@@ -29,13 +29,13 @@ Project Report <br>
     |                    Saurashtra University                     | 
     |                            Rajkot                            |   
     |                                                              | 
-    |                    Academic Year: 2024-2025                  |   
+    |                   Academic Year: 2024-2025                   |   
     |--------------------------------------------------------------| 
 
 
     |--------------------------------------------------------------| 
     |                       Project Guide:                         | 
-    |                   Prof. NIKITA FICHADIYA                     | 
+    |                     PROF. MITAL GOSWAMI                      | 
     |--------------------------------------------------------------| 
 
 <div class="page" />
