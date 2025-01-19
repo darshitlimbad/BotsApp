@@ -27,8 +27,14 @@
 
     function insertData(string $table, array $columns , array $values , $db = "conn")   {
         try{
-            $columns = array_map('trim', $columns);
-            $values = array_map('trim', $values);
+            $columns = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $columns);
+            
+            $values = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $values);            
+
 
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);
@@ -60,8 +66,14 @@
     function fetch_columns( $table , array $points , array $point_values , array $columns, $db="conn",array $flags=[]){
         try{
              // Trim columns, points, and point_values
-            $columns = array_map('trim', $columns);
-            $points = array_map('trim', $points);
+             $columns = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $columns);
+            
+            $points = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $points);  
+                  
             $point_values = array_map('trim', $point_values);
             
             if(sizeof($points) != sizeof($point_values))
@@ -145,8 +157,13 @@
 
     function updateData($table,array $columns ,array $values , $point, $point_value , $db="conn" )   {
         try{
-            $columns = array_map('trim', $columns);
-            $values = array_map('trim', $values);
+            $columns = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $columns);
+            
+            $values = array_map(function ($item) {
+                return is_null($item) ? '' : trim($item);
+            }, $values);        
 
             if(sizeof($columns) != sizeof($values))
                 throw new Exception( "Columns size is not equal to values size", 400);

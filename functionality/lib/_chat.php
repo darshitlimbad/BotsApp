@@ -57,7 +57,6 @@ function getChatList(string $chatType=null){
             $chatType = strtolower($_COOKIE['chat']);
         
         $dataFromInbox = fetch_columns('inbox', ['fromID','chatType'], [$userID,$chatType], array("toID"));
-        
         if($dataFromInbox -> num_rows != 0 ){
             $i=0;
             while( $toID = $dataFromInbox->fetch_column() ){
@@ -289,7 +288,7 @@ function getNewMsgs($data){
             $msgObjs[$i]['toUnm']= ($chatType == 'group') ? $oppoUserUNM : (($row['fromID'] == $userID) ? $oppoUserUNM : $userUNM) ;
             $msgObjs[$i][($row['type'] == 'text') ? 'msg' : 'fileName']=$row['msg'];
             $msgObjs[$i]['type']= $row['type'];
-            $msgObjs[$i]['details'] = unserialize($row['details']);
+            $msgObjs[$i]['details'] = (!is_null($row['details'])) ? unserialize($row['details']) : "";
             $msgObjs[$i]['time']= $row['time'];
             $i++;
 

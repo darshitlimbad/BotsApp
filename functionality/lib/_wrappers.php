@@ -7,7 +7,6 @@
             <h1 onclick="tohomepage()"><?= $title?></h1>
         </div>
         <p>-A Better place for chat.</p>
-        
 <?php
     }
 

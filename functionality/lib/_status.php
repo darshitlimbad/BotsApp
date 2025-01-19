@@ -63,12 +63,14 @@
 
                     break;
                 case 'group':
-                    $sql= " SELECT i.toID
-                            FROM inbox as i 
-                            JOIN groups as g
-                            ON i.fromID = '$userID' 
-                            WHERE i.toID = g.groupID ";
-                    
+                    $sql= " SELECT 
+                                i.toID
+                            FROM inbox AS i
+                            JOIN `groups` AS g
+                                ON i.toID = g.groupID
+                            WHERE 
+                                i.fromID = '$userID'
+                            ";
                     break;
                 default:
                     throw new Exception("Select Chat Type first.",0);

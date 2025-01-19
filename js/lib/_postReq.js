@@ -17,8 +17,7 @@ const postReq = (url, data=null ,
         XHR.onload = (res) => {
             if (XHR.readyState === 4) {
                 if (XHR.status === 200) {
-                    try{
-                        // console.log(res.target.responseText);
+                    try{                        
                         let resTxt = JSON.parse(res.target.responseText);
                         // console.log({ status:"success", responseText: resTxt });
                         resolve({ status:"success", responseText: resTxt });

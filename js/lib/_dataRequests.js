@@ -28,7 +28,8 @@ const _getChatList = async (chatType=null) => {
     if(chatType)    data.chatType=chatType;
 
     try{
-        const res = await postReq(url,JSON.stringify(data));
+        const res = await postReq(url,JSON.stringify(data));       
+        
         if(res.status === "success" && !res.responseText.error)
             return res.responseText;
         else 
@@ -39,6 +40,7 @@ const _getChatList = async (chatType=null) => {
         return 0;
     }
 }
+
 const _getAllMsgs = async () => {
     var url = "/functionality/lib/_chat.php";
     var data = {
@@ -546,6 +548,7 @@ function _searchEmoji(data=null){
 
     return new Promise(resolve=>{
         postReq(url,JSON.stringify(data)).then(res=>{
+            
             if(!res.responseText.error){
                 resolve(res.responseText);
             }else{
@@ -568,7 +571,8 @@ function _fetchEmoji(data=null){
     //     emojiUser:'test#234',
     // }
     if(!data) return;
-
+    
+    
     let url= "/functionality/lib/_fetch_data.php";
     data.req="fetchEmoji";
 

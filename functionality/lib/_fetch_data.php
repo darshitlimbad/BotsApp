@@ -2,6 +2,7 @@
     if($data = json_decode(file_get_contents("php://input") , true) ){
         if(!session_id()){
             session_start();
+            
             if(isset($data['req']) && isset($_SESSION['userID'])){
                 require_once('../db/_conn.php');
                 require_once('../lib/_validation.php');

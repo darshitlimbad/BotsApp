@@ -27,7 +27,7 @@ const openChatList = async () =>  {
         // return;
         var chatList = await _getChatList();  _flash_chatList();
         userStatus.checkStatus();
-
+        
         if(chatList){
             chatList.forEach(chat => chatListTemplate(chat));
             sortChatByTime();

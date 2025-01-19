@@ -101,6 +101,7 @@
 
         postReq(URL , data)
             .then(res=>{
+                
                 if(res.status == "success"){
                     var data=res.responseText;
                     var box = document.querySelector(".noti-box > .conteiner");box.innerHTML="";
@@ -288,12 +289,14 @@ const _edit_user_data = (ele) => {
         req:field,
         edit_column: field,
         value,
-        };
+    };
 
 
     var url = "/functionality/_user_edit.php".concat("?key_pass=khulJaSimSim");
     postReq(url , JSON.stringify(data)) 
         .then(res => {
+            console.log(res.responseText);
+            
             if(res.status == "success"){
                 if ( res.responseText == 1 ){
                     handler.suc_dataChanged();
@@ -1211,7 +1214,7 @@ function emojiSyntaxChecker(str=null,e=null){
             turn_off_emoji_searching();
         }else{
             //thist part is executed when emoji searching is false
-            const regex = new RegExp(/(?<=^|\s):/,'i');
+            const regex = new RegExp(/(?<=^|\s):/,'i');            
             if(str.slice(e.target.selectionStart-2,e.target.selectionStart).match(regex))
                 turn_on_emoji_searching(e.target.selectionStart-1);
         }

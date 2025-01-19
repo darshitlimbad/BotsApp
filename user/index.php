@@ -30,7 +30,7 @@ if (isset($_SESSION['userID'])) {
     <script type="text/javascript" src="../js/User/index.js"></script>
     
     <!-- google Recaptcha -->
-<script src="https://www.google.com/recaptcha/api.js?render=6LdWOSEqAAAAAIO6YwlHIZdbVmFcGotoEredZwHd"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LdWOSEqAAAAAIO6YwlHIZdbVmFcGotoEredZwHd"></script>
 </head>
 
 <body onload="document.forms['form']['user'].focus()" class="User">

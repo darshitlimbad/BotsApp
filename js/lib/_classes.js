@@ -923,6 +923,7 @@ class showEmojiListContainer{
             
             //serching emoji by name and scope
             let list= await _searchEmoji(data);
+            
             this.body.querySelector('.loader')?.remove();
             if(!list)
                 throw 411;

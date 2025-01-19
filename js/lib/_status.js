@@ -77,6 +77,7 @@ class Status {
         postReq(this.statusURL,JSON.stringify(data))
             .then(res=>{
                 if(res.status == 'success' && res.responseText != 0){
+                    
                     res.responseText.forEach(chatter => {
                         
                         let inboxUser = (chatType === 'personal') ? 
@@ -167,7 +168,7 @@ class Status {
                                     || chatType === 'group' && user && user.id == chatter.GID){
                                         _getNewMsgs()
                                         .then(msgObjs=>{
-                                            if( msgObjs ){
+                                            if( msgObjs ){                                               
                                                 msgObjs.forEach(msgObj => addNewMsgInCurrChat(msgObj));
                                                 return 1;
                                             }
