@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /
+
+# Check if the requested URL matches the actual file path with case sensitivity
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteCond %{REQUEST_URI} !^.*\.(jpg|jpeg|png|gif|css|js|ico)$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ - [R=404,L]
